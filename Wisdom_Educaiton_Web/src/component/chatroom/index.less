@@ -1,0 +1,145 @@
+.chatroomWrapper {
+  width: 100%;
+  height: 100%;
+  border-radius: 2px;
+  background-color: rgba(35, 44, 55, 1);
+  color: #333;
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+}
+
+.chatroomTitle {
+  text-align: center;
+  font-size: 16px;
+  font-weight: 500;
+  border-bottom: 1px solid #ebedf0;
+  padding: 9px 0;
+}
+
+.chatroomContent {
+  padding: 12px 20px;
+  flex: 1 1 auto;
+  flex-basis: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  p.chatroomCardTime{
+    color: #4A5665;
+    text-align: center;
+    font-size: 12px;
+  }
+}
+
+.chatroomTools {
+  padding: 12px;
+  border-bottom: 1px solid rgba(52, 61, 73, 1);
+  display: flex;
+  width: 620px;
+  margin-left: -16px;
+}
+
+.chatroomToolsButton {
+  cursor: pointer;
+  &:first-child {
+    margin-right: 12px;
+  }
+}
+
+.chatroomEditor {
+  width: 100%;
+  height: 68px;
+  overflow-y: auto;
+  textarea{
+    color: #fff;
+    &::placeholder{
+      color: rgba(74, 86, 101, 1);
+    }
+  }
+}
+
+.chatCardWrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  &:not(:first-child) {
+    margin-top: 15px;
+  }
+}
+
+.chatCardNickName {
+  color: #4A5665;
+  font-size: 12px;
+}
+
+.chatCardSendTime {
+  color: #4A5665;
+  font-size: 12px;
+}
+
+.chatCardContent {
+  margin-top: 5px;
+  display: flex;
+  align-items: center;
+}
+
+.chatCardFillContent {
+  margin-top: 5px;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.chatCardText {
+  border-radius: 8px;
+  padding: 10px 12px;
+  flex: 1;
+  height: auto;
+  color: #333;
+  font-size: 14px;
+  word-break: break-all;
+}
+
+.chatCardTextItem {
+  // word-break: break-all;
+  word-break: break-word;
+}
+
+.chatCardImg {
+  width: 160px;
+  height: 120px;
+  border-radius: 8px;
+  border: 1px solid #dfe0e3;
+  object-fit: contain;
+}
+
+.chatCardFile {
+  width: 100%;
+  min-height: 60px;
+  border-radius: 8px;
+  border: 1px solid #dfe0e3;
+  display: flex;
+  align-items: center;
+  padding: 10px 12px;
+  color: #333;
+  cursor: pointer;
+  &:hover {
+    color: #333;
+  }
+}
+
+.chatCardFileContent {
+  flex: 1;
+  margin: 0 15px;
+}
+
+.chatCardFileName {
+  word-break: break-all;
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.chatCardFileSize {
+  font-size: 12px;
+  color: #999;
+}

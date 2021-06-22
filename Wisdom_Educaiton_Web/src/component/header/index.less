@@ -1,0 +1,112 @@
+.head-component {
+  width: 100%;
+  height: 36px;
+  background: #1A2028;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  clear: both;
+  z-index: 100;
+  .head-courseState {
+    font-size: 14px;
+    color: #ffffff;
+    margin: 0 auto;
+  }
+  .head-infoBar {
+    // width: 212px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    position: relative;
+    text-align: left;
+    padding: 10px 13px 10px 13px;
+    border-left: 1px solid rgba(55, 59, 71, 0.6);
+    div {
+      width: 21px;
+      height: 21px;
+      background: #272E37;
+      border-radius: 2px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .info-title {
+      font-size: 12px;
+      color: #848893;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+      width: 140px;
+    }
+    .infoDiv {
+      margin-left: 14px;
+      margin-right: 4px;
+      .infoImg {
+        width: 11px;
+        height: 11px;
+        &:hover {
+          cursor: pointer;
+        }
+      }
+    }
+    .signImg {
+      width: 11px;
+      height: 11px;
+    }
+  }
+}
+
+.head-infoCard {
+  // width: 287px;
+  height: 132px;
+  background: #272E37;
+  border-radius: 2px;
+  .info-num {
+    text-align: left;
+    padding: 24px 0 6px 24px;
+    .copyImg {
+      width: 16px;
+      margin-left: 8px;
+      cursor: pointer;
+      margin-bottom: 3px;
+    }
+  }
+  .info-name {
+    text-align: left;
+    padding: 6px 0 6px 24px;
+    display: flex;
+  }
+  .info-role {
+    text-align: left;
+    padding: 6px 0 12px 24px;
+    display: flex;
+  }
+  .title {
+    color: #94979A;
+    font-size: 14px;
+    width: 56px;
+    margin-right: 24px;
+    display: inline-block;
+  }
+  .desc {
+    font-size: 14px;
+    color: #ffffff;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    width: 140px;
+  }
+}
+
+.head-info-tooltip {
+  max-width: 300px;
+  .ant-tooltip-inner {
+    padding: 0px;
+  }
+  .ant-tooltip-arrow {
+    right: 5px;
+  }
+  .ant-tooltip-inner{
+    width: auto;
+  }
+}
