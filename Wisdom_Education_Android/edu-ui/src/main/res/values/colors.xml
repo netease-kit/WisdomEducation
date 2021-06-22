@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2021 NetEase, Inc.  All rights reserved.
+  ~ Use of this source code is governed by a MIT license that can be found in the LICENSE file.
+  -->
+
+<resources>
+    <color name="gray_F5F7F8">#F5F7F8</color>
+
+    <color name="red_FF0D19">#FF0D19</color>
+
+    <color name="yellow_FF8F00">#FF8F00</color>
+    <color name="yellow_FFCA00">#FFCA00</color>
+
+    <color name="green_00DD52">#00DD52</color>
+
+    <color name="transparent">#00000000</color>
+
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="black_66">#66000000</color>
+    <color name="black_79">#79000000</color>
+    <color name="black_7F">#7F000000</color>
+    <color name="black_99">#99000000</color>
+    <color name="gray_333333">#333333</color>
+    <color name="gray_666666">#666666</color>
+    <color name="gray_D8D8D8">#D8D8D8</color>
+    <color name="gray_CCCCCC">#CCCCCC</color>
+    <color name="gray_EEEEEE">#EEEEEE</color>
+    <color name="gray_565656">#565656</color>
+    <color name="gray_191919">#191919</color>
+    <color name="gray_141414">#141414</color>
+    <color name="gray_DBE2E5">#DBE2E5</color>
+    <color name="blue_44A2FC">#44A2FC</color>
+    <color name="blue_E7F6FF">#E7F6FF</color>
+    <color name="blue_007AFF">#007AFF</color>
+    <color name="blue_007CFF">#007CFF</color>
+    <color name="blue_1F3DE8">#1F3DE8</color>
+    <color name="purple_C455DF">#C455DF</color>
+    <color name="color_b0b6be">#b0b6be</color>
+    <color name="color_337eff">#337eff</color>
+    <color name="color_222222">#222222</color>
+    <color name="color_dcdfe5">#dcdfe5</color>
+    <color name="color_272730">#272730</color>
+    <color name="color_ebedf0">#ebedf0</color>
+    <color name="color_26262f">#26262f</color>
+    <color name="color_f2f3f5">#f2f3f5</color>
+    <color name="color_cce1ff">#cce1ff</color>
+    <color name="color_18181f">#18181f</color>
+    <color name="color_5174f6">#5174f6</color>
+    <color name="color_e7f0ff">#e7f0ff</color>
+    <color name="color_3c54e4">#3c54e4</color>
+    <color name="color_1a2028">#1a2028</color>
+    <color name="color_b4bfd0">#b4bfd0</color>
+    <color name="color_030404">#030404</color>
+    <color name="color_89909c">#89909c</color>
+    <color name="color_343D49">#343D49</color>
+    <color name="color_4a5665">#4a5665</color>
+    <color name="color_333b45">#333b45</color>
+    <color name="color_4574fc">#4574fc</color>
+    <color name="color_232c37">#232c37</color>
+    <color name="color_cccccc">#cccccc</color>
+    <color name="color_ff526c">#ff526c</color>
+    <color name="color_grey_eaeaea">#eaeaea</color>
+    <color name="color_999999">#999999</color>
+    <color name="color_337EFF">#337EFF</color>
+    <color name="color_50_337EFF">#7f337eff</color>
+    <color name="color_f3f3f3">#f3f3f3</color>
+    <color name="color_d93d35">#d93d35</color>
+    <color name="color_6a7687">#6a7687</color>
+    <color name="color_60_54585C">#6654585C</color>
+    <color name="color_7e8a99">#7e8a99</color>
+    <color name="color_272e37">#272e37</color>
+    <color name="color_8d94a0">#8d94a0</color>
+    <color name="color_3f4a57">#3f4a57</color>
+    <color name="color_101418">#101418</color>
+    <color name="color_b25174f6">#b25174f6</color>
+
+    <color name="eye_care_color">#1Aff9900</color>
+</resources>

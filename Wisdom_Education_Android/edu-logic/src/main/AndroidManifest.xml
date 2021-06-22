@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2021 NetEase, Inc.  All rights reserved.
+  ~ Use of this source code is governed by a MIT license that can be found in the LICENSE file.
+  -->
+
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.netease.yunxin.app.wisdom.edu.logic">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- 8.0 系统上需要-->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
+    <application>
+        <service
+            android:name=".foreground.NEEduForegroundService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="mediaProjection">
+            <intent-filter>
+                <action android:name="com.netease.Yunxin.ScreenShare" />
+            </intent-filter>
+        </service>
+    </application>
+</manifest>

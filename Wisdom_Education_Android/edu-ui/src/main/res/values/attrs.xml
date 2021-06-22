@@ -1,0 +1,14 @@
+<!--
+  ~ Copyright (c) 2021 NetEase, Inc.  All rights reserved.
+  ~ Use of this source code is governed by a MIT license that can be found in the LICENSE file.
+  -->
+
+<resources>
+    <declare-styleable name="ItemBottomView">
+        <attr name="text" format="string" />
+        <attr name="unSelectedText" format="string" />
+        <attr name="selected" format="boolean" />
+        <attr name="src" format="reference" />
+        <attr name="showExpand" format="boolean" />
+    </declare-styleable>
+</resources>

@@ -1,0 +1,164 @@
+/*
+ * Copyright (c) 2021 NetEase, Inc.  All rights reserved.
+ * Use of this source code is governed by a MIT license that can be found in the LICENSE file.
+ */
+
+package com.netease.yunxin.app.wisdom.whiteboard.bridge
+
+import android.os.Handler
+import android.os.Looper
+import android.os.Message
+import android.util.Log
+import android.webkit.JavascriptInterface
+import android.webkit.WebView
+import com.google.gson.Gson
+import com.netease.yunxin.app.wisdom.whiteboard.api.WhiteboardApi
+import com.netease.yunxin.app.wisdom.whiteboard.model.JsMessage
+import com.netease.yunxin.app.wisdom.whiteboard.model.JsMessageAction
+import org.json.JSONException
+import org.json.JSONObject
+
+/**
+ * Created by hzsunyj on 2021/5/21.
+ */
+class JsBridge(private val whiteboardApi: WhiteboardApi) : Handler(Looper.getMainLooper()) {
+
+    private val TAG: String = "JsBridge"
+
+    private val gson: Gson = Gson()
+
+    private val jsCall = 0x1
+
+    private var loginSuccess = false
+
+    private var enableDraw = false
+
+    @JavascriptInterface
+    fun NativeFunction(content: String) {
+        val message: Message = this.obtainMessage(jsCall)
+        message.obj = content
+        message.sendToTarget()
+    }
+
+    override fun handleMessage(msg: Message) {
+        super.handleMessage(msg)
+        var content: String = msg.obj as String
+        Log.i(TAG, String.format("called by js, content=%s", content))
+        try {
+            var jsMessage: JsMessage? = gson.fromJson(content, JsMessage::class.java)
+            jsMessage?.let {
+                when (jsMessage.action) {
+                    JsMessageAction.webPageLoaded -> login()
+                    JsMessageAction.webLoginIMSucceed -> onLogin()
+                    JsMessageAction.webLoginIMFailed -> imFail()
+                    JsMessageAction.webJoinWBFailed -> wbFail()
+                    JsMessageAction.webCreateWBFailed -> createFail()
+                    JsMessageAction.webLeaveWB -> leave()
+                    JsMessageAction.webError -> webError()
+                    JsMessageAction.webJsError -> jsError()
+                }
+            }
+
+        } catch (e: Exception) {
+
+        }
+    }
+
+    private fun webError() {
+        whiteboardApi.finish()
+    }
+
+
+    private fun jsError() {
+
+    }
+
+    private fun leave() {
+
+    }
+
+    private fun createFail() {
+
+    }
+
+    private fun imFail() {
+
+    }
+
+    private fun wbFail() {
+
+    }
+
+    private fun onLogin() {
+        loginSuccess = true
+        evaluateJavascriptJsDirectCallSetContainerOptions()
+        enableDraw(enableDraw)
+    }
+
+    private fun login() {
+        val jsParam = JSONObject()
+        val param = JSONObject()
+        val toolbar = JSONObject()
+        jsParam.put("action", "jsLoginIMAndJoinWB")
+        param.put("toolbar", toolbar)
+        param.put("account", whiteboardApi.getUserInfo().account)
+        param.put("token", whiteboardApi.getUserInfo().token)
+        param.put("ownerAccount", whiteboardApi.getOwnerAccount())
+        param.put("channelName", whiteboardApi.getChannelName())
+        param.put("record", true)
+        param.put("debug", false)
+        param.put("platform", "android")
+        param.put("appKey", whiteboardApi.getAppKey())
+        jsParam.put("param", param)
+        runJs(jsParam.toString())
+    }
+
+    @Throws(JSONException::class)
+    fun enableDraw(enable: Boolean) {
+        enableDraw = enable
+        if (!loginSuccess) {
+            // cache
+            return
+        }
+        evaluateJavascriptJsDirectCallToolCollection(enableDraw)
+        evaluateJavascriptJsDirectCallEnable("enableDraw", enableDraw)
+    }
+
+    fun isEnableDraw(): Boolean {
+        return enableDraw
+    }
+
+    private fun evaluateJavascriptJsDirectCallSetContainerOptions() {
+        val params =
+            "[{\"position\":\"bottomRight\",\"items\":[{\"tool\":\"select\",\"hint\":\"选择\"},{\"tool\":\"pen\",\"hint\":\"画笔\",\"stack\":\"horizontal\"},{\"tool\":\"shape\",\"hint\":\"图形\",\"stack\":\"horizontal\"},{\"tool\":\"multiInOne\",\"hint\":\"更多\",\"subItems\":[{\"tool\":\"element-eraser\"},{\"tool\":\"clear\"},{\"tool\":\"undo\"},{\"tool\":\"redo\"}]}]},{\"position\":\"topRight\",\"items\":[{\"tool\":\"multiInOne\",\"hint\":\"更多\",\"subItems\":[{\"tool\":\"fitToContent\"},{\"tool\":\"fitToDoc\"},{\"tool\":\"pan\"},{\"tool\":\"zoomIn\"},{\"tool\":\"zoomOut\"},{\"tool\":\"visionLock\"}]},{\"tool\":\"zoomLevel\"}]},{\"position\":\"topLeft\",\"items\":[{\"tool\":\"pageBoardInfo\"},{\"tool\":\"preview\",\"hint\":\"预览\",\"previewSliderPosition\":\"right\"}]}]"
+        evaluateJavascript(
+            "javascript:WebJSBridge({\"action\":\"jsDirectCall\",\"param\":{\"target\":\"toolCollection\",\"action\":\"setContainerOptions\",\"params\":[" +
+                    params + "]}})")
+    }
+
+    private fun evaluateJavascriptJsDirectCallEnable(action: String, enable: Boolean) {
+        evaluateJavascript(
+            ("javascript:WebJSBridge({\"action\":\"jsDirectCall\",\"param\":{\"target\":\"drawPlugin\",\"action\":\"" +
+                    action + "\",\"params\":[" + enable + "]}})"))
+    }
+
+    private fun evaluateJavascriptJsDirectCallToolCollection(visible: Boolean) {
+        val params = "{\"topLeft\": {\"visible\": " + visible +
+                "},\"topRight\": {\"visible\": true},\"bottomRight\": {\"visible\": " + visible + "}}"
+        //String params1 = "{\"target\": {\"drawPlugin\" ，\"funcName\": \"zoomTo\",\"arg1\": 0.55}";
+        evaluateJavascript(
+            "javascript:WebJSBridge({\"action\":\"jsDirectCall\",\"param\":{\"target\":\"toolCollection\",\"action\":\"setVisibility\",\"params\":[" +
+                    params + "]}})")
+    }
+
+    private fun runJs(param: String) {
+        val escapedParam = param.replace("\"".toRegex(), "\\\\\"")
+        evaluateJavascript("javascript:WebJSBridge(\"$escapedParam\")")
+    }
+
+    private fun evaluateJavascript(js: String) {
+        val whiteboardView: WebView = whiteboardApi.getWhiteboardView()
+        whiteboardView.evaluateJavascript(js, null)
+    }
+
+}
