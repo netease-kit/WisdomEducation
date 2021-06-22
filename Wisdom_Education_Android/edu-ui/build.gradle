@@ -1,0 +1,63 @@
+/*
+ * Copyright (c) 2021 NetEase, Inc.  All rights reserved.
+ * Use of this source code is governed by a MIT license that can be found in the LICENSE file.
+ */
+
+plugins {
+    id 'com.android.library'
+    id 'kotlin-android'
+}
+
+android {
+    compileSdkVersion versions.compileSdkVersion
+    buildToolsVersion versions.buildToolsVersion
+
+    defaultConfig {
+        minSdkVersion  versions.minSdkVersion
+        targetSdkVersion versions.targetSdkVersion
+        versionCode VERSION_CODE as int
+        versionName VERSION_NAME
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+    viewBinding {
+        enabled = true
+    }
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    api project(':base')
+    api project(':edu-logic')
+    api project(':whiteboard')
+    api project(':im')
+
+    implementation deps.lifecycle_common
+    implementation deps.ktx_fragment
+    implementation deps.ktx_coroutines
+    implementation deps.core_ktx
+    implementation deps.appcompat
+    implementation deps.material
+    implementation deps.livedata_ktx
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    testImplementation deps.junit
+    androidTestImplementation deps.ext_junit
+    androidTestImplementation deps.espresso_core
+}

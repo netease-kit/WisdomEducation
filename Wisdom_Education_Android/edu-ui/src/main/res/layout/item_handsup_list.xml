@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2021 NetEase, Inc.  All rights reserved.
+  ~ Use of this source code is governed by a MIT license that can be found in the LICENSE file.
+  -->
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/common_dp_53"
+    tools:background="@color/color_1a2028">
+
+    <TextView
+        android:id="@+id/tv_member_name"
+        android:layout_width="@dimen/common_dp_52"
+        android:layout_height="@dimen/common_dp_22"
+        android:layout_marginStart="@dimen/common_dp_137"
+        android:gravity="start|center_vertical"
+        android:textColor="@color/white"
+        android:textSize="@dimen/common_dp_16"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="朱迪斯" />
+
+    <TextView
+        android:id="@+id/btn_accept"
+        android:layout_width="@dimen/common_dp_76"
+        android:layout_height="@dimen/common_dp_36"
+        android:layout_marginEnd="@dimen/common_dp_223"
+        android:gravity="center"
+        android:background="@drawable/bg_hands_up_btn"
+        android:text="同意"
+        android:textColor="@color/color_b4bfd0"
+        android:textSize="@dimen/ts_14_dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/btn_reject"
+        android:layout_width="@dimen/common_dp_76"
+        android:layout_height="@dimen/common_dp_36"
+        android:layout_marginEnd="@dimen/common_dp_135"
+        android:gravity="center"
+        android:background="@drawable/ic_handsup_btn"
+        android:text="拒绝"
+        android:textColor="@color/color_b4bfd0"
+        android:textSize="@dimen/ts_14_dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+    
+    <View
+        android:layout_width="@dimen/common_dp_542"
+        android:layout_height="@dimen/common_dp_1"
+        android:background="@color/color_6a7687"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

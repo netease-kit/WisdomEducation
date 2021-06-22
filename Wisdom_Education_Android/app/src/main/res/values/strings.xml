@@ -1,0 +1,13 @@
+<!--
+  ~ Copyright (c) 2021 NetEase, Inc.  All rights reserved.
+  ~ Use of this source code is governed by a MIT license that can be found in the LICENSE file.
+  -->
+
+<resources>
+    <string name="app_name">WisdomEducation</string>
+    <string name="join_class_fail_try_again">join class fail, try again</string>
+    <string name="network_is_not_available">network is not available check later</string>
+    <string name="teacher_over_limit">teacher role over limit</string>
+    <string name="student_over_limit">student role over limit</string>
+    <string name="app_tips">* This product is only used to demonstrate the function of the product, the longest class is 30 minutes, not commercial</string>
+</resources>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2021 NetEase, Inc.  All rights reserved.
+  ~ Use of this source code is governed by a MIT license that can be found in the LICENSE file.
+  -->
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginLeft="@dimen/common_dp_20"
+        android:layout_marginRight="@dimen/common_dp_20"
+        android:background="@drawable/white_round_box_13dp_shape"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/common_dp_15"
+            android:ellipsize="end"
+            android:gravity="center_horizontal"
+            android:includeFontPadding="false"
+            android:paddingLeft="@dimen/common_dp_29"
+            android:paddingRight="@dimen/common_dp_29"
+            android:singleLine="true"
+            android:textColor="@color/color_222222"
+            android:textSize="@dimen/ts_18_dp"
+            android:textStyle="bold"
+            tools:text="共享屏幕" />
+
+        <TextView
+            android:id="@+id/message"
+            android:layout_width="@dimen/common_dp_264"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/common_dp_16"
+            android:gravity="center_horizontal"
+            android:includeFontPadding="false"
+            android:paddingLeft="@dimen/common_dp_29"
+            android:paddingRight="@dimen/common_dp_29"
+            android:textColor="@color/color_222222"
+            android:textSize="@dimen/ts_14_dp"
+            android:visibility="gone"
+            tools:text="云课堂将开始截取您的屏幕上显示的所有内容。"
+            tools:visibility="visible" />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="54dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/cancel"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/cancel"
+                android:textColor="@color/gray_333333"
+                android:textSize="@dimen/ts_15_dp"
+                android:visibility="visible"/>
+
+
+            <TextView
+                android:id="@+id/ok"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/sure"
+                android:textColor="@color/color_337eff"
+                android:textSize="@dimen/ts_15_dp" />
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>

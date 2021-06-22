@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2021 NetEase, Inc.  All rights reserved.
+  ~ Use of this source code is governed by a MIT license that can be found in the LICENSE file.
+  -->
+
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.netease.yunxin.app.wisdom.edu.ui">
+
+    <application>
+        <activity
+            android:name=".clazz.OneToOneTeacherActivity"
+            android:configChanges="keyboardHidden|screenSize|orientation"
+            android:launchMode="singleTop"
+            android:screenOrientation="sensorLandscape"
+            android:theme="@style/Theme.EduApp.Landscape" />
+
+        <activity
+            android:name=".clazz.OneToOneStudentActivity"
+            android:configChanges="keyboardHidden|screenSize|orientation"
+            android:launchMode="singleTop"
+            android:screenOrientation="sensorLandscape"
+            android:theme="@style/Theme.EduApp.Landscape" />
+
+        <activity
+            android:name=".clazz.SmallClazzTeacherActivity"
+            android:configChanges="keyboardHidden|screenSize|orientation"
+            android:launchMode="singleTop"
+            android:screenOrientation="sensorLandscape"
+            android:theme="@style/Theme.EduApp.Landscape" />
+
+        <activity
+            android:name=".clazz.SmallClazzStudentActivity"
+            android:configChanges="keyboardHidden|screenSize|orientation"
+            android:launchMode="singleTop"
+            android:screenOrientation="sensorLandscape"
+            android:theme="@style/Theme.EduApp.Landscape" />
+
+        <activity
+            android:name=".clazz.BigClazzTeacherActivity"
+            android:configChanges="keyboardHidden|screenSize|orientation"
+            android:launchMode="singleTop"
+            android:screenOrientation="sensorLandscape"
+            android:theme="@style/Theme.EduApp.Landscape" />
+
+        <activity
+            android:name=".clazz.BigClazzStudentActivity"
+            android:configChanges="keyboardHidden|screenSize|orientation"
+            android:launchMode="singleTop"
+            android:screenOrientation="sensorLandscape"
+            android:theme="@style/Theme.EduApp.Landscape" />
+    </application>
+
+</manifest>

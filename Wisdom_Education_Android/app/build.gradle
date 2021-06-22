@@ -1,0 +1,109 @@
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+}
+
+def configProperties = new Properties()
+def configPropertiesFile = rootProject.file('./config.properties')
+if (configPropertiesFile.exists()) {
+    configPropertiesFile.withReader('UTF-8') {
+        reader -> configProperties.load(reader)
+    }
+}
+/*
+ * Copyright (c) 2021 NetEase, Inc.  All rights reserved.
+ * Use of this source code is governed by a MIT license that can be found in the LICENSE file.
+ */
+
+//def env = configProperties.getProperty("ENV")
+
+String env = System.getProperty("env", "test")
+if (env != "test") env = "online"
+print("xxxxxxxxxxxxxxxxxxxxxxx---$env")
+
+def appKey = configProperties.getProperty(env == "online" ? "APP_KEY_ONLINE" : "APP_KEY")
+if (appKey == null) {
+    appKey = 'ed73b42de1b66244337a4cd54a9534cc'
+}
+
+def appId = configProperties.getProperty(env == "online" ? "APP_ID_ONLINE" : "APP_ID")
+if (appId == null) {
+    appId = 'cf36c555dc184555926e302e17b7c0c4'
+}
+
+def baseUrl = configProperties.getProperty(env == "online" ? "BASE_URL_ONLINE" : "BASE_URL")
+if (baseUrl == null) {
+    baseUrl = 'https://yiyong-xedu-v2-test.netease.im'
+}
+
+def authorization = configProperties.getProperty(env == "online" ? "AUTHORIZATION_ONLINE" :
+        "AUTHORIZATION")
+if (authorization == null) {
+    authorization = 'Nzc0MWVjYzI2NTM1NGVhMzliMGIzNWE1MGE2ZjMyYjE6YjA3MWE0NzhjNmIxNDQ5MGE1NGVhODljYTYzNWM1MWI='
+}
+
+android {
+    compileSdkVersion versions.compileSdkVersion
+    buildToolsVersion versions.buildToolsVersion
+
+    defaultConfig {
+        applicationId "com.netease.yunxin.app.wisdom.education"
+        minSdkVersion versions.minSdkVersion
+        targetSdkVersion versions.targetSdkVersion
+        versionCode VERSION_CODE as int
+        versionName VERSION_NAME
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField 'String', 'ENV', "\"${env}\""
+        buildConfigField 'String', 'APP_KEY', "\"${appKey}\""
+        buildConfigField 'String', 'APP_ID', "\"${appId}\""
+        buildConfigField 'String', 'API_BASE_URL', "\"$baseUrl\""
+        buildConfigField 'String', 'AUTHORIZATION', "\"$authorization\""
+        buildConfigField "long", 'TIMESTAMP', System.currentTimeMillis() + "L"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+    viewBinding {
+        enabled = true
+    }
+
+    packagingOptions {
+        pickFirst 'lib/arm64-v8a/libc++_shared.so'
+        pickFirst 'lib/armeabi-v7a/libc++_shared.so'
+    }
+    viewBinding {
+        enabled = true
+    }
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+
+    implementation project(':edu-ui')
+
+    implementation deps.permissionx
+    implementation deps.core_ktx
+    implementation deps.appcompat
+    implementation deps.material
+    implementation deps.constraintlayout
+    implementation deps.livedata_ktx
+    implementation deps.viewmodel_ktx
+    implementation deps.bugly
+    testImplementation deps.junit
+    androidTestImplementation deps.ext_junit
+    androidTestImplementation deps.espresso_core
+    implementation deps.htloading
+}

@@ -1,0 +1,166 @@
+<!--
+  ~ Copyright (c) 2021 NetEase, Inc.  All rights reserved.
+  ~ Use of this source code is governed by a MIT license that can be found in the LICENSE file.
+  -->
+
+<resources>
+    <string name="hello_blank_fragment">Hello blank fragment, ono to one</string>
+    <string name="powered_by_netease" translatable="false">Powered by netease</string>
+    <string name="wisdom_edu_title">Wisdom Cloud Class</string>
+    <string name="create_romm_warn">If the class number does not exist, the class will be created</string>
+    <string name="hint_room_id">Your Name</string>
+    <string name="hint_roon_name">Room Name</string>
+    <string name="hint_role">Your Name</string>
+    <string name="hint_your_name">Your Name</string>
+    <string name="eye_care_mode">Eye protection</string>
+    <string name="join">Join</string>
+    <string name="setting">Setting</string>
+    <string name="title_teaching_material">Materials area</string>
+    <string name="title_chat_room">ChatRoom(%s)</string>
+    <string name="confirm_leave_room_content">Quit classroom?</string>
+    <string name="cancel">cancel</string>
+    <string name="hint_im_message">Enter chat content</string>
+    <string name="confirm">Confirm</string>
+    <string name="title_student_list">Student</string>
+    <string name="room_id_should_not_be_empty">Room id should not be empty.</string>
+    <string name="your_name_should_not_be_empty">Your name should not be empty.</string>
+    <string name="room_name_should_not_be_empty">Room name should not be empty.</string>
+    <string name="room_type_should_not_be_empty">Room type should not be empty.</string>
+    <string name="color_picker">Color Picker</string>
+    <string name="no_enough_permissions">No enough permissions</string>
+    <string name="there_is_no_teacher_disable_whiteboard">There is no teacher in this classroom, cannot use the whiteboard.</string>
+    <string name="get_channel_attr_failed">Get channel attributes failed，Please try again later!</string>
+    <string name="the_room_is_full">Room is full, please change another room!</string>
+    <string name="chat_muting">Prohibited post!</string>
+    <string name="time_default" translatable="false">00:00:00</string>
+    <string name="time_separator" translatable="false">&#160;/&#160;</string>
+    <string name="configuration_load_failed">Configuration load failed, please try again later</string>
+    <string name="policy_tips">Please read carefully and fully understand the terms of the user agreement and privacy policy.</string>
+    <string name="policy">User agreement and privacy policy</string>
+    <string name="policy_agree">Agree</string>
+    <string name="policy_refuse">Refuse</string>
+    <string name="accept_interactive">Teacher accept your interactive request!</string>
+    <string name="reject_interactive">Teacher reject your interactive request!</string>
+    <string name="abort_interactive">Teacher abort your interactive video!</string>
+    <string name="authorize_board">Teacher has authorized your whiteboard permissions</string>
+    <string name="revoke_board">Teacher has revoked your whiteboard permissions</string>
+    <string name="open_follow_board">The teacher set up the whiteboard to follow</string>
+    <string name="relieve_follow_board">The teacher lifted the whiteboard</string>
+    <string name="request_error">Server request error: %1$d</string>
+    <string name="wait_record">Please wait for recording finished</string>
+    <string name="follow_tips">The teacher is moving the whiteboard. Please do not draw on it</string>
+    <string name="function_error">Function Error(code:%d;reason:%s)</string>
+    <string name="there_is_no_teacher_disable_covideo">There is no teacher in this classroom, cannot apply coVideo.</string>
+    <string name="replay_link">Replay Link</string>
+    <string name="upload_log">Log reporting</string>
+    <string name="teacher">Teacher</string>
+    <string name="student">Student</string>
+    <string name="assistant">Assistant</string>
+    <string name="msg_title" translatable="false">[%s]%s</string>
+    <string name="input_mask" translatable="false">ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789</string>
+    <string name="wisdom_edu_subtitle">join classroom</string>
+    <string name="alert">alert</string>
+    <string name="i_know">I know</string>
+    <string name="hint_room_type">Room type</string>
+    <string name="hide_chat_room">hide</string>
+    <string name="one2one_class">One to One Classroom</string>
+    <string name="small_class">Small Classroom</string>
+    <string name="big_class">Lecture Hall</string>
+    <string name="request_permission_reason">The permissions to be applied for are the permissions that the program must rely on.</string>
+    <string name="settings_to_manually_enable_permissions">You need to go to the application settings to manually enable permissions</string>
+    <string name="i_have_understood">I have understood</string>
+    <string name="not_granted_permissions">The app has not been granted the following permissions:%s</string>
+    <string name="entering_class">Entering class</string>
+    <string name="item_audio">mute</string>
+    <string name="item_camera">close camera</string>
+    <string name="item_share">share screen</string>
+    <string name="item_hands_up">hands up</string>
+    <string name="item_members">menbers</string>
+    <string name="item_hands_up_apply">hands up apply</string>
+    <string name="item_chatroom">chatroom</string>
+    <string name="end_class">End class</string>
+    <string name="leave_class_temporarily">Leave temporarily</string>
+    <string name="send_message">send</string>
+    <string name="mute_all">Mute all</string>
+    <string name="mute_chat_all">Mute chat all</string>
+    <string name="having_class_now">having class now</string>
+    <string name="class_did_not_start">Class did not start</string>
+    <string name="classes_begin">Classes begin</string>
+    <string name="have_been_blacklisted">You have been blacklisted and can no longer enter</string>
+    <string name="chat_room_does_not_exist">Chat room does not exist</string>
+    <string name="message_send_fail">message send fail</string>
+    <string name="share_screen_fail">Screen sharing failed</string>
+    <string name="more_actions">More Actions</string>
+    <string name="grant_whiteboard_permissions">Grant whiteboard permissions</string>
+    <string name="grant_share_permission">Grant share permission</string>
+    <string name="revoke_whiteboard_permissions">Revoke whiteboard permissions</string>
+    <string name="revoke_share_permission">Revoke share permission</string>
+    <string name="whiteboard_permission">The teacher has %s your whiteboard permission</string>
+    <string name="grant">grant</string>
+    <string name="screen_share_permission">Teacher has %s your screen sharing permission</string>
+    <string name="avhandsup_permission">Teacher has %s your permission to raise your hand</string>
+    <string name="avhandsup_accept">Pass your hand and you are on the stage</string>
+    <string name="stop_sharing">Stop sharing</string>
+    <string name="item_hands_uping">hands up</string>
+    <string name="stage_student_over_limit">stage students over limit</string>
+    <string name="operate_fail">operate fail</string>
+    <string name="screen_share_over_limit">screen share over limit</string>
+    <string name="raise_hand_to_apply_count">Raise hand to apply(%d)</string>
+    <string name="off_stage">off stage</string>
+    <string name="leave_class">leave class</string>
+    <string name="come_on_stage">come on stage</string>
+    <string name="go_off_stage">go off stage</string>
+    <string name="class_finish">class finish (%s)</string>
+    <string name="course_over">The course is over</string>
+    <string name="view_course_playback">View course playback</string>
+    <string name="back">back</string>
+    <string name="copy_success">Copy success</string>
+    <string name="all_members">All members(%d)</string>
+    <string name="all_room_members">room members(%d)</string>
+    <string name="attachment_members">attachment members(%d)</string>
+    <string name="all_have_been_muted">All have been muted</string>
+    <string name="disable_audio">disable audio</string>
+    <string name="disable_video">disable video</string>
+    <string name="enable_audio">enable audio</string>
+    <string name="enable_video">enable video</string>
+    <string name="more">more</string>
+    <string name="sure">sure</string>
+    <string name="hands_up_apply">hands up applay</string>
+    <string name="hands_up_apply_msg">Apply for the stage to communicate with the teacher. After passing, your video screen will appear on the screen and you can speak with the teacher</string>
+    <string name="someone_share">some one screen share</string>
+    <string name="end_class_message">after finish class
+        teacher and student both jump to end finish view, support look class replay</string>
+    <string name="chat_room_has_been_banned">chat room mute all</string>
+    <string name="copy">copy</string>
+    <string name="sure_start_class">Confirm to start class？</string>
+    <string name="start_class_tips">After the class starts, the teaching content will be synchronized to the students, and the class recording will start formally</string>
+    <string name="sure_leave_class">sure leave class?</string>
+    <string name="leave_class_teacher_tips">The class will be suspended after you leave the
+        classroom. student need to wait for you to enter the class again before continuing the
+        class?</string>
+    <string name="leave_class_student_tips">The class will be suspended after you leave the classroom. need to wait for you to enter the class again before continuing the class?</string>
+    <string name="start_class_first">Please start the class first</string>
+    <string name="teacher_label">(teacher)</string>
+    <string name="item_audio_unselected">open audio</string>
+    <string name="item_video_unselected">open video</string>
+    <string name="chat_room_has_been_allowed">chat room has been allowed</string>
+    <string name="room_name">class name</string>
+    <string name="teacher_name">teacher name</string>
+    <string name="room_id">room id</string>
+    <string name="identity_not_selected">Identity not selected</string>
+    <string name="teacher_turns_on_your_microphone">The teacher turns on your microphone</string>
+    <string name="teacher_turns_on_your_camera">The teacher turns on your camera</string>
+    <string name="teacher_turns_off_your_microphone">The teacher turns off your microphone</string>
+    <string name="teacher_turns_off_your_camera">The teacher turns off your camera</string>
+    <string name="operation_successful">Operation is successful</string>
+    <string name="operation_fail">Operation is fail</string>
+    <string name="hands_up_has_been_rejected">For some reasons, your application has been rejected. Please try again later</string>
+    <string name="teacher_finished_your_stage_operation">The teacher has finished your stage operation</string>
+    <string name="offstage_confirm_message">Your video window will no longer be displayed on the screen and you will not be able to continue your voice communication with the teacher</string>
+    <string name="left_class_due_to_network_problems">Left class due to network problems</string>
+    <string name="cancel_hands_up">Cancel hands up</string>
+    <string name="sure_to_cancel_your_hand">Are you sure to cancel your hand</string>
+    <string name="chat_room">chat room</string>
+    <string name="student_label">(student)</string>
+    <string name="class_init_tips">The course has started completely, please wait patiently</string>
+</resources>

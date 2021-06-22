@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) 2021 NetEase, Inc.  All rights reserved.
+  ~ Use of this source code is governed by a MIT license that can be found in the LICENSE file.
+  -->
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/color_1a2028"
+    android:focusable="true"
+    android:clickable="true">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rcv_msg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/line"
+        android:layout_alignParentTop="true"
+        android:paddingStart="@dimen/common_dp_10"
+        android:paddingEnd="@dimen/common_dp_10" />
+
+    <View
+        android:id="@+id/line"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/common_dp_1"
+        android:layout_above="@id/iv_chat_emoji"
+        android:background="@color/color_60_54585C" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_chat_emoji"
+        android:layout_width="@dimen/common_dp_16"
+        android:layout_height="@dimen/common_dp_16"
+        android:layout_above="@+id/edit_send_msg"
+        android:layout_alignParentStart="true"
+        android:layout_gravity="center"
+        android:layout_marginStart="@dimen/common_dp_46"
+        android:layout_marginTop="@dimen/common_dp_8"
+        android:layout_marginEnd="@dimen/common_dp_10"
+        android:src="@drawable/ic_chat_emoji"
+        android:visibility="gone" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_chat_pic"
+        android:layout_width="@dimen/common_dp_16"
+        android:layout_height="@dimen/common_dp_16"
+        android:layout_above="@+id/edit_send_msg"
+        android:layout_gravity="center"
+        android:layout_toRightOf="@id/iv_chat_emoji"
+        android:src="@drawable/ic_chat_pic"
+        android:visibility="gone" />
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/edit_send_msg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="@dimen/common_dp_46"
+        android:layout_marginTop="@dimen/common_dp_6"
+        android:layout_marginEnd="@dimen/common_dp_10"
+        android:layout_marginBottom="@dimen/common_dp_16"
+        android:layout_toLeftOf="@id/btn_send_message"
+        android:background="@null"
+        android:gravity="start|top"
+        android:hint="@string/hint_im_message"
+        android:imeOptions="actionDone"
+        android:minHeight="@dimen/common_dp_50"
+        android:textColor="@color/white"
+        android:textColorHint="@color/color_7e8a99" />
+
+    <Button
+        android:id="@+id/btn_send_message"
+        android:layout_width="@dimen/common_dp_56"
+        android:layout_height="@dimen/common_dp_22"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="@dimen/common_dp_45"
+        android:layout_marginBottom="@dimen/common_dp_16"
+        android:background="@drawable/ic_send_background"
+        android:gravity="center"
+        android:text="@string/send_message"
+        android:textColor="@color/white"
+        android:textSize="@dimen/ts_12" />
+
+    <FrameLayout
+        android:id="@+id/layout_empty"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:visibility="gone">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:src="@null" />
+
+    </FrameLayout>
+
+</RelativeLayout>
