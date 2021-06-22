@@ -1,0 +1,24 @@
+# Uncomment the next line to define a global platform for your project
+ platform :ios, '10.0'
+
+target 'WisdomEducation' do
+  # Comment the next line if you don't want to use dynamic frameworks
+  use_frameworks!
+
+  # Pods for WisdomEducation
+  pod 'EduLogic', :path => 'Modules/EduLogic/EduLogic.podspec'
+  pod 'NEWhiteBoard', :path => 'Modules/NEWhiteBoard/NEWhiteBoard.podspec'
+  pod 'EduUI', :path => 'Modules/EduUI/EduUI.podspec'
+  pod 'NEScreenShareBroadcaster', '~> 0.1.0'
+  pod 'Bugly'
+  
+  target 'WisdomEducationTests' do
+    inherit! :search_paths
+    # Pods for testing
+  end
+
+  target 'WisdomEducationUITests' do
+    # Pods for testing
+  end
+
+end
