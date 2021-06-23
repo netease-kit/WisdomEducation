@@ -12,26 +12,24 @@
   - 产品功能：
     - 音视频通话 2.0 的云端录制和抄送功能。
     - 互动白板的文档转码和云端录制功能。
-  - 音视频通话 2.0 抄送：1-房间启动、2-房间结束、3-房间录制文件下载信息抄送 、4-用户进入房间、5-用户离开房间、8-房间时长抄送。
+  - 音视频通话 2.0 抄送，抄送类型如下：
+    - 1-房间启动
+    - 2-房间结束
+    - 3-房间录制文件下载信息抄送
+    - 4-用户进入房间
+    - 5-用户离开房间
+    - 8-房间时长抄送。
 
 
-<note type="note">
-<ul><li>开通相关产品与抄送，请联系<a href="https://yunxin.163.com/bizQQWPA.html">联系云信商务经理</a>。</li><li>如果仅需要本地跑通示例项目，简单体验智慧云课堂，您可以使用<a href="https://github.com/netease-kit/WisdomEducation/tree/main/Wisdom_Education_Docs">智慧云课堂体验账号</a>。体验账号已开通相关权限与抄送，课堂时长限制为 30 分钟。</li><li>体验账号仅供开发者体验与测试，请勿在线上环境中使用。</li></ul>
-</note>
+> 开通相关产品与抄送，请联系[联系云信商务经理](https://yunxin.163.com/bizQQWPA.html)
+>
+> 如果仅需要本地跑通示例项目，简单体验智慧云课堂，您可以使用[智慧云课堂体验账号](https://github.com/netease-kit/WisdomEducation/tree/main/Wisdom_Education_Docs/智慧云课堂体验账号.md)。体验账号已开通相关权限与抄送，课堂时长限制为 30 分钟。
+> 
+> 体验账号仅供开发者体验与测试，请勿在线上环境中使用。
 
 ## 开发环境
 
 在开始运行示例项目之前，请确保开发环境满足以下要求：
-
-
-<style>
-table th:first-of-type {
-    width: 35%;
-}
-table th:nth-of-type(2) {
-    width: 50%;
-}
-</style>
 
 | 环境要求      | 说明                              |
 | ----------------- | ----------------------------------- |
@@ -77,8 +75,9 @@ table th:nth-of-type(2) {
     | APP_KEY       | 应用的 AppKey。可以在网易云信控制台中查看。 |
     | AUTHORIZATION | 调用服务端接口时，请求头中的校验参数。 |
     
-    <note type="note">如果仅需要本地跑通示例项目，您可以使用<a href="https://github.com/netease-kit/WisdomEducation/tree/main/Wisdom_Education_Docs">智慧云课堂体验账号</a>。体验账号的课堂时长限制为 30 分钟。</note>
+    > 如果仅需要本地跑通示例项目，您可以使用[智慧云课堂体验账号](https://github.com/netease-kit/WisdomEducation/tree/main/Wisdom_Education_Docs/智慧云课堂体验账号.md)。体验账号的课堂时长限制为 30 分钟。
+    >
+    > 如果未在 config.properties配置，请在App目录工程下的build.gradle中配置，否则整个工程不能正常运行
 
-    如果未在 `config.properties`配置，请在App目录工程下的build.gradle中配置，否则整个工程不能正常运行
 5. 在 Android Studio 中，单击 Sync Project with Gradle Files 按钮，同步工程依赖。
 6. 选中设备直接运行，即可体验 Demo。
