@@ -1,10 +1,6 @@
 /*
- * @Author: lizhaoxuan
- * @Date: 2021-06-17 16:27:59
- * @LastEditTime: 2021-06-17 16:28:57
- * @LastEditors: Please set LastEditors
- * @Description: In User Settings Edit
- * @FilePath: /app_wisdom_education_web/scripts/utils.ts
+ * @Copyright (c) 2021 NetEase, Inc.  All rights reserved.
+ * Use of this source code is governed by a MIT license that can be found in the LICENSE file
  */
 const fs = require('fs')
 
