@@ -27,9 +27,9 @@
     return manager;
 }
 
-- (void)setupAppId:(NSString * _Nonnull)AppId options:(NEEduKitOptions *)options {
+- (void)setupAppId:(NSString * _Nonnull)appId options:(NEEduKitOptions *)options {
     HttpManagerConfig *config = [HttpManager getHttpManagerConfig];
-    config.appId = AppId;
+    config.appId = appId;
     config.authorization = options.authorization;
     config.baseURL = options.baseURL;
 }

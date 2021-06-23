@@ -33,7 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (instancetype)shared;
 
-- (void)setupAppId:(NSString * _Nonnull)AppId options:(NEEduKitOptions * )options;
+- (void)setupAppId:(NSString * _Nonnull)appId options:(NEEduKitOptions * )options;
 
 /// 登录
 /// @param userID 用户ID，为nil则匿名登录
