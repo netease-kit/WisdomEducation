@@ -1,13 +1,7 @@
 /*
- * @Author: lizhaoxuan
- * @Date: 2021-05-28 14:12:34
- * @LastEditTime: 2021-06-11 16:25:11
- * @LastEditors: Please set LastEditors
- * @Description: lizhaoxuan
- * @FilePath: /app_wisdom_education_web/src/pages/classRoom/big-class.tsx
+ * @Copyright (c) 2021 NetEase, Inc.  All rights reserved.
+ * Use of this source code is governed by a MIT license that can be found in the LICENSE file
  */
-
-
 import React, { useEffect } from 'react';
 import { useRoomStore } from '@/hooks/store';
 import { observer } from 'mobx-react';

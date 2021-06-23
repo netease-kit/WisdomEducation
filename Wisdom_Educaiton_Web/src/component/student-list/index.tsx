@@ -1,10 +1,6 @@
 /*
- * @Author: lizhaoxuan
- * @Date: 2021-05-20 16:09:16
- * @LastEditTime: 2021-05-20 16:19:28
- * @LastEditors: Please set LastEditors
- * @Description: 教师与学生列表
- * @FilePath: /app_wisdom_education_web/src/component/student-list/index.tsx
+ * @Copyright (c) 2021 NetEase, Inc.  All rights reserved.
+ * Use of this source code is governed by a MIT license that can be found in the LICENSE file
  */
 
 import React from 'react';

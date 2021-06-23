@@ -1,12 +1,7 @@
 /*
- * @Author: lizhaoxuan
- * @Date: 2021-05-19 11:26:15
- * @LastEditTime: 2021-06-21 20:56:29
- * @LastEditors: Please set LastEditors
- * @Description: 播放组件
- * @FilePath: /app_wisdom_education_web/src/component/video-player/index.tsx
+ * @Copyright (c) 2021 NetEase, Inc.  All rights reserved.
+ * Use of this source code is governed by a MIT license that can be found in the LICENSE file
  */
-
 
 import React, { useRef, useCallback, useEffect, useState, useMemo } from 'react';
 import './index.less';

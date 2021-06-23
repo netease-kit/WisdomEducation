@@ -1,13 +1,7 @@
-/* eslint-disable react-hooks/rules-of-hooks */
 /*
- * @Author: lizhaoxuan
- * @Date: 2021-05-11 15:05:34
- * @LastEditTime: 2021-06-17 16:55:25
- * @LastEditors: Please set LastEditors
- * @Description: 配置
- * @FilePath: /wangyi/yunxin/app_wisdom_education_web/config-overrides.js
+ * @Copyright (c) 2021 NetEase, Inc.  All rights reserved.
+ * Use of this source code is governed by a MIT license that can be found in the LICENSE file
  */
-
 const {
   override,
   addWebpackExternals,

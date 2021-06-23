@@ -1,3 +1,7 @@
+/*
+ * @Copyright (c) 2021 NetEase, Inc.  All rights reserved.
+ * Use of this source code is governed by a MIT license that can be found in the LICENSE file
+ */
 import React, { FC, useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Input, Select, Button, Radio, Form } from 'antd';
