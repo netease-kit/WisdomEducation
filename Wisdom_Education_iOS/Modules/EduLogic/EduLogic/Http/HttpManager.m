@@ -2,8 +2,8 @@
 //  CYXHttpRequest.m
 //  TenMinDemo
 //
-//  Created by apple开发 on 16/5/31.
-//  Copyright © 2016年 CYXiang. All rights reserved.
+//  Copyright © 2021 NetEase. All rights reserved.
+//  Use of this source code is governed by a MIT license that can be found in the LICENSE file
 //
 
 #import "HttpManager.h"
@@ -31,6 +31,7 @@ static HttpManagerConfig *config;
         config.baseURL = @"https://yiyong-xedu-v2.netease.im";
         NSString *UUIDStr = [[[UIDevice currentDevice] identifierForVendor] UUIDString];
         config.deviceId = UUIDStr;
+        
     }
     return config;
 }

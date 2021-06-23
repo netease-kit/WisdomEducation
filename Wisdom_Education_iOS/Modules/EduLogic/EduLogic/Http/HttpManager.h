@@ -2,8 +2,8 @@
 //  CYXHttpRequest.h
 //  TenMinDemo
 //
-//  Created by apple开发 on 16/5/31.
-//  Copyright © 2016年 CYXiang. All rights reserved.
+//  Copyright © 2021 NetEase. All rights reserved.
+//  Use of this source code is governed by a MIT license that can be found in the LICENSE file
 //
 
 #import <Foundation/Foundation.h>
@@ -17,6 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface HttpManagerConfig : NSObject
 @property(nonatomic, strong) NSString *baseURL;
 @property(nonatomic, strong) NSString *version;
+@property(nonatomic, strong) NSString *appKey;
 
 //header
 @property(nonatomic, strong) NSString *authorization;
@@ -24,7 +25,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, strong) NSString *userUuid;
 @property(nonatomic, strong) NSString *userToken;
 @property(nonatomic, strong) NSString *appId;
-
 
 @end
 

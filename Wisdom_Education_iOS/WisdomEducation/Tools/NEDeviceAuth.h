@@ -3,7 +3,7 @@
 //  YXEducation
 //
 //  Created by Groot on 2021/5/7.
-//  Copyright © 2021 Netease. All rights reserved.
+//  Copyright © 2021 NetEase. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>

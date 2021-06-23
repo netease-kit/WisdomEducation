@@ -3,7 +3,8 @@
 //  YXEducation
 //
 //  Created by Netease on 2020/4/16.
-//  Copyright © 2020. All rights reserved.
+//  Copyright © 2021 NetEase. All rights reserved.
+//  Use of this source code is governed by a MIT license that can be found in the LICENSE file
 //
 
 // /scene/apps/{appId}/v1/users/{userUuid}/login
