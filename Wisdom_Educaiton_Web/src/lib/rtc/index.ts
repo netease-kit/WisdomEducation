@@ -1,10 +1,6 @@
 /*
- * @Author: lizhaoxuan
- * @Date: 2021-05-12 16:03:47
- * @LastEditTime: 2021-06-21 19:11:30
- * @LastEditors: Please set LastEditors
- * @Description: In User Settings Edit
- * @FilePath: /app_wisdom_education_web/src/lib/rtc/index.ts
+ * @Copyright (c) 2021 NetEase, Inc.  All rights reserved.
+ * Use of this source code is governed by a MIT license that can be found in the LICENSE file
  */
 import * as WebRTC2 from './sdk/NIM_Web_WebRTC2_v4.2.1.js';
 

@@ -1,12 +1,7 @@
 /*
- * @Author: your name
- * @Date: 2021-05-12 09:38:46
- * @LastEditTime: 2021-06-09 17:00:39
- * @LastEditors: Please set LastEditors
- * @Description: In User Settings Edit
- * @FilePath: /app_wisdom_education_web/src/services/index.ts
+ * @Copyright (c) 2021 NetEase, Inc.  All rights reserved.
+ * Use of this source code is governed by a MIT license that can be found in the LICENSE file
  */
-
 
 import axios, { AxiosResponse } from 'axios';
 import qs from 'querystring';

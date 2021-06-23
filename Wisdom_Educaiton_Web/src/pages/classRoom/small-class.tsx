@@ -1,12 +1,7 @@
 /*
- * @Author: lizhaoxuan
- * @Date: 2021-05-28 14:12:14
- * @LastEditTime: 2021-06-09 17:37:37
- * @LastEditors: Please set LastEditors
- * @Description: 小班课
- * @FilePath: /app_wisdom_education_web/src/pages/classRoom/small-class.tsx
+ * @Copyright (c) 2021 NetEase, Inc.  All rights reserved.
+ * Use of this source code is governed by a MIT license that can be found in the LICENSE file
  */
-
 import React, { useEffect } from 'react';
 import { useRoomStore } from '@/hooks/store';
 import { observer } from 'mobx-react';

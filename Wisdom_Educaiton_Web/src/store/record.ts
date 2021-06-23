@@ -1,3 +1,7 @@
+/*
+ * @Copyright (c) 2021 NetEase, Inc.  All rights reserved.
+ * Use of this source code is governed by a MIT license that can be found in the LICENSE file
+ */
 import { observable, computed, action, makeObservable, toJS } from 'mobx';
 import { AppStore } from './index';
 import logger from '@/lib/logger';
