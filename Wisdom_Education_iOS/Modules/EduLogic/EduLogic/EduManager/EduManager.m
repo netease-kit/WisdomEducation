@@ -3,6 +3,8 @@
 //  EduLogic
 //
 //  Created by Groot on 2021/5/13.
+//  Copyright © 2021 NetEase. All rights reserved.
+//  Use of this source code is governed by a MIT license that can be found in the LICENSE file
 //
 
 #import "EduManager.h"
@@ -13,8 +15,6 @@
 
 @interface EduManager ()
 @property (nonatomic, strong ,readwrite) NEEduUser *localUser;
-@property (nonatomic, strong ,readwrite) NSString *appKey;
-
 @end
 
 @implementation EduManager
@@ -26,14 +26,12 @@
     });
     return manager;
 }
-- (void)setupAppkey:(NSString * _Nonnull)appKey options:(NEEduKitOptions *)options {
-    self.appKey = appKey;
-    [self.imService setupAppkey:appKey];
-    [self.videoService setupAppkey:appKey];
-    self.imService.delegate = self.messageService;
+
+- (void)setupAppId:(NSString * _Nonnull)AppId options:(NEEduKitOptions *)options {
     HttpManagerConfig *config = [HttpManager getHttpManagerConfig];
-    config.appId = options.appId;
+    config.appId = AppId;
     config.authorization = options.authorization;
+    config.baseURL = options.baseURL;
 }
 
 - (void)login:(NSString * _Nullable)userID success:(void(^)(NEEduUser *user))success failure:(void(^)(NSError *error))failure {
@@ -46,6 +44,9 @@
         HttpManagerConfig *config = [HttpManager getHttpManagerConfig];
         config.userUuid = weakSelf.localUser.userUuid;
         config.userToken = weakSelf.localUser.userToken;
+        config.appKey = weakSelf.localUser.imKey;
+        
+        [self setupSDKWithAppKey:config.appKey];
         
         [self.imService login:weakSelf.localUser.userUuid token:weakSelf.localUser.imToken completion:^(NSError * _Nullable error) {
             if (error) {
@@ -131,7 +132,6 @@
         }
     }];
 }
-
 - (void)setCanvasView:(UIView *)view forMember:(NEEduHttpUser *)member {
     NERtcVideoCanvasExtention *canvas = [[NERtcVideoCanvasExtention alloc] init];
     canvas.uid = member.rtcUid;
@@ -158,6 +158,13 @@
 }
 
 #pragma mark - private
+/// 初始化IMSDK & RtcSDK
+/// @param appkey 用户申请的appKey
+- (void)setupSDKWithAppKey:(NSString *)appkey {
+    [self.imService setupAppkey:appkey];
+    [self.videoService setupAppkey:appkey];
+    self.imService.delegate = self.messageService;
+}
 - (BOOL)myselfWithUserID:(NSString *)userID {
     if (!self.localUser) {
         return NO;

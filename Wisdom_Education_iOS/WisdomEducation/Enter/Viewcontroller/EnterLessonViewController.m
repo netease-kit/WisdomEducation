@@ -3,6 +3,8 @@
 //  NEEducation
 //
 //  Created by Netease on 2021/1/19.
+//  Copyright © 2021 NetEase. All rights reserved.
+//  Use of this source code is governed by a MIT license that can be found in the LICENSE file
 //
 
 #import "EnterLessonViewController.h"
@@ -263,9 +265,9 @@ static NSString *kUserAgreementURL = @"http://yunxin.163.com/clauses";
     self.view.userInteractionEnabled = NO;
 //     1.初始化SDK
     NEEduKitOptions *option = [[NEEduKitOptions alloc] init];
-    option.appId = [KeyCenter appId];
     option.authorization = [KeyCenter authorization];
-    [[EduManager shared] setupAppkey:[KeyCenter appKey] options:option];
+    option.baseURL = [KeyCenter baseURL];
+    [[EduManager shared] setupAppId:[KeyCenter appId] options:option];
 //    2.登录
     __weak typeof(self)weakSelf = self;
     [[EduManager shared] login:nil success:^(NEEduUser * _Nonnull user) {

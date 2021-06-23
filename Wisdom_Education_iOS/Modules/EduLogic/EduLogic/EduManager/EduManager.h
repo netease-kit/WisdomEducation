@@ -3,6 +3,8 @@
 //  EduLogic
 //
 //  Created by Groot on 2021/5/13.
+//  Copyright © 2021 NetEase. All rights reserved.
+//  Use of this source code is governed by a MIT license that can be found in the LICENSE file
 //
 
 #import <Foundation/Foundation.h>
@@ -28,10 +30,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, strong) NEEduRoomProfile *profile;
 @property (nonatomic, strong ,readonly) NEEduUser *localUser;
-@property (nonatomic, strong ,readonly) NSString *appKey;
 
 + (instancetype)shared;
-- (void)setupAppkey:(NSString * _Nonnull)appKey options:(NEEduKitOptions * )options;
+
+- (void)setupAppId:(NSString * _Nonnull)AppId options:(NEEduKitOptions * )options;
+
 /// 登录
 /// @param userID 用户ID，为nil则匿名登录
 /// @param success 成功

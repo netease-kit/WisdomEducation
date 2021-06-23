@@ -3,6 +3,8 @@
 //  EduUI
 //
 //  Created by Groot on 2021/5/19.
+//  Copyright © 2021 NetEase. All rights reserved.
+//  Use of this source code is governed by a MIT license that can be found in the LICENSE file
 //
 
 #import "NEEduClassRoomVC.h"
@@ -1120,7 +1122,7 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
 #pragma mark - NMCWhiteboardManagerDelegate
 - (void)onWebPageLoaded {
     NMCWebLoginParam *param = [[NMCWebLoginParam alloc] init];
-    param.appKey = [EduManager shared].appKey;
+    param.appKey = [EduManager shared].localUser.imKey;
     param.account = [EduManager shared].localUser.userUuid;
     param.token = [EduManager shared].localUser.imToken;
     param.ownerAccount = [EduManager shared].profile.snapshot.room.properties.chatRoom.roomCreatorId;
