@@ -23,23 +23,23 @@ print("xxxxxxxxxxxxxxxxxxxxxxx---$env")
 
 def appKey = configProperties.getProperty(env == "online" ? "APP_KEY_ONLINE" : "APP_KEY")
 if (appKey == null) {
-    appKey = 'ed73b42de1b66244337a4cd54a9534cc'
+    appKey = 'holder_app_key'
 }
 
 def appId = configProperties.getProperty(env == "online" ? "APP_ID_ONLINE" : "APP_ID")
 if (appId == null) {
-    appId = 'cf36c555dc184555926e302e17b7c0c4'
+    appId = 'holder_app_id'
 }
 
 def baseUrl = configProperties.getProperty(env == "online" ? "BASE_URL_ONLINE" : "BASE_URL")
 if (baseUrl == null) {
-    baseUrl = 'https://yiyong-xedu-v2-test.netease.im'
+    baseUrl = 'holder_base_url'
 }
 
 def authorization = configProperties.getProperty(env == "online" ? "AUTHORIZATION_ONLINE" :
         "AUTHORIZATION")
 if (authorization == null) {
-    authorization = 'Nzc0MWVjYzI2NTM1NGVhMzliMGIzNWE1MGE2ZjMyYjE6YjA3MWE0NzhjNmIxNDQ5MGE1NGVhODljYTYzNWM1MWI='
+    authorization = 'holder_auth'
 }
 
 android {
