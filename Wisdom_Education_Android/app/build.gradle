@@ -19,27 +19,27 @@ if (configPropertiesFile.exists()) {
 
 String env = System.getProperty("env", "test")
 if (env != "test") env = "online"
-print("xxxxxxxxxxxxxxxxxxxxxxx---$env")
+print("$env")
 
 def appKey = configProperties.getProperty(env == "online" ? "APP_KEY_ONLINE" : "APP_KEY")
 if (appKey == null) {
-    appKey = 'holder_app_key'
+    appKey = '请替换为您申请的AppKey'
 }
 
 def appId = configProperties.getProperty(env == "online" ? "APP_ID_ONLINE" : "APP_ID")
 if (appId == null) {
-    appId = 'holder_app_id'
+    appId = '请替换为您申请的AppId'
 }
 
 def baseUrl = configProperties.getProperty(env == "online" ? "BASE_URL_ONLINE" : "BASE_URL")
 if (baseUrl == null) {
-    baseUrl = 'holder_base_url'
+    baseUrl = 'https://yiyong-xedu-v2.netease.im'
 }
 
 def authorization = configProperties.getProperty(env == "online" ? "AUTHORIZATION_ONLINE" :
         "AUTHORIZATION")
 if (authorization == null) {
-    authorization = 'holder_auth'
+    authorization = '请替换为您申请的AUTHORIZATION'
 }
 
 android {
