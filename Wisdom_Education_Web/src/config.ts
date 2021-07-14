@@ -1,7 +1,12 @@
 /*
- * @Copyright (c) 2021 NetEase, Inc.  All rights reserved.
- * Use of this source code is governed by a MIT license that can be found in the LICENSE file
+ * @Author: lizhaoxuan
+ * @Date: 2021-05-20 14:58:34
+ * @LastEditTime: 2021-06-21 20:33:07
+ * @LastEditors: Please set LastEditors
+ * @Description: 通用配置项
+ * @FilePath: /app_wisdom_education_web/src/config.ts
  */
+
 
 export enum RoomTypes {
   oneToOne = 5,

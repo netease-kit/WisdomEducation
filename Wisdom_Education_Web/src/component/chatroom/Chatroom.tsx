@@ -68,10 +68,6 @@ const Chatroom: React.FC<IProps> = ({
     FileList: any[],
   ): boolean | Promise<void | Blob | File> => {
     const isLt100M = file.size / 1024 / 1024 < 100;
-    if (!canSendMsg) {
-      message.error('已全体禁言');
-      return false;
-    }
     if (!isLt100M) {
       message.error('图片或文件大小最大支持100M');
     }
@@ -103,6 +99,7 @@ const Chatroom: React.FC<IProps> = ({
             <Upload
               beforeUpload={beforeUploadHandler}
               showUploadList={false}
+              disabled={!canSendMsg}
               accept=".jpg,.png,.jpeg"
               action={uploadImgHandler}
             >
@@ -122,6 +119,7 @@ const Chatroom: React.FC<IProps> = ({
             <Upload
               beforeUpload={beforeUploadHandler}
               showUploadList={false}
+              disabled={!canSendMsg}
               action={uploadFileHandler}
             >
               <Icon

@@ -1,6 +1,10 @@
 /*
- * @Copyright (c) 2021 NetEase, Inc.  All rights reserved.
- * Use of this source code is governed by a MIT license that can be found in the LICENSE file
+ * @Author: lizhaoxuan
+ * @Date: 2021-05-17 14:10:16
+ * @LastEditTime: 2021-05-17 16:03:10
+ * @LastEditors: Please set LastEditors
+ * @Description: 课程未开始
+ * @FilePath: /app_wisdom_education_web/src/component/before-class/index.tsx
  */
 
 import React from 'react';
