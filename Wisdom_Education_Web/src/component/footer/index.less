@@ -1,0 +1,44 @@
+.foot-component {
+  width: 100%;
+  height: 68px;
+  background: #1A2028;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  z-index: 100;
+  .footLists {
+    display: flex;
+  }
+  .roomBtns {
+    height: 68px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 20px 20px 24px;
+    position: absolute;
+    right: 0;
+    Button {
+      width: 76px;
+      height: 28px;
+    }
+    .ant-btn {
+      padding: 0px;
+      border-radius: 2px;
+    }
+    .ant-btn-ghost, .ant-btn-ghost:hover, .ant-btn-ghost:active, .ant-btn-ghost:focus {
+      color: #89909C;
+      font-size: 12px;
+      background: transparent;
+      border: 1px solid #89909C;
+      margin-left: 16px;
+    }
+    .ant-btn-primary, .ant-btn-primary:hover, .ant-btn-primary:active, .ant-btn-primary:focus {
+      color: #FFFFFF;
+      font-size: 12px;
+      background: linear-gradient(180deg, #3772FE 0%, #5376F9 117.86%);
+      border: none;
+      margin-left: 16px;
+    }
+  }
+}
+
