@@ -1,6 +1,10 @@
 /*
- * @Copyright (c) 2021 NetEase, Inc.  All rights reserved.
- * Use of this source code is governed by a MIT license that can be found in the LICENSE file
+ * @Author: lizhaoxuan
+ * @Date: 2021-05-17 10:53:56
+ * @LastEditTime: 2021-06-09 17:40:02
+ * @LastEditors: Please set LastEditors
+ * @Description: 白板store
+ * @FilePath: /app_wisdom_education_web/src/store/whiteboard.ts
  */
 
 

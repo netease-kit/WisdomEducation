@@ -1,6 +1,10 @@
 /*
- * @Copyright (c) 2021 NetEase, Inc.  All rights reserved.
- * Use of this source code is governed by a MIT license that can be found in the LICENSE file
+ * @Author: lizhaoxuan
+ * @Date: 2021-05-28 15:12:06
+ * @LastEditTime: 2021-05-28 15:12:35
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: /app_wisdom_education_web/src/component/icon/index.tsx
  */
 
 import React from 'react';

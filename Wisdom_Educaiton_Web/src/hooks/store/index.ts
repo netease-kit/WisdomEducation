@@ -1,7 +1,12 @@
 /*
- * @Copyright (c) 2021 NetEase, Inc.  All rights reserved.
- * Use of this source code is governed by a MIT license that can be found in the LICENSE file
+ * @Author: lizhaoxuan
+ * @Date: 2021-05-14 14:47:05
+ * @LastEditTime: 2021-05-19 16:44:50
+ * @LastEditors: Please set LastEditors
+ * @Description: store hook
+ * @FilePath: /app_wisdom_education_web/src/hooks/store/index.ts
  */
+
 
 import { MobXProviderContext } from 'mobx-react'
 import { useContext } from 'react';

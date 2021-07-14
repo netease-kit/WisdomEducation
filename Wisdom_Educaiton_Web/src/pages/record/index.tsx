@@ -1,6 +1,9 @@
 /*
- * @Copyright (c) 2021 NetEase, Inc.  All rights reserved.
- * Use of this source code is governed by a MIT license that can be found in the LICENSE file
+ * @Author: penghao
+ * @Date: 2021-06-13 15:02:24
+ * @LastEditTime: 2021-06-13 15:02:24
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
  */
 import React, { useEffect, useRef } from 'react';
 import { toJS } from 'mobx';

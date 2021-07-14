@@ -1,12 +1,18 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 /*
- * @Copyright (c) 2021 NetEase, Inc.  All rights reserved.
- * Use of this source code is governed by a MIT license that can be found in the LICENSE file
+ * @Author: your name
+ * @Date: 2021-05-12 09:38:46
+ * @LastEditTime: 2021-06-29 14:09:57
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: /app_wisdom_education_web/src/services/index.ts
  */
+
 
 import axios, { AxiosResponse } from 'axios';
 import qs from 'querystring';
 import logger from '@/lib/logger';
-import { uuid, checkType } from '@/utils'
+import { uuid, checkType } from '@/utils';
 import { message } from 'antd';
 
 
@@ -14,18 +20,19 @@ export const baseUrl = process.env.REACT_APP_SDK_DOMAIN;
 
 const deviceId = localStorage.getItem('edu-deviceId') || uuid();
 
-localStorage.setItem('edu-deviceId', deviceId)
+localStorage.setItem('edu-deviceId', deviceId);
 
 const defaultHeaders = {
   'Content-Type': 'application/json',
-  'Authorization': process.env.REACT_APP_SDK_AUTHORIZATION,
+  'Authorization': `Basic ${process.env.REACT_APP_SDK_AUTHORIZATION}`,
   'clientType': 'web',
+  versionCode: 10,
   deviceId,
 };
 
 // axios的实例及拦截器配置
 const req = axios.create({
-  baseURL: `${window.location.protocol}//${baseUrl}/scene/apps/${process.env.REACT_APP_SDK_APPID}/`,
+  baseURL: `${window.location.protocol}//${baseUrl}/scene/apps/${process.env.REACT_APP_SDK_APPKEY}/`,
   timeout: 30000, // 超时时间
   responseType: 'json', // default
   headers: defaultHeaders,
@@ -79,7 +86,7 @@ req.interceptors.response.use((res) => {
   }
   return Promise.reject(res?.data);
 }, (error) => {
-  logger.error('请求失败', error)
+  logger.error('请求失败', error);
   if (axios.isCancel(error)) { // 取消请求的情况下，终端Promise调用链
     return Promise.reject(error);
   }

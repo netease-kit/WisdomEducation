@@ -1,7 +1,3 @@
-/*
- * @Copyright (c) 2021 NetEase, Inc.  All rights reserved.
- * Use of this source code is governed by a MIT license that can be found in the LICENSE file
- */
 import React, { useState, useRef, useEffect } from 'react';
 import { Input, Upload, message } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
@@ -72,6 +68,10 @@ const Chatroom: React.FC<IProps> = ({
     FileList: any[],
   ): boolean | Promise<void | Blob | File> => {
     const isLt100M = file.size / 1024 / 1024 < 100;
+    if (!canSendMsg) {
+      message.error('已全体禁言');
+      return false;
+    }
     if (!isLt100M) {
       message.error('图片或文件大小最大支持100M');
     }
@@ -98,7 +98,7 @@ const Chatroom: React.FC<IProps> = ({
         ))}
       </div>
       <div className='chatroomTools'>
-        {/* <div className='chatroomToolsButton'>
+        <div className='chatroomToolsButton'>
           {!imageProgress ? (
             <Upload
               beforeUpload={beforeUploadHandler}
@@ -118,7 +118,7 @@ const Chatroom: React.FC<IProps> = ({
           )}
         </div>
         <div className='chatroomToolsButton'>
-          {!fileProgress ? (
+          {/* {!fileProgress ? (
             <Upload
               beforeUpload={beforeUploadHandler}
               showUploadList={false}
@@ -133,8 +133,8 @@ const Chatroom: React.FC<IProps> = ({
             </Upload>
           ) : (
             <LoadingOutlined />
-          )}
-        </div> */}
+          )} */}
+        </div>
       </div>
       <div className='chatroomEditor' ref={inputWrapperRef}>
         <Input.TextArea

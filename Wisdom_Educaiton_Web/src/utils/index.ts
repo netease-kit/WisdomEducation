@@ -1,7 +1,12 @@
 /*
- * @Copyright (c) 2021 NetEase, Inc.  All rights reserved.
- * Use of this source code is governed by a MIT license that can be found in the LICENSE file
+ * @Author: lizhaoxuan
+ * @Date: 2021-05-12 09:37:33
+ * @LastEditTime: 2021-06-07 22:37:00
+ * @LastEditors: Please set LastEditors
+ * @Description: 工具类
+ * @FilePath: /app_wisdom_education_web/src/utils/index.ts
  */
+
 import { Md5 } from 'ts-md5';
 import { createHashHistory } from 'history';
 

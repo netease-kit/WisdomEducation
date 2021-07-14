@@ -1,7 +1,12 @@
 /*
- * @Copyright (c) 2021 NetEase, Inc.  All rights reserved.
- * Use of this source code is governed by a MIT license that can be found in the LICENSE file
+ * @Author: lizhaoxuan
+ * @Date: 2021-05-13 19:19:23
+ * @LastEditTime: 2021-06-08 16:06:22
+ * @LastEditors: Please set LastEditors
+ * @Description: 请求接口
+ * @FilePath: /app_wisdom_education_web/src/services/login.ts
  */
+
 import { post, put, get, reqDelete } from './index';
 import { GlobalStorage } from '@/utils';
 import { RoomTypes, RoleTypes } from '@/config';

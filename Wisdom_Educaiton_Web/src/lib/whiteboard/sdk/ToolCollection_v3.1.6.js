@@ -1,7 +1,3 @@
-/*
- * @Copyright (c) 2021 NetEase, Inc.  All rights reserved.
- * Use of this source code is governed by a MIT license that can be found in the LICENSE file
- */
 /*!
  * 
  *    Git Hash: 6cbf6250417f58017934c410029c237cf4e1be8f

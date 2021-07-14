@@ -1,7 +1,3 @@
-/*
- * @Copyright (c) 2021 NetEase, Inc.  All rights reserved.
- * Use of this source code is governed by a MIT license that can be found in the LICENSE file
- */
 import React, { useState, useMemo, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Button } from 'antd';
@@ -158,7 +154,7 @@ const DeviceList: React.FC = observer(() => {
               label: item.label,
               value: item.deviceId,
             })),
-            value: microphoneSelect,
+            value: microphoneSelect ? microphoneSelect : microphones[0]?.deviceId,
             onChange: ({ value }) => {
               roomStore.selectAudio(value).then(() => {
                 const label = microphones?.filter(item => {
@@ -181,7 +177,7 @@ const DeviceList: React.FC = observer(() => {
               label: item.label,
               value: item.deviceId,
             })),
-            value: cameraSelect,
+            value: cameraSelect ? cameraSelect : cameras[0]?.deviceId,
             onChange: ({ value }) => {
               roomStore.selectVideo(value).then(() => {
                 const label = cameras?.filter(item => {

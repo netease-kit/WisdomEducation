@@ -1,10 +1,14 @@
 /*
- * @Copyright (c) 2021 NetEase, Inc.  All rights reserved.
- * Use of this source code is governed by a MIT license that can be found in the LICENSE file
+ * @Author: lizhaoxuan
+ * @Date: 2021-05-19 10:49:06
+ * @LastEditTime: 2021-06-29 14:49:57
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: /app_wisdom_education_web/src/pages/classRoom/index.tsx
  */
 import React, { useEffect, useState } from 'react';
 import { observer } from 'mobx-react';
-import './indes.less';
+import './index.less';
 import { Layout, Spin } from 'antd';
 import { useRoomStore, useUIStore, useAppStore } from '@/hooks/store';
 import { GlobalStorage } from '@/utils';

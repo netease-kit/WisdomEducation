@@ -1,6 +1,10 @@
 /*
- * @Copyright (c) 2021 NetEase, Inc.  All rights reserved.
- * Use of this source code is governed by a MIT license that can be found in the LICENSE file
+ * @Author: your name
+ * @Date: 2021-05-12 17:01:35
+ * @LastEditTime: 2021-05-12 17:45:10
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: /app_wisdom_education_web/src/lib/logger/index.ts
  */
 import logDebug from 'yunxin-log-debug';
 import packageJson from '../../../package.json';

@@ -1,7 +1,3 @@
-/*
- * @Copyright (c) 2021 NetEase, Inc.  All rights reserved.
- * Use of this source code is governed by a MIT license that can be found in the LICENSE file
- */
 import React, { FC, useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Input, Select, Button, Radio, Form } from 'antd';
@@ -13,7 +9,7 @@ import './index.less';
 import { observer } from 'mobx-react';
 import { RoomTypes, RoleTypes } from '@/config';
 import { useRoomStore } from '@/hooks/store';
-import { GlobalStorage } from '@/utils'
+import { GlobalStorage } from '@/utils';
 
 const courseOptions = [
   {
@@ -41,7 +37,7 @@ const roleOptions = [
     label: '学生',
     value: RoleTypes.broadcaster
   }
-]
+];
 
 const roomUuidReg = new RegExp(/^\d{1,10}$/);
 
@@ -61,17 +57,18 @@ const Join:FC = observer(() => {
       }
     }
     setDisabled(formValue || verifyNum);
-  }
+  };
 
   const onFinish = (values) => {
-    logger.log("values", values)
+    logger.log("values", values);
     const roomUuid = isNaN(+values.roomUuid) ? values.roomUuid.slice(0, -1) : values.roomUuid;
     const param = {
       ...values,
       roomUuid: `${roomUuid}${values.sceneType}`,
+      roomName: `${values.userName}的课堂`,
       role: values.sceneType === RoomTypes.bigClass && values.role === RoleTypes.broadcaster ? RoleTypes.audience : values.role
-    }
-    param.userUuid = `${param.userName}${param.role}`,
+    };
+    param.userUuid = `${param.userName}${param.role}`;
     GlobalStorage.save('user', param);
     let path = '';
     courseOptions.some((item) => {
@@ -79,20 +76,20 @@ const Join:FC = observer(() => {
         path = item.path;
         return true;
       }
-    })
+    });
     history.push({
       pathname: path,
-    })
+    });
     // roomStore.join(param)
   };
 
   const handleNumFocus = (e) => {
-    setRoomNum(e.target.value || '')
-  }
+    setRoomNum(e.target.value || '');
+  };
 
   useEffect(() => {
     GlobalStorage.clear();
-  }, [])
+  }, []);
 
   return (
     <div className="wrapper">
@@ -141,14 +138,14 @@ const Join:FC = observer(() => {
                 </div>
               </Form.Item>
             </div>
-            <Form.Item name="roomName">
+            {/* <Form.Item name="roomName">
               <Input
                 className="joinForm-input"
                 placeholder="请输入课堂名称"
                 maxLength={20}
                 autoComplete="off"
               />
-            </Form.Item>
+            </Form.Item> */}
             <Form.Item name="userName">
               <Input
                 className="joinForm-input"
@@ -181,9 +178,10 @@ const Join:FC = observer(() => {
               </Button>
             </Form.Item>
           </Form>
+          <p className="tips-message">*本产品仅用于演示产品功能，课堂最长30分钟，不可商用</p>
         </div>
       </div>
     </div>
-  )
+  );
 });
 export default Join;

@@ -1,12 +1,8 @@
-/*
- * @Copyright (c) 2021 NetEase, Inc.  All rights reserved.
- * Use of this source code is governed by a MIT license that can be found in the LICENSE file
- */
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.less';
 import 'antd/dist/antd.less';
-import App from '@/pages/App';
+// import App from '@/pages/App';
 import RoomPage from '@/pages/classRoom';
 import Join from '@/pages/join';
 import OneToOne from '@/pages/classRoom/one-to-one';
@@ -14,6 +10,7 @@ import SmallClass from './pages/classRoom/small-class';
 import BigClass from '@/pages/classRoom/big-class';
 import EndCourse from '@/pages/endCourse';
 import Record from '@/pages/record';
+import DeviceCheck from '@/pages/deviceCheck';
 import { Provider } from 'mobx-react';
 import { AppStore } from '@/store';
 import { history } from '@/utils';
@@ -36,9 +33,9 @@ ReactDOM.render(
         <Route exact path="/" >
           <Join />
         </Route>
-        <Route exact path="/">
+        {/* <Route exact path="/">
           <App />
-        </Route>
+        </Route> */}
         <Route exact path="/classroom/one-to-one">
           <RoomPage>
             <OneToOne />
@@ -59,6 +56,9 @@ ReactDOM.render(
         </Route>
         <Route exact path="/endCourse">
           <EndCourse />
+        </Route>
+        <Route exact path="/deviceCheck">
+          <DeviceCheck />
         </Route>
       </Switch>
     </Router>

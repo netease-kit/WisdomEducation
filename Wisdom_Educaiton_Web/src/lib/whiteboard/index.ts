@@ -1,6 +1,10 @@
 /*
- * @Copyright (c) 2021 NetEase, Inc.  All rights reserved.
- * Use of this source code is governed by a MIT license that can be found in the LICENSE file
+ * @Author: lizhaoxuan
+ * @Date: 2021-05-13 14:40:14
+ * @LastEditTime: 2021-06-02 20:46:17
+ * @LastEditors: Please set LastEditors
+ * @Description: 白板
+ * @FilePath: /app_wisdom_education_web/src/lib/whiteboard/index.ts
  */
 
 import WhiteBoard from './sdk/WhiteBoardSDK_v3.1.6.js';

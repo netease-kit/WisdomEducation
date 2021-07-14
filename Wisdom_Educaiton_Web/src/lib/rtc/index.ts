@@ -1,6 +1,11 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 /*
- * @Copyright (c) 2021 NetEase, Inc.  All rights reserved.
- * Use of this source code is governed by a MIT license that can be found in the LICENSE file
+ * @Author: lizhaoxuan
+ * @Date: 2021-05-12 16:03:47
+ * @LastEditTime: 2021-07-01 17:26:41
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: /app_wisdom_education_web/src/lib/rtc/index.ts
  */
 import * as WebRTC2 from './sdk/NIM_Web_WebRTC2_v4.2.1.js';
 
@@ -9,7 +14,7 @@ import logger from '../logger';
 
 
 // 测试要求加版本信息提示
-logger.log('当前g2版本：4.1.1');
+logger.log('当前g2版本：4.2.1');
 export class NeWebrtc extends EnhancedEventEmitter {
   private readonly _appkey: string|undefined;
   private _client: any;
@@ -235,7 +240,7 @@ export class NeWebrtc extends EnhancedEventEmitter {
       // } else {
       // logger.log('do not publish')
       // }
-    } catch(e) {
+    } catch(e: any) {
       logger.log('join() failed:', e)
       // reporter.send({
       //   'action_name': 'join_channel_failed',
@@ -247,7 +252,7 @@ export class NeWebrtc extends EnhancedEventEmitter {
     this._pubConf.speakerId = speakers[0] && speakers[0].deviceId
     // if (this._pubConf.audio || this._pubConf.video) {
     logger.log('join() initLocalStream')
-    await this.initLocalStream(options.uid, options.audio, options.video).catch(() => logger.log('initLocalStream error'))
+    await this.initLocalStream(options.uid, options.audio, options.video, options.needPublish).catch(() => logger.log('initLocalStream error'))
     logger.log('join() initLocalStream completed')
     // } else {
     logger.log('do not publish')
@@ -263,7 +268,7 @@ export class NeWebrtc extends EnhancedEventEmitter {
       await this._client?.leave()
       this._client = null;
       WebRTC2.destroy();
-    }catch(e){
+    }catch(e: any){
       logger.log('leave failed:', e)
       throw new Error(e);
     }
@@ -304,7 +309,7 @@ export class NeWebrtc extends EnhancedEventEmitter {
         })
       }
       logger.log('open() localstream', this._localStream)
-    } catch(e) {
+    } catch(e: any) {
       logger.log('open() failed:', e)
       throw new Error(e);
     }
@@ -344,13 +349,13 @@ export class NeWebrtc extends EnhancedEventEmitter {
           stream: null,
         })
       }
-    } catch(e) {
+    } catch(e: any) {
       logger.log('close() failed:', e)
       throw new Error(e);
     }
   }
 
-  async setVideoProfile(resolution: number, frameRate: number) {
+  async setVideoProfile(resolution: number, frameRate: number): Promise<void> {
     try {
       await this.close('video');
       await this._localStream.setVideoProfile({
@@ -360,13 +365,13 @@ export class NeWebrtc extends EnhancedEventEmitter {
       });
       await this.open('video', this._pubConf.cameraId);
       logger.log('setVideoProfile success');
-    } catch (e) {
+    } catch (e: any) {
       logger.log('setVideoProfile fail:', e);
       throw new Error(e);
     }
   }
 
-  async initLocalStream(uid: number, audio: boolean, video: boolean): Promise<void>{
+  async initLocalStream(uid: number, audio: boolean, video: boolean, needPublish: boolean): Promise<void>{
     logger.log('initLocalStream()')
     this._pubConf.audio = audio;
     this._pubConf.video = video;
@@ -405,25 +410,36 @@ export class NeWebrtc extends EnhancedEventEmitter {
         mediaType: 'audio',
         stream: this._localStream,
       })
-      await this.publish()
-      logger.log('initLocalStream() publish local stream completed')
+      needPublish && await this.publish()
+      logger.log(`initLocalStream() publish local stream ${needPublish}`)
       const microphones: any = await this.getMicrophones()
       const cameras: any = await this.getCameras()
       this._pubConf.microphoneId = microphones[0] && microphones[0].deviceId
       this._pubConf.cameraId = cameras[0] && cameras[0].deviceId
-    } catch(e) {
+    } catch(e: any) {
       logger.log('initLocalStream() failed:', e)
       throw new Error(e);
     }
   }
 
   async publish(): Promise<void> {
-    logger.log('publish()')
+    logger.log('publish()', this._localStream)
     try {
       await this._client.publish(this._localStream)
       logger.log('publish() successed')
-    } catch(e) {
+    } catch(e: any) {
       logger.log('publish() failed:', e)
+      throw new Error(e);
+    }
+  }
+
+  async unpublish(): Promise<void> {
+    logger.log('unpublish()', this._localStream)
+    try {
+      await this._client.unpublish(this._localStream)
+      logger.log('unpublish() successed')
+    } catch(e: any) {
+      logger.log('unpublish() failed:', e)
       throw new Error(e);
     }
   }
@@ -444,7 +460,7 @@ export class NeWebrtc extends EnhancedEventEmitter {
       })
       await this._client.subscribe(stream)
       logger.log('subscribe() successed')
-    } catch(e) {
+    } catch(e: any) {
       logger.log('subscribe() failed:', e)
       throw new Error(e);
     }
@@ -460,7 +476,7 @@ export class NeWebrtc extends EnhancedEventEmitter {
     try {
       await this._client.unsubscribe(stream)
       logger.log('unsubscribe() successed')
-    } catch(e) {
+    } catch(e: any) {
       logger.log('unsubscribe() failed:', e)
       throw new Error(e);
     }
@@ -491,7 +507,7 @@ export class NeWebrtc extends EnhancedEventEmitter {
       await element.setSinkId(sinkId)
       logger.log('selectSpeakers() successed')
       return
-    } catch(e) {
+    } catch(e: any) {
       logger.log('selectSpeakers() failed:', e)
       // throw new Error(e);
     }
@@ -525,7 +541,7 @@ export class NeWebrtc extends EnhancedEventEmitter {
       const microphones = await WebRTC2.getMicrophones()
       logger.log('getMicrophones() successed:', microphones)
       return microphones
-    } catch(e) {
+    } catch(e: any) {
       logger.log('getMicrophones() failed:', e)
       throw new Error(e);
     }
@@ -537,7 +553,7 @@ export class NeWebrtc extends EnhancedEventEmitter {
       const cameras = await WebRTC2.getCameras()
       logger.log('getCameras() successed:', cameras)
       return cameras
-    } catch(e) {
+    } catch(e: any) {
       logger.log('getCameras() failed:', e)
       throw new Error(e);
     }
@@ -549,7 +565,7 @@ export class NeWebrtc extends EnhancedEventEmitter {
       const speakers = await WebRTC2.getSpeakers()
       logger.log('getSpeakers() successed:', speakers)
       return speakers
-    } catch(e) {
+    } catch(e: any) {
       logger.log('getSpeakers() failed:', e)
       throw new Error(e);
     }
@@ -570,7 +586,7 @@ export class NeWebrtc extends EnhancedEventEmitter {
       const data = await this._client.getTransportStats();
       logger.log('获取网络相关数据', data);
       return data;
-    } catch (e) {
+    } catch (e: any) {
       logger.log('getTransportStats() failed:', e);
       throw new Error(e);
     }
@@ -581,7 +597,7 @@ export class NeWebrtc extends EnhancedEventEmitter {
       const data = await this._client.getSessionStats();
       logger.log('获取当前会话数据', data);
       return data;
-    } catch (e) {
+    } catch (e: any) {
       logger.log('getSessionStats() fail:', e);
       throw new Error(e);
     }
@@ -593,7 +609,7 @@ export class NeWebrtc extends EnhancedEventEmitter {
       const data = await this._client.getLocalAudioStats();
       logger.log('getLocalAudioStats success', data);
       return data;
-    } catch (e) {
+    } catch (e: any) {
       logger.log('getLocalAudioStats() fail:', e);
       throw new Error(e);
     }
@@ -605,7 +621,7 @@ export class NeWebrtc extends EnhancedEventEmitter {
       const data = await this._client.getRemoteAudioStats();
       logger.log('getRemoteAudioStats success', data);
       return data;
-    } catch (e) {
+    } catch (e: any) {
       logger.log('getRemoteAudioStats() fail:', e);
       throw new Error(e);
     }
@@ -617,7 +633,7 @@ export class NeWebrtc extends EnhancedEventEmitter {
       const data = await this._client.getLocalVideoStats();
       logger.log('getLocalVideoStats success', data);
       return data;
-    } catch (e) {
+    } catch (e: any) {
       logger.log('getLocalVideoStats() fail:', e);
       throw new Error(e);
     }
@@ -629,7 +645,7 @@ export class NeWebrtc extends EnhancedEventEmitter {
       const data = await this._client.getRemoteVideoStats();
       logger.log('getRemoteVideoStats success', data);
       return data;
-    } catch (e) {
+    } catch (e: any) {
       logger.log('getRemoteVideoStats() fail:', e);
       throw new Error(e);
     }

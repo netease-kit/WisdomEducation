@@ -1,6 +1,6 @@
 {
-  "name": "wisdom-educaiton-web",
-  "version": "1.0.0",
+  "name": "app-wisdon-education-web",
+  "version": "1.1.0",
   "homepage": "./",
   "private": true,
   "dependencies": {
@@ -15,6 +15,7 @@
     "axios": "^0.21.1",
     "copy-to-clipboard": "^3.3.1",
     "dotenv-cli": "^4.0.0",
+    "kit-devicecheck-web": "^1.0.3",
     "less": "^4.1.1",
     "mobx": "^6.3.0",
     "mobx-react": "^7.1.0",
@@ -33,7 +34,6 @@
     "start:pro": "cross-env HTTPS=true PORT=3001 dotenv -e .env.production react-app-rewired start",
     "build:dev": "cross-env NODE_ENV=development dotenv -e .env.development react-app-rewired build",
     "build": "dotenv -e .env.production react-app-rewired build",
-    "deploy": " node scripts/deploy.js",
     "test": "react-app-rewired test",
     "eject": "react-scripts eject",
     "lint:fix": "eslint --ext .ts,.tsx src/ --fix"

@@ -1,10 +1,6 @@
-/*
- * @Copyright (c) 2021 NetEase, Inc.  All rights reserved.
- * Use of this source code is governed by a MIT license that can be found in the LICENSE file
- */
 import React, { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import { observer } from 'mobx-react';
-import { Button, Tooltip, Modal, Checkbox, Tabs, Input } from 'antd';
+import { Button, Tooltip, Modal, Checkbox, Tabs, Input, message } from 'antd';
 import './index.less';
 import logger from '@/lib/logger';
 import { HandsUpTypes, RoleTypes, RoomTypes, UserComponentData } from '@/config';
@@ -26,6 +22,7 @@ const MemberList = observer(() => {
   const [allMember, setAllMember] = useState<Array<UserComponentData>>([]);
   const [searchValue, setSearchValue] = useState('');
   const [messageCount, setMessageCount] = useState<number>(0);
+  const [muteAllBtnHover, setMuteAllBtnHover] = useState(false);
   // const count = useRef(0);
 
   const roomStore = useRoomStore();
@@ -94,10 +91,10 @@ const MemberList = observer(() => {
         await roomStore.handsUpAction(userInfo?.userUuid, HandsUpTypes.init);
         break;
       case HandsUpTypes.studentHandsup:
-        roomStore.handsUpAction(userInfo?.userUuid, HandsUpTypes.studentCancel);
+        await roomStore.handsUpAction(userInfo?.userUuid, HandsUpTypes.studentCancel);
         break;
       default:
-        roomStore.handsUpAction(userInfo?.userUuid, HandsUpTypes.studentHandsup);
+        await roomStore.handsUpAction(userInfo?.userUuid, HandsUpTypes.studentHandsup);
         break;
     }
     setHandsVisible(false);
@@ -186,10 +183,10 @@ const MemberList = observer(() => {
     return (
       <ul onClick={() => setMoreVisible(false)}>
         {item.wbDrawEnable ?
-          <li><Button onClick={() => handleSetWbEnableDraw(item.userUuid, 0)} type="text">停止白板权限</Button></li> :
+          <li><Button onClick={() => handleSetWbEnableDraw(item.userUuid, 0)} type="text">取消白板权限</Button></li> :
           <li><Button onClick={() => handleSetWbEnableDraw(item.userUuid, 1)} type="text">授予白板权限</Button></li>}
         {item.canScreenShare ?
-          <li><Button onClick={() => handleSetAllowScreen(item.userUuid, 0)} type="text">停止共享权限</Button></li> :
+          <li><Button onClick={() => handleSetAllowScreen(item.userUuid, 0)} type="text">取消共享权限</Button></li> :
           <li><Button onClick={() => handleSetAllowScreen(item.userUuid, 1)} type="text">授予共享权限</Button></li>}
         {
           RoomTypes.bigClass === Number(roomStore?.roomInfo?.sceneType) && item.avHandsUp === HandsUpTypes.teacherAgree &&
@@ -222,7 +219,7 @@ const MemberList = observer(() => {
     let result = '举手';
     roomStore.setFinishBtnShow(false);
     if (userInfo?.role === RoleTypes.host) {
-      result = '举手';
+      result = '举手申请';
       roomStore.setFinishBtnShow(false);
     } else {
       switch (userInfo?.avHandsUp) {
@@ -420,6 +417,12 @@ const MemberList = observer(() => {
     }
   }, [moreVisible])
 
+  useEffect( () => {
+    if (userInfo.role === RoleTypes.host && memberAllLength > 0) {
+      message.info('有新的举手申请')
+    }
+  }, [memberAllLength, userInfo.role])
+
 
   return (
     <div className="member-list">
@@ -456,7 +459,7 @@ const MemberList = observer(() => {
             icon={<img className="chat-icon" src={require('@/assets/imgs/chat.png').default} alt="chat" />}
           />
           {
-            !chatVisible && messageCount > 0 && <span className="circle"></span>
+            !chatVisible && messageCount > 0 && <span className="circle message-count"></span>
           }
           <p className="gray">聊天室</p>
         </div>
@@ -472,11 +475,13 @@ const MemberList = observer(() => {
             {/* <Button type="primary" onClick={handleMuteAll}>全体静音</Button> */}
             <Button
               type="text"
-              className={`member-mute-all ${!isMemberMuteAll ? 'active-mute' : ''}`}
-              icon={isMemberMuteAll ?
-                <img src={require('@/assets/close-audio.png').default} alt="audioOpen" /> :
-                <img src={require('@/assets/imgs/audioClose.png').default} alt="audioClose" />
+              className={`member-mute-all ${muteAllBtnHover ? 'active-mute' : ''}`}
+              icon={muteAllBtnHover ?
+                <img src={require('@/assets/imgs/audioClose.png').default} alt="audioClose" /> :
+                <img src={require('@/assets/close-audio.png').default} alt="audioOpen" />
               }
+              onMouseEnter={() => setMuteAllBtnHover(true)}
+              onMouseLeave={() => setMuteAllBtnHover(false)}
               onClick={handleMuteAll}
             >全体静音</Button>
             <Tooltip title={content} overlayClassName="mute-tooltip" placement="topLeft">
@@ -513,7 +518,7 @@ const MemberList = observer(() => {
       <Modal visible={handsVisible} centered
         onOk={handleHandsModalOk}
         onCancel={handleHandsModalCancel}
-        okText="确定"
+        okText="确认"
         cancelText="取消"
         wrapClassName="modal"
       >

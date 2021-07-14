@@ -1,7 +1,12 @@
 /*
- * @Copyright (c) 2021 NetEase, Inc.  All rights reserved.
- * Use of this source code is governed by a MIT license that can be found in the LICENSE file
+ * @Author: lizhaoxuan
+ * @Date: 2021-05-19 11:26:15
+ * @LastEditTime: 2021-06-21 20:56:29
+ * @LastEditors: Please set LastEditors
+ * @Description: 播放组件
+ * @FilePath: /app_wisdom_education_web/src/component/video-player/index.tsx
  */
+
 
 import React, { useRef, useCallback, useEffect, useState, useMemo } from 'react';
 import './index.less';
@@ -142,10 +147,10 @@ const VideoPlayer: React.FC<VideoPlayerProps> = observer(({
     return (
       <ul onClick={() => setMoreVisible(false)}>
         {wbDrawEnable ?
-          <li><Button onClick={() => handleSetWbEnableDraw(userUuid, 0)} type="text">停止白板权限</Button></li> :
+          <li><Button onClick={() => handleSetWbEnableDraw(userUuid, 0)} type="text">取消白板权限</Button></li> :
           <li><Button onClick={() => handleSetWbEnableDraw(userUuid, 1)} type="text">授予白板权限</Button></li>}
         {canScreenShare ?
-          <li><Button onClick={() => handleSetAllowScreen(userUuid, 0)} type="text">停止共享权限</Button></li> :
+          <li><Button onClick={() => handleSetAllowScreen(userUuid, 0)} type="text">取消共享权限</Button></li> :
           <li><Button onClick={() => handleSetAllowScreen(userUuid, 1)} type="text">授予共享权限</Button></li>}
         {
           RoomTypes.bigClass === Number(roomStore?.roomInfo?.sceneType) && avHandsUp === HandsUpTypes.teacherAgree &&
@@ -315,7 +320,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = observer(({
     }
     return () => {
       if (basicStream) {
-        stopVideo();
+        // stopVideo();
       }
     }
   }, [
@@ -356,9 +361,9 @@ const VideoPlayer: React.FC<VideoPlayerProps> = observer(({
               {
                 (role !== RoleTypes.host && wbDrawEnable) && <i className="media-wb-open" />
               }
-              {
+              {/* {
                 (role !== RoleTypes.host && canScreenShare) && <i className="media-screen-open" />
-              }
+              } */}
               {
                 hasAudio ? (<i className="media-audio-open" />) : (<i className="media-audio-close" />)
               }
@@ -378,7 +383,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = observer(({
             onClick={handleAudio}>
             {hasAudio ? (<i className="contrl-audio-open" />) : (<i className="contrl-audio-close" />)}
           </Button>
-          <p>{hasAudio ? '关闭音频' : '开启音频'}</p>
+          <p>{hasAudio ? '静音' : '解除静音'}</p>
         </div>
         <div className="menu-item">
           <Button
@@ -400,7 +405,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = observer(({
         <Modal visible={modalVisible} centered
           onOk={() => handleModalOk(userUuid, HandsUpTypes.teacherOff)}
           onCancel={handleModalCancel}
-          okText="确定"
+          okText="确认"
           cancelText="取消"
           wrapClassName="modal"
         >

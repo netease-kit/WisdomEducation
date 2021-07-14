@@ -1,7 +1,3 @@
-/*
- * @Copyright (c) 2021 NetEase, Inc.  All rights reserved.
- * Use of this source code is governed by a MIT license that can be found in the LICENSE file
- */
 module.exports = {
   root: true,
   parser: '@typescript-eslint/parser',
@@ -33,6 +29,7 @@ module.exports = {
     '@typescript-eslint/no-var-requires': 0,
     '@typescript-eslint/ban-ts-comment': 1,
     '@typescript-eslint/indent': 0,
-    "indent": ["error", 2, { "SwitchCase": 1 }]
+    "indent": ["error", 2, { "SwitchCase": 1 }],
+    // "semi": [2, "always"],
   }
 };

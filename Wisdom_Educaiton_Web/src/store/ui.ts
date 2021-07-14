@@ -1,6 +1,10 @@
 /*
- * @Copyright (c) 2021 NetEase, Inc.  All rights reserved.
- * Use of this source code is governed by a MIT license that can be found in the LICENSE file
+ * @Author: your name
+ * @Date: 2021-05-19 16:31:17
+ * @LastEditTime: 2021-06-07 11:25:52
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: /app_wisdom_education_web/src/store/ui.ts
  */
 
 import { EnhancedEventEmitter } from '@/lib/event';

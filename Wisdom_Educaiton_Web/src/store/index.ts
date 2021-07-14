@@ -1,7 +1,12 @@
 /*
- * @Copyright (c) 2021 NetEase, Inc.  All rights reserved.
- * Use of this source code is governed by a MIT license that can be found in the LICENSE file
+ * @Author: lizhaoxuan
+ * @Date: 2021-05-12 10:15:03
+ * @LastEditTime: 2021-06-07 21:44:26
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: /app_wisdom_education_web/src/store/index.js
  */
+
 
 import { observable, autorun, action, toJS, computed, makeObservable } from 'mobx';
 import { GlobalStorage } from '@/utils';

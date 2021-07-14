@@ -1,7 +1,12 @@
 /*
- * @Copyright (c) 2021 NetEase, Inc.  All rights reserved.
- * Use of this source code is governed by a MIT license that can be found in the LICENSE file
+ * @Author: your name
+ * @Date: 2021-05-13 17:33:24
+ * @LastEditTime: 2021-07-13 16:22:50
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: /app_wisdom_education_web/src/pages/classRoom/one-to-one.tsx
  */
+
 import React, { useEffect } from 'react';
 import { useRoomStore } from '@/hooks/store';
 import { observer } from 'mobx-react';
@@ -9,6 +14,7 @@ import BeforeOrInClass, { classStatus } from '@/component/beforeorin-class';
 import WhiteBoard from '@/component/white-board';
 import VideoPlayer from '@/component/video-player';
 import StudentList from '@/component/student-list';
+import ScreenSharing from '@/component/screen-sharing';
 import './one-to-one.less';
 import { Layout } from 'antd';
 import logger from '@/lib/logger';
@@ -31,6 +37,7 @@ const OneToOne: React.FC = observer(() => {
   return (
     <div className="one-to-one-class">
       {/* <Layout> */}
+      {localData?.hasScreen && <ScreenSharing />}
       <Content className="layout-content">
         <WhiteBoard />
         {screenData[0] && <VideoPlayer {...screenData[0]} showUserControl={false} showMediaStatus={false} />}
