@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (c) 2021 NetEase, Inc.  All rights reserved.
   ~ Use of this source code is governed by a MIT license that can be found in the LICENSE file.
   -->
@@ -31,6 +30,7 @@
         android:layout_marginEnd="@dimen/common_dp_46"
         android:background="@drawable/bg_chat_other_content"
         android:gravity="center_vertical|start"
+        android:maxWidth="@dimen/common_dp_500"
         android:minHeight="@dimen/common_dp_40"
         android:paddingStart="@dimen/common_dp_12"
         android:paddingTop="@dimen/common_dp_10"

@@ -32,6 +32,7 @@
         android:layout_marginEnd="@dimen/common_dp_46"
         android:background="@drawable/bg_chat_me_content"
         android:gravity="center_vertical|end"
+        android:maxWidth="@dimen/common_dp_500"
         android:minHeight="@dimen/common_dp_40"
         android:paddingStart="@dimen/common_dp_12"
         android:paddingTop="@dimen/common_dp_10"
@@ -40,7 +41,7 @@
         android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_name"
-        tools:text="Yes，We are!" />
+        tools:text="Yes，We are!111111111111111111111111111111111111111111111111111111111111111111111111" />
 
     <ProgressBar
         android:id="@+id/progress_bar_message_item"
@@ -63,9 +64,9 @@
         android:layout_marginRight="@dimen/common_dp_16"
         android:src="@drawable/ic_message_failed"
         android:visibility="gone"
-        tools:visibility="visible"
         app:layout_constraintBottom_toBottomOf="@id/tv_content"
         app:layout_constraintEnd_toStartOf="@id/tv_content"
-        app:layout_constraintTop_toTopOf="@id/tv_content" />
+        app:layout_constraintTop_toTopOf="@id/tv_content"
+        tools:visibility="visible" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
