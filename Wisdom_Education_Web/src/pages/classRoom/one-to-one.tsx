@@ -1,10 +1,6 @@
 /*
- * @Author: your name
- * @Date: 2021-05-13 17:33:24
- * @LastEditTime: 2021-07-13 16:22:50
- * @LastEditors: Please set LastEditors
- * @Description: In User Settings Edit
- * @FilePath: /app_wisdom_education_web/src/pages/classRoom/one-to-one.tsx
+ * @Copyright (c) 2021 NetEase, Inc.  All rights reserved.
+ * Use of this source code is governed by a MIT license that can be found in the LICENSE file
  */
 
 import React, { useEffect } from 'react';

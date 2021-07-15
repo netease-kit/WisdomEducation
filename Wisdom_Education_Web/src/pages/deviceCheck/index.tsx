@@ -1,10 +1,6 @@
 /*
- * @Author: lizhaoxuan
- * @Date: 2021-06-29 14:18:42
- * @LastEditTime: 2021-06-29 15:00:32
- * @LastEditors: Please set LastEditors
- * @Description: 会前设备检查
- * @FilePath: /app_wisdom_education_web/src/pages/deviceCheck/index.tsx
+ * @Copyright (c) 2021 NetEase, Inc.  All rights reserved.
+ * Use of this source code is governed by a MIT license that can be found in the LICENSE file
  */
 
 import React, { useState, useEffect } from 'react';

@@ -1,10 +1,6 @@
 /*
- * @Author: lizhoaxuan
- * @Date: 2021-05-13 10:45:41
- * @LastEditTime: 2021-06-17 11:10:02
- * @LastEditors: Please set LastEditors
- * @Description: IM
- * @FilePath: /app_wisdom_education_web/src/lib/im/index.ts
+ * @Copyright (c) 2021 NetEase, Inc.  All rights reserved.
+ * Use of this source code is governed by a MIT license that can be found in the LICENSE file
  */
 
 import NIM from './sdk/NIM_Web_SDK_v8.2.5.js';

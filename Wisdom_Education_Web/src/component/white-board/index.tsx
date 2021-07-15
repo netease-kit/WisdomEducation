@@ -1,10 +1,6 @@
 /*
- * @Author: lizhaoxuan
- * @Date: 2021-05-17 10:48:15
- * @LastEditTime: 2021-06-11 18:21:35
- * @LastEditors: Please set LastEditors
- * @Description: 白板相关
- * @FilePath: /app_wisdom_education_web/src/component/white-board/index.tsx
+ * @Copyright (c) 2021 NetEase, Inc.  All rights reserved.
+ * Use of this source code is governed by a MIT license that can be found in the LICENSE file
  */
 
 import React, { useEffect, useRef } from 'react';

@@ -1,3 +1,7 @@
+/*
+ * @Copyright (c) 2021 NetEase, Inc.  All rights reserved.
+ * Use of this source code is governed by a MIT license that can be found in the LICENSE file
+ */
 import React, { useEffect, useState, useMemo, useReducer } from 'react';
 import { message } from 'antd';
 import ChatroomHelper, {
@@ -64,7 +68,7 @@ const Chatroom: React.FC<IProps> = ({
   const [fileProgress, setFileProgress] = useState<Progress | undefined>(
     undefined,
   );
- 
+
 
   useEffect(() => {
     if(chatroomHelper) {

@@ -1,10 +1,6 @@
 /*
- * @Author: lizhaoxuan
- * @Date: 2021-05-14 14:38:46
- * @LastEditTime: 2021-07-13 10:53:18
- * @LastEditors: Please set LastEditors
- * @Description: 房间相关操作以及
- * @FilePath: /app_wisdom_education_web/src/store/room.ts
+ * @Copyright (c) 2021 NetEase, Inc.  All rights reserved.
+ * Use of this source code is governed by a MIT license that can be found in the LICENSE file
  */
 
 import { observable, action, computed, runInAction, makeObservable } from 'mobx';
