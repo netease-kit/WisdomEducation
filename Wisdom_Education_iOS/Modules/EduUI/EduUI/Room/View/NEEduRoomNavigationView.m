@@ -13,7 +13,6 @@
 @interface NEEduRoomNavigationView () {
     dispatch_source_t timer;
 }
-@property (nonatomic,assign) NSInteger timeCount;
 @property (nonatomic, strong) NSString *lessonState;
 @property (nonatomic, strong) NEEduHttpRoom *room;
 @end
@@ -101,16 +100,14 @@
     //每秒执行一次
     dispatch_source_set_timer(timer, dispatch_walltime(NULL, 0), 1.0*NSEC_PER_SEC, 0);
     dispatch_source_set_event_handler(timer, ^{
-        int hours = weakself.timeCount / 3600;
-        int minutes = (weakself.timeCount - (3600*hours)) / 60;
-        int seconds = weakself.timeCount % 60;
-        NSString *strTime = [NSString stringWithFormat:@"%.2d:%.2d",minutes,seconds];
-//        NSString *strTime = [NSString stringWithFormat:@"%.2d:%.2d:%.2d",hours,minutes,seconds];
-
+        long hours = weakself.timeCount / 3600;
+        long minutes = (weakself.timeCount - (3600*hours)) / 60;
+        long seconds = weakself.timeCount % 60;
+        NSString *strTime = [NSString stringWithFormat:@"%.2ld:%.2ld",minutes,seconds];
         dispatch_async(dispatch_get_main_queue(), ^{
             weakself.lessonStateLabel.text = [NSString stringWithFormat:@"%@(%@)",self.lessonState,strTime];
         });
-        self.timeCount++;
+        weakself.timeCount++;
     });
     dispatch_resume(timer);
 }

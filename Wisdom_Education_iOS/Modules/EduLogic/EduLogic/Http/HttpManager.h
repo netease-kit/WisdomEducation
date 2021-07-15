@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "BaseModel.h"
+#import "NEAppInfo.h"
 
 #define APIVersion1 @"v1"
 #define APIVersion2 @"v2"
@@ -24,7 +25,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, strong) NSString *deviceId;
 @property(nonatomic, strong) NSString *userUuid;
 @property(nonatomic, strong) NSString *userToken;
-@property(nonatomic, strong) NSString *appId;
 
 @end
 
@@ -46,8 +46,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (void)deleteMemberPropertyWithRoomUuid:(NSString *)roomUuid userUuid:(NSString *)userUuid param:(NSDictionary *)param classType:(Class)classType property:(NSString *)property success:(void (^ _Nullable) (id objModel))successBlock failure:(void (^ _Nullable) (NSError * _Nullable error, NSInteger statusCode))failureBlock;
 
-
-//+ (void)removeStreamWithRoomUuid:(NSString *)roomUuid userUuid:(NSString *)tagetUserUuid userToken:(NSString *)userToken streamUuid:(NSString *)streamUuid param:(NSDictionary *)param apiVersion:(NSString *)apiVersion analysisClass:(Class)classType success:(void (^ _Nullable) (id<BaseModel> objModel))successBlock failure:(void (^ _Nullable) (NSError * _Nullable error, NSInteger statusCode))failureBlock;
 
 + (void)startLessonWithRoomUuid:(NSString *)roomUuid param:(NSDictionary *)param classType:(Class)classType success:(void (^ _Nullable) (id objModel))successBlock failure:(void (^ _Nullable) (NSError * _Nullable error, NSInteger statusCode))failureBlock;
 

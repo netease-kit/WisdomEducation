@@ -23,12 +23,22 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    [self updateHandsupStateWithProfile:[EduManager shared].profile];
+    [self updateHandsupStateWithProfile:[NEEduManager shared].profile];
+    [self subscribeVideoForOnlineUser];
 }
-
+- (void)subscribeVideoForOnlineUser {
+    for (NEEduHttpUser *user in self.members) {
+        if (user.streams.video.value) {
+            [[NEEduManager shared].rtcService subscribeVideo:YES forUserID:user.rtcUid];
+        }
+        if (user.streams.audio.value) {
+            [[NEEduManager shared].rtcService subscribeAudio:YES forUserID:user.rtcUid];
+        }
+    }
+}
 - (void)initMenuItems {
     NEEduMenuItem *audoItem = [[NEEduMenuItem alloc] initWithTitle:@"静音" image:[UIImage ne_imageNamed:@"menu_audio"]];
-    audoItem.selectTitle = @"取消静音";
+    audoItem.selectTitle = @"解除静音";
     audoItem.type = NEEduMenuItemTypeAudio;
     [audoItem setSelctedImage:[UIImage ne_imageNamed:@"menu_audio_off"]];
     
@@ -39,12 +49,13 @@
 
     NEEduMenuItem *shareItem = [[NEEduMenuItem alloc] initWithTitle:@"共享屏幕" image:[UIImage ne_imageNamed:@"menu_share_screen"]];
     shareItem.type = NEEduMenuItemTypeShareScreen;
+    shareItem.selectTitle = @"停止共享";
     [shareItem setSelctedImage:[UIImage ne_imageNamed:@"menu_share_screen_stop"]];
     
     NEEduMenuItem *membersItem = [[NEEduMenuItem alloc] initWithTitle:@"课堂成员" image:[UIImage ne_imageNamed:@"menu_members"]];
     membersItem.type = NEEduMenuItemTypeMembers;
     
-    NEEduMenuItem *handsupItem = [[NEEduMenuItem alloc] initWithTitle:@"举手" image:[UIImage ne_imageNamed:@"menu_handsup"]];
+    NEEduMenuItem *handsupItem = [[NEEduMenuItem alloc] initWithTitle:@"举手申请" image:[UIImage ne_imageNamed:@"menu_handsup"]];
     handsupItem.type = NEEduMenuItemTypeHandsup;
     [handsupItem setSelctedImage:[UIImage ne_imageNamed:@"menu_handsup_select"]];
     self.handsupItem = handsupItem;
@@ -52,6 +63,7 @@
     NEEduMenuItem *chatItem = [[NEEduMenuItem alloc] initWithTitle:@"聊天室" image:[UIImage ne_imageNamed:@"menu_chat"]];
     chatItem.type = NEEduMenuItemTypeChat;
     self.menuItems = @[audoItem,videoItem,shareItem,membersItem,handsupItem,chatItem];
+    self.chatItem = chatItem;
 }
 - (NSArray <NEEduHttpUser *>*)membersWithProfile:(NEEduRoomProfile *)profile {
     NEEduHttpUser *teacher = [[NEEduHttpUser alloc] init];
@@ -63,7 +75,7 @@
             [totalArray replaceObjectAtIndex:0 withObject:user];
             [onlineArray replaceObjectAtIndex:0 withObject:user];
         }else {
-            if ([user.userUuid isEqualToString:[EduManager shared].localUser.userUuid]) {
+            if ([user.userUuid isEqualToString:[NEEduManager shared].localUser.userUuid]) {
                 //自己
                 [totalArray insertObject:user atIndex:1];
                 if (user.properties.avHandsUp.value == NEEduHandsupStateTeaAccept) {
@@ -145,8 +157,8 @@
     if (self.membersVC) {
         [self.membersVC user:user.userUuid online:YES];
     }
-    [[EduManager shared].videoService subscribeAudio:YES forUserID:user.rtcUid];
-    [[EduManager shared].videoService subscribeVideo:YES forUserID:user.rtcUid];
+    [[NEEduManager shared].rtcService subscribeAudio:YES forUserID:user.rtcUid];
+    [[NEEduManager shared].rtcService subscribeVideo:YES forUserID:user.rtcUid];
 }
 - (void)handleHandsupClose:(NEEduHttpUser *)user {
     //学生关闭
@@ -161,8 +173,8 @@
     }
     
     [self.collectionView reloadData];
-    [[EduManager shared].videoService subscribeAudio:NO forUserID:user.rtcUid];
-    [[EduManager shared].videoService subscribeVideo:NO forUserID:user.rtcUid];
+    [[NEEduManager shared].rtcService subscribeAudio:NO forUserID:user.rtcUid];
+    [[NEEduManager shared].rtcService subscribeVideo:NO forUserID:user.rtcUid];
     if (self.membersVC) {
         [self.membersVC user:user.userUuid online:NO];
     }
@@ -180,8 +192,8 @@
     }
     
     [self.collectionView reloadData];
-    [[EduManager shared].videoService subscribeAudio:NO forUserID:user.rtcUid];
-    [[EduManager shared].videoService subscribeVideo:NO forUserID:user.rtcUid];
+    [[NEEduManager shared].rtcService subscribeAudio:NO forUserID:user.rtcUid];
+    [[NEEduManager shared].rtcService subscribeVideo:NO forUserID:user.rtcUid];
     if (self.membersVC) {
         [self.membersVC user:user.userUuid online:NO];
     }
@@ -189,10 +201,6 @@
 
 #pragma mark -老师点击举手申请列表
 - (void)handsupItem:(NEEduMenuItem *)item {
-    if ([EduManager shared].profile.snapshot.room.states.step.value == NEEduLessonStateNone) {
-        [self.view makeToast:@"还未开始上课"];
-        return;
-    }
     NEEduHandsupStudentList *applyVC = [[NEEduHandsupStudentList alloc] init];
     applyVC.applyStudents = self.applyMembers;
     applyVC.delegate = self;
@@ -206,7 +214,7 @@
         [self.members replaceObjectAtIndex:0 withObject:user];
         [self.totalMembers replaceObjectAtIndex:0 withObject:user];
     }else {
-        if ([user.userUuid isEqualToString:[EduManager shared].localUser.userUuid]) {
+        if ([user.userUuid isEqualToString:[NEEduManager shared].localUser.userUuid]) {
             //自己
             [self.totalMembers insertObject:user atIndex:1];
             if (user.properties.avHandsUp.value == NEEduHandsupStateTeaAccept) {

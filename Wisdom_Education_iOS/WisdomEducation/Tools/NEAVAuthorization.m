@@ -6,14 +6,14 @@
 //  Copyright © 2021 NetEase. All rights reserved.
 //
 
-#import "NEDeviceAuth.h"
+#import "NEAVAuthorization.h"
 #import <UIKit/UIKit.h>
 #import <Photos/Photos.h>
 #import <AssetsLibrary/AssetsLibrary.h>
 #ifdef NSFoundationVersionNumber_iOS_9_x_Max
 #import <UserNotifications/UserNotifications.h>
 #endif
-@implementation NEDeviceAuth
+@implementation NEAVAuthorization
 + (BOOL)hasAudioAuthoriztion {
     AVAuthorizationStatus authStatus = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeAudio];
     if (authStatus == AVAuthorizationStatusDenied || authStatus == AVAuthorizationStatusRestricted) {

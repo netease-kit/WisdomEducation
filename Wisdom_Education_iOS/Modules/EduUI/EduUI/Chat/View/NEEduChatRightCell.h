@@ -8,11 +8,22 @@
 //
 
 #import "NEEduChatBaseCell.h"
-
+#import "UIImage+NE.h"
 NS_ASSUME_NONNULL_BEGIN
+@class NEEduChatRightCell;
+
+@protocol NEEduChatTextCellDelegate <NEEduChatBaseCellDelegate>
+- (void)textCell:(NEEduChatRightCell *)cell retrySendMessage:(NEEduChatMessage *)message;
+
+@end
 
 @interface NEEduChatRightCell : NEEduChatBaseCell
+@property (nonatomic, strong) UIView *bgView;
+@property (nonatomic, strong) UILabel *contentLabel;
 @property (nonatomic, strong) NSLayoutConstraint *bgWidth;
+@property (nonatomic, strong) UIButton *sendResultView;
+@property (nonatomic, strong) UIActivityIndicatorView *activityView;
+
 
 @end
 

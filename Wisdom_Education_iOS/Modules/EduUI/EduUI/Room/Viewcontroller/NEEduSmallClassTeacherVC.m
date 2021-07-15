@@ -27,7 +27,7 @@
         if ([user.role isEqualToString:NEEduRoleHost]) {
             [placehlodArray replaceObjectAtIndex:0 withObject:user];
         }else {
-            if ([user.userUuid isEqualToString:[EduManager shared].localUser.userUuid]) {
+            if ([user.userUuid isEqualToString:[NEEduManager shared].localUser.userUuid]) {
                 //自己
                 [placehlodArray insertObject:user atIndex:1];
             }else  {
@@ -58,7 +58,7 @@
         if (exist) {
             [self.members replaceObjectAtIndex:index withObject:user];
         }else {
-            if ([user.userUuid isEqualToString:[EduManager shared].localUser.userUuid]) {
+            if ([user.userUuid isEqualToString:[NEEduManager shared].localUser.userUuid]) {
                 [self.members insertObject:user atIndex:1];
             }else {
                 [self.members addObject:user];

@@ -9,6 +9,7 @@
 
 #import "NEEduChatInputView.h"
 #import <EduLogic/EduLogic.h>
+#import "UIImage+NE.h"
 
 @interface NEEduChatInputView ()
 @property (nonatomic, assign) BOOL muteChat;
@@ -29,9 +30,9 @@
 - (void)setupSubviews {
     [self addSubview:self.textField];
     NSLayoutConstraint *left = [NSLayoutConstraint constraintWithItem:self.textField attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeLeading multiplier:1.0 constant:46];
-    NSLayoutConstraint *top = [NSLayoutConstraint constraintWithItem:self.textField attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeTop multiplier:1.0 constant:10];
-    NSLayoutConstraint *bottom = [NSLayoutConstraint constraintWithItem:self.textField attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeBottom multiplier:1.0 constant:-10];
-    [self addConstraints:@[left,top,bottom]];
+    NSLayoutConstraint *top = [NSLayoutConstraint constraintWithItem:self.textField attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeTop multiplier:1.0 constant:30];
+    NSLayoutConstraint *height = [NSLayoutConstraint constraintWithItem:self.textField attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:20];
+    [self addConstraints:@[left,top,height]];
     
     [self addSubview:self.sendButton];
     NSLayoutConstraint *buttonLeft = [NSLayoutConstraint constraintWithItem:self.sendButton attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:self.textField attribute:NSLayoutAttributeTrailing multiplier:1.0 constant:10];
@@ -42,6 +43,13 @@
     [self addConstraints:@[buttonLeft,buttonRight,buttonBottom]];
     [self.sendButton addConstraints:@[buttonHeight,buttonWidth]];
     
+    [self addSubview:self.pictureButton];
+    NSLayoutConstraint *pictureButtonLeft =  [NSLayoutConstraint constraintWithItem:self.pictureButton attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeLeft multiplier:1.0 constant:34];
+    NSLayoutConstraint *pictureButtonWidth = [NSLayoutConstraint constraintWithItem:self.pictureButton attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:40];
+    NSLayoutConstraint *pictureButtonHeight = [NSLayoutConstraint constraintWithItem:self.pictureButton attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:24];
+    NSLayoutConstraint *pictureButtonTop = [NSLayoutConstraint constraintWithItem:self.pictureButton attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeTop multiplier:1.0 constant:0];
+    [self addConstraints:@[pictureButtonLeft,pictureButtonTop]];
+    [self.pictureButton addConstraints:@[pictureButtonHeight,pictureButtonWidth]];
 }
 - (void)updateUIWithMute:(BOOL)mute {
     self.muteChat = mute;
@@ -62,11 +70,10 @@
         _textField = [[UITextField alloc] init];
         _textField.textColor = [UIColor whiteColor];
         NSAttributedString *string = [[NSAttributedString alloc] initWithString:@"请输入" attributes:@{NSForegroundColorAttributeName:[UIColor colorWithRed:74/255.0 green:86/255.0 blue:101/255.0 alpha:1.0]}];
-        self.textField.attributedPlaceholder = string;
+        _textField.attributedPlaceholder = string;
         _textField.delegate = self;
         _textField.returnKeyType = UIReturnKeyDone;
         _textField.translatesAutoresizingMaskIntoConstraints = NO;
-        
     }
     return _textField;
 }
@@ -81,5 +88,22 @@
         _sendButton.translatesAutoresizingMaskIntoConstraints = NO;
     }
     return _sendButton;
+}
+
+- (UIButton *)emojiButton {
+    if (!_emojiButton) {
+        _emojiButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        //未要求
+    }
+    return _emojiButton;
+}
+
+- (UIButton *)pictureButton {
+    if (!_pictureButton) {
+        _pictureButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_pictureButton setImage:[UIImage ne_imageNamed:@"chat_pick_picture"] forState:UIControlStateNormal];
+        _pictureButton.translatesAutoresizingMaskIntoConstraints = NO;
+    }
+    return _pictureButton;
 }
 @end

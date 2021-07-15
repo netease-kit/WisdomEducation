@@ -17,7 +17,12 @@
 #import <EduLogic/EduLogic.h>
 #import "NSString+NE.h"
 #import "NEEduChatTimeCell.h"
-@interface NEEduChatViewController ()<UITableViewDelegate,UITableViewDataSource,NEEduIMChatDelegate,NEEduChatBaseCellDelegate>
+#import "NEEduImagePickerController.h"
+#import "NEEduChatLeftImageCell.h"
+#import "NEEduChatImageRightCell.h"
+#import "NEEduImagePreview.h"
+
+@interface NEEduChatViewController ()<UITableViewDelegate,UITableViewDataSource,NEEduIMChatDelegate,NEEduChatBaseCellDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate>
 @property (nonatomic, strong) UIButton *backButton;
 @property (nonatomic, strong) UILabel *titleLabel;
 @property (nonatomic, strong) UIView *topLine;
@@ -27,33 +32,35 @@
 @property (nonatomic, strong) NEEduChatInputView *inputView;
 @property (nonatomic, strong) NSLayoutConstraint *inputBottom;
 @property (nonatomic, strong) NSDate *lastMsgDate;
+@property (nonatomic, strong) UIImagePickerController *imagePickerController;
 @end
 
 static NSString *leftCell = @"leftCellID";
 static NSString *rightCell = @"rightCellID";
 static NSString *timeCell = @"timeCellID";
+static NSString *leftImageCell = @"leftImageCellID";
+static NSString *rightImageCell = @"rightImageCellID";
 
 @implementation NEEduChatViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    [self.navigationController setNavigationBarHidden:YES];
     self.view.backgroundColor = [UIColor colorWithRed:26/255.0 green:32/255.0 blue:40/255.0 alpha:1.0];
     self.titleLabel.text = @"聊天室";
     [self setupSubviews];
     [self.inputView updateUIWithMute:self.muteChat];
     [self.tableView registerClass:[NEEduChatLeftCell class] forCellReuseIdentifier:leftCell];
+    [self.tableView registerClass:[NEEduChatLeftImageCell class] forCellReuseIdentifier:leftImageCell];
+    [self.tableView registerClass:[NEEduChatImageRightCell class] forCellReuseIdentifier:rightImageCell];
     [self.tableView registerClass:[NEEduChatRightCell class] forCellReuseIdentifier:rightCell];
     [self.tableView registerClass:[NEEduChatTimeCell class] forCellReuseIdentifier:timeCell];
-
-//    [EduManager shared].imService.chatDelegate = self;
     [self addNotification];
 }
-- (void)loadData {
-    
-}
+
 - (void)updateMuteChat:(BOOL)muteChat {
     self.muteChat = muteChat;
-    if ([EduManager shared].localUser.roleType != NEEduRoleTypeTeacher) {
+    if (![[NEEduManager shared].localUser isTeacher]) {
         [self.inputView updateUIWithMute:muteChat];
     }
 }
@@ -105,7 +112,6 @@ static NSString *timeCell = @"timeCellID";
     NSLayoutConstraint *inputHeight = [NSLayoutConstraint constraintWithItem:self.inputView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:80];
     [self.view addConstraints:@[inputLeft,inputRight,self.inputBottom]];
     [self.inputView addConstraint:inputHeight];
-
 }
 - (void)addNotification {
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
@@ -143,7 +149,7 @@ static NSString *timeCell = @"timeCellID";
 }
 
 #pragma mark - NEEduChatBaseCellDelegate
-- (void)chatCell:(NEEduChatBaseCell *)cell didLongPressMessage:(NEEduChatMessage *)message {
+- (void)chatView:(UIView *)tapView didLongPressMessage:(NEEduChatMessage *)message {
     UIAlertController *alertVC = [UIAlertController alertControllerWithTitle:@"" message:@"更多操作" preferredStyle:UIAlertControllerStyleActionSheet];
     UIAlertAction *copyAction = [UIAlertAction actionWithTitle:@"复制" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         if (message.content) {
@@ -152,18 +158,25 @@ static NSString *timeCell = @"timeCellID";
             [self.view makeToast:@"复制成功"];
         }
     }];
-    
     [alertVC addAction:copyAction];
-    
     UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
     }];
     [alertVC addAction:cancelAction];
-    
     if (alertVC.popoverPresentationController) {
-        alertVC.popoverPresentationController.sourceView = cell.contentLabel;
+        alertVC.popoverPresentationController.sourceView = tapView;
         alertVC.popoverPresentationController.permittedArrowDirections = UIPopoverArrowDirectionAny;
     }
     [self presentViewController:alertVC animated:YES completion:nil];
+}
+- (void)chatView:(UIView *)tapView didTapMessage:(NEEduChatMessage *)message {
+    NEEduImagePreview *preview = [[NEEduImagePreview alloc] initWithImageUrl:message.imageUrl];
+    [self.view addSubview:preview];
+    [NSLayoutConstraint activateConstraints:@[
+    [preview.topAnchor constraintEqualToAnchor:self.view.topAnchor],
+    [preview.bottomAnchor constraintEqualToAnchor:self.view.bottomAnchor],
+    [preview.leftAnchor constraintEqualToAnchor:self.view.leftAnchor],
+    [preview.rightAnchor constraintEqualToAnchor:self.view.rightAnchor],
+    ]];
 }
 #pragma mark -
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
@@ -174,25 +187,54 @@ static NSString *timeCell = @"timeCellID";
 }
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     NEEduChatMessage *message = self.messages[indexPath.row];
-    if (message.type == NIMMessageTypeText) {
-        NSString *cellID = message.myself ? rightCell : leftCell;
-        NEEduChatBaseCell *cell = [tableView dequeueReusableCellWithIdentifier:cellID forIndexPath:indexPath];
-        cell.model = message;
-        cell.delegate = self;
-        return cell;
-    }else {
-        NEEduChatBaseCell *cell = [tableView dequeueReusableCellWithIdentifier:timeCell forIndexPath:indexPath];
+    NSString *cellId;
+    if (message.type == NEEduChatMessageTypeText) {
+        if (message.myself) {
+            cellId = rightCell;
+        }else {
+            cellId = leftCell;
+        }
+    } else if (message.type == NEEduChatMessageTypeImage) {
+        if (message.myself) {
+            cellId = rightImageCell;
+        }else {
+            cellId = leftImageCell;
+        }
+    } else {
+        cellId = timeCell;
+        NEEduChatTimeCell *cell = [tableView dequeueReusableCellWithIdentifier:cellId forIndexPath:indexPath];
         cell.model = message;
         return cell;
     }
+    NEEduChatBaseCell *cell = [tableView dequeueReusableCellWithIdentifier:cellId forIndexPath:indexPath];
+    [cell updateUIWithMessage:message];
+    cell.delegate = self;
+    return cell;
 }
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     NEEduChatMessage *message = self.messages[indexPath.row];
     if (message.type == NIMMessageTypeText) {
-        return message.textSize.height + 43 + 20;
+        return message.contentSize.height + 43 + 20;
     }else {
-        return message.textSize.height + 20;
+        return message.contentSize.height + 10 + 10 + 17 + 10;
     }
+}
+
+- (void)imageCell:(NEEduChatImageRightCell *)cell retrySendMessage:(NEEduChatMessage *)message {
+    NSError *error;
+    [[NEEduManager shared].imService resendMessage:message.imMessage error:&error];
+}
+- (void)textCell:(NEEduChatRightCell *)cell retrySendMessage:(NEEduChatMessage *)message {
+    NSError *error;
+    [[NEEduManager shared].imService resendMessage:message.imMessage error:&error];
+}
+#pragma mark - UIImagePickerControllerDelegate
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<UIImagePickerControllerInfoKey,id> *)info {
+    UIImage *chosenImage = info[UIImagePickerControllerOriginalImage];
+    NSError *error = nil;
+    
+    [[NEEduManager shared].imService sendChatroomImageMessage:chosenImage error:&error];
+    [picker dismissViewControllerAnimated:YES completion:nil];
 }
 
 #pragma mark - Event
@@ -205,7 +247,7 @@ static NSString *timeCell = @"timeCellID";
         return;
     }
     NSError *error = nil;
-    [[EduManager shared].imService sendChatroomTextMessage:self.inputView.textField.text error:&error];
+    [[NEEduManager shared].imService sendChatroomTextMessage:self.inputView.textField.text error:&error];
     self.inputView.textField.text = @"";
     [self.inputView.textField resignFirstResponder];
 }
@@ -244,6 +286,31 @@ static NSString *timeCell = @"timeCellID";
     }
     return _backButton;
 }
+
+- (void)pictureButtonEvent:(UIButton *)button {
+    if (self.muteChat) {
+        [self.view makeToast:@"已全体禁言"];
+        return;
+    }
+    if (!_imagePickerController) {
+        _imagePickerController = [[NEEduImagePickerController alloc] init];
+        _imagePickerController.delegate = self;
+        _imagePickerController.allowsEditing = NO;
+        _imagePickerController.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+    }
+    [self presentViewController:_imagePickerController animated:YES completion:nil];
+}
+
+- (UIViewController *)topViewController:(UIViewController *)controller {
+    if ([controller isKindOfClass:[UINavigationController class]]) {
+        return [self topViewController:[(UINavigationController *)controller topViewController]];
+    } else if ([controller isKindOfClass:[UITabBarController class]]) {
+        return [self topViewController:[(UITabBarController *)controller selectedViewController]];
+    } else {
+        return controller;
+    }
+}
+
 - (UILabel *)titleLabel {
     if (!_titleLabel) {
         _titleLabel = [[UILabel alloc] init];
@@ -276,6 +343,7 @@ static NSString *timeCell = @"timeCellID";
     if (!_inputView) {
         _inputView = [[NEEduChatInputView alloc] init];
         [_inputView.sendButton addTarget:self action:@selector(sendButtonEvent:) forControlEvents:UIControlEventTouchUpInside];
+        [_inputView.pictureButton addTarget:self action:@selector(pictureButtonEvent:) forControlEvents:UIControlEventTouchUpInside];
     }
     return _inputView;
 }

@@ -10,8 +10,6 @@
 #import "NEEduIMService.h"
 @interface NEEduIMService ()<NIMPassThroughManagerDelegate,NIMChatroomManagerDelegate,NIMChatManagerDelegate>
 @property (nonatomic, strong ,readwrite) NIMChatroom *chatRoom;
-//@property (nonatomic, strong) NIMChatroom *chatRoom;
-
 @property (nonatomic, strong ,readwrite) NSMutableArray *chatMessages;
 @end
 
@@ -90,6 +88,22 @@
     [[NIMSDK sharedSDK].chatManager sendMessage:textMessage toSession:session error:error];
 }
 
+- (void)sendChatroomImageMessage:(UIImage *)image error:(NSError * __nullable *)error {
+    if (!self.chatRoom) {
+        return;
+    }
+    NIMMessage *imageMessage = [[NIMMessage alloc] init];
+    imageMessage.messageObject = [[NIMImageObject alloc] initWithImage:image];
+    NIMSession *session = [NIMSession session:self.chatRoom.roomId type:NIMSessionTypeChatroom];
+    BOOL result = [[NIMSDK sharedSDK].chatManager sendMessage:imageMessage toSession:session error:error];
+    NSLog(@"result:%d",result);
+}
+
+- (void)resendMessage:(NIMMessage *)message error:(NSError * __nullable *)error {
+    BOOL result = [[NIMSDK sharedSDK].chatManager resendMessage:message error:error];
+    NSLog(@"resendMessage result:%d",result);
+}
+
 #pragma mark - NIMPassThroughManagerDelegate
 - (void)didReceivedPassThroughMsg:(NIMPassThroughMsgData *)recvData {
     if (self.delegate && [self.delegate respondsToSelector:@selector(didRecieveSignalMessage:fromUser:)]) {
@@ -99,16 +113,21 @@
 
 #pragma mark - NIMChatManagerDelegate
 - (void)onRecvMessages:(NSArray<NIMMessage *> *)messages {
-    [self.chatMessages addObjectsFromArray:messages];
     if (self.chatDelegate && [self.chatDelegate respondsToSelector:@selector(didRecieveChatMessages:)]) {
         [self.chatDelegate didRecieveChatMessages:messages];
     }
 }
-
-- (void)sendMessage:(NIMMessage *)message didCompleteWithError:(nullable NSError *)error {
-    if (!error) {
-        [self.chatMessages addObject:message];
+- (void)willSendMessage:(NIMMessage *)message {
+    if (self.chatDelegate && [self.chatDelegate respondsToSelector:@selector(willSendMessage:)]) {
+        [self.chatDelegate willSendMessage:message];
     }
+}
+- (void)sendMessage:(NIMMessage *)message progress:(float)progress {
+    if (self.chatDelegate && [self.chatDelegate respondsToSelector:@selector(sendMessage:progress:)]) {
+        [self.chatDelegate sendMessage:message progress:progress];
+    }
+}
+- (void)sendMessage:(NIMMessage *)message didCompleteWithError:(nullable NSError *)error {
     if (self.chatDelegate && [self.chatDelegate respondsToSelector:@selector(didSendMessage:error:)]) {
         [self.chatDelegate didSendMessage:message error:error];
     }
@@ -125,12 +144,6 @@
     YXAlogInfo(@"[IM Chatroom] %s  state:%d",__func__,state);
 }
 
-- (NSMutableArray *)chatMessages {
-    if (!_chatMessages) {
-        _chatMessages = [NSMutableArray array];
-    }
-    return _chatMessages;
-}
 - (void)destroy {
     if ([NIMSDK sharedSDK].loginManager.isLogined) {
         [self logoutWithCompletion:nil];

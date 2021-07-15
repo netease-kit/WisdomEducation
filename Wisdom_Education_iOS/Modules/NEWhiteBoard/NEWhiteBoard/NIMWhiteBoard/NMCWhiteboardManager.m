@@ -11,13 +11,8 @@
 #import "NMCMessageHandlerDispatch.h"
 #import "NMCWebViewHeader.h"
 
-//#ifdef debug
-NSString * const NMCWhiteboardURL = @"https://meeting.163.com/whiteboard/stable/3.1.0/webview.html";
-//#else
-//NSString * const NMCWhiteboardURL = @"https://app.yunxin.163.com/webdemo/whiteboard/webview.html";
-//#endif
+NSString * const NMCWhiteboardURL = @"https://yiyong-xedu-v2-static.netease.im/whiteboard/stable/webview.html";
 
-//NSString * const NMCWhiteboardURL = @"https://app.yunxin.163.com/webdemo/whiteboard/webview_vconsole.html";
 @interface NMCWhiteboardManager()<WKNavigationDelegate,WKUIDelegate>
 @property(nonatomic, strong) NMCWebView *webview;
 @end

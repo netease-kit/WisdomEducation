@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol NEInputViewDelegate <NSObject>
 
 - (void)textFieldDidChange:(UITextField *)textField;
-
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string;
 @end
 
 

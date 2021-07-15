@@ -1,5 +1,5 @@
 //
-//  EduManager.h
+//  NEEduManager.h
 //  EduLogic
 //
 //  Created by Groot on 2021/5/13.
@@ -15,25 +15,28 @@
 #import "NEEduRoomService.h"
 #import "NEEduMessageService.h"
 #import "NEEduIMService.h"
-#import "NEEduVideoService.h"
+#import "NEEduRtcService.h"
 #import "NEEduUserService.h"
-
+#import "NEEduHttpUser.h"
 NS_ASSUME_NONNULL_BEGIN
 
-@interface EduManager : NSObject
+@interface NEEduManager : NSObject
 @property (nonatomic, strong) NEEduIMService *imService;
-@property (nonatomic, strong) NEEduVideoService *videoService;
+@property (nonatomic, strong) NEEduRtcService *rtcService;
 
 @property (nonatomic, strong) NEEduRoomService *roomService;
 @property (nonatomic, strong) NEEduMessageService *messageService;
 @property (nonatomic, strong) NEEduUserService *userService;
 
 @property (nonatomic, strong) NEEduRoomProfile *profile;
-@property (nonatomic, strong ,readonly) NEEduUser *localUser;
+@property (nonatomic, strong ,readonly) NEEduHttpUser *localUser;
+
+@property (nonatomic, copy, readonly) NSString *imKey;
+@property (nonatomic, copy, readonly) NSString *imToken;
 
 + (instancetype)shared;
 
-- (void)setupAppId:(NSString * _Nonnull)appId options:(NEEduKitOptions * )options;
+- (void)setupAppKey:(NSString * _Nonnull)appKey options:(NEEduKitOptions * )options;
 
 /// 登录
 /// @param userID 用户ID，为nil则匿名登录

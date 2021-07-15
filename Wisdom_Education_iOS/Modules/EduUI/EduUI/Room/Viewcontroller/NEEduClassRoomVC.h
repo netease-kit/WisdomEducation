@@ -15,6 +15,7 @@
 #import "NEEduVideoCell.h"
 #import <NEWhiteBoard/NMCWhiteboardManager.h>
 #import "NEEduMembersVC.h"
+#import "NEEduLessonStateView.h"
 
 NS_ASSUME_NONNULL_BEGIN
 static NSString *cellID = @"NEEduVideoCellID";
@@ -34,6 +35,9 @@ static NSString *cellID = @"NEEduVideoCellID";
 @property (nonatomic, strong) UIView *shareScreenView;
 @property (nonatomic, strong) NEEduRoomViewMaskView *maskView;
 @property (nonatomic, strong) NEEduMembersVC *membersVC;
+@property (nonatomic, strong) NEEduLessonStateView *lessonStateView;
+@property (nonatomic, strong) NEEduMenuItem *chatItem;
+
 // 子类实现
 - (void)initMenuItems;
 - (void)handsupItem:(NEEduMenuItem *)item;
@@ -47,6 +51,8 @@ static NSString *cellID = @"NEEduVideoCellID";
 - (void)showAlertViewWithMember:(NEEduHttpUser *)member cell:(NEEduVideoCell *)cell;
 - (NEEduMember *)memberFromHttpUser:(NEEduHttpUser *)user;
 - (void)stopAllScreenShare;
+- (void)stopRecord;
+- (void)classOver;
 
 @end
 

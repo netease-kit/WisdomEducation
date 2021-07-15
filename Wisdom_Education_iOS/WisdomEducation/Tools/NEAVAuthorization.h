@@ -11,7 +11,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface NEDeviceAuth : NSObject
+@interface NEAVAuthorization : NSObject
 
 /// 查询麦克风授权
 + (BOOL)hasAudioAuthoriztion;

@@ -24,9 +24,9 @@
 		9E858EC02654B5170068B75E /* EduInputView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9E858EBB2654B5170068B75E /* EduInputView.m */; };
 		9E858EC12654B5170068B75E /* EduSelectView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9E858EBC2654B5170068B75E /* EduSelectView.m */; };
 		9E858EC22654B5170068B75E /* EduCustomPickView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9E858EBD2654B5170068B75E /* EduCustomPickView.m */; };
-		9E858ED32654BED00068B75E /* ENavigationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9E858ECF2654BED00068B75E /* ENavigationViewController.m */; };
+		9E858ED32654BED00068B75E /* NEEduNavigationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9E858ECF2654BED00068B75E /* NEEduNavigationViewController.m */; };
 		9E858ED42654BED00068B75E /* NEBaseViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9E858ED02654BED00068B75E /* NEBaseViewController.m */; };
-		9EDA44A1267C85C500E816AC /* NEDeviceAuth.m in Sources */ = {isa = PBXBuildFile; fileRef = 9EDA449F267C85C500E816AC /* NEDeviceAuth.m */; };
+		9EDA44A1267C85C500E816AC /* NEAVAuthorization.m in Sources */ = {isa = PBXBuildFile; fileRef = 9EDA449F267C85C500E816AC /* NEAVAuthorization.m */; };
 		BD94C36D47E79336955B7A04 /* Pods_WisdomEducation_WisdomEducationUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9685ECB67B8FD66BD79D61B /* Pods_WisdomEducation_WisdomEducationUITests.framework */; };
 		D5282C0DBABD160F480C8845 /* Pods_WisdomEducationTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 85EEA079D46FA12FCBBC3D95 /* Pods_WisdomEducationTests.framework */; };
 /* End PBXBuildFile section */
@@ -112,12 +112,12 @@
 		9E858EBD2654B5170068B75E /* EduCustomPickView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EduCustomPickView.m; sourceTree = "<group>"; };
 		9E858EBE2654B5170068B75E /* EduSelectView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EduSelectView.h; sourceTree = "<group>"; };
 		9E858EBF2654B5170068B75E /* EduInputView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EduInputView.h; sourceTree = "<group>"; };
-		9E858ECF2654BED00068B75E /* ENavigationViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ENavigationViewController.m; sourceTree = "<group>"; };
+		9E858ECF2654BED00068B75E /* NEEduNavigationViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NEEduNavigationViewController.m; sourceTree = "<group>"; };
 		9E858ED02654BED00068B75E /* NEBaseViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NEBaseViewController.m; sourceTree = "<group>"; };
 		9E858ED12654BED00068B75E /* NEBaseViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NEBaseViewController.h; sourceTree = "<group>"; };
-		9E858ED22654BED00068B75E /* ENavigationViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ENavigationViewController.h; sourceTree = "<group>"; };
-		9EDA449F267C85C500E816AC /* NEDeviceAuth.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NEDeviceAuth.m; sourceTree = "<group>"; };
-		9EDA44A0267C85C500E816AC /* NEDeviceAuth.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NEDeviceAuth.h; sourceTree = "<group>"; };
+		9E858ED22654BED00068B75E /* NEEduNavigationViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NEEduNavigationViewController.h; sourceTree = "<group>"; };
+		9EDA449F267C85C500E816AC /* NEAVAuthorization.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NEAVAuthorization.m; sourceTree = "<group>"; };
+		9EDA44A0267C85C500E816AC /* NEAVAuthorization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NEAVAuthorization.h; sourceTree = "<group>"; };
 		C9685ECB67B8FD66BD79D61B /* Pods_WisdomEducation_WisdomEducationUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_WisdomEducation_WisdomEducationUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CACB2072266EFA7C00732A95 /* WisdomEducationDebug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = WisdomEducationDebug.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -283,8 +283,8 @@
 			children = (
 				9E858ED12654BED00068B75E /* NEBaseViewController.h */,
 				9E858ED02654BED00068B75E /* NEBaseViewController.m */,
-				9E858ED22654BED00068B75E /* ENavigationViewController.h */,
-				9E858ECF2654BED00068B75E /* ENavigationViewController.m */,
+				9E858ED22654BED00068B75E /* NEEduNavigationViewController.h */,
+				9E858ECF2654BED00068B75E /* NEEduNavigationViewController.m */,
 			);
 			path = BaseViewController;
 			sourceTree = "<group>";
@@ -304,8 +304,8 @@
 		9EDA449E267C85AF00E816AC /* Tools */ = {
 			isa = PBXGroup;
 			children = (
-				9EDA44A0267C85C500E816AC /* NEDeviceAuth.h */,
-				9EDA449F267C85C500E816AC /* NEDeviceAuth.m */,
+				9EDA44A0267C85C500E816AC /* NEAVAuthorization.h */,
+				9EDA449F267C85C500E816AC /* NEAVAuthorization.m */,
 			);
 			path = Tools;
 			sourceTree = "<group>";
@@ -581,13 +581,13 @@
 				9E858EC12654B5170068B75E /* EduSelectView.m in Sources */,
 				9E858EC22654B5170068B75E /* EduCustomPickView.m in Sources */,
 				9E78B49D26525DE6006A8AAC /* EnterLessonViewController.m in Sources */,
-				9EDA44A1267C85C500E816AC /* NEDeviceAuth.m in Sources */,
+				9EDA44A1267C85C500E816AC /* NEAVAuthorization.m in Sources */,
 				9E858ED42654BED00068B75E /* NEBaseViewController.m in Sources */,
 				9E78B49A26525B34006A8AAC /* KeyCenter.m in Sources */,
 				9E67A1C3263021E7007771F1 /* ViewController.m in Sources */,
 				9E67A1BD263021E7007771F1 /* AppDelegate.m in Sources */,
 				9E858EC02654B5170068B75E /* EduInputView.m in Sources */,
-				9E858ED32654BED00068B75E /* ENavigationViewController.m in Sources */,
+				9E858ED32654BED00068B75E /* NEEduNavigationViewController.m in Sources */,
 				9E67A1CE263021E8007771F1 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -777,7 +777,7 @@
 				CODE_SIGN_ENTITLEMENTS = WisdomEducation/WisdomEducationDebug.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 10;
 				DEVELOPMENT_TEAM = 569GNZ5392;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -789,7 +789,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.0;
+				MARKETING_VERSION = 1.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.netease.yunxin.app.wisdom.education;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = wisdomProfileDev;
@@ -807,7 +807,7 @@
 				CODE_SIGN_ENTITLEMENTS = WisdomEducation/WisdomEducation.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 10;
 				DEVELOPMENT_TEAM = 569GNZ5392;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -819,7 +819,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.0;
+				MARKETING_VERSION = 1.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.netease.yunxin.app.wisdom.education;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = WisdomEducationUniversalDistribution;

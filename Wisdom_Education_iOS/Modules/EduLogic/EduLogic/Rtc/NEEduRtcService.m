@@ -7,17 +7,17 @@
 //  Use of this source code is governed by a MIT license that can be found in the LICENSE file
 //
 
-#import "NEEduVideoService.h"
+#import "NEEduRtcService.h"
 #import <NERtcSDK/NERtcSDK.h>
 
-@interface NEEduVideoService ()<NERtcEngineDelegateEx,NERtcEngineMediaStatsObserver>
+@interface NEEduRtcService ()<NERtcEngineDelegateEx,NERtcEngineMediaStatsObserver>
 @property (nonatomic, assign) BOOL subscribeVideo;
 @property (nonatomic, assign) BOOL subscribeAideo;
 
 - (void)setupAppkey:(NSString *)appKey;
 @end
 
-@implementation NEEduVideoService
+@implementation NEEduRtcService
 
 - (void)setupAppkey:(NSString *)appKey {
     [[NERtcEngine sharedEngine] setChannelProfile:kNERtcChannelProfileCommunication];
@@ -50,11 +50,15 @@
         }
     }];
 }
-- (void)subscribeVideo:(BOOL)subscribe forUserID:(UInt64)userID {
-    [[NERtcEngine sharedEngine] subscribeRemoteVideo:subscribe forUserID:userID streamType:kNERtcRemoteVideoStreamTypeLow];
+- (int)subscribeVideo:(BOOL)subscribe forUserID:(UInt64)userID {
+    int code = [[NERtcEngine sharedEngine] subscribeRemoteVideo:subscribe forUserID:userID streamType:kNERtcRemoteVideoStreamTypeLow];
+    if (code != 0) {
+        NEduLogError(@"[Rtc]subscribeVideo:%d userId:%ud code:%d",subscribe,userID,code);
+    }
+    return code;
 }
-- (void)subscribeAudio:(BOOL)subscribe forUserID:(UInt64)userID {
-    [[NERtcEngine sharedEngine] subscribeRemoteAudio:subscribe forUserID:userID];
+- (int)subscribeAudio:(BOOL)subscribe forUserID:(UInt64)userID {
+    return [[NERtcEngine sharedEngine] subscribeRemoteAudio:subscribe forUserID:userID];
 }
 - (int)setupLocalVideo:(NERtcVideoCanvasExtention *)local
 {
@@ -103,10 +107,21 @@
     if (self.delegate &&[self.delegate respondsToSelector:@selector(onUserDidJoinWithUserID:)]) {
         [self.delegate onUserDidJoinWithUserID:userID];
     }
+    
 }
 - (void)onNERtcEngineUserVideoDidStartWithUserID:(uint64_t)userID videoProfile:(NERtcVideoProfileType)profile {
     if (self.subscribeVideo) {
-        [[NERtcEngine sharedEngine] subscribeRemoteVideo:YES forUserID:userID streamType:kNERtcRemoteVideoStreamTypeLow];
+        int code = [[NERtcEngine sharedEngine] subscribeRemoteVideo:YES forUserID:userID streamType:kNERtcRemoteVideoStreamTypeLow];
+        NSLog(@"auto subscribeVideo code:%d",code);
+        
+    }else {
+//        NSNumber *userId = @(userID);
+//        [self.subscribeCacheList containsIndex:userID];
+        if ([self.subscribeCacheList containsIndex:userID]) {
+            int code = [[NERtcEngine sharedEngine] subscribeRemoteVideo:YES forUserID:userID streamType:kNERtcRemoteVideoStreamTypeLow];
+            [[NERtcEngine sharedEngine] subscribeRemoteAudio:YES forUserID:userID];
+            NSLog(@"subscribeVideo code:%d",code);
+        }
     }
 }
 - (void)onNERtcEngineUserVideoDidStop:(uint64_t)userID {
@@ -119,6 +134,10 @@
     [[NERtcEngine sharedEngine] subscribeRemoteSubStreamVideo:YES forUserID:userID];
 }
 - (void)onNERtcEngineUserSubStreamDidStop:(uint64_t)userID {
+    [[NERtcEngine sharedEngine] subscribeRemoteSubStreamVideo:NO forUserID:userID];
+    if (self.delegate && [self.delegate respondsToSelector:@selector(onSubStreamDidStop:)]) {
+        [self.delegate onSubStreamDidStop:userID];
+    }
 }
 
 - (void)onNetworkQuality:(NSArray<NERtcNetworkQualityStats *> *)stats {

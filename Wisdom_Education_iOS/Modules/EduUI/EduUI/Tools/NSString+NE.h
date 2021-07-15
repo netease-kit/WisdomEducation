@@ -12,9 +12,16 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface NSString (NE)
+
+/// 计算文本的尺寸
+/// @param width 最大宽度
+/// @param font 文字大小
 - (CGSize)sizeWithWidth:(CGFloat)width font:(UIFont *)font;
 
+/// 日期转字符串
+/// @param date 日期
 + (NSString *)stringFromDate:(NSDate *)date;
+
 @end
 
 NS_ASSUME_NONNULL_END

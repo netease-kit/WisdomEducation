@@ -136,12 +136,10 @@ Pod::Spec.new do |spec|
   
   spec.dependency "AFNetworking", '~> 4.0.1'
   spec.dependency "YYModel", "1.0.4"
-  spec.dependency "NERtcSDK", "4.0.0"
+  spec.dependency "NERtcSDK", "4.2.1"
   spec.dependency "NIMSDK_LITE", '8.3.3'
   spec.dependency "YXAlog_iOS", '1.0.6'
-  
-#  spec.dependency "NEScreenShareBroadcaster", '~> 0.0.7'
-  
+    
 
 
 end

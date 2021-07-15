@@ -11,8 +11,8 @@
 
 @implementation KeyCenter
 
-+ (NSString *)appId {
-    return @"替换为您申请的appId";
++ (NSString *)appKey {
+    return @"替换为您申请的appKey";
 }
 
 + (NSString *)authorization {

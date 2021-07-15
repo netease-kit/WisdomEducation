@@ -1,5 +1,5 @@
 //
-//  EduManager.m
+//  NEEduManager.m
 //  EduLogic
 //
 //  Created by Groot on 2021/5/13.
@@ -7,29 +7,32 @@
 //  Use of this source code is governed by a MIT license that can be found in the LICENSE file
 //
 
-#import "EduManager.h"
+#import "NEEduManager.h"
 
 #import "HttpManager.h"
 #import "NEEduUser.h"
 #import "NERtcVideoCanvasExtention.h"
 
-@interface EduManager ()
-@property (nonatomic, strong ,readwrite) NEEduUser *localUser;
+
+@interface NEEduManager ()
+@property (nonatomic, strong, readwrite) NEEduHttpUser *localUser;
+@property (nonatomic, copy, readwrite) NSString *imKey;
+@property (nonatomic, copy, readwrite) NSString *imToken;
 @end
 
-@implementation EduManager
+@implementation NEEduManager
 + (instancetype)shared {
     static dispatch_once_t onceToken;
-    static EduManager *manager;
+    static NEEduManager *manager;
     dispatch_once(&onceToken, ^{
-        manager = [[EduManager alloc] init];
+        manager = [[NEEduManager alloc] init];
     });
     return manager;
 }
 
-- (void)setupAppId:(NSString * _Nonnull)appId options:(NEEduKitOptions *)options {
+- (void)setupAppKey:(NSString * _Nonnull)appKey options:(NEEduKitOptions *)options {
     HttpManagerConfig *config = [HttpManager getHttpManagerConfig];
-    config.appId = appId;
+    config.appKey = appKey;
     config.authorization = options.authorization;
     config.baseURL = options.baseURL;
 }
@@ -37,18 +40,15 @@
 - (void)login:(NSString * _Nullable)userID success:(void(^)(NEEduUser *user))success failure:(void(^)(NSError *error))failure {
     // 1.login http
     __weak typeof(self)weakSelf = self;
-    [HttpManager loginWithParam:nil analysisClass:[NEEduUser class] success:^(id _Nonnull objModel) {
-        weakSelf.localUser = objModel;
-        weakSelf.userService = [[NEEduUserService alloc] initLocalUser:objModel];
+    [HttpManager loginWithParam:nil analysisClass:[NEEduUser class] success:^(NEEduUser * _Nonnull objModel) {
+        weakSelf.imKey = objModel.imKey;
+        weakSelf.imToken = objModel.imToken;
         //登录成功，更新HttpManager token
         HttpManagerConfig *config = [HttpManager getHttpManagerConfig];
-        config.userUuid = weakSelf.localUser.userUuid;
-        config.userToken = weakSelf.localUser.userToken;
-        config.appKey = weakSelf.localUser.imKey;
-        
-        [self setupSDKWithAppKey:config.appKey];
-        
-        [self.imService login:weakSelf.localUser.userUuid token:weakSelf.localUser.imToken completion:^(NSError * _Nullable error) {
+        config.userUuid = objModel.userUuid;
+        config.userToken = objModel.userToken;
+        [self setupSDKWithImKey:objModel.imKey rtcKey:objModel.rtcKey];
+        [self.imService login:objModel.userUuid token:objModel.imToken completion:^(NSError * _Nullable error) {
             if (error) {
                 //IM登录失败，更新HttpManager token
                 HttpManagerConfig *config = [HttpManager getHttpManagerConfig];
@@ -58,8 +58,9 @@
                     failure(error);
                 }
             }else {
+                weakSelf.localUser.userUuid = objModel.userUuid;
                 if (success) {
-                    success(weakSelf.localUser);
+                    success(objModel);
                 }
             }
         }];
@@ -69,7 +70,6 @@
         }
     }];
 }
-
 - (void)enterClassroom:(NEEduEnterRoomParam *)roomOption success:(void(^)(NEEduRoomProfile *roomProfile))success failure:(void(^)(NSError *error))failure {
     __weak typeof(self)weakSelf = self;
     // 1.http entry
@@ -81,9 +81,9 @@
             }
         }else {
             //2.Rtc join
-            strongSelf.localUser.userName = response.member.userName;
-            strongSelf.localUser.roleType = roomOption.role;
-            strongSelf.localUser.rtcUserId = response.member.rtcUid;
+            weakSelf.localUser = response.member;
+            weakSelf.userService = [[NEEduUserService alloc] initLocalUser:response.member];
+            weakSelf.messageService.localUser = response.member;
             NEEduRtcJoinChannelParam *param = [[NEEduRtcJoinChannelParam alloc] init];
             param.channelID = roomOption.roomUuid;
             param.rtcToken = response.member.rtcToken;
@@ -91,7 +91,7 @@
             param.subscribeAudio = roomOption.autoSubscribeAudio;
             param.subscribeVideo = roomOption.autoSubscribeVideo;
             __strong typeof(self)weakSelf = strongSelf;
-            [strongSelf.videoService joinChannel:(NEEduRtcJoinChannelParam *)param completion:^(NSError * _Nonnull error, uint64_t channelID) {
+            [strongSelf.rtcService joinChannel:(NEEduRtcJoinChannelParam *)param completion:^(NSError * _Nonnull error, uint64_t channelID) {
                 __strong typeof(self)strongSelf = weakSelf;
                 if (error) {
                     if (failure) {
@@ -109,8 +109,8 @@
                             }
                         }else {
                             //推流
-                            [strongSelf.videoService enableLocalAudio:roomOption.autoPublish];
-                            [strongSelf.videoService enableLocalVideo:roomOption.autoPublish];
+                            [strongSelf.rtcService enableLocalAudio:roomOption.autoPublish];
+                            [strongSelf.rtcService enableLocalVideo:roomOption.autoPublish];
                             if (success) {
                                 success(profile);
                             }
@@ -137,34 +137,35 @@
     canvas.uid = member.rtcUid;
     canvas.container = view;
     canvas.renderMode = kNERtcVideoRenderScaleFit;
-    
     if ([self myselfWithUserID:member.userUuid]) {
-        [self.videoService setupLocalVideo:canvas];
+        [self.rtcService setupLocalVideo:canvas];
     }else {
-        [self.videoService setupRemoteVideo:canvas];
+        [self.rtcService setupRemoteVideo:canvas];
     }
 }
 
 - (void)leaveClassroom {
-    [self.videoService leaveChannel];
+    [self.rtcService leaveChannel];
     [self.imService destroy];
 }
 
 - (void)destoryClassroom {
-    [self.videoService destroy];
-    self.videoService = nil;
+    [self.rtcService destroy];
+    self.rtcService = nil;
     self.imService = nil;
     self.roomService = nil;
 }
 
 #pragma mark - private
 /// 初始化IMSDK & RtcSDK
-/// @param appkey 用户申请的appKey
-- (void)setupSDKWithAppKey:(NSString *)appkey {
-    [self.imService setupAppkey:appkey];
-    [self.videoService setupAppkey:appkey];
+/// @param imKey IMSDK的Key
+/// @param rtcKey RtcSDK的Key
+- (void)setupSDKWithImKey:(NSString *)imKey rtcKey:(NSString *)rtcKey {
+    [self.imService setupAppkey:imKey];
+    [self.rtcService setupAppkey:rtcKey];
     self.imService.delegate = self.messageService;
 }
+
 - (BOOL)myselfWithUserID:(NSString *)userID {
     if (!self.localUser) {
         return NO;
@@ -184,11 +185,11 @@
     }
     return _imService;
 }
-- (NEEduVideoService *)videoService {
-    if (!_videoService) {
-        _videoService = [[NEEduVideoService alloc] init];
+- (NEEduRtcService *)rtcService {
+    if (!_rtcService) {
+        _rtcService = [[NEEduRtcService alloc] init];
     }
-    return _videoService;
+    return _rtcService;
 }
 - (NEEduRoomService *)roomService {
     if (!_roomService) {
@@ -210,5 +211,10 @@
     return _userService;
 }
 
-
+- (NEEduHttpUser *)localUser {
+    if (!_localUser) {
+        _localUser = [[NEEduHttpUser alloc] init];
+    }
+    return _localUser;
+}
 @end

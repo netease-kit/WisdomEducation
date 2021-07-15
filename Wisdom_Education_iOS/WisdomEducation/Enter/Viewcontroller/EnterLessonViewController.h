@@ -13,7 +13,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface EnterLessonViewController : NEBaseViewController
+@interface EnterLessonViewController : NEBaseViewController<NEInputViewDelegate>
 @end
 
 NS_ASSUME_NONNULL_END

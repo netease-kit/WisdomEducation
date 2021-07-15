@@ -141,7 +141,8 @@ Pod::Spec.new do |spec|
    spec.dependency "EduLogic", "~> 0.0.1"
    spec.dependency "NEWhiteBoard", "~> 0.0.1"
    spec.dependency "NEScreenShareHost", '~> 0.1.0'
+   spec.dependency "SDWebImage", '~> 5.11.1 '
 
-   
+
 
 end

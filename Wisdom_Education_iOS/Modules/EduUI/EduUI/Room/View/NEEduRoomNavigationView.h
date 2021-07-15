@@ -18,6 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) UILabel *lessonNameLabel;
 @property (nonatomic, strong) UIButton *infoButton;
 @property (nonatomic, strong) UIImageView *netStateView;
+@property (nonatomic,assign) NSInteger timeCount;
 
 - (void)updateRoomState:(NEEduHttpRoom *)room serverTime:(NSInteger)serverTime;
 @end

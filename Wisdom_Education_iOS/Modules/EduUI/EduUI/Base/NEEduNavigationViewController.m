@@ -7,13 +7,13 @@
 //  Use of this source code is governed by a MIT license that can be found in the LICENSE file
 //
 
-#import "ENavigationViewController.h"
+#import "NEEduNavigationViewController.h"
 
-@interface ENavigationViewController ()
+@interface NEEduNavigationViewController ()
 
 @end
 
-@implementation ENavigationViewController
+@implementation NEEduNavigationViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];

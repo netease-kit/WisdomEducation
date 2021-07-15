@@ -24,7 +24,7 @@
 - (void)initMenuItems {
     NEEduMenuItem *audoItem = [[NEEduMenuItem alloc] initWithTitle:@"静音" image:[UIImage ne_imageNamed:@"menu_audio"]];
     audoItem.type = NEEduMenuItemTypeAudio;
-    audoItem.selectTitle = @"取消静音";
+    audoItem.selectTitle = @"解除静音";
     [audoItem setSelctedImage:[UIImage ne_imageNamed:@"menu_audio_off"]];
     
     NEEduMenuItem *videoItem = [[NEEduMenuItem alloc] initWithTitle:@"关闭摄像头" image:[UIImage ne_imageNamed:@"menu_video"]];
@@ -36,6 +36,7 @@
     NEEduMenuItem *chatItem = [[NEEduMenuItem alloc] initWithTitle:@"聊天室" image:[UIImage ne_imageNamed:@"menu_chat"]];
     chatItem.type = NEEduMenuItemTypeChat;
     self.menuItems = @[audoItem,videoItem,membersItem,chatItem];
+    self.chatItem = chatItem;
 }
 - (NSArray <NEEduHttpUser *>*)membersWithProfile:(NEEduRoomProfile *)profile {
     NEEduHttpUser *teacher = [[NEEduHttpUser alloc] init];
@@ -45,7 +46,7 @@
         if ([user.role isEqualToString:NEEduRoleHost]) {
             [placehlodArray replaceObjectAtIndex:0 withObject:user];
         }else {
-            if ([user.userUuid isEqualToString:[EduManager shared].localUser.userUuid]) {
+            if ([user.userUuid isEqualToString:[NEEduManager shared].localUser.userUuid]) {
                 //自己
                 [placehlodArray insertObject:user atIndex:1];
             }else  {
@@ -60,7 +61,7 @@
 
 #pragma mark - NEEduMessageServiceDelegate
 - (void)onLessonMuteAllAudio:(BOOL)mute roomUuid:(NSString *)roomUuid {
-    [[EduManager shared].userService localUserAudioEnable:!mute result:^(NSError * _Nonnull error) {
+    [[NEEduManager shared].userService localUserAudioEnable:!mute result:^(NSError * _Nonnull error) {
         if (!error) {
             NSString *string = mute ? @"已全体静音" : @"已取消全体静音";
             [[UIApplication sharedApplication].keyWindow makeToast:string];
@@ -84,7 +85,7 @@
             }
         }
         if (!exist) {
-            if ([user.userUuid isEqualToString:[EduManager shared].localUser.userUuid]) {
+            if ([user.userUuid isEqualToString:[NEEduManager shared].localUser.userUuid]) {
                 [self.members insertObject:user atIndex:1];
             }else {
                 [self.members addObject:user];

@@ -12,9 +12,10 @@
 #import "NEEduStreams.h"
 
 NS_ASSUME_NONNULL_BEGIN
-extern const NSString * NEEduRoleHost;
-extern const NSString * NEEduRoleBroadcaster;
-extern const NSString * NEEduRoleAudience;
+
+extern NSString * const NEEduRoleHost;
+extern NSString * const NEEduRoleBroadcaster;
+extern NSString * const NEEduRoleAudience;
 
 @interface NEEduHttpUser : NSObject
 @property (nonatomic , copy) NSString              * rtcKey;
@@ -26,6 +27,9 @@ extern const NSString * NEEduRoleAudience;
 @property (nonatomic , copy) NSString              * rtcToken;
 @property (nonatomic , strong) NEEduStreams        * streams;
 
+/// 是否上台 默认为NO 仅大班课场景使用
+@property (nonatomic, assign) BOOL isOnStage;
+@property (nonatomic, assign) BOOL isTeacher;
 @end
 
 NS_ASSUME_NONNULL_END

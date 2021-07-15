@@ -12,7 +12,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface NEEduMembersVC : UIViewController
+@interface NEEduMembersVC : UIViewController<UITextFieldDelegate>
 @property (nonatomic, assign) BOOL muteChat;
 @property (nonatomic, strong) NSMutableArray<NEEduMember *> *members;
 - (void)user:(NSString *)userID online:(BOOL)online;

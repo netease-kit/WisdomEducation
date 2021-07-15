@@ -17,7 +17,7 @@ PODS:
   - Bugly (2.5.90)
   - EduLogic (0.0.1):
     - AFNetworking (~> 4.0.1)
-    - NERtcSDK (= 4.0.0)
+    - NERtcSDK (= 4.2.1)
     - NIMSDK_LITE (= 8.3.3)
     - YXAlog_iOS (= 1.0.6)
     - YYModel (= 1.0.4)
@@ -25,14 +25,18 @@ PODS:
     - EduLogic (~> 0.0.1)
     - NEScreenShareHost (~> 0.1.0)
     - NEWhiteBoard (~> 0.0.1)
+    - SDWebImage (~> 5.11.1)
   - NEDyldYuv (0.0.1)
-  - NERtcSDK (4.0.0)
+  - NERtcSDK (4.2.1)
   - NEScreenShareBroadcaster (0.1.0):
     - NEDyldYuv (= 0.0.1)
   - NEScreenShareHost (0.1.0)
   - NEWhiteBoard (0.0.1):
     - YYModel (= 1.0.4)
   - NIMSDK_LITE (8.3.3)
+  - SDWebImage (5.11.1):
+    - SDWebImage/Core (= 5.11.1)
+  - SDWebImage/Core (5.11.1)
   - YXAlog_iOS (1.0.6)
   - YYModel (1.0.4)
 
@@ -52,6 +56,7 @@ SPEC REPOS:
     - NEScreenShareBroadcaster
     - NEScreenShareHost
     - NIMSDK_LITE
+    - SDWebImage
     - YXAlog_iOS
     - YYModel
 
@@ -66,14 +71,15 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   AFNetworking: 7864c38297c79aaca1500c33288e429c3451fdce
   Bugly: 88bc32c0acc6fef7b74d610f0319ee7560d6b9fe
-  EduLogic: a1878ff94fc5385ac229610fed5e9b0f8c883c52
-  EduUI: b7f4140aac25adf7c7c658955cc29cd2f9473dbb
+  EduLogic: 983c9a51c0c170c1c2d1e971bc2795cac30ed588
+  EduUI: b90e3347e5833769d87e67059821d1b6bf680f13
   NEDyldYuv: 6b47adff16186768bf2f8b165697fdee8e94d7ac
-  NERtcSDK: de2654cd6ab9258d689791bd611acd9f2d6ec95d
+  NERtcSDK: 14c7a371b04bb264ed629a89425305be3eb23df9
   NEScreenShareBroadcaster: 6048110e58028d38c01b4fa70c478b530dbe1635
   NEScreenShareHost: be9b9fe5d0d264111e0e44956ad7c90b451951c0
   NEWhiteBoard: fd5013962c9c7c3e9ee4d690b4c9be27ecc58eec
   NIMSDK_LITE: f196e9ea550528a7da2104c63ef09d825e26a16a
+  SDWebImage: a7f831e1a65eb5e285e3fb046a23fcfbf08e696d
   YXAlog_iOS: 3948d6f7c0173c9dc0117a9445fc9411f97b314e
   YYModel: 2a7fdd96aaa4b86a824e26d0c517de8928c04b30
 
