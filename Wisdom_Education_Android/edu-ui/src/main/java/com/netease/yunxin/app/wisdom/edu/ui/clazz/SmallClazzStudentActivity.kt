@@ -5,7 +5,6 @@
 
 package com.netease.yunxin.app.wisdom.edu.ui.clazz
 
-import CommonUtil.setOnClickThrottleFirst
 import android.content.Context
 import android.content.Intent
 import android.view.View

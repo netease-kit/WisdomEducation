@@ -5,7 +5,7 @@
 
 package com.netease.yunxin.app.wisdom.edu.ui.base
 
-import CommonUtil.setOnClickThrottleFirst
+import com.netease.yunxin.app.wisdom.base.util.CommonUtil.setOnClickThrottleFirst
 import android.app.Activity
 import android.content.Context
 import android.content.Intent

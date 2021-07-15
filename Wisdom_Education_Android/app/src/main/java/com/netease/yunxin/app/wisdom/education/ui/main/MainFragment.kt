@@ -5,7 +5,7 @@
 
 package com.netease.yunxin.app.wisdom.education.ui.main
 
-import CommonUtil.throttleFirst
+import com.netease.yunxin.app.wisdom.base.util.CommonUtil.throttleFirst
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextUtils
@@ -25,7 +25,6 @@ import com.netease.yunxin.app.wisdom.edu.ui.viewbinding.viewBinding
 import com.netease.yunxin.app.wisdom.education.BuildConfig
 import com.netease.yunxin.app.wisdom.education.R
 import com.netease.yunxin.app.wisdom.education.databinding.MainFragmentBinding
-import com.netease.yunxin.kit.alog.ALog
 import com.superlht.htloading.view.HTLoading
 
 class MainFragment : Fragment(R.layout.main_fragment) {
