@@ -11,6 +11,7 @@ import androidx.lifecycle.MediatorLiveData
 import com.netease.yunxin.app.wisdom.base.network.NEResult
 import com.netease.yunxin.app.wisdom.edu.logic.impl.NEEduManagerImpl
 import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduMember
+import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduMemberProperties
 import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduStateValue
 import com.netease.yunxin.app.wisdom.edu.logic.net.service.UserServiceRepository
 import com.netease.yunxin.app.wisdom.edu.logic.net.service.request.NEEduMemberPropertiesType
@@ -29,8 +30,6 @@ internal class NEEduBoardServiceImpl : NEEduBoardService() {
 
     private val permissionLD: MediatorLiveData<NEEduMember> = MediatorLiveData()
 
-    private var boardPermission: Int? = null
-
     override fun grantPermission(userId: String, grant: Boolean): LiveData<NEResult<Void>> {
         val req = NEEduUpdateMemberPropertyReq(drawable = if (grant) NEEduStateValue.OPEN else NEEduStateValue.CLOSE)
         return UserServiceRepository.updateProperty(
@@ -41,26 +40,21 @@ internal class NEEduBoardServiceImpl : NEEduBoardService() {
         )
     }
 
-    override fun initBoard(context: Context, webView: WhiteboardView, config: WhiteboardConfig) {
-        whiteboardManager.init(context, webView, config)
+    override fun initBoard(webView: WhiteboardView, config: WhiteboardConfig) {
+        whiteboardManager.init(webView, config)
     }
 
     override fun setEnableDraw(enable: Boolean) {
         whiteboardManager.setEnableDraw(enable)
     }
 
-    override fun updateSelfPermission(member: NEEduMember) {
-        if (NEEduManagerImpl.isSelf(member.userUuid) && !member.isHost()) {
-            member.properties?.whiteboard?.let {
-                if (it.drawable != boardPermission) {
-                    boardPermission = it.drawable
-                    permissionLD.postValue(member)
-                }
-            }
+    override fun updatePermission(member: NEEduMember, properties: NEEduMemberProperties) {
+        properties.whiteboard?.let {
+            permissionLD.postValue(member)
         }
     }
 
-    override fun onSelfPermissionGranted(): LiveData<NEEduMember> {
+    override fun onPermissionGranted(): LiveData<NEEduMember> {
         return permissionLD
     }
 }

@@ -9,6 +9,7 @@ import android.content.Context
 import androidx.lifecycle.LiveData
 import com.netease.yunxin.app.wisdom.base.network.NEResult
 import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduMember
+import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduMemberProperties
 import com.netease.yunxin.app.wisdom.whiteboard.config.WhiteboardConfig
 import com.netease.yunxin.app.wisdom.whiteboard.view.WhiteboardView
 
@@ -26,20 +27,25 @@ abstract class NEEduBoardService : INEEduService() {
      */
     abstract fun grantPermission(userId: String, grant: Boolean): LiveData<NEResult<Void>>
 
-
-    abstract fun initBoard(context: Context, webView: WhiteboardView, config: WhiteboardConfig)
+    /**
+     * 初始化白板
+     *
+     * @param webView 白板webView控件
+     * @param config 白板配置参数
+     */
+    abstract fun initBoard(webView: WhiteboardView, config: WhiteboardConfig)
 
     /**
-     * 设置允许绘制
+     * 设置是否允许绘制
      *
      * @param enable 是否允许绘制
      */
     abstract fun setEnableDraw(enable: Boolean)
 
     /**
-     *
+     * 白板权限变化通知
      */
-    abstract fun onSelfPermissionGranted(): LiveData<NEEduMember>
+    abstract fun onPermissionGranted(): LiveData<NEEduMember>
 
-    internal abstract fun updateSelfPermission(member: NEEduMember)
+    internal abstract fun updatePermission(member: NEEduMember, properties: NEEduMemberProperties)
 }

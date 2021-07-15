@@ -10,6 +10,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Observer
 import com.netease.yunxin.app.wisdom.base.network.NEResult
+import com.netease.yunxin.app.wisdom.base.util.observeForeverOnce
 import com.netease.yunxin.app.wisdom.edu.logic.impl.NEEduManagerImpl
 import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduRoomConfig
 import com.netease.yunxin.app.wisdom.edu.logic.net.service.response.NEEduLoginRes
@@ -33,34 +34,30 @@ interface NEEduManager {
 
         lateinit var eduOptions: NEEduOptions
 
-        private val managerLD: MediatorLiveData<NEResult<NEEduManager>> = MediatorLiveData<NEResult<NEEduManager>>()
-
         lateinit var instance: NEEduManager
 
         /// im must call application onCreate
         fun config(context: Application, eduOptions: NEEduOptions) {
             this.context = context
             this.eduOptions = eduOptions
-            BaseRepository.appId = eduOptions.appId
+            BaseRepository.appKey = eduOptions.appKey
             BaseService.baseUrl = eduOptions.baseUrl
             IMManager.config(context, eduOptions.appKey, eduOptions.reuseIM ?: false)
             NEEduActivityManger.init(context)
         }
 
         fun init(): LiveData<NEResult<NEEduManager>> {
+            val managerLD: MediatorLiveData<NEResult<NEEduManager>> = MediatorLiveData<NEResult<NEEduManager>>()
             NEEduManagerImpl.init().also {
-                it.observeForever(object : Observer<NEResult<Boolean>> {
-                    override fun onChanged(t: NEResult<Boolean>) {
-                        it.removeObserver(this)
-                        if (t.success()) {
-                            instance = NEEduManagerImpl
-                            managerLD.postValue(NEResult(t.code, NEEduManagerImpl))
-                        } else {
-                            managerLD.postValue(NEResult(t.code))
-                        }
+                it.observeForeverOnce { t ->
+                    if (t.success()) {
+                        instance = NEEduManagerImpl
+                        managerLD.postValue(NEResult(t.code, NEEduManagerImpl))
+                    } else {
+                        NEEduManagerImpl.destroy()
+                        managerLD.postValue(NEResult(t.code))
                     }
-
-                })
+                }
             }
             return managerLD
         }

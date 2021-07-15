@@ -11,8 +11,8 @@ import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduMember
  * Created by hzsunyj on 2021/5/17.
  */
 class RoomMemberLeaveAction(
-    appId: String,
+    appKey: String,
     roomUuid: String,
     val members: MutableList<NEEduMember>,
     val operatorMember: NEEduMember,
-) : CMDAction(appId, roomUuid)
+) : CMDAction(appKey, roomUuid)

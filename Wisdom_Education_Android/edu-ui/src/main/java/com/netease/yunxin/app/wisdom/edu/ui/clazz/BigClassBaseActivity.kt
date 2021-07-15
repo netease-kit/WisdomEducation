@@ -29,8 +29,6 @@ import com.netease.yunxin.kit.alog.ALog
  * Created by hzsunyj on 2021/6/17.
  */
 abstract class BigClassBaseActivity(layoutId: Int) : BaseClassActivity(layoutId) {
-
-    protected val binding: ActivityClazzBinding by viewBinding(R.id.one_container)
     private val bigClazzMembersFragment = BigClazzMembersFragment()
     protected val chatRoomFragment = ChatRoomFragment()
 

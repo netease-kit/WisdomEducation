@@ -27,6 +27,8 @@ interface BaseView {
 
     fun getScreenShareView(): View
 
+    fun getScreenShareCoverView(): View
+
     fun getChatRoomView(): ItemBottomView
 
     fun getMembersView(): View
@@ -56,4 +58,8 @@ interface BaseView {
     fun getClassFinishBackView(): View
 
     fun getClassInitLayout(): View
+
+    fun getAvHandsUpOffstageView(): View
+
+    fun getZoomImageLayout(): View
 }

@@ -5,8 +5,10 @@
 
 package com.netease.yunxin.app.wisdom.edu.ui.clazz.fragment
 
+import CommonUtil.setOnClickThrottleFirst
 import android.view.View
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
@@ -15,18 +17,24 @@ import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduStateValue
 import com.netease.yunxin.app.wisdom.edu.ui.R
 import com.netease.yunxin.app.wisdom.edu.ui.base.BaseClassActivity
 import com.netease.yunxin.app.wisdom.edu.ui.base.BaseFragment
+import com.netease.yunxin.app.wisdom.edu.ui.clazz.viewmodel.ChatRoomViewModel
 import com.netease.yunxin.app.wisdom.edu.ui.databinding.FragmentBigclazzMembersBinding
 import com.netease.yunxin.app.wisdom.edu.ui.viewbinding.viewBinding
 import com.netease.yunxin.kit.alog.ALog
 
 class BigClazzMembersFragment : BaseFragment(R.layout.fragment_bigclazz_members) {
     private val binding: FragmentBigclazzMembersBinding by viewBinding()
+    private val viewModel: ChatRoomViewModel by activityViewModels()
     private val fragmentList: MutableList<Fragment> = ArrayList()
 
     override fun initData() {
         eduManager.getHandsUpService().onHandsUpStateChange().observe(this, { updateAttachmentMembersText() })
         eduManager.getMemberService().onMemberJoin().observe(this, { updateAllMembersText() })
-        //eduManager.getMemberService().onMemberLeave().observe(this, { updateAllMembersText() })
+        viewModel.onMuteAllChat().observe(this, {
+            if (eduManager.getEntryMember().isHost()) {
+                binding.muteChatAll.isSelected = it
+            }
+        })
         updateAttachmentMembersText()
         updateAllMembersText()
 
@@ -60,7 +68,8 @@ class BigClazzMembersFragment : BaseFragment(R.layout.fragment_bigclazz_members)
             }
             val titles = arrayOf(getString(R.string.attachment_members, 0), getString(R.string.all_members, 0))
             TabLayoutMediator(
-                tablayout, viewpager) { tab: TabLayout.Tab, position: Int ->
+                tablayout, viewpager
+            ) { tab: TabLayout.Tab, position: Int ->
                 tab.text = titles[position]
             }.attach()
             ivMemberHide.setOnClickListener {
@@ -68,7 +77,7 @@ class BigClazzMembersFragment : BaseFragment(R.layout.fragment_bigclazz_members)
             }
             if (eduManager.getEntryMember().isHost()) {
                 muteAudioAll.visibility = View.VISIBLE
-                muteAudioAll.setOnClickListener {
+                muteAudioAll.setOnClickThrottleFirst {
                     eduManager.getRtcService()
                         .muteAllAudio(roomUuid = eduManager.eduEntryRes.room.roomUuid, NEEduStateValue.OPEN)
                         .observe(this@BigClazzMembersFragment, {
@@ -82,21 +91,24 @@ class BigClazzMembersFragment : BaseFragment(R.layout.fragment_bigclazz_members)
                         })
                 }
 
-                cbMuteChatAll.visibility = View.VISIBLE
-                tvMuteChatAll.visibility = View.VISIBLE
-                cbMuteChatAll.setOnCheckedChangeListener { buttonView, isChecked ->
-                    eduManager.getIMService()
-                        .muteAllChat(roomUuid = eduManager.eduEntryRes.room.roomUuid,
-                            if (isChecked) NEEduStateValue.OPEN else NEEduStateValue.CLOSE)
-                        .observe(this@BigClazzMembersFragment, {
-                            if (it.success()) {
-                                ALog.i(tag, "muteChatAll success")
-                                ToastUtil.showShort(R.string.operation_successful)
-                            } else {
-                                ALog.i(tag, "muteChatAll fail code=${it.code}")
-                                ToastUtil.showShort(R.string.operation_fail)
-                            }
-                        })
+                muteChatAll.visibility = View.VISIBLE
+                ivHintMuteAudioAll.visibility = View.VISIBLE
+                muteChatAll.setOnClickThrottleFirst {
+                    eduManager.getIMService().muteAllChat(
+                        roomUuid = eduManager.eduEntryRes.room.roomUuid,
+                        if (!muteChatAll.isSelected) NEEduStateValue.OPEN else NEEduStateValue.CLOSE
+                    ).observe(this@BigClazzMembersFragment, {
+                        if (it.success()) {
+                            ALog.i(tag, "muteChatAll success")
+                            ToastUtil.showShort(R.string.operation_successful)
+                        } else {
+                            ALog.i(tag, "muteChatAll fail code=${it.code}")
+                            ToastUtil.showShort(R.string.operation_fail)
+                        }
+                    })
+                }
+                ivHintMuteAudioAll.setOnClickListener {
+                    hintsMuteAllView.show()
                 }
             }
         }

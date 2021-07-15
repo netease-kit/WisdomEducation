@@ -6,11 +6,12 @@
 package com.netease.yunxin.app.wisdom.education
 
 import android.app.Application
-import android.util.Log
+import android.os.Build
 import com.netease.nimlib.sdk.util.NIMUtil
 import com.netease.yunxin.app.wisdom.base.network.RetrofitManager
 import com.netease.yunxin.app.wisdom.base.util.CryptoUtil
 import com.netease.yunxin.app.wisdom.base.util.PreferenceUtil
+import com.netease.yunxin.app.wisdom.base.util.ScreenUtil
 import com.netease.yunxin.app.wisdom.base.util.ToastUtil
 import com.netease.yunxin.app.wisdom.edu.logic.options.NEEduOptions
 import com.netease.yunxin.app.wisdom.edu.ui.NEEduUiKit
@@ -29,8 +30,9 @@ class EduApplication : Application() {
 
     private fun init() {
         ALog.init(this, if (BuildConfig.DEBUG) ALog.LEVEL_ALL else ALog.LEVEL_INFO)
+        ScreenUtil.init(this)
         CrashReport.initCrashReport(this, "645e346c8e", true)
-        NEEduUiKit.config(this, NEEduOptions(BuildConfig.APP_KEY, BuildConfig.APP_ID, BuildConfig.API_BASE_URL))
+        NEEduUiKit.config(this, NEEduOptions(BuildConfig.APP_KEY,  BuildConfig.API_BASE_URL))
         if (NIMUtil.isMainProcess(this)) {
             ToastUtil.init(this)
             PreferenceUtil.init(this)
@@ -39,10 +41,13 @@ class EduApplication : Application() {
                 CryptoUtil.getAuth(BuildConfig.AUTHORIZATION)
             ).addHeader(
                 "deviceId",
-                PreferenceUtil.getDeviceId()
+                PreferenceUtil.deviceId
             ).addHeader(
                 "clientType",
-                "android"
+                "aos"
+            ).addHeader(
+                "versionCode",
+                BuildConfig.VERSION_CODE.toString()
             )
             ALog.i("Application init ${BuildConfig.TIMESTAMP}")
         }

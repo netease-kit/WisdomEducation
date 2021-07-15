@@ -11,6 +11,7 @@ import androidx.lifecycle.LiveData
 import com.netease.lava.nertc.sdk.video.NERtcScreenConfig
 import com.netease.yunxin.app.wisdom.base.network.NEResult
 import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduMember
+import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduMemberProperties
 import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduState
 
 /**
@@ -19,7 +20,7 @@ import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduState
  */
 abstract class NEEduShareScreenService : INEEduService() {
     /**
-     * 屏幕共享授权
+     * 屏幕共享授权或取消授权
      *
      * @param userId 用户id
      * @param grant 是否授予/取消权限
@@ -28,7 +29,7 @@ abstract class NEEduShareScreenService : INEEduService() {
     abstract fun grantPermission(userId: String, grant: Boolean): LiveData<NEResult<Void>>
 
     /**
-     * 屏幕共享
+     * 发送屏幕共享，不主动打开截屏
      *
      */
     abstract fun shareScreen(
@@ -36,10 +37,8 @@ abstract class NEEduShareScreenService : INEEduService() {
         userUuid: String,
     ): LiveData<NEResult<NEEduState>>
 
-    abstract fun startScreenCapture(config: NERtcScreenConfig, intent: Intent, callback: MediaProjection.Callback): Int
-
     /**
-     * 结束屏幕共享
+     * 结束屏幕共享，不主动关闭截屏
      */
     abstract fun finishShareScreen(
         roomUuid: String,
@@ -47,15 +46,19 @@ abstract class NEEduShareScreenService : INEEduService() {
     ): LiveData<NEResult<Void>>
 
     /**
-     * 屏幕共享权限发生变化
+     * 开始屏幕共享
      */
-    abstract fun onSelfPermissionGranted(): LiveData<NEEduMember>
+    abstract fun startScreenCapture(config: NERtcScreenConfig, intent: Intent, callback: MediaProjection.Callback): Int
 
     /**
-     * 关闭屏幕共享
+     * 停止屏幕共享
      */
     abstract fun stopScreenCapture()
 
+    /**
+     * 屏幕共享权限发生变化
+     */
+    abstract fun onPermissionGranted(): LiveData<NEEduMember>
 
     /**
      * 屏幕共享状态变更
@@ -84,5 +87,5 @@ abstract class NEEduShareScreenService : INEEduService() {
      */
     internal abstract fun updateMemberLeave(list: MutableList<NEEduMember>)
 
-    internal abstract fun updateSelfPermission(member: NEEduMember)
+    internal abstract fun updatePermission(member: NEEduMember, propertiesDiff: NEEduMemberProperties)
 }

@@ -9,8 +9,8 @@ import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduMember
 import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduMemberProperties
 
 class RoomMemberPropertiesRemoveAction(
-    appId: String,
+    appKey: String,
     roomUuid: String,
     val key: String,
     val member: NEEduMember,
-) : CMDAction(appId, roomUuid)
+) : CMDAction(appKey, roomUuid)

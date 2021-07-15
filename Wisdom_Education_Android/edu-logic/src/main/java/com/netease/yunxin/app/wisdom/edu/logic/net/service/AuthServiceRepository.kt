@@ -16,10 +16,10 @@ object AuthServiceRepository : BaseRepository() {
     private val authService = getDelegateService(AuthService::class.java)
 
     fun login(userUuid: String): LiveData<NEResult<NEEduLoginRes>> {
-        return authService.login(appId, userUuid)
+        return authService.login(appKey, userUuid)
     }
 
     fun anonymousLogin(): LiveData<NEResult<NEEduLoginRes>> {
-        return authService.anonymousLogin(appId)
+        return authService.anonymousLogin(appKey)
     }
 }

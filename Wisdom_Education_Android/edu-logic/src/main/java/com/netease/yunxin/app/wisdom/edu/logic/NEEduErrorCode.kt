@@ -167,33 +167,31 @@ enum class NEEduErrorCode(val code: Int, val msg: String) {
     ENGINE_ERROR_ROOM_CLOSED(NERtcConstants.ErrorCode.ENGINE_ERROR_ROOM_CLOSED, ""),
 
 
-    // IM error code, im 返回错误码统一加ERROR_CODE_BASE， 区分各种情况错误码
-    IM_ERROR_CODE_BASE(IMErrorCode.ERROR_CODE_BASE.code, ""),
-
+    // IM error code, im 区分各种情况错误码
     /**
      * 被其他端的登录踢掉
      */
-    KICKOUT(50007, ""),
+    KICKOUT(IMErrorCode.KICKOUT.code, ""),
 
     /**
      * 被同时在线的其他端主动踢掉
      */
-    KICK_BY_OTHER_CLIENT(50008, ""),
+    KICK_BY_OTHER_CLIENT(IMErrorCode.KICK_BY_OTHER_CLIENT.code, ""),
 
     /**
      * 被服务器禁止登录
      */
-    IM_FORBIDDEN(50009, ""),
+    IM_FORBIDDEN(IMErrorCode.IM_FORBIDDEN.code, ""),
 
     /**
      * 客户端版本错误
      */
-    VER_ERROR(50010, ""),
+    VER_ERROR(IMErrorCode.VER_ERROR.code, ""),
 
     /**
      * 用户名或密码错误
      */
-    PWD_ERROR(50011, ""),
+    PWD_ERROR(IMErrorCode.PWD_ERROR.code, ""),
 
 }
 

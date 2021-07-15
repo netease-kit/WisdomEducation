@@ -27,6 +27,29 @@ data class NEEduMemberProperties(
         return this
     }
 
+    /**
+     * 比较计算差异
+     */
+    fun diff(properties: NEEduMemberProperties?): NEEduMemberProperties {
+        if(properties == null) {
+            return this
+        }
+        var result = NEEduMemberProperties(null, null, null, null)
+        if (properties.screenShare != screenShare) {
+            result.screenShare = screenShare
+        }
+        if (properties.whiteboard != whiteboard) {
+            result.whiteboard = whiteboard
+        }
+        if (properties.streamAV != streamAV) {
+            result.streamAV = streamAV
+        }
+        if (properties.avHandsUp != avHandsUp) {
+            result.avHandsUp = avHandsUp
+        }
+        return result
+    }
+
     fun isHandsUp(): Boolean {
         return avHandsUp?.value == NEEduHandsUpStateValue.APPLY
     }

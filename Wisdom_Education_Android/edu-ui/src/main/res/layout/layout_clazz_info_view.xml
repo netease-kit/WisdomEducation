@@ -15,8 +15,6 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="@dimen/common_dp_287"
         android:layout_height="@dimen/common_dp_132"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
         android:layout_marginTop="@dimen/common_dp_46"
         android:layout_marginEnd="@dimen/common_dp_75"
         android:background="@drawable/bg_clazz_info_view">

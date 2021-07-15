@@ -5,6 +5,7 @@
 
 package com.netease.yunxin.app.wisdom.edu.ui.clazz
 
+import CommonUtil.setOnClickThrottleFirst
 import android.content.Context
 import android.content.Intent
 import android.view.View
@@ -38,7 +39,7 @@ class BigClazzTeacherActivity : BigClassBaseActivity(R.layout.activity_clazz) {
         binding.ivChatHide.setOnClickListener { hideFragmentWithChatRoom() }
         binding.bottomView.apply {
             getHandsUp().visibility = View.GONE
-            getHandsUpApply().setOnClickListener {
+            getHandsUpApply().setOnClickThrottleFirst {
                 showFragmentWithHandsUp()
             }
         }

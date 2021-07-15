@@ -5,7 +5,9 @@
 
 package com.netease.yunxin.app.wisdom.edu.ui.clazz.fragment
 
+import CommonUtil.setOnClickThrottleFirst
 import android.view.View
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.netease.yunxin.app.wisdom.base.util.ToastUtil
 import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduMember
@@ -15,6 +17,7 @@ import com.netease.yunxin.app.wisdom.edu.ui.base.BaseClassActivity
 import com.netease.yunxin.app.wisdom.edu.ui.base.BaseFragment
 import com.netease.yunxin.app.wisdom.edu.ui.clazz.adapter.BaseAdapter
 import com.netease.yunxin.app.wisdom.edu.ui.clazz.adapter.MemberControlListAdapter
+import com.netease.yunxin.app.wisdom.edu.ui.clazz.viewmodel.ChatRoomViewModel
 import com.netease.yunxin.app.wisdom.edu.ui.databinding.FragmentSmallclazzMembersBinding
 import com.netease.yunxin.app.wisdom.edu.ui.viewbinding.viewBinding
 import com.netease.yunxin.kit.alog.ALog
@@ -22,6 +25,7 @@ import com.netease.yunxin.kit.alog.ALog
 class SmallClazzMembersFragment : BaseFragment(R.layout.fragment_smallclazz_members),
     BaseAdapter.OnItemChildClickListener<NEEduMember> {
     private val binding: FragmentSmallclazzMembersBinding by viewBinding()
+    private val viewModel: ChatRoomViewModel by activityViewModels()
     private lateinit var adapter: MemberControlListAdapter
 
     override fun initData() {
@@ -34,8 +38,13 @@ class SmallClazzMembersFragment : BaseFragment(R.layout.fragment_smallclazz_memb
             updateAllMembersText()
         })
         eduManager.getRtcService().onStreamChange().observe(this, { t -> adapter.refreshDataAndNotify(t.first) })
-        eduManager.getBoardService().onSelfPermissionGranted().observe(this, { t -> adapter.refreshDataAndNotify(t) })
-        eduManager.getShareScreenService().onSelfPermissionGranted().observe(this, { t -> adapter.refreshDataAndNotify(t) })
+        eduManager.getBoardService().onPermissionGranted().observe(this, { t -> adapter.refreshDataAndNotify(t) })
+        eduManager.getShareScreenService().onPermissionGranted().observe(this, { t -> adapter.refreshDataAndNotify(t) })
+        viewModel.onMuteAllChat().observe(this, {
+            if (eduManager.getEntryMember().isHost()) {
+                binding.muteChatAll.isSelected = it
+            }
+        })
         updateAllMembersText()
     }
 
@@ -55,7 +64,7 @@ class SmallClazzMembersFragment : BaseFragment(R.layout.fragment_smallclazz_memb
             }
             if (eduManager.getEntryMember().isHost()) {
                 muteAudioAll.visibility = View.VISIBLE
-                muteAudioAll.setOnClickListener {
+                muteAudioAll.setOnClickThrottleFirst {
                     eduManager.getRtcService()
                         .muteAllAudio(roomUuid = eduManager.eduEntryRes.room.roomUuid, NEEduStateValue.OPEN)
                         .observe(this@SmallClazzMembersFragment, {
@@ -70,12 +79,12 @@ class SmallClazzMembersFragment : BaseFragment(R.layout.fragment_smallclazz_memb
                         })
                 }
 
-                cbMuteChatAll.visibility = View.VISIBLE
-                tvMuteChatAll.visibility = View.VISIBLE
-                cbMuteChatAll.setOnCheckedChangeListener { _, isChecked ->
+                muteChatAll.visibility = View.VISIBLE
+                ivHintMuteAudioAll.visibility = View.VISIBLE
+                muteChatAll.setOnClickThrottleFirst {
                     eduManager.getIMService().muteAllChat(
                         roomUuid = eduManager.eduEntryRes.room.roomUuid,
-                        if (isChecked) NEEduStateValue.OPEN else NEEduStateValue.CLOSE
+                        if (!muteChatAll.isSelected) NEEduStateValue.OPEN else NEEduStateValue.CLOSE
                     ).observe(this@SmallClazzMembersFragment, {
                         if (it.success()) {
                             ALog.i(tag, "muteChatAll success")
@@ -85,6 +94,9 @@ class SmallClazzMembersFragment : BaseFragment(R.layout.fragment_smallclazz_memb
                             ToastUtil.showShort(R.string.operation_fail)
                         }
                     })
+                }
+                ivHintMuteAudioAll.setOnClickListener {
+                    hintsMuteAllView.show()
                 }
             }
         }

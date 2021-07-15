@@ -18,7 +18,7 @@ import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduState
 abstract class NEEduRtcService : INEEduService() {
 
     /**
-     * 设置本地的音视频开关
+     * 设置本地的音视频开关，不开关硬件
      *
      * @param videoEnabled 本地视频开关
      * @param videoEnabled 本地音频开关
@@ -29,32 +29,46 @@ abstract class NEEduRtcService : INEEduService() {
     ): LiveData<Pair<NEResult<Void>, NEResult<Void>>>
 
     /**
-     * 设置本地的音视频开关
+     * 取消/发送本地视频，不开关硬件
      *
      * @param videoEnabled 本地视频开关
      */
     abstract fun localUserVideoEnable(videoEnabled: Boolean): LiveData<NEResult<Void>>
 
     /**
-     * 设置本地的音视频开关
+     * 取消/发送本地音频，不开关硬件
      *
      * @param audioEnabled 本地音频开关
      */
     abstract fun localUserAudioEnable(audioEnabled: Boolean): LiveData<NEResult<Void>>
 
+    /**
+     * 老师开关远程视频
+     *
+     * @param userId
+     * @param videoEnabled
+     * @return
+     */
     abstract fun remoteUserVideoEnable(
         userId: String,
         videoEnabled: Boolean,
     ): LiveData<NEResult<Void>>
 
+    /**
+     * 老师开关远程音频
+     *
+     * @param userId
+     * @param audioEnabled
+     * @return
+     */
     abstract fun remoteUserAudioEnable(
         userId: String,
-        videoEnabled: Boolean,
+        audioEnabled: Boolean,
     ): LiveData<NEResult<Void>>
 
 
     /**
-     * 全体静音
+     * 发送全体静音
      *
      * @param roomUuid
      * @param state
@@ -73,22 +87,22 @@ abstract class NEEduRtcService : INEEduService() {
     internal abstract fun updateMuteAllAudio(muteState: NEEduState)
 
     /**
-     * 变更rtc audio
+     * 设置音频，会开关硬件
      */
     abstract fun updateRtcAudio(member: NEEduMember)
 
     /**
-     * 变更rtc video
+     * 开关本地视频，会开关硬件
      */
     abstract fun enableLocalVideo(member: NEEduMember)
 
     /**
-     * 变更rtc video状态
+     * 设置成员的视频
      */
     abstract fun updateRtcVideo(rtcView: ViewGroup?, member: NEEduMember)
 
     /**
-     * 变更rtc sub video状态
+     * 设置辅流视频
      */
     abstract fun updateRtcSubVideo(rtcView: ViewGroup?, member: NEEduMember)
 
@@ -121,7 +135,7 @@ abstract class NEEduRtcService : INEEduService() {
     /**
      * 成员下台流变更
      */
-    abstract fun updateMemberOffStageStreamChange(member: NEEduMember)
+    internal abstract fun updateMemberOffStageStreamChange(member: NEEduMember)
 
     /**
      * 离开音视频房间

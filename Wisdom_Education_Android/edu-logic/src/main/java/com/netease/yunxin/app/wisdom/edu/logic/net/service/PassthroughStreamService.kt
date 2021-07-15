@@ -21,7 +21,7 @@ object PassthroughStreamService : StreamService, BaseService {
     private val streamService = getService(StreamService::class.java)
 
     override fun updateStreamInfo(
-        appId: String,
+        appKey: String,
         roomUuid: String,
         userUuid: String,
         streamType: String,
@@ -29,32 +29,32 @@ object PassthroughStreamService : StreamService, BaseService {
     ): LiveData<NEResult<NEEduState>> {
         val method: Method? = findMethod(BaseService.UPDATE_STREAM_INFO)
         return if (overPassthrough() && method != null) {
-            executeOverPassthrough(method, appId, roomUuid, userUuid, streamType, streamStatusReq)
+            executeOverPassthrough(method, appKey, roomUuid, userUuid, streamType, streamStatusReq)
         } else {
-            streamService.updateStreamInfo(appId, roomUuid, userUuid, streamType, streamStatusReq)
+            streamService.updateStreamInfo(appKey, roomUuid, userUuid, streamType, streamStatusReq)
         }
     }
 
     override fun deleteStream(
-        appId: String,
+        appKey: String,
         roomUuid: String,
         userUuid: String,
         streamType: String,
     ): LiveData<NEResult<Void>> {
         val method: Method? = findMethod(BaseService.DELETE_STREAM)
         return if (overPassthrough() && method != null) {
-            executeOverPassthrough(method, appId, roomUuid, userUuid, streamType)
+            executeOverPassthrough(method, appKey, roomUuid, userUuid, streamType)
         } else {
-            return streamService.deleteStream(appId, roomUuid, userUuid, streamType)
+            return streamService.deleteStream(appKey, roomUuid, userUuid, streamType)
         }
     }
 
-    override fun batchStreams(appId: String, roomUuid: String, req: BatchReq): LiveData<NEResult<BatchStreamRes>> {
+    override fun batchStreams(appKey: String, roomUuid: String, req: BatchReq): LiveData<NEResult<BatchStreamRes>> {
         val method: Method? = findMethod(BaseService.BATCH_STREAMS)
         return if (overPassthrough() && method != null) {
-            executeOverPassthrough(method, appId, roomUuid, req)
+            executeOverPassthrough(method, appKey, roomUuid, req)
         } else {
-            return streamService.batchStreams(appId, roomUuid, req)
+            return streamService.batchStreams(appKey, roomUuid, req)
         }
     }
 }

@@ -24,7 +24,7 @@
 > 开通相关产品与抄送，请联系[联系云信商务经理](https://yunxin.163.com/bizQQWPA.html)
 >
 > 如果仅需要本地跑通示例项目，简单体验智慧云课堂，您可以使用[智慧云课堂体验账号](https://github.com/netease-kit/WisdomEducation/tree/main/Wisdom_Education_Docs/智慧云课堂体验账号.md)。体验账号已开通相关权限与抄送，课堂时长限制为 30 分钟。
-> 
+>
 > 体验账号仅供开发者体验与测试，请勿在线上环境中使用。
 
 ## 开发环境
@@ -71,10 +71,9 @@
 
     | 配置项     | 说明                                      |
     | ------------- | ------------------------------------------- |
-    | APP_ID        | 应用的 AppId。可以在网易云信控制台中查看。 |
     | APP_KEY       | 应用的 AppKey。可以在网易云信控制台中查看。 |
     | AUTHORIZATION | 调用服务端接口时，请求头中的校验参数。 |
-    
+
     > 如果仅需要本地跑通示例项目，您可以使用[智慧云课堂体验账号](https://github.com/netease-kit/WisdomEducation/tree/main/Wisdom_Education_Docs/智慧云课堂体验账号.md)。体验账号的课堂时长限制为 30 分钟。
     >
     > 如果未在 config.properties配置，请在App目录工程下的build.gradle中配置，否则整个工程不能正常运行

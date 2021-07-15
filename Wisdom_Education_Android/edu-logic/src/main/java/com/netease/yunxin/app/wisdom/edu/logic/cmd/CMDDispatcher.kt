@@ -34,7 +34,7 @@ internal class CMDDispatcher(private val neEduManager: NEEduManagerImpl) {
     }
 
     private fun dispatch(text: String) {
-        ALog.i(tag, "$text")
+        ALog.i(tag, text)
         val cmdBody = CMDActionFactory.parse(text)
         cmdBody?.let {
             NEEduManagerImpl.neEduSync?.handle(cmdBody).let {
@@ -113,8 +113,8 @@ internal class CMDDispatcher(private val neEduManager: NEEduManagerImpl) {
                 }
                 neEduManager.getHandsUpService().updateHandsUpState(member)
             }
-            neEduManager.getBoardService().updateSelfPermission(member)
-            neEduManager.getShareScreenService().updateSelfPermission(member)
+            neEduManager.getBoardService().updatePermission(member, action.properties)
+            neEduManager.getShareScreenService().updatePermission(member, action.properties)
         }
     }
 

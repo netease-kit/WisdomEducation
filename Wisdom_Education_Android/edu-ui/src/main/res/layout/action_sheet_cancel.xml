@@ -16,7 +16,7 @@
         android:layout_centerInParent="true"
         android:layout_marginBottom="@dimen/ts_10"
         android:layout_marginTop="@dimen/common_dp_6"
-        android:background="@drawable/white_round_box_13dp_shape"
+        android:background="@drawable/white_round_box_14dp_shape"
         android:gravity="center"
         android:textColor="@color/black"
         android:textSize="@dimen/ts_18"/>

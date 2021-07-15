@@ -12,7 +12,6 @@ import com.netease.yunxin.app.wisdom.edu.logic.foreground.NEEduForegroundService
  */
 class NEEduOptions(
     val appKey: String,
-    val appId: String,
     val baseUrl: String,
     val reuseIM: Boolean? = false,
     val foregroundServiceConfig: NEEduForegroundServiceConfig? = null,

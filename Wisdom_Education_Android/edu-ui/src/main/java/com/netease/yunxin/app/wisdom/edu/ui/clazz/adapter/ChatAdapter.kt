@@ -5,17 +5,18 @@
 
 package com.netease.yunxin.app.wisdom.edu.ui.clazz.adapter
 
-import android.text.TextUtils
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import com.netease.nimlib.sdk.chatroom.model.ChatRoomMessage
 import com.netease.nimlib.sdk.msg.constant.MsgDirectionEnum
+import com.netease.nimlib.sdk.msg.constant.MsgStatusEnum
 import com.netease.nimlib.sdk.msg.constant.MsgTypeEnum
 import com.netease.yunxin.app.wisdom.base.util.TimeUtil
+import com.netease.yunxin.app.wisdom.edu.ui.R
 import com.netease.yunxin.app.wisdom.edu.ui.base.BaseClassActivity
-import com.netease.yunxin.app.wisdom.edu.ui.databinding.ItemMsgLeftBinding
-import com.netease.yunxin.app.wisdom.edu.ui.databinding.ItemMsgRightBinding
-import com.netease.yunxin.app.wisdom.edu.ui.databinding.ItemMsgTipsBinding
+import com.netease.yunxin.app.wisdom.edu.ui.clazz.viewholder.MsgThumbViewHolder
+import com.netease.yunxin.app.wisdom.edu.ui.databinding.*
 
 /**
  * Created by hzsunyj on 2021/6/4.
@@ -28,29 +29,65 @@ class ChatAdapter(
 
     companion object {
         const val tips: Int = 0
-        const val left: Int = 1
-        const val right: Int = 2
+        const val leftText: Int = 1
+        const val rightText: Int = 2
+        const val leftImage: Int = 3
+        const val rightImage: Int = 4
     }
 
     init {
         setDelegate(object : BaseDelegate<ChatRoomMessage>() {
             override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): BaseViewHolder<*>? {
-                return when (viewType) {
+                var viewHolder = when (viewType) {
                     tips -> TipsViewHolder(ItemMsgTipsBinding.inflate(LayoutInflater.from(activity), parent, false))
-                    left -> LeftViewHolder(ItemMsgLeftBinding.inflate(LayoutInflater.from(activity), parent, false))
-                    right -> RightViewHolder(ItemMsgRightBinding.inflate(LayoutInflater.from(activity), parent, false))
+                    leftText -> LeftTextViewHolder(
+                        ItemTextMsgLeftBinding.inflate(
+                            LayoutInflater.from(activity),
+                            parent,
+                            false
+                        )
+                    )
+                    rightText -> RightTextViewHolder(
+                        ItemTextMsgRightBinding.inflate(
+                            LayoutInflater.from(activity),
+                            parent,
+                            false
+                        )
+                    )
+                    leftImage -> LeftImageViewHolder(
+                        ItemImageMsgLeftBinding.inflate(
+                            LayoutInflater.from(activity),
+                            parent,
+                            false
+                        )
+                    )
+                    rightImage -> RightImageViewHolder(
+                        ItemImageMsgRightBinding.inflate(
+                            LayoutInflater.from(activity),
+                            parent,
+                            false
+                        )
+                    )
                     else -> null
                 }
+                viewHolder?.let { this@ChatAdapter.bindViewClickListener(it, viewType) }
+                return viewHolder
             }
 
             override fun getItemViewType(data: ChatRoomMessage, pos: Int): Int {
                 return when (data.msgType) {
                     MsgTypeEnum.tip -> tips
-                    else -> if (data.direct == MsgDirectionEnum.In) left else right
+                    MsgTypeEnum.image -> if (data.direct == MsgDirectionEnum.In) leftImage else rightImage
+                    else -> if (data.direct == MsgDirectionEnum.In) leftText else rightText
                 }
             }
 
         })
+        addChildClickViewIds(
+            R.id.iv_message_item_alert,
+            R.id.iv_message_item_thumb_thumbnail,
+            R.id.message_item_thumb_progress_cover
+        )
     }
 
     inner class TipsViewHolder(val binding: ItemMsgTipsBinding) : BaseViewHolder<ChatRoomMessage>(binding.root) {
@@ -63,25 +100,67 @@ class ChatAdapter(
     }
 
 
-    inner class LeftViewHolder(val binding: ItemMsgLeftBinding) : BaseViewHolder<ChatRoomMessage>(binding.root) {
+    inner class LeftTextViewHolder(val binding: ItemTextMsgLeftBinding) :
+        BaseViewHolder<ChatRoomMessage>(binding.root) {
         override fun findViews() {
         }
 
         override fun onBindViewHolder(item: ChatRoomMessage) {
-            binding.tvName.text =
-                if (TextUtils.isEmpty(item.fromNick)) item.chatRoomMessageExtension.senderNick else item
-                    .fromNick
+            binding.tvName.text = getSenderName(item, activity)
             binding.tvContent.text = item.content
         }
     }
 
-    inner class RightViewHolder(val binding: ItemMsgRightBinding) : BaseViewHolder<ChatRoomMessage>(binding.root) {
+    inner class RightTextViewHolder(val binding: ItemTextMsgRightBinding) :
+        BaseViewHolder<ChatRoomMessage>(binding.root) {
         override fun findViews() {
         }
 
         override fun onBindViewHolder(item: ChatRoomMessage) {
-            binding.tvName.text = (activity.eduManager.getEntryMember().userName)
+            binding.tvName.text = getSenderName(item, activity)
             binding.tvContent.text = item.content
+            if (item.status == MsgStatusEnum.fail) {
+                binding.ivMessageItemAlert.visibility = View.VISIBLE
+                binding.progressBarMessageItem.visibility = View.GONE
+            } else if (item.status == MsgStatusEnum.sending){
+                binding.ivMessageItemAlert.visibility = View.GONE
+                binding.progressBarMessageItem.visibility = View.VISIBLE
+            } else {
+                binding.ivMessageItemAlert.visibility = View.GONE
+                binding.progressBarMessageItem.visibility = View.GONE
+            }
+        }
+    }
+
+    inner class LeftImageViewHolder(val binding: ItemImageMsgLeftBinding) : MsgThumbViewHolder(binding) {
+        override fun findViews() {
+
+        }
+
+        override fun onBindViewHolder(item: ChatRoomMessage) {
+            initParameter(
+                item,
+                binding.ivMessageItemThumbThumbnail,
+                binding.ivMessageItemAlert
+            )
+            binding.tvName.text = getSenderName(item, activity)
+            loadThumb()
+        }
+    }
+
+    inner class RightImageViewHolder(val binding: ItemImageMsgRightBinding) : MsgThumbViewHolder(binding) {
+        override fun findViews() {
+        }
+
+        override fun onBindViewHolder(item: ChatRoomMessage) {
+            initParameter(
+                item,
+                binding.ivMessageItemThumbThumbnail,
+                binding.ivMessageItemAlert,
+                binding.progressBarMessageItem
+            )
+            binding.tvName.text = getSenderName(item, activity)
+            loadThumb()
         }
     }
 }

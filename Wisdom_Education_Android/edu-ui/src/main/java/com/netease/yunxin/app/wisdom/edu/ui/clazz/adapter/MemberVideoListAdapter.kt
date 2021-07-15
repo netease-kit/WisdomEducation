@@ -45,6 +45,7 @@ class MemberVideoListAdapter(
             updateRtcView(view, item, payloads == null || payloads.isEmpty() || payloads[0] == true)
             view.enableAudio(item.hasAudio())
             view.enableVideo(item.hasVideo())
+            view.enableWhiteboard(item.isGrantedWhiteboard() && !item.isHost())
         }
     }
 

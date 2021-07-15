@@ -26,6 +26,7 @@ import com.netease.yunxin.app.wisdom.edu.logic.net.service.request.NEEduMemberPr
 import com.netease.yunxin.app.wisdom.edu.logic.net.service.request.NEEduUpdateMemberPropertyReq
 import com.netease.yunxin.app.wisdom.edu.logic.service.NEEduRtcService
 import com.netease.yunxin.app.wisdom.edu.logic.service.widget.NEEduRtcVideoViewPool
+import com.netease.yunxin.app.wisdom.rtc.RtcManager
 
 /**
  * Created by hzsunyj on 2021/5/20.
@@ -40,6 +41,8 @@ internal class NEEduRtcServiceImpl : NEEduRtcService() {
     private var lastMuteAllAudioTime: Long? = null
 
     private val muteAllAudioLD: MediatorLiveData<Boolean> = MediatorLiveData()
+
+    private val rtcManager: RtcManager = NEEduManagerImpl.rtcManager
 
     override fun localUserVideoEnable(videoEnabled: Boolean): LiveData<NEResult<Void>> {
         return if (videoEnabled) {
@@ -145,10 +148,10 @@ internal class NEEduRtcServiceImpl : NEEduRtcService() {
         )
     }
 
-    override fun remoteUserAudioEnable(userId: String, videoEnabled: Boolean): LiveData<NEResult<Void>> {
+    override fun remoteUserAudioEnable(userId: String, audioEnabled: Boolean): LiveData<NEResult<Void>> {
         val req =
             NEEduUpdateMemberPropertyReq(
-                audio = if (videoEnabled) NEEduStateValue.OPEN else NEEduStateValue.CLOSE,
+                audio = if (audioEnabled) NEEduStateValue.OPEN else NEEduStateValue.CLOSE,
                 value = NEEduStateValue.OPEN
             )
         return UserServiceRepository.updateProperty(
@@ -182,14 +185,14 @@ internal class NEEduRtcServiceImpl : NEEduRtcService() {
     override fun updateRtcAudio(member: NEEduMember) {
         val enable = member.hasAudio()
         if (NEEduManagerImpl.isSelf(member.userUuid)) {
-            NEEduManagerImpl.rtcManager.setupLocalAudio(enable)
+            rtcManager.setupLocalAudio(enable)
         } else {
-            NEEduManagerImpl.rtcManager.setupRemoteAudio(member.rtcUid, enable)
+            rtcManager.setupRemoteAudio(member.rtcUid, enable)
         }
     }
 
     override fun enableLocalVideo(member: NEEduMember) {
-        NEEduManagerImpl.rtcManager.enableLocalVideo(member.hasVideo())
+        rtcManager.enableLocalVideo(member.hasVideo())
     }
 
     override fun updateRtcVideo(rtcView: ViewGroup?, member: NEEduMember) {
@@ -202,9 +205,9 @@ internal class NEEduRtcServiceImpl : NEEduRtcService() {
             rtcView.addView(videoView)
         }
         if (NEEduManagerImpl.isSelf(member.userUuid)) {
-            NEEduManagerImpl.rtcManager.setupLocalVideo(videoView)
+            rtcManager.setupLocalVideo(videoView)
         } else {
-            NEEduManagerImpl.rtcManager.setupRemoteVideo(videoView, member.rtcUid)
+            rtcManager.setupRemoteVideo(videoView, member.rtcUid)
         }
     }
 
@@ -218,9 +221,9 @@ internal class NEEduRtcServiceImpl : NEEduRtcService() {
             rtcView.addView(videoView)
         }
         if (NEEduManagerImpl.isSelf(member.userUuid)) {
-            NEEduManagerImpl.rtcManager.setupLocalSubVideo(videoView)
+            rtcManager.setupLocalSubVideo(videoView)
         } else {
-            NEEduManagerImpl.rtcManager.setupRemoteSubVideo(videoView, member.rtcUid)
+            rtcManager.setupRemoteSubVideo(videoView, member.rtcUid)
         }
     }
 
@@ -257,7 +260,7 @@ internal class NEEduRtcServiceImpl : NEEduRtcService() {
     }
 
     override fun leave() {
-        NEEduManagerImpl.rtcManager.leave()
+        rtcManager.leave()
     }
 
 }

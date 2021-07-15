@@ -9,6 +9,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import com.netease.yunxin.app.wisdom.base.network.NEResult
 import com.netease.yunxin.app.wisdom.edu.logic.impl.NEEduManagerImpl
+import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduAvHandsUpProperty
+import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduHandsUpStateValue
 import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduMember
 import com.netease.yunxin.app.wisdom.edu.logic.net.service.UserServiceRepository
 import com.netease.yunxin.app.wisdom.edu.logic.net.service.request.NEEduMemberPropertiesType
@@ -35,6 +37,11 @@ internal class NEEduHandsUpServiceImpl : NEEduHandsUpService() {
      */
     override fun updateMemberJoin(list: MutableList<NEEduMember>, increment: Boolean) {
         synchronized(this) {
+            if (!increment) list.firstOrNull { NEEduManagerImpl.isSelf(it.userUuid) && !it.isHost() }?.properties?.let {
+                if (it.avHandsUp == null) it.avHandsUp = NEEduAvHandsUpProperty(
+                    NEEduHandsUpStateValue.IDLE, -1L
+                )
+            }
             val updateList = list.filter { it.properties?.avHandsUp != null }
             if (increment) {
                 for (element in updateList) {
@@ -48,6 +55,9 @@ internal class NEEduHandsUpServiceImpl : NEEduHandsUpService() {
             } else {
                 handsUpStateList.clear()
                 handsUpStateList.addAll(updateList)
+            }
+            if (increment && updateList.isNullOrEmpty()) {
+                return
             }
             handsUpStateLD.postValue(updateList)
         }

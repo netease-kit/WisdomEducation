@@ -26,7 +26,7 @@ abstract class NEEduRoomService : INEEduService() {
      * @param options 配置课堂房间的参数信息
      * @param callbackNE 结果回调
      */
-    abstract fun config(options: NEEduClassOptions): LiveData<NEResult<NEEduRoomConfigRes>>
+    internal abstract fun config(options: NEEduClassOptions): LiveData<NEResult<NEEduRoomConfigRes>>
 
     /**
      * 获得房间配置
@@ -34,7 +34,7 @@ abstract class NEEduRoomService : INEEduService() {
      * @param roomUuid
      * @return
      */
-    abstract fun getConfig(roomUuid: String): LiveData<NEResult<NEEduRoomConfig>>
+    internal abstract fun getConfig(roomUuid: String): LiveData<NEResult<NEEduRoomConfig>>
 
     /**
      * 加入房间
@@ -42,12 +42,12 @@ abstract class NEEduRoomService : INEEduService() {
      * @param options 加入房间必要的参数信息
      * @param callbackNE 结果回调
      */
-    abstract fun entryClass(options: NEEduClassOptions): LiveData<NEResult<NEEduEntryRes>>
+    internal abstract fun entryClass(options: NEEduClassOptions): LiveData<NEResult<NEEduEntryRes>>
 
     internal abstract fun updateCurrentRoomInfo(room: NEEduRoom)
 
     /**
-     * 获取当前课堂详情。如果当前无正在进行中的课堂，则回调数据对象为空
+     * 当前课堂详情变化通知
      * @param callbackNE 回调，数据类型为 [Room]
      */
     abstract fun onCurrentRoomInfo(): LiveData<NEEduRoom>
@@ -74,18 +74,21 @@ abstract class NEEduRoomService : INEEduService() {
     /**
      * 快照数据
      */
-    abstract fun snapshot(roomUuid: String): LiveData<NEResult<NEEduSnapshotRes>>
+    internal abstract fun snapshot(roomUuid: String): LiveData<NEResult<NEEduSnapshotRes>>
 
     /**
      *获取接下来的数据
      */
-    abstract fun fetchNextSequences(roomUuid: String, nextId: Long): LiveData<NEResult<NEEduSequenceList>>
+    internal abstract fun fetchNextSequences(roomUuid: String, nextId: Long): LiveData<NEResult<NEEduSequenceList>>
 
     /**
      * 下行 merge: true,表示与之前的状态合并， false： 状态替换
      */
     internal abstract fun updateRoomStatesChange(eduRoomStates: NEEduRoomStates, merge: Boolean)
 
+    /**
+     * 房间状态回调
+     */
     abstract fun onRoomStatesChange(): MediatorLiveData<NEEduRoomStates>
 
     /**

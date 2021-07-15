@@ -5,6 +5,7 @@
 
 package com.netease.yunxin.app.wisdom.education.ui.main
 
+import CommonUtil.throttleFirst
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextUtils
@@ -14,6 +15,7 @@ import androidx.fragment.app.Fragment
 import com.netease.yunxin.app.wisdom.base.network.NEResult
 import com.netease.yunxin.app.wisdom.base.util.NetworkUtil
 import com.netease.yunxin.app.wisdom.base.util.ToastUtil
+import com.netease.yunxin.app.wisdom.base.util.observeOnce
 import com.netease.yunxin.app.wisdom.edu.logic.NEEduErrorCode
 import com.netease.yunxin.app.wisdom.edu.logic.options.NEEduClassOptions
 import com.netease.yunxin.app.wisdom.edu.logic.options.NEEduRoleType
@@ -23,6 +25,7 @@ import com.netease.yunxin.app.wisdom.edu.ui.viewbinding.viewBinding
 import com.netease.yunxin.app.wisdom.education.BuildConfig
 import com.netease.yunxin.app.wisdom.education.R
 import com.netease.yunxin.app.wisdom.education.databinding.MainFragmentBinding
+import com.netease.yunxin.kit.alog.ALog
 import com.superlht.htloading.view.HTLoading
 
 class MainFragment : Fragment(R.layout.main_fragment) {
@@ -44,11 +47,9 @@ class MainFragment : Fragment(R.layout.main_fragment) {
         binding.tvSmallClass.setOnClickListener(onClickListener)
         binding.tvLargeClass.setOnClickListener(onClickListener)
         binding.btnJoin.setOnClickListener(onClickListener)
-        binding.tvBack.setOnClickListener(onClickListener)
         binding.radioGroupRole.clearCheck()
 
         binding.etRoomId.addTextChangedListener(onTextChangedListener)
-        binding.etClassName.addTextChangedListener(onTextChangedListener)
         binding.etNickName.addTextChangedListener(onTextChangedListener)
         binding.etSceneType.addTextChangedListener(onTextChangedListener)
         binding.radioGroupRole.setOnCheckedChangeListener { _, _ -> switchJoinBtn() }
@@ -57,35 +58,23 @@ class MainFragment : Fragment(R.layout.main_fragment) {
         }
     }
 
-    private fun checkInputLegal(showToast: Boolean): Boolean {
-        val roomIdStr: String = binding.etRoomId.text.toString()
-        if (TextUtils.isEmpty(roomIdStr)) {
-            if (showToast) ToastUtil.showShort(R.string.room_id_should_not_be_empty)
+    private fun checkInputLegal(): Boolean {
+        if (TextUtils.isEmpty(binding.etRoomId.text)) {
             return false
         }
-        val roomNameStr: String = binding.etClassName.text.toString()
-        if (TextUtils.isEmpty(roomNameStr)) {
-            if (showToast) ToastUtil.showShort(R.string.room_name_should_not_be_empty)
+        if (TextUtils.isEmpty(binding.etNickName.text)) {
             return false
         }
-        val yourNameStr: String = binding.etNickName.text.toString()
-        if (TextUtils.isEmpty(yourNameStr)) {
-            if (showToast) ToastUtil.showShort(R.string.your_name_should_not_be_empty)
-            return false
-        }
-        val roomTypeStr: String = binding.etSceneType.text.toString()
-        if (TextUtils.isEmpty(roomTypeStr)) {
-            if (showToast) ToastUtil.showShort(R.string.room_type_should_not_be_empty)
+        if (TextUtils.isEmpty(binding.etSceneType.text)) {
             return false
         }
         if (!binding.rbTeacher.isChecked && !binding.rbStudent.isChecked) {
-            if (showToast) ToastUtil.showShort(R.string.identity_not_selected)
             return false
         }
         return true
     }
 
-    private val initObserver: (t: NEResult<NEEduUiKit>) -> Unit = { t ->
+    private val initObserver = { t: NEResult<NEEduUiKit> ->
         if (!t.success()) {
             starting = false
             htLoading?.dismiss()
@@ -100,9 +89,6 @@ class MainFragment : Fragment(R.layout.main_fragment) {
      *
      */
     private fun joinClass() {
-        if (!checkInputLegal(true)) {
-            return
-        }
         if (starting) {
             ToastUtil.showShort(R.string.entering_class)
             return
@@ -115,15 +101,14 @@ class MainFragment : Fragment(R.layout.main_fragment) {
         htLoading = HTLoading(requireActivity())
         htLoading?.show()
         val classId: String = binding.etRoomId.text.toString()
-        val className: String = binding.etClassName.text.toString()
         val nickname: String = binding.etNickName.text.toString()
-
+        val className: String = getString(R.string.clazz_name, nickname)
         var roleType = getRoleType()
         if (sceneType!! == NEEduSceneType.BIG && getRoleType() == NEEduRoleType.BROADCASTER) {
             roleType = NEEduRoleType.AUDIENCE
         }
         classOptions = NEEduClassOptions(classId, className, nickname, sceneType!!, roleType)
-        NEEduUiKit.init().observe(viewLifecycleOwner, initObserver)
+        NEEduUiKit.init().observeOnce(viewLifecycleOwner, initObserver)
     }
 
     private fun enterClassroom(eduUiKit: NEEduUiKit, neEduClassOptions: NEEduClassOptions) {
@@ -154,7 +139,6 @@ class MainFragment : Fragment(R.layout.main_fragment) {
 
     private fun clearInput() {
         binding.etRoomId.text?.clear()
-        binding.etClassName.text?.clear()
         binding.etNickName.text?.clear()
         binding.etSceneType.text?.clear()
         binding.radioGroupRole.clearCheck()
@@ -183,15 +167,12 @@ class MainFragment : Fragment(R.layout.main_fragment) {
                 hideCardRoomType()
             }
             binding.etSceneType -> {
-                binding.cardRoomType.let { it ->
+                binding.cardRoomType.let {
                     if (it.visibility == View.GONE) showCardRoomType() else hideCardRoomType()
                 }
             }
-            binding.tvBack -> {
-                requireActivity().finish()
-            }
         }
-    }
+    }.throttleFirst()
 
     private val onTextChangedListener: TextWatcher = object : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -204,7 +185,7 @@ class MainFragment : Fragment(R.layout.main_fragment) {
     }
 
     private fun switchJoinBtn() {
-        binding.btnJoin.isSelected = checkInputLegal(false)
+        binding.btnJoin.isEnabled = checkInputLegal()
     }
 
     private fun showCardRoomType() {

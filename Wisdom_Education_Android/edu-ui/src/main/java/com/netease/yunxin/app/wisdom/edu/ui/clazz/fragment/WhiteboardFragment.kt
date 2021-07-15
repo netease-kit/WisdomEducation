@@ -25,7 +25,7 @@ class WhiteboardFragment : BaseFragment(R.layout.fragment_whiteboard) {
     }
 
     override fun initViews() {
-        eduManager.getBoardService().initBoard(requireActivity(), binding.whiteboardView, config)
+        eduManager.getBoardService().initBoard(binding.whiteboardView, config)
         eduManager.getBoardService().setEnableDraw(eduManager.eduEntryRes.isHost() || eduManager.roomConfig.is1V1())
     }
 }

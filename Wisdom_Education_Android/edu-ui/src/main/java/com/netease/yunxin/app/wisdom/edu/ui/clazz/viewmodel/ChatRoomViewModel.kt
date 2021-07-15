@@ -12,7 +12,9 @@ import com.netease.nimlib.sdk.chatroom.model.ChatRoomInfo
 import com.netease.nimlib.sdk.chatroom.model.ChatRoomMessage
 import com.netease.nimlib.sdk.chatroom.model.EnterChatRoomData
 import com.netease.nimlib.sdk.chatroom.model.EnterChatRoomResultData
+import com.netease.nimlib.sdk.msg.model.AttachmentProgress
 import com.netease.yunxin.app.wisdom.base.network.NEResult
+import com.netease.yunxin.app.wisdom.base.util.filter
 import com.netease.yunxin.app.wisdom.edu.logic.service.NEEduIMService
 
 class ChatRoomViewModel : BaseViewModel() {
@@ -31,6 +33,14 @@ class ChatRoomViewModel : BaseViewModel() {
 
     fun onReceiveMessage(): LiveData<List<ChatRoomMessage>> {
         return imService.onReceiveMessage().map { it.filter { t -> t.sessionId == roomInfo?.roomId } }
+    }
+
+    fun onMessageStatusChange(): LiveData<ChatRoomMessage> {
+        return imService.onMessageStatusChange().filter { t -> t?.sessionId == roomInfo?.roomId }
+    }
+
+    fun onAttachmentProgressChange(): LiveData<AttachmentProgress> {
+        return imService.onAttachmentProgressChange()
     }
 
     fun enterChatRoom(data: EnterChatRoomData): LiveData<NEResult<EnterChatRoomResultData>> {

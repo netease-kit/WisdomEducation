@@ -16,12 +16,16 @@ import com.netease.nimlib.sdk.chatroom.ChatRoomServiceObserver
 import com.netease.nimlib.sdk.passthrough.PassthroughService
 import com.netease.nimlib.sdk.passthrough.PassthroughServiceObserve
 import com.netease.nimlib.sdk.passthrough.model.PassthroughNotifyData
+import com.netease.nimlib.sdk.passthrough.model.PassthroughProxyData
 import com.netease.nimlib.sdk.util.NIMUtil
+import com.netease.yunxin.kit.alog.ALog
 
 /**
  * Created by hzsunyj on 4/21/21.
  */
 object IMManager {
+
+    private const val TAG = "IMManager"
 
     private var reuseIM: Boolean = false
 
@@ -56,10 +60,11 @@ object IMManager {
     /// other can auto login
     private val onlineObserver = Observer<StatusCode>
     { t ->
+        ALog.i(TAG, "online status change $t")
         when (t) {
             StatusCode.KICKOUT, StatusCode.KICK_BY_OTHER_CLIENT, StatusCode.FORBIDDEN, StatusCode.PWD_ERROR -> {
                 authLD.postValue(false)
-                errorLD.postValue(t.value + IMErrorCode.ERROR_CODE_BASE.code)
+                errorLD.postValue(IMErrorCode.mapError(t.value))
                 loginInfo = null
             }
             StatusCode.LOGINED -> {
@@ -82,9 +87,12 @@ object IMManager {
                 NIMClient.initSDK()
             }
         }
+        if (NIMUtil.isMainProcess(context)) {
+            initService()
+        }
     }
 
-    private fun getService() {
+    private fun initService() {
         authService = NIMClient.getService(AuthService::class.java)
         authServiceObserver = NIMClient.getService(AuthServiceObserver::class.java)
         passthroughService = NIMClient.getService(PassthroughService::class.java)
@@ -94,7 +102,6 @@ object IMManager {
     }
 
     fun login(loginInfo: LoginInfo) {
-        getService()
         this.loginInfo = loginInfo
         if (!reuseIM) {
             authService.login(loginInfo).setCallback(object : RequestCallback<LoginInfo> {
@@ -103,10 +110,12 @@ object IMManager {
                 }
 
                 override fun onFailed(code: Int) {
+                    ALog.i(TAG, "login failed $code")
                     authLD.postValue(false)
                 }
 
                 override fun onException(exception: Throwable?) {
+                    ALog.i(TAG, "login exception ${exception?.message}")
                     authLD.postValue(false)
                 }
             })
@@ -115,9 +124,20 @@ object IMManager {
         passthroughServiceObserve.observePassthroughNotify(passthrougthObserver, true)
     }
 
+    /**
+     * may be check login states
+     */
+    fun httpProxy(data: PassthroughProxyData): InvocationFuture<PassthroughProxyData> {
+        return passthroughService.httpProxy(data)
+    }
+
     fun logout() {
-        authServiceObserver.observeOnlineStatus(onlineObserver, false)
-        passthroughServiceObserve.observePassthroughNotify(passthrougthObserver, false)
+        if (this::authServiceObserver.isInitialized) {
+            authServiceObserver.observeOnlineStatus(onlineObserver, false)
+        }
+        if (this::passthroughServiceObserve.isInitialized) {
+            passthroughServiceObserve.observePassthroughNotify(passthrougthObserver, false)
+        }
         if (!reuseIM) {
             /// ignore return value
             authService.logout()

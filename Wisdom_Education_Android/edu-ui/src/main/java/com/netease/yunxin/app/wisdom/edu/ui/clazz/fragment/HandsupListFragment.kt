@@ -5,11 +5,11 @@
 
 package com.netease.yunxin.app.wisdom.edu.ui.clazz.fragment
 
+import CommonUtil.setOnClickThrottleFirst
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduMember
 import com.netease.yunxin.app.wisdom.edu.ui.R
-import com.netease.yunxin.app.wisdom.edu.ui.base.BaseClassActivity
 import com.netease.yunxin.app.wisdom.edu.ui.base.BaseFragment
 import com.netease.yunxin.app.wisdom.edu.ui.clazz.BigClassBaseActivity
 import com.netease.yunxin.app.wisdom.edu.ui.clazz.adapter.BaseAdapter
@@ -39,7 +39,7 @@ class HandsUpListFragment : BaseFragment(R.layout.fragment_hands_up_list),
         binding.apply {
             rcvHandsupList.layoutManager = layoutManager
             rcvHandsupList.adapter = adapter
-            ivHandsupHide.setOnClickListener {
+            ivHandsupHide.setOnClickThrottleFirst {
                 hideFragment()
             }
             titleHandsup.text = getString(R.string.raise_hand_to_apply_count, getHandsUpList().size)

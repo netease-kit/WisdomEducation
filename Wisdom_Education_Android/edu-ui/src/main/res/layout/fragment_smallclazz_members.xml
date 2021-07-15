@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (c) 2021 NetEase, Inc.  All rights reserved.
   ~ Use of this source code is governed by a MIT license that can be found in the LICENSE file.
   -->
@@ -70,31 +69,44 @@
         android:textSize="@dimen/common_dp_16"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        tools:visibility="visible" />
 
-    <androidx.appcompat.widget.AppCompatCheckBox
-        android:id="@+id/cb_mute_chat_all"
-        android:layout_width="@dimen/common_dp_16"
-        android:layout_height="@dimen/common_dp_16"
-        android:layout_marginStart="@dimen/common_dp_250"
-        android:layout_marginBottom="@dimen/common_dp_21"
-        android:button="@drawable/bg_member_checkbox"
+    <ImageView
+        android:id="@+id/iv_hint_mute_audio_all"
+        android:layout_width="@dimen/common_dp_11"
+        android:layout_height="@dimen/common_dp_11"
+        android:layout_marginStart="@dimen/common_dp_4"
+        android:gravity="center"
+        android:scaleType="centerInside"
+        android:src="@drawable/hint_mute_audio_all"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintBottom_toBottomOf="@id/mute_audio_all"
+        app:layout_constraintStart_toEndOf="@id/mute_audio_all"
+        app:layout_constraintTop_toTopOf="@id/mute_audio_all" />
+
+    <com.netease.yunxin.app.wisdom.edu.ui.clazz.widget.HintsView
+        android:id="@+id/hints_mute_all_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/tv_mute_chat_all"
+        android:id="@+id/mute_chat_all"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/common_dp_18"
-        android:layout_marginStart="@dimen/common_dp_274"
+        android:layout_marginStart="@dimen/common_dp_16"
         android:layout_marginBottom="@dimen/common_dp_21"
+        android:drawableLeft="@drawable/bg_member_checkbox"
+        android:drawablePadding="@dimen/common_dp_8"
         android:gravity="start|center_vertical"
+        android:includeFontPadding="false"
         android:text="@string/mute_chat_all"
         android:textColor="@color/white"
         android:textSize="@dimen/common_dp_16"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toEndOf="@id/iv_hint_mute_audio_all"
+        tools:visibility="visible" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

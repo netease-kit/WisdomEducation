@@ -10,4 +10,5 @@
     <string name="teacher_over_limit">teacher role over limit</string>
     <string name="student_over_limit">student role over limit</string>
     <string name="app_tips">* This product is only used to demonstrate the function of the product, the longest class is 30 minutes, not commercial</string>
+    <string name="clazz_name">%s classroom</string>
 </resources>

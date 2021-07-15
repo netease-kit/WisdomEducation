@@ -38,6 +38,10 @@ class BottomView(context: Context, attrs: AttributeSet?, defStyleAttr: Int = 0) 
         return binding.itemHandupApply
     }
 
+    fun getHandsUpOffstage(): ItemBottomView {
+        return binding.itemHandupOffstage
+    }
+
     fun getShareScreen(): ItemBottomView {
         return binding.itemShare
     }

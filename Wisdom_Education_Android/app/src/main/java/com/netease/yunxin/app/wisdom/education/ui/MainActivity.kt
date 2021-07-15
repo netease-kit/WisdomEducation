@@ -39,6 +39,7 @@ class MainActivity : AppCompatActivity() {
     private fun requestPermissions() {
         PermissionX.init(this)
             .permissions(
+                Manifest.permission.READ_EXTERNAL_STORAGE,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 Manifest.permission.CAMERA,
                 Manifest.permission.RECORD_AUDIO
