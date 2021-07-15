@@ -95,6 +95,7 @@
     <dimen name="common_dp_20">20dp</dimen>
     <dimen name="common_dp_21">21dp</dimen>
     <dimen name="common_dp_22">22dp</dimen>
+    <dimen name="common_dp_22_5">22.5dp</dimen>
     <dimen name="common_dp_23">23dp</dimen>
     <dimen name="common_dp_24">24dp</dimen>
     <dimen name="common_dp_25">25dp</dimen>
@@ -435,6 +436,7 @@
     <dimen name="common_dp_360">360dp</dimen>
     <dimen name="common_dp_365">365dp</dimen>
     <dimen name="common_dp_370">370dp</dimen>
+    <dimen name="common_dp_391">391dp</dimen>
     <dimen name="common_dp_400">400dp</dimen>
     <dimen name="common_dp_410">410dp</dimen>
     <dimen name="common_dp_422">422dp</dimen>

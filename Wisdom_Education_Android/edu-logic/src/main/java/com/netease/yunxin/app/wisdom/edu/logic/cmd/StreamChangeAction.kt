@@ -12,8 +12,8 @@ import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduStreams
  * Created by hzsunyj on 2021/5/27.
  */
 class StreamChangeAction(
-    appId: String,
+    appKey: String,
     roomUuid: String,
     var streams: NEEduStreams,
     val member: NEEduMember,
-) : CMDAction(appId, roomUuid)
+) : CMDAction(appKey, roomUuid)

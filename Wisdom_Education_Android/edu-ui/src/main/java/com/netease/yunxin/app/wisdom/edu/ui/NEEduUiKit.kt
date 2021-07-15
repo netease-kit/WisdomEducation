@@ -11,6 +11,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Observer
 import com.netease.yunxin.app.wisdom.base.network.NEResult
+import com.netease.yunxin.app.wisdom.base.util.observeForeverOnce
 import com.netease.yunxin.app.wisdom.edu.logic.NEEduManager
 import com.netease.yunxin.app.wisdom.edu.logic.net.service.response.NEEduEntryRes
 import com.netease.yunxin.app.wisdom.edu.logic.net.service.response.NEEduLoginRes
@@ -31,18 +32,14 @@ interface NEEduUiKit {
             val liveData: MediatorLiveData<NEResult<NEEduUiKit>> = MediatorLiveData()
             val eduUiKit = NEEduUiKitImpl()
             eduUiKit.init().also {
-                it.observeForever(object : Observer<NEResult<NEEduManager>> {
-                    override fun onChanged(t: NEResult<NEEduManager>) {
-                        it.removeObserver(this)
-                        if (t.success()) {
-                            instance = eduUiKit
-                            liveData.postValue(NEResult(t.code, eduUiKit))
-                        } else {
-                            liveData.postValue(NEResult(t.code))
-                        }
+                it.observeForeverOnce { t ->
+                    if (t.success()) {
+                        instance = eduUiKit
+                        liveData.postValue(NEResult(t.code, eduUiKit))
+                    } else {
+                        liveData.postValue(NEResult(t.code))
                     }
-
-                })
+                }
             }
             return liveData
         }

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2021 NetEase, Inc.  All rights reserved.
+  ~ Use of this source code is governed by a MIT license that can be found in the LICENSE file.
+  -->
+<rotate xmlns:android="http://schemas.android.com/apk/res/android"
+    android:fromDegrees="270"
+    android:toDegrees="270">
+    <shape
+        android:innerRadiusRatio="2.615"
+        android:shape="ring"
+        android:thickness="4dp"
+        android:useLevel="true"><!-- this line fixes the issue for lollipop api 21 -->
+
+        <gradient
+            android:angle="0"
+            android:endColor="@color/white"
+            android:startColor="@color/white"
+            android:type="sweep"
+            android:useLevel="false" />
+    </shape>
+</rotate>

@@ -65,4 +65,8 @@ class RtcVideoAudioView(context: Context, attrs: AttributeSet?, defStyleAttr: In
     fun enableVideo(enable: Boolean) {
         binding.icVideo.isSelected = enable
     }
+
+    fun enableWhiteboard(enable: Boolean) {
+        binding.icWhiteboard.visibility = if (enable) View.VISIBLE else View.GONE
+    }
 }

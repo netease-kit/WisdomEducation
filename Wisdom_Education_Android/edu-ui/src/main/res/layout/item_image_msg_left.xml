@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) 2021 NetEase, Inc.  All rights reserved.
+  ~ Use of this source code is governed by a MIT license that can be found in the LICENSE file.
+  -->
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingTop="@dimen/common_dp_12"
+    android:paddingBottom="@dimen/common_dp_8">
+
+    <TextView
+        android:id="@+id/tv_name"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/common_dp_17"
+        android:layout_marginStart="@dimen/common_dp_46"
+        android:layout_marginEnd="@dimen/common_dp_46"
+        android:textColor="@color/color_7e8a99"
+        android:textSize="@dimen/ts_12_dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="朱迪斯(学生)" />
+
+    <com.netease.yunxin.app.wisdom.edu.ui.clazz.widget.MsgThumbImageView
+        android:id="@+id/iv_message_item_thumb_thumbnail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/common_dp_6"
+        android:layout_marginStart="@dimen/common_dp_46"
+        android:layout_marginEnd="@dimen/common_dp_46"
+        android:gravity="center"
+        android:padding="0dip"
+        android:scaleType="centerCrop"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_name"
+        tools:src="@drawable/ic_image_default" />
+
+    <ImageView
+        android:id="@+id/iv_message_item_alert"
+        android:layout_width="@dimen/common_dp_20"
+        android:layout_height="@dimen/common_dp_20"
+        android:layout_marginLeft="@dimen/common_dp_16"
+        android:layout_marginRight="@dimen/common_dp_16"
+        android:src="@drawable/ic_message_failed"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/iv_message_item_thumb_thumbnail"
+        app:layout_constraintStart_toEndOf="@id/iv_message_item_thumb_thumbnail"
+        app:layout_constraintTop_toTopOf="@id/iv_message_item_thumb_thumbnail" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

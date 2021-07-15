@@ -43,7 +43,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/common_dp_4"
-        android:layout_marginEnd="@dimen/common_dp_36"
+        android:layout_marginEnd="@dimen/common_dp_54"
         android:ellipsize="end"
         android:maxLines="1"
         android:textColor="@color/white"
@@ -53,6 +53,19 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/bottom_view_mask"
         tools:text="十九大较大肯德基爱哭的骄傲打卡机打卡机大看电视剧" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/ic_whiteboard"
+        android:layout_width="@dimen/common_dp_13"
+        android:layout_height="@dimen/common_dp_13"
+        android:layout_marginEnd="@dimen/common_dp_5"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_small_whiteboard"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/bottom_view_mask"
+        app:layout_constraintEnd_toStartOf="@id/ic_audio"
+        app:layout_constraintTop_toTopOf="@id/bottom_view_mask"
+        tools:visibility="visible" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/ic_audio"

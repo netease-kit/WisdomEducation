@@ -48,6 +48,8 @@ dependencies {
     api project(':whiteboard')
     api project(':im')
 
+    implementation deps.glide
+    annotationProcessor deps.glide_compiler
     implementation deps.lifecycle_common
     implementation deps.ktx_fragment
     implementation deps.ktx_coroutines

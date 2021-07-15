@@ -5,6 +5,7 @@
 
 package com.netease.yunxin.app.wisdom.edu.ui.base
 
+import com.netease.yunxin.app.wisdom.base.util.CommonUtil.setOnClickThrottleFirst
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -19,14 +20,15 @@ import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
 import androidx.lifecycle.map
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.netease.lava.api.model.RTCVideoProfile
 import com.netease.lava.nertc.sdk.video.NERtcScreenConfig
+import com.netease.nimlib.sdk.chatroom.model.ChatRoomMessage
 import com.netease.yunxin.app.wisdom.base.network.NEResult
 import com.netease.yunxin.app.wisdom.base.util.ToastUtil
+import com.netease.yunxin.app.wisdom.base.util.observeForeverOnce
 import com.netease.yunxin.app.wisdom.edu.logic.NEEduErrorCode
 import com.netease.yunxin.app.wisdom.edu.logic.NEEduManager
 import com.netease.yunxin.app.wisdom.edu.logic.model.*
@@ -39,14 +41,18 @@ import com.netease.yunxin.app.wisdom.edu.ui.clazz.adapter.MemberVideoListAdapter
 import com.netease.yunxin.app.wisdom.edu.ui.clazz.dialog.ActionSheetDialog
 import com.netease.yunxin.app.wisdom.edu.ui.clazz.dialog.ConfirmDialog
 import com.netease.yunxin.app.wisdom.edu.ui.clazz.fragment.WhiteboardFragment
+import com.netease.yunxin.app.wisdom.edu.ui.clazz.fragment.ZoomImageFragment
 import com.netease.yunxin.app.wisdom.edu.ui.clazz.viewmodel.ChatRoomViewModel
 import com.netease.yunxin.app.wisdom.edu.ui.clazz.widget.RtcVideoAudioView
 import com.netease.yunxin.app.wisdom.edu.ui.clazz.widget.TitleView
+import com.netease.yunxin.app.wisdom.edu.ui.databinding.ActivityClazzBinding
+import com.netease.yunxin.app.wisdom.edu.ui.viewbinding.viewBinding
 import com.netease.yunxin.kit.alog.ALog
 
-abstract class BaseClassActivity(layoutId: Int) : AppCompatActivity(layoutId), BaseView,
+abstract class BaseClassActivity(layoutId: Int = R.layout.activity_clazz) : AppCompatActivity(layoutId), BaseView,
     BaseAdapter.OnItemChildClickListener<NEEduMember> {
     private val tag: String = "BaseClassActivity"
+    protected val binding: ActivityClazzBinding by viewBinding(R.id.one_container)
 
     companion object {
         private const val CAPTURE_PERMISSION_REQUEST_CODE = 0x1123
@@ -66,7 +72,7 @@ abstract class BaseClassActivity(layoutId: Int) : AppCompatActivity(layoutId), B
 
     lateinit var memberVideoAdapter: MemberVideoListAdapter
 
-    private var clazzStart: Boolean = false
+    protected var clazzStart: Boolean = false
 
     private var clazzEnd: Boolean = false
 
@@ -85,8 +91,10 @@ abstract class BaseClassActivity(layoutId: Int) : AppCompatActivity(layoutId), B
         it.let {
             if (it) {
                 val localMediaUser = eduManager.getMemberService().getLocalUser()
-                if (localMediaUser!!.hasAudio() && !entryMember.isHost()) {
-                    switchLocalAudio(false).observe(this@BaseClassActivity, {})
+                if(!entryMember.isHost()) {
+                    if (localMediaUser!!.hasAudio()) {
+                        switchLocalAudio(false).observe(this@BaseClassActivity, {})
+                    }
                     ToastUtil.showShort(getString(R.string.all_have_been_muted))
                 }
             }
@@ -141,8 +149,8 @@ abstract class BaseClassActivity(layoutId: Int) : AppCompatActivity(layoutId), B
         eduManager.getMemberService().onMemberPropertiesChange().observeForever(memberPropertiesChangeObserver)
         eduManager.getRtcService().onStreamChange().observeForever(streamChangeObserver)
         eduManager.getShareScreenService().onScreenShareChange().observeForever(screenShareChangeObserver)
-        eduManager.getBoardService().onSelfPermissionGranted().observeForever(boardPermissionObserver)
-        eduManager.getShareScreenService().onSelfPermissionGranted().observeForever(shareScreenPermissionObserver)
+        eduManager.getBoardService().onPermissionGranted().observeForever(boardPermissionObserver)
+        eduManager.getShareScreenService().onPermissionGranted().observeForever(shareScreenPermissionObserver)
     }
 
 
@@ -162,13 +170,13 @@ abstract class BaseClassActivity(layoutId: Int) : AppCompatActivity(layoutId), B
         // 底部按钮
         getVideoView().visibility = View.GONE
         getAudioView().visibility = View.GONE
-        getVideoView().setOnClickListener {
+        getVideoView().setOnClickThrottleFirst {
             switchLocalVideo().observe(this@BaseClassActivity, { toastOperateSuccess() })
         }
-        getAudioView().setOnClickListener {
+        getAudioView().setOnClickThrottleFirst {
             switchLocalAudio().observe(this@BaseClassActivity, { toastOperateSuccess() })
         }
-        getScreenShareView().setOnClickListener {
+        getScreenShareView().setOnClickThrottleFirst {
             if (!clazzStart) {
                 ToastUtil.showShort(getString(R.string.start_class_first))
             } else switchLocalShareScreen()
@@ -244,7 +252,8 @@ abstract class BaseClassActivity(layoutId: Int) : AppCompatActivity(layoutId), B
         getClazzTitleView().setClazzState(getString(R.string.class_did_not_start))
         getChangeClazzStateView()?.apply {
             text = getString(R.string.classes_begin)
-            setOnClickListener {
+            isSelected = true
+            setOnClickThrottleFirst {
                 startClazz()
             }
         }
@@ -294,7 +303,8 @@ abstract class BaseClassActivity(layoutId: Int) : AppCompatActivity(layoutId), B
                     if (!clazzStart) {
                         getChangeClazzStateView()?.apply {
                             text = getString(R.string.end_class)
-                            setOnClickListener {
+                            isSelected = false
+                            setOnClickThrottleFirst {
                                 finishClazz()
                             }
                         }
@@ -308,10 +318,10 @@ abstract class BaseClassActivity(layoutId: Int) : AppCompatActivity(layoutId), B
                 NEEduRoomStep.END.ordinal -> {
                     eduManager.getRtcService().leave()
                     getClazzTitleView().apply { setFinishClazzState(getClazzDuration()) }
-                    getClassFinishReplay().setOnClickListener {
+                    getClassFinishReplay().setOnClickThrottleFirst {
                         TODO("Not yet implemented")
                     }
-                    getClassFinishBackView().setOnClickListener {
+                    getClassFinishBackView().setOnClickThrottleFirst {
                         onBackClicked()
                     }
                     getClazzFinishLayout().visibility = View.VISIBLE
@@ -323,7 +333,8 @@ abstract class BaseClassActivity(layoutId: Int) : AppCompatActivity(layoutId), B
                     getClazzTitleView().setClazzState(getString(R.string.class_did_not_start))
                     getChangeClazzStateView()?.apply {
                         text = getString(R.string.classes_begin)
-                        setOnClickListener {
+                        isSelected = true
+                        setOnClickThrottleFirst {
                             startClazz()
                         }
                     }
@@ -346,6 +357,8 @@ abstract class BaseClassActivity(layoutId: Int) : AppCompatActivity(layoutId), B
     }
 
     private fun onMemberPropertiesChange(member: NEEduMember, properties: NEEduMemberProperties) {
+        // 刷新视频列表白板 屏幕共享状态
+        memberVideoAdapter.refreshDataAndNotify(member, false)
         if (!isSelf(member) || member.isHost()) return
         properties.streamAV?.also {
             var videoEnabled: Boolean? = null
@@ -360,44 +373,26 @@ abstract class BaseClassActivity(layoutId: Int) : AppCompatActivity(layoutId), B
                 return
             }
             if (videoEnabled != null && audioEnabled != null) {
-                updateLocalUserVideoAudio(videoEnabled!!, audioEnabled!!).also { t ->
-                    t.observeForever(object : Observer<Pair<NEResult<Void>, NEResult<Void>>> {
-                        override fun onChanged(result: Pair<NEResult<Void>, NEResult<Void>>) {
-                            t.removeObserver(this)
-                        }
-                    })
-                }
+                updateLocalUserVideoAudio(videoEnabled!!, audioEnabled!!).observeForeverOnce { }
             } else if (videoEnabled != null) {
                 ToastUtil.showShort(getString(if (videoEnabled!!) R.string.teacher_turns_on_your_camera else R.string.teacher_turns_off_your_camera))
-                switchLocalVideo(videoEnabled!!).also { t ->
-                    t.observeForever(object : Observer<NEResult<Void>> {
-                        override fun onChanged(result: NEResult<Void>) {
-                            t.removeObserver(this)
-                        }
-                    })
-                }
+                switchLocalVideo(videoEnabled!!).observeForeverOnce { }
             } else if (audioEnabled != null) {
                 ToastUtil.showShort(getString(if (audioEnabled!!) R.string.teacher_turns_on_your_microphone else R.string.teacher_turns_off_your_microphone))
-                switchLocalAudio(audioEnabled!!).also { t ->
-                    t.observeForever(object : Observer<NEResult<Void>> {
-                        override fun onChanged(result: NEResult<Void>) {
-                            t.removeObserver(this)
-                        }
-                    })
-                }
+                switchLocalAudio(audioEnabled!!).observeForeverOnce { }
             }
         }
     }
 
     private fun onBoardPermissionGranted(member: NEEduMember) {
-        if (!isSelf(member) || member.isHost()) return
+        if (member.isHost() || !isSelf(member)) return
         val grantStr = getGrantStr(member.isGrantedWhiteboard())
         ToastUtil.showLong(getString(R.string.whiteboard_permission, grantStr))
         eduManager.getBoardService().setEnableDraw(member.isGrantedWhiteboard())
     }
 
     private fun onScreenSharePermissionGranted(member: NEEduMember) {
-        if (!isSelf(member) || member.isHost()) return
+        if (member.isHost() || !isSelf(member)) return
         val grantStr = getGrantStr(member.isGrantedScreenShare())
         ToastUtil.showLong(getString(R.string.screen_share_permission, grantStr))
         getScreenShareView().visibility = if (member.isGrantedScreenShare()) View.VISIBLE else View.GONE
@@ -408,6 +403,7 @@ abstract class BaseClassActivity(layoutId: Int) : AppCompatActivity(layoutId), B
                     stopLocalShareScreen()
                 }
             }
+            getScreenShareCoverView().visibility = View.GONE
         }
     }
 
@@ -441,8 +437,12 @@ abstract class BaseClassActivity(layoutId: Int) : AppCompatActivity(layoutId), B
         supportFragmentManager.beginTransaction().add(id, baseFragment).commitNowAllowingStateLoss()
     }
 
+    open fun removeFragment(baseFragment: BaseFragment) {
+        supportFragmentManager.beginTransaction().remove(baseFragment).commitAllowingStateLoss()
+    }
+
     open fun handleBackBtn(view: View) {
-        view.setOnClickListener {
+        view.setOnClickThrottleFirst {
             // may be show quit dialog
             onBackClicked()
         }
@@ -476,21 +476,18 @@ abstract class BaseClassActivity(layoutId: Int) : AppCompatActivity(layoutId), B
             })
     }
 
-    open fun stopLocalShareScreen() {
-        stopLocalShareScreen {}
-    }
-
-    private fun stopLocalShareScreen(callback: () -> Unit) {
+    open fun stopLocalShareScreen(callback: (() -> Unit)? = null) {
         eduManager.getShareScreenService().finishShareScreen(eduRoom.roomUuid, entryMember.userUuid).observe(this,
             { t ->
                 if (t.success()) {
                     eduManager.getShareScreenService().stopScreenCapture()
                     eduManager.getMemberService().getLocalUser()?.updateSubVideo(null)
                     getScreenShareView().isSelected = true
+                    getScreenShareCoverView().visibility = View.GONE
                 } else {
                     ALog.w("fail to stop ScreenCapture")
                 }
-                callback()
+                callback?.let { it() }
             })
     }
 
@@ -511,6 +508,10 @@ abstract class BaseClassActivity(layoutId: Int) : AppCompatActivity(layoutId), B
                     it.observe(this, {})
                 }
             } else {
+                if (!entryMember.isHost() && eduManager.getMemberService().getLocalUser()?.isGrantedScreenShare() != true) {
+                    ToastUtil.showShort(getString(R.string.share_screen_fail))
+                    return
+                }
                 val config = NERtcScreenConfig().apply {
                     contentPrefer = NERtcScreenConfig.NERtcSubStreamContentPrefer.CONTENT_PREFER_DETAILS
                     videoProfile = RTCVideoProfile.kVideoProfileHD1080p
@@ -524,6 +525,7 @@ abstract class BaseClassActivity(layoutId: Int) : AppCompatActivity(layoutId), B
                 })
                 eduManager.getMemberService().getLocalUser()?.updateSubVideo(NEEduStreamSubVideo())
                 getScreenShareView().isSelected = false
+                getScreenShareCoverView().visibility = View.VISIBLE
             }
         }
     }
@@ -769,7 +771,7 @@ abstract class BaseClassActivity(layoutId: Int) : AppCompatActivity(layoutId), B
                     }
                 }
             })
-        btnTempLeaveClazz?.setOnClickListener {
+        btnTempLeaveClazz?.setOnClickThrottleFirst {
             //tempLeaveClazz()
         }
     }
@@ -866,8 +868,8 @@ abstract class BaseClassActivity(layoutId: Int) : AppCompatActivity(layoutId), B
         eduManager.getMemberService().onMemberPropertiesChange().removeObserver(memberPropertiesChangeObserver)
         eduManager.getRtcService().onStreamChange().removeObserver(streamChangeObserver)
         eduManager.getShareScreenService().onScreenShareChange().removeObserver(screenShareChangeObserver)
-        eduManager.getBoardService().onSelfPermissionGranted().removeObserver(boardPermissionObserver)
-        eduManager.getShareScreenService().onSelfPermissionGranted().removeObserver(shareScreenPermissionObserver)
+        eduManager.getBoardService().onPermissionGranted().removeObserver(boardPermissionObserver)
+        eduManager.getShareScreenService().onPermissionGranted().removeObserver(shareScreenPermissionObserver)
     }
 
     fun destroy() {
@@ -883,6 +885,35 @@ abstract class BaseClassActivity(layoutId: Int) : AppCompatActivity(layoutId), B
                 NEEduUiKit.destroy()
                 finish()
             }
+        }
+    }
+
+    override fun getScreenShareCoverView(): View {
+        return binding.tvShareVideo
+    }
+
+    override fun getAvHandsUpOffstageView(): View {
+        return binding.bottomView.getHandsUpOffstage()
+    }
+
+    override fun getZoomImageLayout(): View {
+        return binding.layoutZoomImage
+    }
+
+    private var zoomImageFragment: BaseFragment? = null
+
+    fun showZoomImageFragment(message: ChatRoomMessage) {
+        getZoomImageLayout().visibility = View.VISIBLE
+        zoomImageFragment = ZoomImageFragment().also {
+            it.arguments = Bundle().apply { putSerializable(ZoomImageFragment.INTENT_EXTRA_IMAGE, message) }
+            addFragment(R.id.layout_zoom_image, it)
+        }
+    }
+
+    fun hideZoomImageFragment() {
+        getZoomImageLayout().visibility = View.GONE
+        zoomImageFragment?.let {
+            removeFragment(it)
         }
     }
 }

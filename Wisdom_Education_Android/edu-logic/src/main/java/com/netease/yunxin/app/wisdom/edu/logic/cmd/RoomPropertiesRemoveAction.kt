@@ -12,8 +12,8 @@ import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduRoomProperties
  * Created by hzsunyj on 2021/5/17.
  */
 class RoomPropertiesRemoveAction(
-    appId: String,
+    appKey: String,
     roomUuid: String,
     val key: String,
     val operatorMember: NEEduMember,
-) : CMDAction(appId, roomUuid)
+) : CMDAction(appKey, roomUuid)

@@ -61,7 +61,7 @@ abstract class NEEduMemberService : INEEduService() {
     ): NEEduMember?
 
     /**
-     * 获取当前用户的最新数据
+     * 获取当前用户
      *
      * @return
      */

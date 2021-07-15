@@ -14,7 +14,7 @@ import java.lang.reflect.Type
 open class BaseRepository {
 
     companion object {
-        lateinit var appId: String
+        lateinit var appKey: String
         lateinit var baseUrl: String
         val passthrough: Boolean = true
     }

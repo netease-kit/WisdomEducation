@@ -9,8 +9,8 @@ import androidx.lifecycle.LiveData
 import com.netease.nimlib.sdk.chatroom.model.ChatRoomMessage
 import com.netease.nimlib.sdk.chatroom.model.EnterChatRoomData
 import com.netease.nimlib.sdk.chatroom.model.EnterChatRoomResultData
+import com.netease.nimlib.sdk.msg.model.AttachmentProgress
 import com.netease.yunxin.app.wisdom.base.network.NEResult
-import com.netease.yunxin.app.wisdom.edu.logic.impl.NEEduManagerImpl
 
 /**
  * 提供可供 App 调用的聊天消息，透传相关方法
@@ -32,6 +32,16 @@ abstract class NEEduIMService : INEEduService() {
     abstract fun onReceiveMessage(): LiveData<List<ChatRoomMessage>>
 
     /**
+     * 图片消息状态变化通知
+     */
+    abstract fun onMessageStatusChange(): LiveData<ChatRoomMessage>
+
+    /**
+     * 消息附件上传/下载进度通知
+     */
+    abstract fun onAttachmentProgressChange(): LiveData<AttachmentProgress>
+
+    /**
      * 全体聊天禁言
      *
      * @param mute 是否禁言全体聊天
@@ -39,7 +49,7 @@ abstract class NEEduIMService : INEEduService() {
     internal abstract fun updateMuteAllChat(mute: Boolean)
 
     /**
-     * 聊天禁言状态发生变化
+     * 聊天禁言状态发生变化通知
      */
     abstract fun onMuteAllChat(): LiveData<Boolean>
 

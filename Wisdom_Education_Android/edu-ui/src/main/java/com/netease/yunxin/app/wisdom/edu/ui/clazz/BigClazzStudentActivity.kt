@@ -5,6 +5,7 @@
 
 package com.netease.yunxin.app.wisdom.edu.ui.clazz
 
+import com.netease.yunxin.app.wisdom.base.util.CommonUtil.setOnClickThrottleFirst
 import android.content.Context
 import android.content.Intent
 import android.view.View
@@ -29,14 +30,10 @@ class BigClazzStudentActivity : BigClassBaseActivity(R.layout.activity_clazz) {
     }
 
     override fun getChangeClazzStateView(): TextView? {
-        return null
-    }
-
-    override fun getLeaveClazzView(): TextView? {
         return binding.bottomView.getBtnClazzCtrlRight()
     }
 
-    private fun getOffStageView(): TextView {
+    override fun getLeaveClazzView(): TextView? {
         return binding.bottomView.getBtnClazzCtrlLeft()
     }
 
@@ -46,11 +43,10 @@ class BigClazzStudentActivity : BigClassBaseActivity(R.layout.activity_clazz) {
         binding.bottomView.apply {
             getHandsUpApply().visibility = View.GONE
             getAvHandsUpView().visibility = View.GONE
-            getAvHandsUpView().setOnClickListener {
+            getAvHandsUpView().setOnClickThrottleFirst {
                 switchStuLocalHandsUp()
             }
             getLeaveClazzView()?.visibility = View.GONE
-            getOffStageView().visibility = View.GONE
             getShareScreen().visibility = View.GONE
         }
 
@@ -99,12 +95,22 @@ class BigClazzStudentActivity : BigClassBaseActivity(R.layout.activity_clazz) {
     }
 
     private fun onHandsUpStateChange(members: List<NEEduMember>?) {
+        if (!clazzStart) return
         if (members == null) return
-        var self = members.firstOrNull { isSelf(it) }
-        if (self == null) {
-            resetHandsUpState()
-        } else {
-            handleSelf(self)
+        members.firstOrNull { isSelf(it) }?.let {
+            handleSelf(it)
+        }
+        // 清空状态
+        members.forEach { member ->
+            member.properties?.avHandsUp?.let {
+                if (!member.isOnStage()) {
+                    eduManager.getMemberService().getMemberList().firstOrNull { it == member }?.apply {
+                        properties?.whiteboard = null
+                        properties?.screenShare = null
+                        streams?.reset()
+                    }
+                }
+            }
         }
     }
 
@@ -117,17 +123,16 @@ class BigClazzStudentActivity : BigClassBaseActivity(R.layout.activity_clazz) {
                     videoEnabled = true,
                     audioEnabled = true
                 ).observe(this, {})
-                getOffStageView().apply {
-                    text = getString(R.string.off_stage)
-                    setOnClickListener {
+                getAvHandsUpOffstageView().apply {
+                    visibility = View.VISIBLE
+                    setOnClickThrottleFirst {
                         showOffStageDialog()
                     }
                 }
                 //                            getLeaveClazzView()?.visibility = View.VISIBLE // TODO 离开课堂功能
                 //                            getLeaveClazzView()?.setOnClickListener {
                 //                                onBackPressed()
-                //                            }
-                getOffStageView().visibility = View.VISIBLE
+                //
                 getLeaveClazzView()?.text = getString(R.string.leave_class)
 
                 getAudioView().visibility = View.VISIBLE
@@ -137,7 +142,7 @@ class BigClazzStudentActivity : BigClassBaseActivity(R.layout.activity_clazz) {
                 getAvHandsUpView().visibility = View.VISIBLE
                 getAvHandsUpView().isSelected = false
                 getLeaveClazzView()?.visibility = View.GONE
-                getOffStageView().visibility = View.GONE
+                getAvHandsUpOffstageView().visibility = View.GONE
 
                 getAudioView().visibility = View.GONE
                 getVideoView().visibility = View.GONE
@@ -154,8 +159,9 @@ class BigClazzStudentActivity : BigClassBaseActivity(R.layout.activity_clazz) {
         getAvHandsUpView().visibility = View.VISIBLE
         getAvHandsUpView().isSelected = true
         getLeaveClazzView()?.visibility = View.GONE
-        getOffStageView().visibility = View.GONE
+        getAvHandsUpOffstageView().visibility = View.GONE
         getScreenShareView().visibility = View.GONE
+        getScreenShareCoverView().visibility = View.GONE
 
         // 状态清除: 流/白板/举手状态/白板/屏幕共享
         eduManager.getMemberService().getLocalUser()?.apply {
@@ -163,15 +169,8 @@ class BigClazzStudentActivity : BigClassBaseActivity(R.layout.activity_clazz) {
                 stopLocalShareScreen()
             }
 
-            if (isGrantedWhiteboard()) {
-                eduManager.getBoardService().setEnableDraw(false)
-            }
+            eduManager.getBoardService().setEnableDraw(false)
         }
-
-        updateLocalUserVideoAudio(
-            videoEnabled = false,
-            audioEnabled = false
-        ).observe(this, {})
 
         getAudioView().visibility = View.GONE
         getVideoView().visibility = View.GONE

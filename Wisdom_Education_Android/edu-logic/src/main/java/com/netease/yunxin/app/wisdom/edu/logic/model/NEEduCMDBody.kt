@@ -12,7 +12,7 @@ class NEEduCMDBody(
     val cmd: Int,
     val sequence: Long?,
     val type: String,
-    val appId: String,
+    val appKey: String,
     val roomUuid: String?,
     val version: Int,
     val data: Object,

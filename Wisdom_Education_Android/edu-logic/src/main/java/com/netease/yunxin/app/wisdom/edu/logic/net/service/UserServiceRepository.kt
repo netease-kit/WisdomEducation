@@ -21,7 +21,7 @@ object UserServiceRepository : BaseRepository() {
         eduJoinClassroomReq: JoinClassroomReq
     ): LiveData<NEResult<NEEduEntryRes>> {
         return userService.joinClassroom(
-            appId,
+            appKey,
             roomUuid,
             eduJoinClassroomReq
         )
@@ -33,21 +33,21 @@ object UserServiceRepository : BaseRepository() {
         key: String,
         req: NEEduUpdateMemberPropertyReq
     ): LiveData<NEResult<Void>> {
-        return userService.updateProperty(appId, roomId, userUuid, key, req)
+        return userService.updateProperty(appKey, roomId, userUuid, key, req)
     }
 
     fun updateInfo(
         roomId: String,
         userUuid: String
     ): LiveData<NEResult<String>> {
-        return userService.updateInfo(appId, roomId, userUuid)
+        return userService.updateInfo(appKey, roomId, userUuid)
     }
 
     fun recordPlayback(
         roomId: String,
         userUuid: String
     ): LiveData<NEResult<String>> {
-        return userService.recordPlayback(appId, roomId, userUuid)
+        return userService.recordPlayback(appKey, roomId, userUuid)
     }
 
 }

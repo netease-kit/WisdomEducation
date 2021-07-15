@@ -22,8 +22,6 @@ import com.netease.yunxin.app.wisdom.edu.ui.viewbinding.viewBinding
 
 class OneToOneTeacherActivity : BaseClassActivity(R.layout.activity_clazz) {
 
-    private val binding: ActivityClazzBinding by viewBinding(R.id.one_container)
-
     companion object {
         fun start(context: Context) {
             val intent = Intent(context, OneToOneTeacherActivity::class.java)

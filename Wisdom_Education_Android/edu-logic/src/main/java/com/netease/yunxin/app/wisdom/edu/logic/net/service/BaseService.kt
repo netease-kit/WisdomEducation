@@ -98,7 +98,7 @@ internal interface BaseService {
         val completer: MediatorLiveData<NEResult<T>> = MediatorLiveData()
         val data1 = PassthroughDataFactory().builder(method, args)
         ALog.i("passthrougth--> ${method.name} ${data1.path} ${data1.body}")
-        NEEduManagerImpl.httpProxy(data1).setCallback(object : RequestCallbackWrapper<PassthroughProxyData>() {
+        NEEduManagerImpl.imManager.httpProxy(data1).setCallback(object : RequestCallbackWrapper<PassthroughProxyData>() {
             override fun onResult(code: Int, result: PassthroughProxyData?, exception: Throwable?) {
                 if (code == ResponseCode.RES_SUCCESS.toInt()) {
                     if (result == null) {

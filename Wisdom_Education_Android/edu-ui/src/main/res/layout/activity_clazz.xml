@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (c) 2021 NetEase, Inc.  All rights reserved.
   ~ Use of this source code is governed by a MIT license that can be found in the LICENSE file.
   -->
@@ -56,16 +55,31 @@
         android:layout_height="0dp"
         android:layout_marginEnd="@dimen/common_dp_8"
         android:background="@color/color_030404"
+        android:clickable="true"
+        android:focusable="true"
         android:gravity="center"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/bottom_view"
         app:layout_constraintEnd_toStartOf="@id/rcv_member_video"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/title_layout"
-        app:layout_goneMarginEnd="@dimen/common_dp_174"
+        app:layout_goneMarginEnd="@dimen/common_dp_174" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_share_video"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/common_dp_0"
+        android:gravity="center"
+        android:text="@string/you_are_sharing_the_screen"
+        android:textColor="@color/white"
+        android:textSize="@dimen/common_dp_17"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/bottom_view"
+        app:layout_constraintTop_toBottomOf="@id/title_layout"
         android:clickable="true"
         android:focusable="true"
-        />
+        app:layout_constraintHeight_default="spread"
+        android:background="@color/color_030404"/>
 
     <RelativeLayout
         android:id="@+id/rl_class_init"
@@ -150,11 +164,11 @@
             android:layout_width="wrap_content"
             android:layout_height="@dimen/common_dp_40"
             android:layout_centerHorizontal="true"
-            android:gravity="center_vertical"
-            android:textColor="@color/white"
             android:layout_marginTop="@dimen/common_dp_2"
-            android:textSize="@dimen/ts_18_dp"
-            android:text="@string/chat_room" />
+            android:gravity="center_vertical"
+            android:text="@string/chat_room"
+            android:textColor="@color/white"
+            android:textSize="@dimen/ts_18_dp" />
 
         <View
             android:id="@+id/line_horizontal_top"
@@ -171,12 +185,22 @@
 
     </RelativeLayout>
 
+    <FrameLayout
+        android:id="@+id/layout_zoom_image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:clickable="true"
+        android:focusable="true" />
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_class_finish"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="@dimen/common_dp_40"
         android:background="@color/color_030404"
+        android:clickable="true"
+        android:focusable="true"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

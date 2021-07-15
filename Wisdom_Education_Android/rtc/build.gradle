@@ -43,6 +43,7 @@ dependencies {
     implementation deps.core_ktx
     implementation deps.appcompat
     implementation deps.material
+    implementation project(':base')
 
     testImplementation deps.junit
     androidTestImplementation deps.ext_junit

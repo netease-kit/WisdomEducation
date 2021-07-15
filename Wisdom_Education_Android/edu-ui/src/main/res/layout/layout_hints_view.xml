@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) 2021 NetEase, Inc.  All rights reserved.
+  ~ Use of this source code is governed by a MIT license that can be found in the LICENSE file.
+  -->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="bottom|left">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="@dimen/common_dp_183"
+        android:layout_height="@dimen/common_dp_92"
+        android:layout_marginStart="@dimen/common_dp_240"
+        android:layout_marginBottom="@dimen/common_dp_48"
+        android:background="@drawable/bg_hints_view">
+
+        <TextView
+            android:id="@+id/tv_hints_mute_all"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="@dimen/common_dp_16"
+            android:gravity="center_vertical|start"
+            android:text="@string/hints_mute_all"
+            android:textColor="@color/color_b4bfd0"
+            android:textSize="@dimen/ts_14_dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

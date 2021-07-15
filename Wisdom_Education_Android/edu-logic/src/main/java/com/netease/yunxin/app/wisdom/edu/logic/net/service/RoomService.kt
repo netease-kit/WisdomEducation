@@ -26,9 +26,9 @@ internal interface RoomService {
      * @param roomConfigOptionsReq
      * @return
      */
-    @PUT("/scene/apps/{appId}/v1/rooms/{roomUuid}")
+    @PUT("/scene/apps/{appKey}/v1/rooms/{roomUuid}")
     fun config(
-        @Path("appId") appId: String,
+        @Path("appKey") appKey: String,
         @Path("roomUuid") roomUuid: String,
         @Body roomConfigOptionsReq: RoomConfigOptsReq,
     ): LiveData<NEResult<NEEduRoomConfigRes>>
@@ -40,27 +40,27 @@ internal interface RoomService {
      * @param roomUuid
      * @return
      */
-    @GET("/scene/apps/{appId}/v1/rooms/{roomUuid}/config")
+    @GET("/scene/apps/{appKey}/v1/rooms/{roomUuid}/config")
     fun getConfig(
-        @Path("appId") appId: String,
+        @Path("appKey") appKey: String,
         @Path("roomUuid") roomUuid: String,
     ): LiveData<NEResult<NEEduRoomConfig>>
 
     /**
      * 查询房间快照
      */
-    @GET("/scene/apps/{appId}/v1/rooms/{roomUuid}/snapshot")
+    @GET("/scene/apps/{appKey}/v1/rooms/{roomUuid}/snapshot")
     fun fetchSnapshot(
-        @Path("appId") appId: String,
+        @Path("appKey") appKey: String,
         @Path("roomUuid") roomUuid: String,
     ): LiveData<NEResult<NEEduSnapshotRes>>
 
     /**
      * 收件箱拉取列表
      */
-    @GET("/scene/apps/{appId}/v1/rooms/{roomId}/sequence/nextId={nextId}")
+    @GET("/scene/apps/{appKey}/v1/rooms/{roomId}/sequence/nextId={nextId}")
     fun fetchNextSequences(
-        @Path("appId") appId: String,
+        @Path("appKey") appKey: String,
         @Path("roomId") roomId: String,
         @Query("nextId") nextId: Long,
     ): LiveData<NEResult<NEEduSequenceList>>
@@ -68,9 +68,9 @@ internal interface RoomService {
     /**
      * 发送自定义的点对点消息
      */
-    @POST("/scene/apps/{appId}/v1/rooms/{roomUuid}/users/{toUserUuid}/messages/peer")
+    @POST("/scene/apps/{appKey}/v1/rooms/{roomUuid}/users/{toUserUuid}/messages/peer")
     fun sendP2PMessage(
-        @Path("appId") appId: String,
+        @Path("appKey") appKey: String,
         @Path("roomUuid") roomUuid: String,
         @Path("toUserUuid") toUserUuid: String,
         @Body userMsgReq: UserMsgReq,
@@ -79,9 +79,9 @@ internal interface RoomService {
     /**
      * 房间状态
      */
-    @PUT("/scene/apps/{appId}/v1/rooms/{roomId}/states/{key}")
+    @PUT("/scene/apps/{appKey}/v1/rooms/{roomId}/states/{key}")
     fun updateRoomStates(
-        @Path("appId") appId: String,
+        @Path("appKey") appKey: String,
         @Path("roomId") roomId: String,
         @Path("key") key: String,
         @Body commonReq: CommonReq,
@@ -90,9 +90,9 @@ internal interface RoomService {
     /**
      * 删除房间状态
      */
-    @DELETE("/scene/apps/{appId}/v1/rooms/{roomId}/states/{key}")
+    @DELETE("/scene/apps/{appKey}/v1/rooms/{roomId}/states/{key}")
     fun deleteRoomStates(
-        @Path("appId") appId: String,
+        @Path("appKey") appKey: String,
         @Path("roomId") roomId: String,
         @Path("key") key: String,
     ): LiveData<NEResult<String>>
@@ -100,9 +100,9 @@ internal interface RoomService {
     /**
      * 房间属性
      */
-    @PUT("/scene/apps/{appId}/v1/rooms/{roomId}/properties/{key}")
+    @PUT("/scene/apps/{appKey}/v1/rooms/{roomId}/properties/{key}")
     fun updateRoomProperties(
-        @Path("appId") appId: String,
+        @Path("appKey") appKey: String,
         @Path("roomId") roomId: String,
         @Path("key") key: String,
         @Body commonReq: CommonReq,
@@ -111,9 +111,9 @@ internal interface RoomService {
     /**
      * 删除房间属性
      */
-    @DELETE("/scene/apps/{appId}/v1/rooms/{roomId}/properties/{key}")
+    @DELETE("/scene/apps/{appKey}/v1/rooms/{roomId}/properties/{key}")
     fun deleteRoomProperties(
-        @Path("appId") appId: String,
+        @Path("appKey") appKey: String,
         @Path("roomId") roomId: String,
         @Path("key") key: String,
     ): LiveData<NEResult<String>>

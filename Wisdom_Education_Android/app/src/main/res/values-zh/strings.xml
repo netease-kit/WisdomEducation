@@ -10,4 +10,5 @@
     <string name="teacher_over_limit">老师数量超过限制</string>
     <string name="student_over_limit">学生数量超过限制</string>
     <string name="app_tips">* 本产品仅用于演示产品功能，课堂最长30分钟，不可商用</string>
+    <string name="clazz_name">%s的课堂</string>
 </resources>

@@ -16,14 +16,14 @@ import retrofit2.http.*
 
  */
 internal interface AuthService {
-    @POST("/scene/apps/{appId}/v1/users/{userUuid}/login")
+    @POST("/scene/apps/{appKey}/v1/users/{userUuid}/login")
     fun login(
-        @Path("appId") appId: String,
+        @Path("appKey") appKey: String,
         @Path("userUuid") userUuid: String,
     ): LiveData<NEResult<NEEduLoginRes>>
 
-    @POST("/scene/apps/{appId}/v1/anonymous/login")
+    @POST("/scene/apps/{appKey}/v1/anonymous/login")
     fun anonymousLogin(
-        @Path("appId") appId: String,
+        @Path("appKey") appKey: String,
     ): LiveData<NEResult<NEEduLoginRes>>
 }

@@ -23,7 +23,7 @@
         android:id="@+id/line"
         android:layout_width="match_parent"
         android:layout_height="@dimen/common_dp_1"
-        android:layout_above="@id/iv_chat_emoji"
+        android:layout_above="@id/iv_chat_pic"
         android:background="@color/color_60_54585C" />
 
     <androidx.appcompat.widget.AppCompatImageView
@@ -45,9 +45,10 @@
         android:layout_height="@dimen/common_dp_16"
         android:layout_above="@+id/edit_send_msg"
         android:layout_gravity="center"
-        android:layout_toRightOf="@id/iv_chat_emoji"
+        android:layout_marginTop="@dimen/common_dp_8"
+        android:layout_marginStart="@dimen/common_dp_46"
         android:src="@drawable/ic_chat_pic"
-        android:visibility="gone" />
+        android:visibility="visible" />
 
     <androidx.appcompat.widget.AppCompatEditText
         android:id="@+id/edit_send_msg"

@@ -9,11 +9,10 @@ import android.text.TextUtils
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Observer
-import com.netease.nimlib.sdk.InvocationFuture
 import com.netease.nimlib.sdk.auth.LoginInfo
-import com.netease.nimlib.sdk.passthrough.model.PassthroughProxyData
 import com.netease.yunxin.app.wisdom.base.network.NEResult
 import com.netease.yunxin.app.wisdom.base.network.RetrofitManager
+import com.netease.yunxin.app.wisdom.base.util.observeForeverOnce
 import com.netease.yunxin.app.wisdom.edu.logic.NEEduErrorCode
 import com.netease.yunxin.app.wisdom.edu.logic.NEEduManager
 import com.netease.yunxin.app.wisdom.edu.logic.cmd.CMDDispatcher
@@ -31,6 +30,7 @@ import com.netease.yunxin.app.wisdom.edu.logic.service.impl.*
 import com.netease.yunxin.app.wisdom.edu.logic.service.widget.NEEduRtcVideoViewPool
 import com.netease.yunxin.app.wisdom.im.IMManager
 import com.netease.yunxin.app.wisdom.rtc.RtcManager
+import com.netease.yunxin.kit.alog.ALog
 
 /**
  * Created by hzsunyj on 4/21/21.
@@ -88,40 +88,32 @@ internal object NEEduManagerImpl : NEEduManager {
     fun init(): LiveData<NEResult<Boolean>> {
         val initLD: MediatorLiveData<NEResult<Boolean>> = MediatorLiveData()
         AuthServiceRepository.anonymousLogin().also {
-            it.observeForever(object : Observer<NEResult<NEEduLoginRes>> {
-                override fun onChanged(t: NEResult<NEEduLoginRes>) {
-                    it.removeObserver(this)
-                    val ok = t.success() && t.data != null
-                    if (ok) {
-                        eduLoginRes = t.data!!
-                        initRtc(initLD)
-                        RetrofitManager.instance().addHeader("user", eduLoginRes.userUuid).addHeader(
-                            "token", eduLoginRes.userToken
-                        )
-                    } else {
-                        initLD.postValue(NEResult(t.code, t.requestId, t.msg, 0, false))
-                    }
-                }
 
-            })
+            it.observeForeverOnce { t ->
+                val ok = t.success() && t.data != null
+                if (ok) {
+                    eduLoginRes = t.data!!
+                    initRtc(initLD)
+                    RetrofitManager.instance().addHeader("user", eduLoginRes.userUuid)
+                        .addHeader("token", eduLoginRes.userToken)
+                } else {
+                    initLD.postValue(NEResult(t.code, t.requestId, t.msg, 0, false))
+                }
+            }
         }
         return initLD
     }
 
     private fun initRtc(initLD: MediatorLiveData<NEResult<Boolean>>) {
         rtcManager.initEngine(NEEduManager.context, eduLoginRes.rtcKey).also {
-            it.observeForever(object : Observer<Boolean> {
-                override fun onChanged(t: Boolean) {
-                    it.removeObserver(this)
-                    if (t) {
-                        initInnerOthers()
-                        initLD.postValue(NEResult(NEEduErrorCode.SUCCESS.code, true))
-                    } else {
-                        initLD.postValue(NEResult(NEEduErrorCode.RTC_INIT_ERROR.code, false))
-                    }
+            it.observeForeverOnce { t ->
+                if (t) {
+                    initInnerOthers()
+                    initLD.postValue(NEResult(NEEduErrorCode.SUCCESS.code, true))
+                } else {
+                    initLD.postValue(NEResult(NEEduErrorCode.RTC_INIT_ERROR.code, false))
                 }
-
-            })
+            }
         }
     }
 
@@ -145,17 +137,15 @@ internal object NEEduManagerImpl : NEEduManager {
     override fun enterClass(neEduClassOptions: NEEduClassOptions): LiveData<NEResult<NEEduEntryRes>> {
         val enterLD = MediatorLiveData<NEResult<NEEduEntryRes>>()
         getRoomService().config(neEduClassOptions).also {
-            it.observeForever(object : Observer<NEResult<NEEduRoomConfigRes>> {
-                override fun onChanged(t: NEResult<NEEduRoomConfigRes>) {
-                    it.removeObserver(this)
-                    if (t.success() || t.success(NEEduErrorCode.CONFLICT.code)) {
-                        roomConfig = t.data!!.config
-                        realEnterClass(enterLD, neEduClassOptions)
-                    } else {
-                        enterLD.postValue(NEResult(t.code))
-                    }
+            it.observeForeverOnce { t ->
+                if (t.success() || t.success(NEEduErrorCode.CONFLICT.code)) {
+                    roomConfig = t.data!!.config
+                    realEnterClass(enterLD, neEduClassOptions)
+                } else {
+                    destroy()
+                    enterLD.postValue(NEResult(t.code))
                 }
-            })
+            }
         }
 
         return enterLD
@@ -170,21 +160,19 @@ internal object NEEduManagerImpl : NEEduManager {
         neEduClassOptions: NEEduClassOptions,
     ) {
         getRoomService().entryClass(neEduClassOptions).also {
-            it.observeForever(object : Observer<NEResult<NEEduEntryRes>> {
-                override fun onChanged(t: NEResult<NEEduEntryRes>) {
-                    it.removeObserver(this)
-                    if (t.success()) {
-                        eduEntryRes = t.data!!
-                        joinRtc()
-                        NEEduForegroundService.start(context = NEEduManager.context, NEEduManager.eduOptions
-                            .foregroundServiceConfig ?: NEEduForegroundServiceConfig())
-                        observerAuth()
-                        enterLiveData.postValue(t)
-                    } else {
-                        enterLiveData.postValue(t)
-                    }
+            it.observeForeverOnce { t ->
+                if (t.success()) {
+                    eduEntryRes = t.data!!
+                    joinRtc()
+                    NEEduForegroundService.start(context = NEEduManager.context, NEEduManager.eduOptions
+                        .foregroundServiceConfig ?: NEEduForegroundServiceConfig())
+                    observerAuth()
+                    enterLiveData.postValue(t)
+                } else {
+                    destroy()
+                    enterLiveData.postValue(t)
                 }
-            })
+            }
         }
     }
 
@@ -197,10 +185,6 @@ internal object NEEduManagerImpl : NEEduManager {
         rtcManager.join(getEntryMember().rtcToken, eduEntryRes.room.roomUuid, getEntryMember().rtcUid)
     }
 
-    fun httpProxy(data: PassthroughProxyData): InvocationFuture<PassthroughProxyData> {
-        return imManager.passthroughService.httpProxy(data)
-    }
-
     override fun destroy() {
         imManager.authLD.removeObserver(observer)
         NEEduForegroundService.cancel(context = NEEduManager.context)
@@ -208,6 +192,8 @@ internal object NEEduManagerImpl : NEEduManager {
         rtcManager.release()
         cmdDispatcher?.destroy()
         NEEduRtcVideoViewPool.clear()
+        ALog.i(TAG, "destroy")
+        ALog.flush(true)
     }
 
     private fun initService() {

@@ -6,10 +6,16 @@
 package com.netease.yunxin.app.wisdom.edu.ui.clazz.adapter
 
 import android.content.Context
+import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.netease.nimlib.sdk.chatroom.model.ChatRoomMessage
+import com.netease.nimlib.sdk.msg.constant.MsgDirectionEnum
+import com.netease.yunxin.app.wisdom.edu.logic.options.NEEduRoleType
+import com.netease.yunxin.app.wisdom.edu.ui.R
+import com.netease.yunxin.app.wisdom.edu.ui.base.BaseClassActivity
 
 /**
  */
@@ -82,4 +88,18 @@ abstract class BaseViewHolder<T>(view: View) : RecyclerView.ViewHolder(view) {
     val isLastItem: Boolean
         get() = adapterPosition == adapter!!.itemCount - 1
 
+    fun getSenderName(message: ChatRoomMessage, activity: BaseClassActivity): String {
+        return if (message!!.direct == MsgDirectionEnum.In) {
+            if (TextUtils.isEmpty(message.fromNick)) message.chatRoomMessageExtension.senderNick else message.fromNick
+        } else {
+            activity.run {
+                var suffix =
+                    if (eduManager.getEntryMember().role == NEEduRoleType.HOST.value)
+                        getString(R.string.teacher_label)
+                    else
+                        getString(R.string.student_label)
+                "${entryMember.userName}$suffix"
+            }
+        }
+    }
 }

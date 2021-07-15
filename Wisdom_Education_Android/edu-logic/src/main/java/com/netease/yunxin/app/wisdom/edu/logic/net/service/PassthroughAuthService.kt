@@ -16,11 +16,11 @@ object PassthroughAuthService : AuthService, BaseService {
 
     private val authService = getService(AuthService::class.java)
 
-    override fun login(appId: String, userUuid: String): LiveData<NEResult<NEEduLoginRes>> {
-        return authService.login(appId, userUuid)
+    override fun login(appKey: String, userUuid: String): LiveData<NEResult<NEEduLoginRes>> {
+        return authService.login(appKey, userUuid)
     }
 
-    override fun anonymousLogin(appId: String): LiveData<NEResult<NEEduLoginRes>> {
-        return authService.anonymousLogin(appId)
+    override fun anonymousLogin(appKey: String): LiveData<NEResult<NEEduLoginRes>> {
+        return authService.anonymousLogin(appKey)
     }
 }

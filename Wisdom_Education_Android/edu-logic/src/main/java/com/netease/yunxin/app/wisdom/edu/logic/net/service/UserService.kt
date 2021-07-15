@@ -17,9 +17,9 @@ internal interface UserService {
     /**
      * 用户加入房间
      */
-    @POST("/scene/apps/{appId}/v1/rooms/{roomUuid}/entry")
+    @POST("/scene/apps/{appKey}/v1/rooms/{roomUuid}/entry")
     fun joinClassroom(
-        @Path("appId") appId: String,
+        @Path("appKey") appKey: String,
         @Path("roomUuid") roomUuid: String,
         @Body eduJoinClassroomReq: JoinClassroomReq,
     ): LiveData<NEResult<NEEduEntryRes>>
@@ -27,9 +27,9 @@ internal interface UserService {
     /**
      * 房间成员属性
      */
-    @PUT("/scene/apps/{appId}/v1/rooms/{roomId}/members/{userUuid}/properties/{key}")
+    @PUT("/scene/apps/{appKey}/v1/rooms/{roomId}/members/{userUuid}/properties/{key}")
     fun updateProperty(
-        @Path("appId") appId: String,
+        @Path("appKey") appKey: String,
         @Path("roomId") roomId: String,
         @Path("userUuid") userUuid: String,
         @Path("key") key: String,
@@ -39,9 +39,9 @@ internal interface UserService {
     /**
      * 房间成员属性和流集合操作
      */
-    @POST("/scene/apps/{appId}/v1/rooms/{roomId}/users/{userUuid}/info")
+    @POST("/scene/apps/{appKey}/v1/rooms/{roomId}/users/{userUuid}/info")
     fun updateInfo(
-        @Path("appId") appId: String,
+        @Path("appKey") appKey: String,
         @Path("roomId") roomId: String,
         @Path("userUuid") userUuid: String,
     ): LiveData<NEResult<String>>
@@ -49,9 +49,9 @@ internal interface UserService {
     /**
      * 录制回放
      */
-    @POST("/scene/apps/{appId}/v1/rooms/{roomId}/users/{userUuid}/record/playback")
+    @POST("/scene/apps/{appKey}/v1/rooms/{roomId}/users/{userUuid}/record/playback")
     fun recordPlayback(
-        @Path("appId") appId: String,
+        @Path("appKey") appKey: String,
         @Path("roomId") roomId: String,
         @Path("userUuid") userUuid: String,
     ): LiveData<NEResult<String>>

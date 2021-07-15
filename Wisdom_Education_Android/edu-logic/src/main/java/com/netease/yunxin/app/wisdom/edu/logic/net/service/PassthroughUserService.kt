@@ -20,15 +20,15 @@ object PassthroughUserService : UserService, BaseService {
     private val userService = getService(UserService::class.java)
 
     override fun joinClassroom(
-        appId: String,
+        appKey: String,
         roomUuid: String,
         eduJoinClassroomReq: JoinClassroomReq,
     ): LiveData<NEResult<NEEduEntryRes>> {
-        return userService.joinClassroom(appId, roomUuid, eduJoinClassroomReq)
+        return userService.joinClassroom(appKey, roomUuid, eduJoinClassroomReq)
     }
 
     override fun updateProperty(
-        appId: String,
+        appKey: String,
         roomId: String,
         userUuid: String,
         key: String,
@@ -36,22 +36,22 @@ object PassthroughUserService : UserService, BaseService {
     ): LiveData<NEResult<Void>> {
         val method: Method? = findMethod(BaseService.UPDATE_PROPERTY)
         return if (overPassthrough() && method != null) {
-            executeOverPassthrough(method, appId, roomId, userUuid, key, req)
+            executeOverPassthrough(method, appKey, roomId, userUuid, key, req)
         } else {
-            return userService.updateProperty(appId, roomId, userUuid, key, req)
+            return userService.updateProperty(appKey, roomId, userUuid, key, req)
         }
     }
 
-    override fun updateInfo(appId: String, roomId: String, userUuid: String): LiveData<NEResult<String>> {
+    override fun updateInfo(appKey: String, roomId: String, userUuid: String): LiveData<NEResult<String>> {
         val method: Method? = findMethod(BaseService.UPDATE_INFO)
         return if (overPassthrough() && method != null) {
-            executeOverPassthrough(method, appId, roomId, userUuid)
+            executeOverPassthrough(method, appKey, roomId, userUuid)
         } else {
-            return userService.updateInfo(appId, roomId, userUuid)
+            return userService.updateInfo(appKey, roomId, userUuid)
         }
     }
 
-    override fun recordPlayback(appId: String, roomId: String, userUuid: String): LiveData<NEResult<String>> {
-        return userService.recordPlayback(appId, roomId, userUuid)
+    override fun recordPlayback(appKey: String, roomId: String, userUuid: String): LiveData<NEResult<String>> {
+        return userService.recordPlayback(appKey, roomId, userUuid)
     }
 }

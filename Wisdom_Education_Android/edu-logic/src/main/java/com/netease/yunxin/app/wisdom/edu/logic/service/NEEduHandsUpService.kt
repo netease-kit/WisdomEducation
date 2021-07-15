@@ -26,7 +26,7 @@ abstract class NEEduHandsUpService : INEEduService() {
     abstract fun getOnStageMemberList(): MutableList<NEEduMember>
 
     /**
-     * 改变举手状态
+     * 改变成员的举手状态
      */
     abstract fun handsUpStateChange(state: Int, userUuid: String): LiveData<NEResult<Void>>
 

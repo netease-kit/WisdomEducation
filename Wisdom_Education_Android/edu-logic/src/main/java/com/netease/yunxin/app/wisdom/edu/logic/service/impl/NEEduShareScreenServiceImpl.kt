@@ -12,10 +12,7 @@ import androidx.lifecycle.MediatorLiveData
 import com.netease.lava.nertc.sdk.video.NERtcScreenConfig
 import com.netease.yunxin.app.wisdom.base.network.NEResult
 import com.netease.yunxin.app.wisdom.edu.logic.impl.NEEduManagerImpl
-import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduMember
-import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduState
-import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduStateValue
-import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduStreamType
+import com.netease.yunxin.app.wisdom.edu.logic.model.*
 import com.netease.yunxin.app.wisdom.edu.logic.net.service.StreamServiceRepository
 import com.netease.yunxin.app.wisdom.edu.logic.net.service.UserServiceRepository
 import com.netease.yunxin.app.wisdom.edu.logic.net.service.request.CommonReq
@@ -78,18 +75,13 @@ internal class NEEduShareScreenServiceImpl : NEEduShareScreenService() {
         return NEEduManagerImpl.rtcManager.stopScreenCapture()
     }
 
-    override fun updateSelfPermission(member: NEEduMember) {
-        if (NEEduManagerImpl.isSelf(member.userUuid) && !member.isHost()) {
-            member.properties?.screenShare?.let {
-                if (it.value != sharePermission) {
-                    sharePermission = it.value
-                    permissionLD.postValue(member)
-                }
-            }
+    override fun updatePermission(member: NEEduMember, propertiesDiff: NEEduMemberProperties) {
+        propertiesDiff.screenShare?.let {
+            permissionLD.postValue(member)
         }
     }
 
-    override fun onSelfPermissionGranted(): LiveData<NEEduMember> {
+    override fun onPermissionGranted(): LiveData<NEEduMember> {
         return permissionLD
     }
 

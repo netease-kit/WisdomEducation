@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (c) 2021 NetEase, Inc.  All rights reserved.
   ~ Use of this source code is governed by a MIT license that can be found in the LICENSE file.
   -->
@@ -11,18 +10,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.main.MainFragment">
-
-    <ImageView
-        android:id="@+id/tv_back"
-        android:layout_width="@dimen/common_dp_44"
-        android:layout_height="@dimen/common_dp_44"
-        android:layout_marginStart="@dimen/common_dp_4"
-        android:layout_marginTop="@dimen/common_dp_44"
-        android:gravity="center_vertical"
-        android:scaleType="centerInside"
-        android:src="@drawable/ic_back"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tv_title"
@@ -67,22 +54,6 @@
         app:layout_constraintTop_toBottomOf="@id/tv_desc" />
 
     <androidx.appcompat.widget.AppCompatEditText
-        android:id="@+id/et_class_name"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/common_dp_46"
-        android:layout_marginStart="@dimen/common_dp_35"
-        android:layout_marginTop="@dimen/common_dp_12"
-        android:layout_marginEnd="@dimen/common_dp_35"
-        android:background="@drawable/input_underline"
-        android:hint="@string/hint_roon_name"
-        android:maxLength="20"
-        android:singleLine="true"
-        android:textColor="@color/gray_333333"
-        android:textSize="@dimen/ts_16_dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/et_room_id" />
-
-    <androidx.appcompat.widget.AppCompatEditText
         android:id="@+id/et_nick_name"
         android:layout_width="match_parent"
         android:layout_height="@dimen/common_dp_46"
@@ -96,7 +67,7 @@
         android:textColor="@color/gray_333333"
         android:textSize="@dimen/ts_16_dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/et_class_name" />
+        app:layout_constraintTop_toBottomOf="@id/et_room_id" />
 
     <androidx.appcompat.widget.AppCompatEditText
         android:id="@+id/et_scene_type"
@@ -240,6 +211,7 @@
         android:layout_marginTop="@dimen/common_dp_26"
         android:layout_marginEnd="@dimen/common_dp_35"
         android:background="@drawable/bg_submit_btn"
+        android:enabled="false"
         android:gravity="center"
         android:text="@string/join"
         android:textColor="@color/white"
@@ -261,6 +233,6 @@
         android:textSize="@dimen/ts_12"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"></TextView>
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

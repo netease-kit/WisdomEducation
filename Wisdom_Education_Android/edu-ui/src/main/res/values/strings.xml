@@ -13,7 +13,7 @@
     <string name="hint_role">Your Name</string>
     <string name="hint_your_name">Your Name</string>
     <string name="eye_care_mode">Eye protection</string>
-    <string name="join">Join</string>
+    <string name="join">Join classroom</string>
     <string name="setting">Setting</string>
     <string name="title_teaching_material">Materials area</string>
     <string name="title_chat_room">ChatRoom(%s)</string>
@@ -34,31 +34,11 @@
     <string name="chat_muting">Prohibited post!</string>
     <string name="time_default" translatable="false">00:00:00</string>
     <string name="time_separator" translatable="false">&#160;/&#160;</string>
-    <string name="configuration_load_failed">Configuration load failed, please try again later</string>
-    <string name="policy_tips">Please read carefully and fully understand the terms of the user agreement and privacy policy.</string>
-    <string name="policy">User agreement and privacy policy</string>
-    <string name="policy_agree">Agree</string>
-    <string name="policy_refuse">Refuse</string>
-    <string name="accept_interactive">Teacher accept your interactive request!</string>
-    <string name="reject_interactive">Teacher reject your interactive request!</string>
-    <string name="abort_interactive">Teacher abort your interactive video!</string>
-    <string name="authorize_board">Teacher has authorized your whiteboard permissions</string>
-    <string name="revoke_board">Teacher has revoked your whiteboard permissions</string>
-    <string name="open_follow_board">The teacher set up the whiteboard to follow</string>
-    <string name="relieve_follow_board">The teacher lifted the whiteboard</string>
-    <string name="request_error">Server request error: %1$d</string>
-    <string name="wait_record">Please wait for recording finished</string>
-    <string name="follow_tips">The teacher is moving the whiteboard. Please do not draw on it</string>
-    <string name="function_error">Function Error(code:%d;reason:%s)</string>
-    <string name="there_is_no_teacher_disable_covideo">There is no teacher in this classroom, cannot apply coVideo.</string>
-    <string name="replay_link">Replay Link</string>
-    <string name="upload_log">Log reporting</string>
     <string name="teacher">Teacher</string>
     <string name="student">Student</string>
     <string name="assistant">Assistant</string>
     <string name="msg_title" translatable="false">[%s]%s</string>
     <string name="input_mask" translatable="false">ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789</string>
-    <string name="wisdom_edu_subtitle">join classroom</string>
     <string name="alert">alert</string>
     <string name="i_know">I know</string>
     <string name="hint_room_type">Room type</string>
@@ -72,7 +52,7 @@
     <string name="not_granted_permissions">The app has not been granted the following permissions:%s</string>
     <string name="entering_class">Entering class</string>
     <string name="item_audio">mute</string>
-    <string name="item_camera">close camera</string>
+    <string name="item_camera">close video</string>
     <string name="item_share">share screen</string>
     <string name="item_hands_up">hands up</string>
     <string name="item_members">menbers</string>
@@ -163,4 +143,12 @@
     <string name="chat_room">chat room</string>
     <string name="student_label">(student)</string>
     <string name="class_init_tips">The course has started completely, please wait patiently</string>
+    <string name="hints_mute_all">All mute is the default to turn off the microphones of all members , but members can still actively turn them on</string>
+    <string name="search">Search</string>
+    <string name="please_enter_a_keyword_search">Please enter a keyword search</string>
+    <string name="you_are_sharing_the_screen">You are sharing the screen</string>
+    <string name="take_picture">take picture</string>
+    <string name="select_from_your_phone_photo_album">Select from your phone photo album</string>
+    <string name="download_picture_fail">download picture fail</string>
+    <string name="picker_image_error">picker image error</string>
 </resources>

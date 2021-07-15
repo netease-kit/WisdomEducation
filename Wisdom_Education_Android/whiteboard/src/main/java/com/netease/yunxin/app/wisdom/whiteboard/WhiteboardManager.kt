@@ -6,7 +6,6 @@
 package com.netease.yunxin.app.wisdom.whiteboard
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.text.TextUtils
 import com.netease.yunxin.app.wisdom.whiteboard.api.WhiteboardApi
 import com.netease.yunxin.app.wisdom.whiteboard.bridge.JsBridge
@@ -19,7 +18,7 @@ import com.netease.yunxin.app.wisdom.whiteboard.view.WhiteboardView
  */
 object WhiteboardManager : WhiteboardApi() {
 
-    private const val DEFAULT_URL = "https://meeting.163.com/whiteboard/stable/3.1.0/webview.html"
+    private const val DEFAULT_URL = "https://yiyong-xedu-v2-static.netease.im/whiteboard/stable/webview.html"
 
     private lateinit var webView: WhiteboardView
 
@@ -27,7 +26,7 @@ object WhiteboardManager : WhiteboardApi() {
 
     private lateinit var config: WhiteboardConfig
 
-    fun init(context: Context, webView: WhiteboardView, config: WhiteboardConfig) {
+    fun init(webView: WhiteboardView, config: WhiteboardConfig) {
         this.config = config
         this.webView = webView
         jsBridge = JsBridge(this)

@@ -31,8 +31,8 @@ class MemberStageFragment : BaseFragment(R.layout.fragment_member_item),
                 .observe(this, { adapter.updateDataAndNotify(it1.getOnStageMemberList().filter { !it.isHost() }) })
         }
         eduManager.getRtcService().onStreamChange().observe(this, { t -> adapter.refreshDataAndNotify(t.first) })
-        eduManager.getBoardService().onSelfPermissionGranted().observe(this, { t -> adapter.refreshDataAndNotify(t) })
-        eduManager.getShareScreenService().onSelfPermissionGranted().observe(this, { t -> adapter.refreshDataAndNotify(t) })
+        eduManager.getBoardService().onPermissionGranted().observe(this, { t -> adapter.refreshDataAndNotify(t) })
+        eduManager.getShareScreenService().onPermissionGranted().observe(this, { t -> adapter.refreshDataAndNotify(t) })
     }
 
     override fun initViews() {

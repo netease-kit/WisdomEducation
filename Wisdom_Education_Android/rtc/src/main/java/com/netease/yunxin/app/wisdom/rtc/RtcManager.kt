@@ -17,11 +17,14 @@ import com.netease.lava.nertc.sdk.NERtcEx
 import com.netease.lava.nertc.sdk.NERtcParameters
 import com.netease.lava.nertc.sdk.stats.*
 import com.netease.lava.nertc.sdk.video.*
+import com.netease.yunxin.kit.alog.ALog
 
 /**
  * Created by hzsunyj on 2021/5/13.
  */
 object RtcManager : NERtcCallbackEx, NERtcStatsObserver {
+
+    private const val TAG = "RtcManager";
 
     private var rtcEngine: NERtcEx? = null
 
@@ -62,7 +65,7 @@ object RtcManager : NERtcCallbackEx, NERtcStatsObserver {
                 it.enableAudioVolumeIndication(true, 2000)
                 it.setAudioProfile(NERtcConstants.AudioProfile.STANDARD_EXTEND, NERtcConstants.AudioScenario.SPEECH)
             } catch (e: Exception) {
-                print(e?.message)
+                ALog.e(TAG, "init engine exception ${e?.message}")
                 rtcEngine = null
             }
         }
@@ -83,7 +86,9 @@ object RtcManager : NERtcCallbackEx, NERtcStatsObserver {
     }
 
     fun release() {
-        engine.release()
+        if (this::engine.isInitialized) {
+            engine.release()
+        }
         errorLD.postValue(null)
         networkQualityLD.postValue(null)
         rtcSubVideoPendingMap.clear()
@@ -96,6 +101,7 @@ object RtcManager : NERtcCallbackEx, NERtcStatsObserver {
      * must join success
      */
     override fun onJoinChannel(code: Int, chenelId: Long, elapsed: Long) {
+        ALog.i(TAG, "onJoinChannel $code")
         if (code != 0) {
             errorLD.postValue(code)
             return
@@ -107,10 +113,12 @@ object RtcManager : NERtcCallbackEx, NERtcStatsObserver {
     }
 
     override fun onUserJoined(p0: Long) {
+        ALog.i(TAG, "onUserJoined $p0")
         userList.add(p0)
     }
 
     override fun onUserLeave(p0: Long, p1: Int) {
+        ALog.i(TAG, "onUserLeave $p0 reason $p1")
         userList.remove(p0)
         rtcAudioPendingList.remove(p0)
         rtcVideoPendingMap.remove(p0)
@@ -118,6 +126,7 @@ object RtcManager : NERtcCallbackEx, NERtcStatsObserver {
     }
 
     override fun onUserAudioStart(p0: Long) {
+        ALog.i(TAG, "onUserAudioStart $p0")
         if (rtcAudioPendingList.contains(p0)) {
             engine.subscribeRemoteAudioStream(p0, true)
             rtcAudioPendingList.remove(p0)
@@ -125,10 +134,12 @@ object RtcManager : NERtcCallbackEx, NERtcStatsObserver {
     }
 
     override fun onUserAudioStop(p0: Long) {
+        ALog.i(TAG, "onUserAudioStop $p0")
         rtcAudioPendingList.remove(p0)
     }
 
     override fun onUserVideoStart(p0: Long, p1: Int) {
+        ALog.i(TAG, "onUserVideoStart $p0 maxProfile $p1")
         if (rtcVideoPendingMap.containsKey(p0)) {
             engine.setupRemoteVideoCanvas(rtcVideoPendingMap[p0], p0)
             engine.subscribeRemoteVideoStream(p0, NERtcRemoteVideoStreamType.kNERtcRemoteVideoStreamTypeHigh, true)
@@ -137,11 +148,13 @@ object RtcManager : NERtcCallbackEx, NERtcStatsObserver {
     }
 
     override fun onUserVideoStop(p0: Long) {
+        ALog.i(TAG, "onUserVideoStop $p0")
         rtcVideoPendingMap.remove(p0)
     }
 
     override fun onDisconnect(p0: Int) {
         if (p0 != 0) {
+            ALog.e(TAG, "onDisconnect $p0")
             errorLD.postValue(p0)
         }
     }
@@ -150,6 +163,7 @@ object RtcManager : NERtcCallbackEx, NERtcStatsObserver {
     }
 
     override fun onUserSubStreamVideoStart(p0: Long, p1: Int) {
+        ALog.i(TAG, "onUserSubStreamVideoStop $p0 profile $p1")
         if (rtcSubVideoPendingMap.containsKey(p0)) {
             engine.setupRemoteSubStreamVideoCanvas(rtcSubVideoPendingMap[p0], p0)
             engine.subscribeRemoteSubStreamVideo(p0, true)
@@ -158,6 +172,7 @@ object RtcManager : NERtcCallbackEx, NERtcStatsObserver {
     }
 
     override fun onUserSubStreamVideoStop(p0: Long) {
+        ALog.i(TAG, "onUserSubStreamVideoStop $p0")
         rtcSubVideoPendingMap.remove(p0)
     }
 
@@ -198,6 +213,7 @@ object RtcManager : NERtcCallbackEx, NERtcStatsObserver {
     }
 
     override fun onReJoinChannel(p0: Int, p1: Long) {
+        ALog.i(TAG, "onReJoinChannel $p0")
         if (p0 != 0) {
             errorLD.postValue(p0)
         }
@@ -233,10 +249,19 @@ object RtcManager : NERtcCallbackEx, NERtcStatsObserver {
     override fun onRecvSEIMsg(p0: Long, p1: String?) {
     }
 
+    override fun onAudioRecording(p0: Int, p1: String?) {
+    }
+
     override fun onError(p0: Int) {
     }
 
     override fun onWarning(p0: Int) {
+    }
+
+    override fun onMediaRelayStatesChange(p0: Int, p1: String?) {
+    }
+
+    override fun onMediaRelayReceiveEvent(p0: Int, p1: Int, p2: String?) {
     }
 
     fun enableLocalVideo(enable: Boolean): Int {

@@ -27,6 +27,8 @@ deps.preference = "androidx.preference:preference:1.1.1"
 deps.permissionx = "com.permissionx.guolindev:permissionx:1.2.2"
 deps.lifecycle_common = "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
 deps.htloading = 'com.superlht:HTLoading:1.0.1'
+deps.glide = 'com.github.bumptech.glide:glide:4.12.0'
+deps.glide_compiler = 'com.github.bumptech.glide:compiler:4.12.0'
 
 /*
  * Copyright (c) 2021 NetEase, Inc.  All rights reserved.
@@ -35,9 +37,9 @@ deps.htloading = 'com.superlht:HTLoading:1.0.1'
 
 // im sdk  & rtc sdk
 deps.yxbase = "com.netease.yunxin:yxbase:1.0.0"
-deps.nertc = "com.netease.yunxin:nertc:4.0.0"
-deps.basesdk = "com.netease.nimlib:basesdk:8.3.0"
-deps.chatroom = "com.netease.nimlib:chatroom:8.3.0"
+deps.nertc = "com.netease.yunxin:nertc:4.2.1"
+deps.basesdk = "com.netease.nimlib:basesdk:8.4.6"
+deps.chatroom = "com.netease.nimlib:chatroom:8.4.6"
 deps.alog = "com.netease.yunxin.kit:alog:0.0.3-SNAPSHOT"
 deps.bugly = "com.tencent.bugly:crashreport:3.3.9"
 

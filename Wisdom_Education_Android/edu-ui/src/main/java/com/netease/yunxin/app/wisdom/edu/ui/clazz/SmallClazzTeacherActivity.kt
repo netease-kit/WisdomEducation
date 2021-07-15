@@ -19,11 +19,8 @@ import com.netease.yunxin.app.wisdom.edu.ui.clazz.fragment.SmallClazzMembersFrag
 import com.netease.yunxin.app.wisdom.edu.ui.clazz.widget.ClazzInfoView
 import com.netease.yunxin.app.wisdom.edu.ui.clazz.widget.ItemBottomView
 import com.netease.yunxin.app.wisdom.edu.ui.clazz.widget.TitleView
-import com.netease.yunxin.app.wisdom.edu.ui.databinding.ActivityClazzBinding
-import com.netease.yunxin.app.wisdom.edu.ui.viewbinding.viewBinding
 
 class SmallClazzTeacherActivity : BaseClassActivity(R.layout.activity_clazz) {
-    private val binding: ActivityClazzBinding by viewBinding(R.id.one_container)
 
     private val smallClazzMembersFragment = SmallClazzMembersFragment()
 

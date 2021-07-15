@@ -163,7 +163,23 @@ open class BaseAdapter<T> @JvmOverloads constructor(
                 }
             }
         }
+    }
 
+    fun refreshDataAndNotify(t: T?, updateVideo: Boolean? = null, compare: (T, T?) -> Boolean) {
+        t?.let{
+            for (i in dataList!!.indices) {
+                val element = dataList!![i]
+                if (compare(element, t)) {
+                    dataList!![i] = t
+                    notifyItemChanged(i, updateVideo)
+                    break
+                }
+            }
+        }
+    }
+
+    fun containsData(t: T?): Boolean {
+        return dataList.contains(t)
     }
 
     val isEmpty: Boolean
@@ -260,17 +276,7 @@ open class BaseAdapter<T> @JvmOverloads constructor(
             return -1
         }
     }
-    /**
-     * constructor
-     *
-     * @param dataList
-     * @param listener
-     */
-    /**
-     * constructor
-     *
-     * @param dataList
-     */
+
     init {
         checkData(dataList)
         this.listener = listener
