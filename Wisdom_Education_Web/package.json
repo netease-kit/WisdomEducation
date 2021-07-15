@@ -1,0 +1,78 @@
+{
+  "name": "app-wisdon-education-web",
+  "version": "1.1.0",
+  "homepage": "./",
+  "private": true,
+  "dependencies": {
+    "@testing-library/jest-dom": "^5.11.4",
+    "@testing-library/react": "^11.1.0",
+    "@testing-library/user-event": "^12.1.10",
+    "@types/jest": "^26.0.15",
+    "@types/node": "^12.0.0",
+    "@types/react": "^17.0.0",
+    "@types/react-dom": "^17.0.0",
+    "antd": "^4.15.5",
+    "axios": "^0.21.1",
+    "copy-to-clipboard": "^3.3.1",
+    "dotenv-cli": "^4.0.0",
+    "kit-devicecheck-web": "^1.0.3",
+    "less": "^4.1.1",
+    "mobx": "^6.3.0",
+    "mobx-react": "^7.1.0",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-router-dom": "^5.2.0",
+    "react-scripts": "4.0.3",
+    "styled-components": "^5.3.0",
+    "ts-md5": "^1.2.7",
+    "typescript": "^4.1.2",
+    "web-vitals": "^1.0.1",
+    "yunxin-log-debug": "^1.0.1"
+  },
+  "scripts": {
+    "start": "cross-env HTTPS=true PORT=3001 react-app-rewired start",
+    "start:pro": "cross-env HTTPS=true PORT=3001 dotenv -e .env.production react-app-rewired start",
+    "build:dev": "cross-env NODE_ENV=development dotenv -e .env.development react-app-rewired build",
+    "build": "dotenv -e .env.production react-app-rewired build",
+    "test": "react-app-rewired test",
+    "eject": "react-scripts eject",
+    "lint:fix": "eslint --ext .ts,.tsx src/ --fix"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@babel/plugin-proposal-decorators": "^7.13.15",
+    "@babel/preset-typescript": "^7.13.0",
+    "@types/react-router-dom": "^5.1.7",
+    "@typescript-eslint/eslint-plugin": "^4.23.0",
+    "@typescript-eslint/parser": "^4.23.0",
+    "babel-plugin-transform-decorators-legacy": "^1.3.5",
+    "cache-loader": "^4.1.0",
+    "cross-env": "^7.0.3",
+    "customize-cra": "^1.0.0",
+    "esbuild-loader": "^2.13.1",
+    "eslint": "^7.26.0",
+    "eslint-plugin-react": "^7.23.2",
+    "hard-source-webpack-plugin": "^0.13.1",
+    "less-loader": "^7.3.0",
+    "react-app-rewired": "^2.1.8",
+    "simple-progress-webpack-plugin": "^2.0.0",
+    "thread-loader": "^3.0.4"
+  }
+}
