@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2021 NetEase, Inc.  All rights reserved.
+  ~ Use of this source code is governed by a MIT license that can be found in the LICENSE file.
+  -->
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/common_dp_60"
+    android:background="@color/color_1a2028">
+
+    <com.netease.yunxin.app.wisdom.edu.ui.clazz.widget.ItemBottomView
+        android:id="@+id/item_audio"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginStart="@dimen/common_dp_30"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/item_video"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:src="@drawable/bg_bottom_audio"
+        app:text="@string/item_audio"
+        app:unSelectedText="@string/item_audio_unselected" />
+
+    <com.netease.yunxin.app.wisdom.edu.ui.clazz.widget.ItemBottomView
+        android:id="@+id/item_video"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/item_share"
+        app:layout_constraintStart_toEndOf="@id/item_audio"
+        app:layout_constraintTop_toTopOf="parent"
+        app:src="@drawable/bg_bottom_video"
+        app:text="@string/item_camera"
+        app:unSelectedText="@string/item_video_unselected" />
+
+    <com.netease.yunxin.app.wisdom.edu.ui.clazz.widget.ItemBottomView
+        android:id="@+id/item_share"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/item_members"
+        app:layout_constraintStart_toEndOf="@id/item_video"
+        app:layout_constraintTop_toTopOf="parent"
+        app:src="@drawable/bg_bottom_share"
+        app:text="@string/item_share"
+        app:unSelectedText="@string/stop_sharing" />
+
+    <com.netease.yunxin.app.wisdom.edu.ui.clazz.widget.ItemBottomView
+        android:id="@+id/item_members"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/item_handup"
+        app:layout_constraintStart_toEndOf="@id/item_share"
+        app:layout_constraintTop_toTopOf="parent"
+        app:src="@drawable/ic_bottom_members"
+        app:text="@string/item_members" />
+
+    <com.netease.yunxin.app.wisdom.edu.ui.clazz.widget.ItemBottomView
+        android:id="@+id/item_handup"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/item_handup_apply"
+        app:layout_constraintStart_toEndOf="@id/item_members"
+        app:layout_constraintTop_toTopOf="parent"
+        app:src="@drawable/bg_bottom_handsup"
+        app:text="@string/item_hands_up"
+        app:unSelectedText="@string/item_hands_uping" />
+
+    <com.netease.yunxin.app.wisdom.edu.ui.clazz.widget.ItemBottomView
+        android:id="@+id/item_handup_apply"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/item_chatroom"
+        app:layout_constraintStart_toEndOf="@id/item_handup"
+        app:layout_constraintTop_toTopOf="parent"
+        app:src="@drawable/ic_bottom_handsup"
+        app:text="@string/item_hands_up_apply" />
+
+    <com.netease.yunxin.app.wisdom.edu.ui.clazz.widget.ItemBottomView
+        android:id="@+id/item_chatroom"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginEnd="@dimen/common_dp_70"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/btn_clazz_ctrl_left"
+        app:layout_constraintStart_toEndOf="@id/item_handup_apply"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_goneMarginEnd="@dimen/common_dp_70"
+        app:src="@drawable/ic_bottom_chatroom"
+        app:text="@string/item_chatroom" />
+
+
+    <Button
+        android:id="@+id/btn_clazz_ctrl_right"
+        android:layout_width="@dimen/common_dp_76"
+        android:layout_height="@dimen/common_dp_28"
+        android:layout_marginEnd="@dimen/common_dp_46"
+        android:background="@drawable/bg_bottom_btn"
+        android:gravity="center"
+        android:text="@string/end_class"
+        android:textColor="@drawable/selector_text_color_chat"
+        android:textSize="@dimen/ts_12_dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_goneMarginEnd="@dimen/common_dp_46" />
+
+    <Button
+        android:id="@+id/btn_clazz_ctrl_left"
+        android:layout_width="@dimen/common_dp_76"
+        android:layout_height="@dimen/common_dp_28"
+        android:layout_marginEnd="@dimen/common_dp_20"
+        android:background="@drawable/bg_bottom_btn"
+        android:gravity="center"
+        android:text="@string/leave_class_temporarily"
+        android:textColor="@drawable/selector_text_color_chat"
+        android:textSize="@dimen/ts_12_dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/btn_clazz_ctrl_right"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

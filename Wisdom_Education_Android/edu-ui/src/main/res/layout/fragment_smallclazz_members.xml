@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2021 NetEase, Inc.  All rights reserved.
+  ~ Use of this source code is governed by a MIT license that can be found in the LICENSE file.
+  -->
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/one_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/color_1a2028"
+    android:clickable="true"
+    android:focusable="true">
+
+    <ImageView
+        android:id="@+id/iv_member_hide"
+        android:layout_width="@dimen/common_dp_31"
+        android:layout_height="@dimen/common_dp_48"
+        android:layout_marginStart="@dimen/common_dp_40"
+        android:gravity="center"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_title_hide"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/title_member"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/common_dp_48"
+        android:gravity="center_vertical"
+        android:textColor="@color/white"
+        android:textSize="@dimen/ts_18_dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="课堂成员(4)" />
+
+    <View
+        android:id="@+id/line_horizontal_top"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/common_dp_1"
+        android:layout_marginTop="@dimen/common_dp_48"
+        android:background="@color/color_343D49"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rcv_member_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/common_dp_49"
+        android:layout_marginBottom="@dimen/common_dp_62"
+        android:background="@color/color_1a2028"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/mute_audio_all"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/common_dp_18"
+        android:layout_marginStart="@dimen/common_dp_157"
+        android:layout_marginBottom="@dimen/common_dp_21"
+        android:drawableLeft="@drawable/ic_mute_audio_all"
+        android:drawablePadding="@dimen/common_dp_4"
+        android:gravity="start|center_vertical"
+        android:includeFontPadding="false"
+        android:text="@string/mute_all"
+        android:textColor="@color/white"
+        android:textSize="@dimen/common_dp_16"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatCheckBox
+        android:id="@+id/cb_mute_chat_all"
+        android:layout_width="@dimen/common_dp_16"
+        android:layout_height="@dimen/common_dp_16"
+        android:layout_marginStart="@dimen/common_dp_250"
+        android:layout_marginBottom="@dimen/common_dp_21"
+        android:button="@drawable/bg_member_checkbox"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_mute_chat_all"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/common_dp_18"
+        android:layout_marginStart="@dimen/common_dp_274"
+        android:layout_marginBottom="@dimen/common_dp_21"
+        android:gravity="start|center_vertical"
+        android:text="@string/mute_chat_all"
+        android:textColor="@color/white"
+        android:textSize="@dimen/common_dp_16"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

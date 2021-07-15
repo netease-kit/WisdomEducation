@@ -1,0 +1,166 @@
+/*
+ * @Copyright (c) 2021 NetEase, Inc.  All rights reserved.
+ * Use of this source code is governed by a MIT license that can be found in the LICENSE file
+ */
+.record-wrap{
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    .head-component{
+        flex: 0 0 36px;
+    }
+    .replay-div {
+        flex: 1;
+        .main {
+            height: calc(100% - 68px);
+            .main-video{
+                background-color: #000;
+                padding: 8px;
+                padding-bottom: 36px;
+            }
+        }
+       
+    }
+    .videobox {
+        height: 150px;
+        .video-black{
+            background: #101418 url('~@/assets/video-default-avator.png') no-repeat center center/78px 78px;
+        }
+        video{
+            width: 100%;
+            visibility: visible;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 2px;
+        }
+        .controls{
+            height: 26px;
+            position: absolute;
+            color: #ffffff;
+            bottom: 0;
+            opacity: 0.618;
+            width: 100%;
+            top: initial;
+            background-color: #000;
+            .name, .ctrl{
+                line-height: 26px;
+            }
+            .ctrl{
+                display: flex;
+                flex-direction: row-reverse;
+                .video, .audio{
+                    transform: scale(0.7);
+                }
+            }
+        }
+    }
+   .footer{
+        position: fixed;
+        bottom: 0;
+        background: #1A2028;
+        box-shadow: 0px 4px 6px rgb(24 25 27 / 44%);
+        height: 68px;
+        z-index: 9;
+        .player-container{
+            height: 100%;
+            display: flex;
+            align-items: center;
+            padding: 0 35px;
+            .player-timeline{
+                background: #10151B;
+            }
+            .player-play-icon-wrapper {
+                background: #89909C;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 24px;
+                height: 24px;
+                margin-right: 8px;
+                margin-top: -2px;
+                .player-play-icon{
+                    height: 10px;
+                    width: 10px;
+                }
+            }
+            .player-timeline-label{
+                padding: 0px 3px;
+                bottom: 13px;
+            }
+            .player-timeline-bg{
+                position: absolute;
+                width: 2px;
+                bottom: -5px;
+                pointer-events: none;
+                background: #fff;
+                height: 16px !important;
+            }
+        }
+        .player-speed, .player-duration{
+            color: #fff;
+            height: 30px;
+        }
+   }
+}
+.empty-wrap{
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    .content{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        height: 100%;
+        width: 100%;
+        color: #8D94A0;
+        background: #101418;
+        .process{
+            width: 380px;
+            height: 5px;
+            border-radius: 3px;
+            background: #c4c4c4;
+            margin-bottom: 18px;
+            span{
+                background: #4672ff;
+                display: block;
+                width: 50%;
+                height: 100%;
+                border-radius: 3px;
+            }
+        }
+        h1.title{
+            color: #8D94A0;
+            font-size: 18px;
+        }
+        .desc{
+            font-size: 14px;
+        }
+        .btn-wrap{
+            display: flex;
+            margin: 15px;
+            width: 250px;
+            justify-content: space-between;
+            margin-top: 20px;
+            Button {
+                width: 116px;
+                height: 36px;
+            }
+            .ant-btn {
+                padding: 0px;
+                border-radius: 2px;
+            }
+            .ant-btn-ghost, .ant-btn-ghost:hover, .ant-btn-ghost:active, .ant-btn-ghost:focus {
+                color: #89909C;
+                font-size: 14px;
+                background: transparent;
+                border: 1px solid #89909C;
+            }
+        }
+        
+    }
+    
+}

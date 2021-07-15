@@ -288,7 +288,5 @@ NEEduEnterRoomParam *room = [[NEEduEnterRoomParam alloc] init];
   | onLessonMuteAllAudio: roomUuid:         | 全体静音回调                |
   | onLessonMuteAllText: roomUuid:          | 全体禁言回调                |
 
-  
-
-
+ 
 

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2021 NetEase, Inc.  All rights reserved.
+  ~ Use of this source code is governed by a MIT license that can be found in the LICENSE file.
+  -->
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/common_dp_51"
+    tools:background="@color/color_1a2028">
+
+    <TextView
+        android:id="@+id/tv_member_name"
+        android:layout_width="@dimen/common_dp_174"
+        android:layout_height="@dimen/common_dp_22"
+        android:ellipsize="end"
+        android:gravity="start|center_vertical"
+        android:maxLines="1"
+        android:textColor="@color/white"
+        android:textSize="@dimen/common_dp_16"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/iv_whiteboard_status"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="张三李四王五" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_whiteboard_status"
+        android:layout_width="@dimen/common_dp_18"
+        android:layout_height="@dimen/common_dp_18"
+        android:layout_marginStart="@dimen/common_dp_8"
+        android:background="@drawable/ic_member_whiteboard"
+        android:gravity="start|center_vertical"
+        android:paddingStart="@dimen/common_dp_34"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/iv_screenshare_status"
+        app:layout_constraintStart_toEndOf="@id/tv_member_name"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_screenshare_status"
+        android:layout_width="@dimen/common_dp_18"
+        android:layout_height="@dimen/common_dp_18"
+        android:layout_marginStart="@dimen/common_dp_22"
+        android:background="@drawable/ic_member_screenshare"
+        android:gravity="start|center_vertical"
+        android:paddingStart="@dimen/common_dp_34"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/iv_member_audio"
+        app:layout_constraintStart_toEndOf="@id/iv_whiteboard_status"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_member_audio"
+        android:layout_width="@dimen/common_dp_18"
+        android:layout_height="@dimen/common_dp_18"
+        android:layout_marginStart="@dimen/common_dp_48"
+        android:scaleType="fitCenter"
+        android:src="@drawable/bg_small_audio"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/iv_member_video"
+        app:layout_constraintStart_toEndOf="@id/iv_screenshare_status"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_member_video"
+        android:layout_width="@dimen/common_dp_18"
+        android:layout_height="@dimen/common_dp_18"
+        android:layout_marginStart="@dimen/common_dp_22"
+        android:scaleType="fitCenter"
+        android:src="@drawable/bg_small_video"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/iv_member_more"
+        app:layout_constraintStart_toEndOf="@id/iv_member_audio"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_member_more"
+        android:layout_width="@dimen/common_dp_18"
+        android:layout_height="@dimen/common_dp_18"
+        android:layout_marginStart="@dimen/common_dp_22"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_small_more"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/iv_member_video"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
