@@ -32,7 +32,7 @@
 在开始运行示例项目之前，请确保开发环境满足以下要求：
 
 - 安全环境：https 环境或者本地连接 localhost/127.0.0.1 环境。
-- 浏览器：Chrome 72 及以上版本、Safari 12 及以上版本。
+- 浏览器：Chrome 74 及以上版本、Safari 12 及以上版本。
 
 ## 示例项目结构
 
@@ -68,8 +68,8 @@
 
     | 配置项     | 说明                                      |
     | ------------- | ------------------------------------------- |
-    | REACT_APP_SDK_APPID        | 应用的 AppId。可以在网易云信控制台中查看。 |
-    | REACT_APP_SDK_AUTHORIZATION       | 应用的 AppKey。可以在网易云信控制台中查看。 |
+    | REACT_APP_SDK_APPKEY        | 应用的 AppKey。可以在网易云信控制台中查看。 |
+    | REACT_APP_SDK_AUTHORIZATION       | 调用服务端接口时，请求头中的校验参数。 |
     
     > 如果仅需要本地跑通示例项目，您可以使用[智慧云课堂体验账号](https://github.com/netease-kit/WisdomEducation/tree/main/Wisdom_Education_Docs/智慧云课堂体验账号.md)。体验账号的课堂时长限制为 30 分钟。
 
@@ -78,13 +78,13 @@
     ```
     cd Wisdom_Educaiton_Web
     npm install               // 安装依赖
-    npm start             // 开发环境
+    npm start                 // 开发环境
     ```
 4. 构建项目。
 
     ```
     npm run start:pro         // 线上环境
-    npm run build:dev        // 打包测试环境
+    npm run build:dev         // 打包测试环境
     npm run build             // 打包线上环境
     ```
 
