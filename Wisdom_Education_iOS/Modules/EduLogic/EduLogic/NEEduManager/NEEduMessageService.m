@@ -216,36 +216,53 @@
                 tempUser = temMembers[i];
                 if ([tempUser.userUuid isEqualToString:property.member.userUuid]) {
                     if (property.properties.streamAV.video != nil) {
+                        //更新自己
+                        if ([self.localUser.userUuid isEqualToString:property.member.userUuid]) {
+                            self.localUser.properties.streamAV.video = property.properties.streamAV.video;
+                        }
                         tempUser.properties.streamAV = property.properties.streamAV;
                         if (self.delegate && [self.delegate respondsToSelector:@selector(onVideoAuthorizationEnable:user:)]) {
                             [self.delegate onVideoAuthorizationEnable:tempUser.properties.streamAV.video.intValue user:tempUser];
                         }
                     }
                     if (property.properties.streamAV.audio != nil) {
+                        //更新自己
+                        if ([self.localUser.userUuid isEqualToString:property.member.userUuid]) {
+                            self.localUser.properties.streamAV.audio = property.properties.streamAV.audio;
+                        }
                         tempUser.properties.streamAV = property.properties.streamAV;
                         if (self.delegate && [self.delegate respondsToSelector:@selector(onAudioAuthorizationEnable:user:)]) {
                             [self.delegate onAudioAuthorizationEnable:tempUser.properties.streamAV.audio.intValue user:tempUser];
                         }
                     }
                     if (property.properties.screenShare) {
+                        //更新自己
+                        if ([self.localUser.userUuid isEqualToString:property.member.userUuid]) {
+                            self.localUser.properties.screenShare = property.properties.screenShare;
+                        }
                         tempUser.properties.screenShare = property.properties.screenShare;
                         if (self.delegate && [self.delegate respondsToSelector:@selector(onScreenShareAuthorizationEnable:user:)]) {
                             [self.delegate onScreenShareAuthorizationEnable:tempUser.properties.screenShare.value user:tempUser];
                         }
                     }
                     if (property.properties.whiteboard) {
-                        if (tempUser.properties.whiteboard) {
-                            tempUser.properties.whiteboard.drawable = property.properties.whiteboard.drawable;
-                        }else {
-                            NEEduWhiteboardProperty *item = [[NEEduWhiteboardProperty alloc] init];
-                            item.drawable = property.properties.whiteboard.drawable;
-                            tempUser.properties.whiteboard = item;
+                        //更新自己
+                        if ([self.localUser.userUuid isEqualToString:property.member.userUuid]) {
+                            self.localUser.properties.whiteboard = property.properties.whiteboard;
                         }
+                        NEEduWhiteboardProperty *item = [[NEEduWhiteboardProperty alloc] init];
+                        item.drawable = property.properties.whiteboard.drawable;
+                        tempUser.properties.whiteboard = item;
+                        
                         if (self.delegate && [self.delegate respondsToSelector:@selector(onWhiteboardAuthorizationEnable:user:)]) {
                             [self.delegate onWhiteboardAuthorizationEnable:tempUser.properties.whiteboard.drawable user:tempUser];
                         }
                     }
                     if (property.properties.avHandsUp) {
+                        //更新自己
+                        if ([self.localUser.userUuid isEqualToString:property.member.userUuid]) {
+                            self.localUser.properties.avHandsUp = property.properties.avHandsUp;
+                        }
                         tempUser.properties.avHandsUp = property.properties.avHandsUp;
                         if (self.delegate && [self.delegate respondsToSelector:@selector(onHandsupStateChange:user:)]) {
                             [self.delegate onHandsupStateChange:tempUser.properties.avHandsUp.value user:tempUser];

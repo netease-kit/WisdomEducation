@@ -13,6 +13,7 @@
 #import <EduLogic/EduLogic.h>
 #import "UIView+Toast.h"
 #import "UIView+NE.h"
+#import "NEEduMembersHeadView.h"
 
 @interface NEEduMembersVC ()<UITableViewDelegate,UITableViewDataSource,NEEduMemberCellDelegate>
 @property (nonatomic, strong) UIButton *backButton;
@@ -25,11 +26,17 @@
 @property (nonatomic, strong) NSLayoutConstraint *totalLeft;
 @property (nonatomic, strong) NSLayoutConstraint *lightLineLeft;
 @property (nonatomic, strong) NSArray<NEEduMember *> *onlineArray;
+
 @property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, strong) NSArray *currentArray;
 @property (nonatomic, strong) UIButton *muteAudioButton;
 @property (nonatomic, strong) UIButton *muteTextButton;
+@property (nonatomic, strong) NEEduMembersHeadView *searchView;
+@property (nonatomic, strong) NSLayoutConstraint *searchViewHeight;
+@property (nonatomic, assign) BOOL isSearching;
+@property (nonatomic, copy) NSString *title;
 @end
+
 static NSString *memberCellID = @"memberCellID";
 @implementation NEEduMembersVC
 
@@ -40,18 +47,21 @@ static NSString *memberCellID = @"memberCellID";
 }
 - (void)viewWillAppear:(BOOL)animated {
     [self.tableView reloadData];
-    [self.totalButton setTitle:[NSString stringWithFormat:@"课堂成员(%lu)",(unsigned long)self.members.count] forState:UIControlStateNormal];
+    [self.totalButton setTitle:[NSString stringWithFormat:@"%@(%lu)",self.title,(unsigned long)self.members.count] forState:UIControlStateNormal];
     [self.onlineButton setTitle:[NSString stringWithFormat:@"连线成员(%lu)",(unsigned long)self.onlineArray.count] forState:UIControlStateNormal];
 }
 
 - (void)loadData {
+    self.title = @"课堂成员";
+    self.isSearching = NO;
     self.onlineArray = [self achiveOnlineArray];
-    if ([EduManager shared].roomService.room.sceneType == NEEduSceneTypeBig) {
+    if ([NEEduManager shared].roomService.room.sceneType == NEEduSceneTypeBig) {
         self.currentButton = self.onlineButton;
         self.currentArray = self.onlineArray;
         self.onlineWidth.constant = 140;
         self.totalLeft.constant = 0;
         self.lightLineLeft.constant = 0;
+        self.title = @"全部成员";
         [self.onlineButton setTitle:[NSString stringWithFormat:@"连线成员(%lu)",(unsigned long)self.onlineArray.count] forState:UIControlStateNormal];
         self.currentArray = self.onlineArray;
     }else {
@@ -61,8 +71,9 @@ static NSString *memberCellID = @"memberCellID";
         self.lightLineLeft.constant = 70;
         self.currentArray = self.members;
     }
+    self.searchViewHeight.constant = 0;
     self.currentButton.selected = YES;
-    [self.totalButton setTitle:[NSString stringWithFormat:@"课堂成员(%lu)",(unsigned long)self.members.count] forState:UIControlStateNormal];
+    [self.totalButton setTitle:[NSString stringWithFormat:@"%@(%lu)",self.title,(unsigned long)self.members.count] forState:UIControlStateNormal];
     self.muteTextButton.selected = self.muteChat;
 }
 
@@ -92,8 +103,11 @@ static NSString *memberCellID = @"memberCellID";
 - (void)memberIn:(NEEduMember *)member {
     [self.members addObject:member];
     if (self.presentingViewController) {
+        if (self.isSearching) {
+            self.currentArray = [self searchMembsersWithName:self.searchView.textField.text];
+        }
         [self.tableView reloadData];
-        [self.totalButton setTitle:[NSString stringWithFormat:@"课堂成员(%lu)",(unsigned long)self.members.count] forState:UIControlStateNormal];
+        [self.totalButton setTitle:[NSString stringWithFormat:@"%@(%lu)",self.title,(unsigned long)self.members.count] forState:UIControlStateNormal];
     }
 }
 - (void)memberOut:(NSString *)userID {
@@ -115,9 +129,12 @@ static NSString *memberCellID = @"memberCellID";
     if ([self.currentButton isEqual:self.onlineButton]) {
         self.currentArray = self.onlineArray;
     }
+    if (self.isSearching) {
+        self.currentArray = [self searchMembsersWithName:self.searchView.textField.text];
+    }
     if (self.presentingViewController) {
         [self.tableView reloadData];
-        [self.totalButton setTitle:[NSString stringWithFormat:@"课堂成员(%lu)",(unsigned long)self.members.count] forState:UIControlStateNormal];
+        [self.totalButton setTitle:[NSString stringWithFormat:@"%@(%lu)",self.title,(unsigned long)self.members.count] forState:UIControlStateNormal];
         [self.onlineButton setTitle:[NSString stringWithFormat:@"连线成员(%lu)",(unsigned long)self.onlineArray.count] forState:UIControlStateNormal];
     }
 }
@@ -164,15 +181,23 @@ static NSString *memberCellID = @"memberCellID";
     [self.view addConstraints:@[self.lightLineLeft,lightLineTop]];
     [self.lightLineView addConstraints:@[lightLineHeight,lightLineWidth]];
 
+    [self.view addSubview:self.searchView];
+    NSLayoutConstraint *searchViewtop = [NSLayoutConstraint constraintWithItem:self.searchView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.lineView attribute:NSLayoutAttributeBottom multiplier:1.0 constant:0];
+    NSLayoutConstraint *searchViewLeft = [NSLayoutConstraint constraintWithItem:self.searchView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeLeft multiplier:1.0 constant:100];
+    NSLayoutConstraint *searchViewRight = [NSLayoutConstraint constraintWithItem:self.searchView attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeRight multiplier:1.0 constant:-100];
+    self.searchViewHeight = [NSLayoutConstraint constraintWithItem:self.searchView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:48];
+    [self.view addConstraints:@[searchViewtop,searchViewLeft,searchViewRight]];
+    [self.searchView addConstraint:self.searchViewHeight];
+    
     [self.view addSubview:self.tableView];
-    NSLayoutConstraint *tableTop = [NSLayoutConstraint constraintWithItem:self.tableView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.view.safeAreaLayoutGuide attribute:NSLayoutAttributeTop multiplier:1.0 constant:49];
+    NSLayoutConstraint *tableTop = [NSLayoutConstraint constraintWithItem:self.tableView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.searchView attribute:NSLayoutAttributeBottom multiplier:1.0 constant:0];
     NSLayoutConstraint *tableLeft = [NSLayoutConstraint constraintWithItem:self.tableView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeLeft multiplier:1.0 constant:130];
     NSLayoutConstraint *tableRight = [NSLayoutConstraint constraintWithItem:self.tableView attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeRight multiplier:1.0 constant:- 130];
     NSLayoutConstraint *tableBottom = [NSLayoutConstraint constraintWithItem:self.tableView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeBottom multiplier:1.0 constant:- 68];
     [self.view addConstraints:@[tableTop,tableLeft,tableRight,tableBottom]];
     [self.tableView registerClass:[NEEduMemberCell class] forCellReuseIdentifier:memberCellID];
     
-    if ([EduManager shared].localUser.roleType == NEEduRoleTypeTeacher) {
+    if ([[NEEduManager shared].localUser isTeacher]) {
         [self.view addSubview:self.muteAudioButton];
         NSLayoutConstraint *muteAudioTop = [NSLayoutConstraint constraintWithItem:self.muteAudioButton attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.tableView attribute:NSLayoutAttributeBottom multiplier:1.0 constant:12];
         NSLayoutConstraint *muteAudioLeft = [NSLayoutConstraint constraintWithItem:self.muteAudioButton attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self.tableView attribute:NSLayoutAttributeLeft multiplier:1.0 constant:0];
@@ -200,12 +225,22 @@ static NSString *memberCellID = @"memberCellID";
     if ([self.currentButton isEqual:button]) {
         return;
     }
+    [self.view resignFirstResponder];
+    self.isSearching = NO;
+    self.searchView.textField.text = @"";
     self.currentButton.selected = !self.currentButton.selected;
     button.selected = !button.selected;
     self.currentButton = button;
     if ([self.currentButton isEqual:self.onlineButton]) {
+        if ([NEEduManager shared].roomService.room.sceneType == NEEduSceneTypeBig) {
+            self.searchViewHeight.constant = 0;
+        }
         self.currentArray = self.onlineArray;
+        
     }else {
+        if ([NEEduManager shared].roomService.room.sceneType == NEEduSceneTypeBig) {
+            self.searchViewHeight.constant = 48;
+        }
         self.currentArray = self.members;
     }
     self.lightLineLeft.constant = [self.currentButton isEqual:self.onlineButton] ? 0 : 140;
@@ -229,9 +264,9 @@ static NSString *memberCellID = @"memberCellID";
 
 #pragma mark - NEEduMemberCellDelegate
 - (void)didSeletedAudio:(BOOL)isSelected member:(NEEduMember *)member {
-    if ([member.userID isEqualToString:[EduManager shared].localUser.userUuid]) {
+    if ([member.userID isEqualToString:[NEEduManager shared].localUser.userUuid]) {
         __weak typeof(self) weakSelf = self;
-        [[EduManager shared].userService localUserAudioEnable:!isSelected result:^(NSError * _Nonnull error) {
+        [[NEEduManager shared].userService localUserAudioEnable:!isSelected result:^(NSError * _Nonnull error) {
             if (error) {
                 [weakSelf.view makeToast:error.localizedDescription];
             }else {
@@ -240,7 +275,7 @@ static NSString *memberCellID = @"memberCellID";
         }];
     }else {
         __weak typeof(self) weakSelf = self;
-        [[EduManager shared].userService remoteUserAudioEnable:!isSelected userID:member.userID result:^(NSError * _Nonnull error) {
+        [[NEEduManager shared].userService remoteUserAudioEnable:!isSelected userID:member.userID result:^(NSError * _Nonnull error) {
             if (error) {
                 [weakSelf.view makeToast:error.localizedDescription];
             }else {
@@ -250,11 +285,11 @@ static NSString *memberCellID = @"memberCellID";
     }
 }
 - (void)didSeletedVideo:(BOOL)isSelected member:(NEEduMember *)member {
-    if ([member.userID isEqualToString:[EduManager shared].localUser.userUuid]) {
-        [[EduManager shared].userService localUserVideoEnable:!isSelected result:^(NSError * _Nonnull error) {
+    if ([member.userID isEqualToString:[NEEduManager shared].localUser.userUuid]) {
+        [[NEEduManager shared].userService localUserVideoEnable:!isSelected result:^(NSError * _Nonnull error) {
         }];
     }else {
-        [[EduManager shared].userService remoteUserVideoEnable:!isSelected userID:member.userID result:^(NSError * _Nonnull error) {
+        [[NEEduManager shared].userService remoteUserVideoEnable:!isSelected userID:member.userID result:^(NSError * _Nonnull error) {
         }];
     }
 }
@@ -267,12 +302,12 @@ static NSString *memberCellID = @"memberCellID";
     NSString *shareTitle = member.shareScreenEnable ? @"取消共享权限":@"授予共享权限";
     __weak typeof(self)weakSelf = self;
     UIAlertAction *action = [UIAlertAction actionWithTitle:title style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        if ([EduManager shared].profile.snapshot.room.states.step.value != NEEduLessonStateClassIn) {
-            [weakSelf.view makeToast:@"还未开始上课"];
+        if ([NEEduManager shared].profile.snapshot.room.states.step.value != NEEduLessonStateClassIn) {
+            [weakSelf.view makeToast:@"请先开始上课"];
             return;
         }
         //授予/取消白板权限
-        [[EduManager shared].userService whiteboardDrawable:!member.whiteboardEnable userID:member.userID result:^(NSError * _Nonnull error) {
+        [[NEEduManager shared].userService whiteboardDrawable:!member.whiteboardEnable userID:member.userID result:^(NSError * _Nonnull error) {
             if (error) {
                 [weakSelf.view makeToast:error.localizedDescription];
             }
@@ -280,12 +315,12 @@ static NSString *memberCellID = @"memberCellID";
     }];
     UIAlertAction *actionSecond = [UIAlertAction actionWithTitle:shareTitle style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         //授予/取消共享权限
-        if ([EduManager shared].profile.snapshot.room.states.step.value != NEEduLessonStateClassIn) {
-            [weakSelf.view makeToast:@"还未开始上课"];
+        if ([NEEduManager shared].profile.snapshot.room.states.step.value != NEEduLessonStateClassIn) {
+            [weakSelf.view makeToast:@"请先开始上课"];
             return;
         }
 //        __weak typeof(self)weakSelf = self;
-        [[EduManager shared].userService screenShareAuthorization:!member.shareScreenEnable userID:member.userID result:^(NSError * _Nonnull error) {
+        [[NEEduManager shared].userService screenShareAuthorization:!member.shareScreenEnable userID:member.userID result:^(NSError * _Nonnull error) {
             if (error) {
                 [weakSelf.view makeToast:error.localizedDescription];
             }
@@ -295,12 +330,12 @@ static NSString *memberCellID = @"memberCellID";
     [alert addAction:actionSecond];
     
     //如果是老师且在台上
-    if ([EduManager shared].localUser.roleType == NEEduRoleTypeTeacher && member.online) {
+    if ([[NEEduManager shared].localUser isTeacher] && member.online) {
         UIAlertAction *actionHandsup = [UIAlertAction actionWithTitle:@"请他下台" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             [weakSelf.view showAlertViewOnVC:weakSelf withTitle:@"请他下台" subTitle:@"结束该学生的上台动作，同时回收他的屏幕共享、白板权限" confirm:^{
                 //老师操作下台
 //                __weak typeof(self)weakSelf = self;
-                [[EduManager shared].userService handsupStateChange:NEEduHandsupStateTeaOffStage userID:member.userID result:^(NSError * _Nonnull error) {
+                [[NEEduManager shared].userService handsupStateChange:NEEduHandsupStateTeaOffStage userID:member.userID result:^(NSError * _Nonnull error) {
                     if (!error) {
                         [weakSelf.view makeToast:@"操作成功"];
                     }else {
@@ -327,7 +362,7 @@ static NSString *memberCellID = @"memberCellID";
 
 - (void)muteAudioButtonClick:(UIButton *)button {
     __weak typeof(self)weakSelf = self;
-    [[EduManager shared].roomService muteAll:YES completion:^(NSError * _Nonnull error, NEEduPropertyItem * _Nonnull item) {
+    [[NEEduManager shared].roomService muteAll:YES completion:^(NSError * _Nonnull error, NEEduPropertyItem * _Nonnull item) {
         if (error) {
             [weakSelf.view makeToast:error.localizedDescription];
         }else {
@@ -338,7 +373,7 @@ static NSString *memberCellID = @"memberCellID";
 - (void)muteTextButtonClick:(UIButton *)button {
     button.selected = !button.selected;
     __weak typeof(self)weakSelf = self;
-    [[EduManager shared].roomService muteAllText:button.selected completion:^(NSError * _Nonnull error, NEEduPropertyItem * _Nonnull item) {
+    [[NEEduManager shared].roomService muteAllText:button.selected completion:^(NSError * _Nonnull error, NEEduPropertyItem * _Nonnull item) {
         if (error) {
             [weakSelf.view makeToast:error.localizedDescription];
         }else {
@@ -346,7 +381,53 @@ static NSString *memberCellID = @"memberCellID";
         }
     }];
 }
+- (void)searchButtonEvent:(UIButton *)button {
+    if (self.searchView.textField.text.length) {
+        self.isSearching = YES;
+        self.currentArray = [self searchMembsersWithName:self.searchView.textField.text];
+    }else {
+        self.isSearching = NO;
+        self.currentArray = self.members;
+    }
+    [self.tableView reloadData];
+    [self.searchView.textField resignFirstResponder];
+}
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
+    if (textField.text.length) {
+        self.isSearching = YES;
+        self.currentArray = [self searchMembsersWithName:textField.text];
+    }else {
+        self.isSearching = NO;
+        self.currentArray = self.members;
+    }
+    [self.tableView reloadData];
+    [textField resignFirstResponder];
+    return YES;
+}
+- (BOOL)textFieldShouldClear:(UITextField *)textField {
+    self.isSearching = NO;
+    self.currentArray = self.members;
+    [self.tableView reloadData];
+    return YES;
+}
 
+- (NSArray *)searchMembsersWithName:(NSString *)name {
+    NSMutableArray *array = [NSMutableArray array];
+    for (NEEduMember *user in self.members) {
+        if ([user.name localizedStandardContainsString:name]) {
+            [array addObject:user];
+        }
+    }
+    return array;
+}
+- (NEEduMembersHeadView *)searchView {
+    if (!_searchView) {
+        _searchView = [[NEEduMembersHeadView alloc] init];
+        [_searchView.searchButton addTarget:self action:@selector(searchButtonEvent:) forControlEvents:UIControlEventTouchUpInside];
+        _searchView.textField.delegate = self;
+    }
+    return _searchView;
+}
 - (UIButton *)backButton {
     if (!_backButton) {
         _backButton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -371,7 +452,7 @@ static NSString *memberCellID = @"memberCellID";
 - (UIButton *)totalButton {
     if (!_totalButton) {
         _totalButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_totalButton setTitle:@"课堂成员" forState:UIControlStateNormal];
+        [_totalButton setTitle:@"全部成员" forState:UIControlStateNormal];
         [_totalButton addTarget:self action:@selector(topButton:) forControlEvents:UIControlEventTouchUpInside];
         _totalButton.translatesAutoresizingMaskIntoConstraints = NO;
         [_totalButton setTitleColor:[UIColor colorWithRed:74/255.0 green:86/255.0 blue:101/255.0 alpha:1.0] forState:UIControlStateNormal];

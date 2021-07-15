@@ -18,7 +18,7 @@
 
 - (void)initMenuItems {
     NEEduMenuItem *audoItem = [[NEEduMenuItem alloc] initWithTitle:@"静音" image:[UIImage ne_imageNamed:@"menu_audio"]];
-    audoItem.selectTitle = @"取消静音";
+    audoItem.selectTitle = @"解除静音";
     audoItem.type = NEEduMenuItemTypeAudio;
     [audoItem setSelctedImage:[UIImage ne_imageNamed:@"menu_audio_off"]];
     
@@ -29,6 +29,7 @@
 
     NEEduMenuItem *shareItem = [[NEEduMenuItem alloc] initWithTitle:@"共享屏幕" image:[UIImage ne_imageNamed:@"menu_share_screen"]];
     shareItem.type = NEEduMenuItemTypeShareScreen;
+    shareItem.selectTitle = @"停止共享";
     [shareItem setSelctedImage:[UIImage ne_imageNamed:@"menu_share_screen_stop"]];
     self.menuItems = @[audoItem,videoItem,shareItem];
 }
@@ -88,7 +89,7 @@
     self.members = members;
     self.whiteboardWritable = enable;
     //如果是自己的权限被修改 设置白板
-    if ([user.userUuid isEqualToString:[EduManager shared].localUser.userUuid]) {
+    if ([user.userUuid isEqualToString:[NEEduManager shared].localUser.userUuid]) {
         [[NMCWhiteboardManager sharedManager] callEnableDraw:self.whiteboardWritable];
         [[NMCWhiteboardManager sharedManager] hiddenTools:!self.whiteboardWritable];
     }
@@ -105,15 +106,17 @@
     }
     self.members = members;
     //如果是自己的权限被修改 更新底部菜单栏
-    if ([user.userUuid isEqualToString:[EduManager shared].localUser.userUuid]) {
+    if ([user.userUuid isEqualToString:[NEEduManager shared].localUser.userUuid]) {
         if (enable) {
             NEEduMenuItem *shareItem = [[NEEduMenuItem alloc] initWithTitle:@"共享屏幕" image:[UIImage ne_imageNamed:@"menu_share_screen"]];
             shareItem.type = NEEduMenuItemTypeShareScreen;
+            shareItem.selectTitle = @"停止共享";
             [shareItem setSelctedImage:[UIImage ne_imageNamed:@"menu_share_screen_stop"]];
             [self.maskView addItem:shareItem];
             [self.maskView insertItem:shareItem atIndex:2];
         }else {
             [self.maskView removeItemType:NEEduMenuItemTypeShareScreen];
+            [self stopRecord];
         }
     }
     [self.collectionView reloadData];
@@ -131,7 +134,7 @@
 - (void)audioButtonClick:(UIButton *)button {
     NEEduHttpUser *student = [self.members objectAtIndex:1];
     if (student.userUuid) {
-        [[EduManager shared].userService remoteUserAudioEnable:button.selected userID:student.userUuid result:^(NSError * _Nonnull error) {
+        [[NEEduManager shared].userService remoteUserAudioEnable:button.selected userID:student.userUuid result:^(NSError * _Nonnull error) {
             if (error) {
                 [self.view makeToast:error.localizedDescription];
             }
@@ -142,7 +145,7 @@
 - (void)videoButtonClick:(UIButton *)button {
     NEEduHttpUser *student = [self.members objectAtIndex:1];
     if (student.userUuid) {
-        [[EduManager shared].userService remoteUserVideoEnable:button.selected userID:student.userUuid result:^(NSError * _Nonnull error) {
+        [[NEEduManager shared].userService remoteUserVideoEnable:button.selected userID:student.userUuid result:^(NSError * _Nonnull error) {
             if (error) {
                 [self.view makeToast:error.localizedDescription];
             }

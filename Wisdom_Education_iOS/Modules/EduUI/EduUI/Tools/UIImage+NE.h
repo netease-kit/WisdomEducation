@@ -12,7 +12,16 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface UIImage (NE)
+
+/// 读取仓库中的图片资源
+/// @param name 图片名字
 + (UIImage *)ne_imageNamed:(NSString *)name;
+
+/// 计算图片缩放后的展示尺寸
+/// @param maxWidth 最大宽度
+/// @param maxHeight 最大高度
+- (CGSize)ne_showSizeWithMaxWidth:(CGFloat)maxWidth maxHeight:(CGFloat)maxHeight;
+
 @end
 
 NS_ASSUME_NONNULL_END

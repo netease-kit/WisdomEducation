@@ -19,8 +19,25 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @protocol NEEduIMChatDelegate <NSObject>
-- (void)didRecieveChatMessages:(NSArray <NIMMessage *>*)messages;
+
+/// 将要发送消息回调
+/// @param message 消息
+- (void)willSendMessage:(NIMMessage *)message;
+
+/// 消息发送进度回调
+/// @param message 消息
+/// @param progress 进度
+- (void)sendMessage:(NIMMessage *)message progress:(float)progress;
+
+/// 消息发送完成回调
+/// @param message 消息
+/// @param error 错误
 - (void)didSendMessage:(NIMMessage *)message error:(NSError *)error;
+
+/// 收到消息回调
+/// @param messages 消息
+- (void)didRecieveChatMessages:(NSArray <NIMMessage *>*)messages;
+
 @end
 
 @interface NEEduIMService : NSObject
@@ -41,6 +58,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)exitChatroom:(NSString *)roomId completion:(nullable void(^)(NSError *))completion;
 
 - (void)sendChatroomTextMessage:(NSString *)text error:(NSError * __nullable *)error;
+- (void)sendChatroomImageMessage:(UIImage *)image error:(NSError * __nullable *)error;
+- (void)resendMessage:(NIMMessage *)message error:(NSError * __nullable *)error;
 - (void)fetchChatroomInfo:(void(^)(NSError *error,NEEduChatRoomInfo *chatRoom))completion;
 - (void)destroy;
 @end

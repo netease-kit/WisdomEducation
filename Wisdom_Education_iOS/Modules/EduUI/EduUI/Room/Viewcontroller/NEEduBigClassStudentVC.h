@@ -11,7 +11,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface NEEduBigClassVC : NEEduClassRoomVC
+@interface NEEduBigClassStudentVC : NEEduClassRoomVC
 @property (nonatomic, strong) NSMutableArray<NEEduHttpUser *> *totalMembers;
 @end
 

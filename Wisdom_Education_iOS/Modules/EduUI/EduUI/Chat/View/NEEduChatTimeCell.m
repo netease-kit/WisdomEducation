@@ -31,11 +31,12 @@
     NSLayoutConstraint *right = [self.timeLabel.rightAnchor constraintEqualToAnchor:self.contentView.rightAnchor constant:-10];
     NSLayoutConstraint *bottom = [self.timeLabel.bottomAnchor constraintEqualToAnchor:self.contentView.bottomAnchor constant:-10];
     [self.contentView addConstraints:@[top,left,right,bottom]];
-    
 }
+
 - (void)setModel:(NEEduChatMessage *)model {
     self.timeLabel.text = model.content;
 }
+
 - (UILabel *)timeLabel {
     if (!_timeLabel) {
         _timeLabel = [[UILabel alloc] init];

@@ -9,10 +9,19 @@
 
 #import "NEEduHttpUser.h"
 
-NSString * NEEduRoleHost              = @"host";
-NSString * NEEduRoleBroadcaster       = @"broadcaster";
-NSString * NEEduRoleAudience       = @"audience";
+NSString * const NEEduRoleHost              = @"host";
+NSString * const NEEduRoleBroadcaster       = @"broadcaster";
+NSString * const NEEduRoleAudience          = @"audience";
 
 @implementation NEEduHttpUser
-
+- (void)setRole:(NSString *)role {
+    _role = role;
+    NSLog(@"%s  role:%@",__func__,role);
+}
+- (BOOL)isTeacher {
+    if ([self.role isEqualToString:@"host"]) {
+        return YES;
+    }
+    return NO;
+}
 @end

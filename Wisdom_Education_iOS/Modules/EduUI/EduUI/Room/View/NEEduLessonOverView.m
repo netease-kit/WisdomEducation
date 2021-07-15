@@ -17,6 +17,19 @@
     if (self) {
         self.translatesAutoresizingMaskIntoConstraints = NO;
         self.backgroundColor = [UIColor colorWithRed:16/255.0 green:20/255.0 blue:24/255.0 alpha:1.0];
+        [self addSubview:self.timeLabel];
+        NSLayoutConstraint *timeLabelLeft = [NSLayoutConstraint constraintWithItem:self.timeLabel attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeLeft multiplier:1.0 constant:0];
+        NSLayoutConstraint *timeLabelRight = [NSLayoutConstraint constraintWithItem:self.timeLabel attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeRight multiplier:1.0 constant:0];
+        NSLayoutConstraint *timeLabelTop;
+        if (@available(iOS 11.0, *)) {
+            timeLabelTop = [NSLayoutConstraint constraintWithItem:self.timeLabel attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.safeAreaLayoutGuide attribute:NSLayoutAttributeTop multiplier:1.0 constant:0];
+        } else {
+            timeLabelTop = [NSLayoutConstraint constraintWithItem:self.timeLabel attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeTop multiplier:1.0 constant:0];
+        }
+        NSLayoutConstraint *timeLabelH = [NSLayoutConstraint constraintWithItem:self.timeLabel attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:44];
+        [self addConstraints:@[timeLabelLeft,timeLabelRight,timeLabelTop,timeLabelH]];
+        [self.timeLabel addConstraint:timeLabelH];
+        
         [self addSubview:self.label];
         NSLayoutConstraint *labelLeft = [NSLayoutConstraint constraintWithItem:self.label attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeLeft multiplier:1.0 constant:10];
         NSLayoutConstraint *labelRight = [NSLayoutConstraint constraintWithItem:self.label attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeRight multiplier:1.0 constant:-10];
@@ -35,7 +48,18 @@
     }
     return self;
 }
-
+- (UILabel *)timeLabel {
+    if (!_timeLabel) {
+        _timeLabel = [[UILabel alloc] init];
+        _timeLabel.text = @"课程结束";
+        _timeLabel.textColor =[UIColor whiteColor];
+        _timeLabel.font = [UIFont systemFontOfSize:14];
+        _timeLabel.textAlignment = NSTextAlignmentCenter;
+        _timeLabel.translatesAutoresizingMaskIntoConstraints = NO;
+        _timeLabel.backgroundColor = [UIColor colorWithRed:26/255.0 green:32/255.0 blue:40/255.0 alpha:1.0];
+    }
+    return _timeLabel;
+}
 - (UILabel *)label {
     if (!_label) {
         _label = [[UILabel alloc] init];

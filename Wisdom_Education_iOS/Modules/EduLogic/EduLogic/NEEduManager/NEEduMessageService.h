@@ -40,7 +40,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface NEEduMessageService : NSObject<NEEduIMServiceDelegate>
 @property (nonatomic, weak) id delegate;
+@property (nonatomic, strong) NEEduHttpUser *localUser;
 - (void)updateProfile:(NEEduRoomProfile *)profile;
+
 @end
 
 NS_ASSUME_NONNULL_END

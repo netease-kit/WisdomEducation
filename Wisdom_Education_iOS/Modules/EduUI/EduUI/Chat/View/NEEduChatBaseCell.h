@@ -11,19 +11,20 @@
 #import "NEEduChatMessage.h"
 
 NS_ASSUME_NONNULL_BEGIN
-@class NEEduChatBaseCell;
 
 @protocol NEEduChatBaseCellDelegate <NSObject>
-- (void)chatCell:(NEEduChatBaseCell *)cell didLongPressMessage:(NEEduChatMessage *)message;
+- (void)chatView:(UIView *)tapView didLongPressMessage:(NEEduChatMessage *)message;
+- (void)chatView:(UIView *)tapView didTapMessage:(NEEduChatMessage *)message;
 
 @end
+
 @interface NEEduChatBaseCell : UITableViewCell
+@property (nonatomic, weak) id delegate;
 @property (nonatomic, strong) UILabel *nameLabel;
-@property (nonatomic, strong) UIView *bgView;
-@property (nonatomic, strong) UILabel *contentLabel;
-@property (nonatomic, strong) NEEduChatMessage *model;
-@property (nonatomic, weak) id<NEEduChatBaseCellDelegate> delegate;
+@property (nonatomic, strong) NEEduChatMessage *message;
+- (void)updateUIWithMessage:(NEEduChatMessage *)message;
 - (void)setupSubviews;
+- (void)setModel:(NEEduChatMessage *)model;
 @end
 
 NS_ASSUME_NONNULL_END

@@ -12,7 +12,10 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface NEEduChatLeftCell : NEEduChatBaseCell
+@property (nonatomic, strong) UIView *bgView;
+@property (nonatomic, strong) UILabel *contentLabel;
 @property (nonatomic, strong) NSLayoutConstraint *bgWidth;
+
 @end
 
 NS_ASSUME_NONNULL_END

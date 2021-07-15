@@ -46,9 +46,9 @@
 - (void)setMember:(NEEduHttpUser *)member {
     _member = member;
     if (member.streams.video.value) {
-        [[EduManager shared] setCanvasView:self.videoView forMember:member];
+        [[NEEduManager shared] setCanvasView:self.videoView forMember:member];
     }else {
-        [[EduManager shared] setCanvasView:nil forMember:member];
+        [[NEEduManager shared] setCanvasView:nil forMember:member];
     }
     if ([member.role isEqualToString:NEEduRoleHost]) {
         self.namelabel.text = member.userName.length?[NSString stringWithFormat:@"%@(老师)",member.userName]:@"";

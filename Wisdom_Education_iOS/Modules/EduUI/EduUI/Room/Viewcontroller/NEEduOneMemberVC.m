@@ -8,7 +8,7 @@
 //
 
 #import "NEEduOneMemberVC.h"
-#import <EduLogic/EduManager.h>
+#import <EduLogic/NEEduManager.h>
 @interface NEEduOneMemberVC ()
 
 @end
@@ -20,7 +20,7 @@
 }
 - (void)initMenuItems {
     NEEduMenuItem *audoItem = [[NEEduMenuItem alloc] initWithTitle:@"静音" image:[UIImage ne_imageNamed:@"menu_audio"]];
-    audoItem.selectTitle = @"取消静音";
+    audoItem.selectTitle = @"解除静音";
     audoItem.type = NEEduMenuItemTypeAudio;
     [audoItem setSelctedImage:[UIImage ne_imageNamed:@"menu_audio_off"]];
     
@@ -31,6 +31,7 @@
 
     NEEduMenuItem *shareItem = [[NEEduMenuItem alloc] initWithTitle:@"共享屏幕" image:[UIImage ne_imageNamed:@"menu_share_screen"]];
     shareItem.type = NEEduMenuItemTypeShareScreen;
+    shareItem.selectTitle = @"停止共享";
     [shareItem setSelctedImage:[UIImage ne_imageNamed:@"menu_share_screen_stop"]];
     self.menuItems = @[audoItem,videoItem,shareItem];
 }
@@ -39,11 +40,6 @@
     NEEduHttpUser *user = self.members[indexPath.row];
     cell.showWhiteboardIcon = YES;
     cell.member = user;
-    if (user.streams.video.value) {
-        [[EduManager shared] setCanvasView:cell.videoView forMember:user];
-    }else {
-        [[EduManager shared] setCanvasView:nil forMember:user];
-    }
     return cell;
 }
 - (NSArray <NEEduHttpUser *>*)membersWithProfile:(NEEduRoomProfile *)profile {
@@ -98,7 +94,7 @@
     self.members = members;
     self.whiteboardWritable = enable;
     //如果是自己的权限被修改 设置白板
-    if ([user.userUuid isEqualToString:[EduManager shared].localUser.userUuid]) {
+    if ([user.userUuid isEqualToString:[NEEduManager shared].localUser.userUuid]) {
         [[NMCWhiteboardManager sharedManager] callEnableDraw:self.whiteboardWritable];
         [[NMCWhiteboardManager sharedManager] hiddenTools:!self.whiteboardWritable];
     }
@@ -115,15 +111,17 @@
     }
     self.members = members;
     //如果是自己的权限被修改 更新底部菜单栏
-    if ([user.userUuid isEqualToString:[EduManager shared].localUser.userUuid]) {
+    if ([user.userUuid isEqualToString:[NEEduManager shared].localUser.userUuid]) {
         if (enable) {
             NEEduMenuItem *shareItem = [[NEEduMenuItem alloc] initWithTitle:@"共享屏幕" image:[UIImage ne_imageNamed:@"menu_share_screen"]];
             shareItem.type = NEEduMenuItemTypeShareScreen;
+            shareItem.selectTitle = @"停止共享";
             [shareItem setSelctedImage:[UIImage ne_imageNamed:@"menu_share_screen_stop"]];
             [self.maskView insertItem:shareItem atIndex:2];
         }else {
-            [self stopAllScreenShare];
+//            [self stopAllScreenShare];
             [self.maskView removeItemType:NEEduMenuItemTypeShareScreen];
+            [self stopRecord];
         }
     }
     [self.collectionView reloadData];

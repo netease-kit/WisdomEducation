@@ -10,17 +10,17 @@
 #import "NEEduUserService.h"
 #import "HttpManager.h"
 #import "NEEduPropertyItem.h"
-#import "EduManager.h"
+#import "NEEduManager.h"
 #import "NEEduErrorType.h"
 
 @interface NEEduUserService ()
 @property (nonatomic, strong) NEEduRoomProfile *profile;
-@property (nonatomic, strong) NEEduUser *localUser;
+@property (nonatomic, strong) NEEduHttpUser *localUser;
 
 @end
 
 @implementation NEEduUserService
-- (instancetype)initLocalUser:(NEEduUser *)localUser
+- (instancetype)initLocalUser:(NEEduHttpUser *)localUser
 {
     self = [super init];
     if (self) {
@@ -46,7 +46,7 @@
     [HttpManager updateStreamStateWithRoomUuid:self.profile.snapshot.room.roomUuid userUuid:self.localUser.userUuid param:param classType:[NEEduPropertyItem class] streamType:@"video" success:^(id  _Nonnull objModel) {
         NEEduPropertyItem *item = objModel;
         //RTC
-        int code = [[EduManager shared].videoService enableLocalVideo:enable];
+        int code = [[NEEduManager shared].rtcService enableLocalVideo:enable];
         NSError *error = code == 0 ? nil : [NSError errorWithDomain:NEEduErrorDomain code:code userInfo:@{NSLocalizedDescriptionKey:[NSString stringWithFormat:@"视频开关失败,code:%d",code]}];
         if (!error) {
             for (NEEduHttpUser *user in self.profile.snapshot.members) {
@@ -78,7 +78,7 @@
     [HttpManager updateStreamStateWithRoomUuid:self.profile.snapshot.room.roomUuid userUuid:self.localUser.userUuid param:param classType:[NEEduPropertyItem class] streamType:@"audio" success:^(id  _Nonnull objModel) {
         NEEduPropertyItem *item = objModel;
         //RTC
-        int code = [[EduManager shared].videoService enableLocalAudio:enable];
+        int code = [[NEEduManager shared].rtcService enableLocalAudio:enable];
         NSError *error = code == 0 ? nil : [NSError errorWithDomain:NEEduErrorDomain code:code userInfo:@{NSLocalizedDescriptionKey:@"音频开关失败"}];
         if (!error) {//更新profile
             for (NEEduHttpUser *user in self.profile.snapshot.members) {
@@ -169,7 +169,7 @@
     [HttpManager updateStreamStateWithRoomUuid:self.profile.snapshot.room.roomUuid userUuid:self.localUser.userUuid param:param classType:[NEEduPropertyItem class] streamType:@"subVideo" success:^(id  _Nonnull objModel) {
         NEEduPropertyItem *item = objModel;
         //RTC
-        int code = [[EduManager shared].videoService enableLocalAudio:enable];
+        int code = [[NEEduManager shared].rtcService enableLocalAudio:enable];
         NSError *error = code == 0 ? nil : [NSError errorWithDomain:NEEduErrorDomain code:code userInfo:@{NSLocalizedDescriptionKey:@"屏幕共享失败"}];
         if (!error) {//更新profile
             for (NEEduHttpUser *user in self.profile.snapshot.members) {

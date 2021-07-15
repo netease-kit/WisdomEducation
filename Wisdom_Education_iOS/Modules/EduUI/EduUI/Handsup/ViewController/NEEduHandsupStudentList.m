@@ -73,7 +73,7 @@ static NSString *handsupCell = @"handsupCell";
 #pragma mark - NEEduHandsupApplyCellDelegate
 - (void)agreeHansupApplyWithMember:(NEEduHttpUser *)member {
     //http 请求
-    [[EduManager shared].userService handsupStateChange:NEEduHandsupStateTeaAccept userID:member.userUuid result:^(NSError * _Nonnull error) {
+    [[NEEduManager shared].userService handsupStateChange:NEEduHandsupStateTeaAccept userID:member.userUuid result:^(NSError * _Nonnull error) {
         if (!error) {
             [self.view makeToast:@"操作成功"];
             member.properties.avHandsUp.value = NEEduHandsupStateTeaAccept;
@@ -89,7 +89,7 @@ static NSString *handsupCell = @"handsupCell";
 }
 - (void)disagreeHansupApplyWithMember:(NEEduHttpUser *)member {
     //http 请求
-    [[EduManager shared].userService handsupStateChange:NEEduHandsupStateTeaReject userID:member.userUuid result:^(NSError * _Nonnull error) {
+    [[NEEduManager shared].userService handsupStateChange:NEEduHandsupStateTeaReject userID:member.userUuid result:^(NSError * _Nonnull error) {
         if (!error) {
             member.properties.avHandsUp.value = NEEduHandsupStateTeaReject;
             [self.applyStudents removeObject:member];

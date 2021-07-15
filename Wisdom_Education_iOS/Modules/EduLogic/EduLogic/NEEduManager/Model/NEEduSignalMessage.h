@@ -11,14 +11,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-//@interface Data :NSObject
-//@property (nonatomic , copy) NSString              * appId;
-//@property (nonatomic , copy) NSString              * roomUuid;
-//@property (nonatomic , strong) NEEduHttpUser              * operatorMember;
-//@property (nonatomic , copy) NSArray<NEEduHttpUser *>              * members;
-//
-//@end
-
 @interface NEEduSignalMessage : NSObject
 @property (nonatomic , assign) NSInteger              sequence;
 @property (nonatomic , strong) NSDictionary         * data;

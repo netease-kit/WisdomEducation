@@ -11,7 +11,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface ENavigationViewController : UINavigationController
+@interface NEEduNavigationViewController : UINavigationController
 
 @end
 

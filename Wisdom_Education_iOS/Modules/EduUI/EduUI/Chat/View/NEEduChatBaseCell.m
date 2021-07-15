@@ -18,7 +18,7 @@
         self.backgroundColor = [UIColor clearColor];
         self.selectionStyle = UITableViewCellSelectionStyleNone;
         [self setupSubviews];
-        [self addLongPress];
+        
     }
     return self;
 }
@@ -30,30 +30,11 @@
     NSLayoutConstraint *height = [NSLayoutConstraint constraintWithItem:self.nameLabel attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeHeight multiplier:1.0 constant:20];
     [self.contentView addConstraints:@[left,right,top]];
     [self.nameLabel addConstraint:height];
-    
-    [self.contentView addSubview:self.bgView];
-    [self.bgView addSubview:self.contentLabel];
 }
-- (void)addLongPress {
-    UILongPressGestureRecognizer *press = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longPress:)];
-    [self.bgView addGestureRecognizer:press];
-}
-- (void)longPress:(UILongPressGestureRecognizer *)press {
-    if (press.state == UIGestureRecognizerStateBegan) {
-        if (self.delegate && [self.delegate respondsToSelector:@selector(chatCell:didLongPressMessage:)]) {
-            [self.delegate chatCell:self didLongPressMessage:self.model];
-        }
-    }
-}
-- (void)setModel:(NEEduChatMessage *)model {
-    _model = model;
-    self.nameLabel.text = model.userName;
-    self.contentLabel.text = model.content;
-    for (NSLayoutConstraint *constraint in self.bgView.constraints) {
-        if (constraint.firstAttribute == NSLayoutAttributeWidth) {
-            constraint.constant = model.textSize.width + 30;
-        }
-    }
+
+- (void)updateUIWithMessage:(NEEduChatMessage *)message {
+    _message = message;
+    self.nameLabel.text = message.userName;
 }
 
 - (UILabel *)nameLabel {
@@ -66,26 +47,7 @@
     }
     return _nameLabel;
 }
-- (UIView *)bgView {
-    if (!_bgView) {
-        _bgView = [[UIView alloc] init];
-        _bgView.translatesAutoresizingMaskIntoConstraints = NO;
-        _bgView.layer.cornerRadius = 4;
-        _bgView.clipsToBounds = YES;
-    }
-    return _bgView;
-}
-- (UILabel *)contentLabel {
-    if (!_contentLabel) {
-        _contentLabel = [[UILabel alloc] init];
-        _contentLabel.font = [UIFont systemFontOfSize:14];
-        _contentLabel.textColor = [UIColor whiteColor];
-        _contentLabel.translatesAutoresizingMaskIntoConstraints = NO;
-        _contentLabel.textAlignment = NSTextAlignmentLeft;
-        _contentLabel.numberOfLines = 0;
-    }
-    return _contentLabel;
-}
+
 
 
 @end

@@ -12,8 +12,8 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface KeyCenter : NSObject
-/// 用户申请的appId（必填）
-+ (NSString *)appId;
+/// 用户申请的appKey（必填）
++ (NSString *)appKey;
 
 /// 用户申请的鉴权码（必填）
 + (NSString *)authorization;

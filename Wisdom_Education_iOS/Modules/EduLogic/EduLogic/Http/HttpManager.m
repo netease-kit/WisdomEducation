@@ -10,6 +10,7 @@
 #import "HttpClient.h"
 #import "URL.h"
 #import <YYModel/YYModel.h>
+#import "NEAppInfo.h"
 
 #define LocalErrorDomain @"com.netease.needuhttpdomain"
 #define LocalError(errCode,reason) ([NSError errorWithDomain:LocalErrorDomain \
@@ -40,7 +41,7 @@ static HttpManagerConfig *config;
 }
 
 + (void)loginWithParam:(NSDictionary * _Nullable)param analysisClass:(Class)classType success:(void (^ _Nullable) (id objModel))successBlock failure:(void (^ _Nullable) (NSError * _Nullable error, NSInteger statusCode))failureBlock {
-    NSString *urlStr = [NSString stringWithFormat:HTTP_EASY_LOGIN, config.baseURL,config.appId,config.version];
+    NSString *urlStr = [NSString stringWithFormat:HTTP_EASY_LOGIN, config.baseURL,config.appKey,config.version];
     [HttpManager post:urlStr token:nil params:param headers:nil success:^(id responseObj) {
         id model = [classType yy_modelWithDictionary:responseObj];
         if(successBlock){
@@ -54,7 +55,7 @@ static HttpManagerConfig *config;
 }
 
 + (void)createRoom:(NSString *)roomUuid param:(NSDictionary *)param classType:(Class)classType success:(void (^ _Nullable) (id objModel))successBlock failure:(void (^ _Nullable) (NSError * _Nullable error, NSInteger statusCode))failureBlock {
-    NSString *urlStr = [NSString stringWithFormat:HTTP_CREATE_ROOM, config.baseURL, config.appId, config.version,roomUuid];
+    NSString *urlStr = [NSString stringWithFormat:HTTP_CREATE_ROOM, config.baseURL, config.appKey, config.version,roomUuid];
     
     [HttpManager put:urlStr token:nil params:param headers:nil success:^(id responseObj) {
         id model = [classType yy_modelWithDictionary:responseObj];
@@ -69,7 +70,7 @@ static HttpManagerConfig *config;
 }
 
 + (void)enterRoom:(NSString *)roomUuid param:(NSDictionary *)param classType:(Class)classType success:(void (^ _Nullable) (id objModel))successBlock failure:(void (^ _Nullable) (NSError * _Nullable error, NSInteger statusCode))failureBlock {
-    NSString *urlStr = [NSString stringWithFormat:HTTP_ENTER_ROOM, config.baseURL, config.appId, config.version, roomUuid];
+    NSString *urlStr = [NSString stringWithFormat:HTTP_ENTER_ROOM, config.baseURL, config.appKey, config.version, roomUuid];
     [HttpManager post:urlStr token:nil params:param headers:nil success:^(id responseObj) {
         id model = [classType yy_modelWithDictionary:responseObj];
         if(successBlock){
@@ -83,7 +84,7 @@ static HttpManagerConfig *config;
 }
 
 + (void)getRoomProfile:(NSString *)roomUuid classType:(Class)classType success:(void (^ _Nullable) (id objModel ,NSInteger ts))successBlock failure:(void (^ _Nullable) (NSError * _Nullable error, NSInteger statusCode))failureBlock {
-    NSString *urlStr = [NSString stringWithFormat:HTTP_ROOM_profile, config.baseURL, config.appId, config.version, roomUuid];
+    NSString *urlStr = [NSString stringWithFormat:HTTP_ROOM_profile, config.baseURL, config.appKey, config.version, roomUuid];
     [HttpManager get:urlStr token:nil params:nil headers:nil success:^(id responseObj,NSInteger ts) {
         id model = [classType yy_modelWithDictionary:responseObj];
         if(successBlock){
@@ -93,7 +94,7 @@ static HttpManagerConfig *config;
 }
 
 + (void)updateStreamStateWithRoomUuid:(NSString *)roomUuid userUuid:(NSString *)userUuid param:(NSDictionary *)param classType:(Class)classType streamType:(NSString *)streamType success:(void (^ _Nullable) (id objModel))successBlock failure:(void (^ _Nullable) (NSError * _Nullable error, NSInteger statusCode))failureBlock {
-    NSString *urlStr = [NSString stringWithFormat:HTTP_STREAM_STATE, config.baseURL, config.appId, config.version, roomUuid,userUuid,streamType];
+    NSString *urlStr = [NSString stringWithFormat:HTTP_STREAM_STATE, config.baseURL, config.appKey, config.version, roomUuid,userUuid,streamType];
     NSNumber *value = [param objectForKey:@"value"];
     if (value.intValue == 0) {
         [HttpManager delete:urlStr token:nil params:param headers:nil success:^(id responseObj) {
@@ -114,7 +115,7 @@ static HttpManagerConfig *config;
 
 + (void)updateMemberPropertyWithRoomUuid:(NSString *)roomUuid userUuid:(NSString *)userUuid param:(NSDictionary *)param classType:(Class)classType property:(NSString *)property success:(void (^ _Nullable) (id objModel))successBlock failure:(void (^ _Nullable) (NSError * _Nullable error, NSInteger statusCode))failureBlock {
 //    @"%@/scene/apps/%@/%@/rooms/%@/members/%@/properties/%@"
-    NSString *urlStr = [NSString stringWithFormat:HTTP_MEMBER_PROPERTY, config.baseURL, config.appId, config.version, roomUuid,userUuid,property];
+    NSString *urlStr = [NSString stringWithFormat:HTTP_MEMBER_PROPERTY, config.baseURL, config.appKey, config.version, roomUuid,userUuid,property];
     [HttpManager put:urlStr token:nil params:param headers:nil success:^(id responseObj) {
         id model = [classType yy_modelWithDictionary:responseObj];
         if(successBlock){
@@ -125,7 +126,7 @@ static HttpManagerConfig *config;
 
 + (void)deleteMemberPropertyWithRoomUuid:(NSString *)roomUuid userUuid:(NSString *)userUuid param:(NSDictionary *)param classType:(Class)classType property:(NSString *)property success:(void (^ _Nullable) (id objModel))successBlock failure:(void (^ _Nullable) (NSError * _Nullable error, NSInteger statusCode))failureBlock {
 //    @"%@/scene/apps/%@/%@/rooms/%@/members/%@/properties/%@"
-    NSString *urlStr = [NSString stringWithFormat:HTTP_MEMBER_PROPERTY, config.baseURL, config.appId, config.version, roomUuid,userUuid,property];
+    NSString *urlStr = [NSString stringWithFormat:HTTP_MEMBER_PROPERTY, config.baseURL, config.appKey, config.version, roomUuid,userUuid,property];
     [HttpManager delete:urlStr token:nil params:param headers:nil success:^(id responseObj) {
         id model = [classType yy_modelWithDictionary:responseObj];
         if(successBlock){
@@ -146,7 +147,7 @@ static HttpManagerConfig *config;
 //}
 //PUT: /scene/apps/{appId}/v1/rooms/{roomId}/states/step
 + (void)startLessonWithRoomUuid:(NSString *)roomUuid param:(NSDictionary *)param classType:(Class)classType success:(void (^ _Nullable) (id objModel))successBlock failure:(void (^ _Nullable) (NSError * _Nullable error, NSInteger statusCode))failureBlock {
-    NSString *urlStr = [NSString stringWithFormat:HTTP_LESSON_START, config.baseURL, config.appId, config.version, roomUuid];
+    NSString *urlStr = [NSString stringWithFormat:HTTP_LESSON_START, config.baseURL, config.appKey, config.version, roomUuid];
     [HttpManager put:urlStr token:nil params:param headers:nil success:^(id responseObj) {
         id model = [classType yy_modelWithDictionary:responseObj];
         if(successBlock){
@@ -156,7 +157,7 @@ static HttpManagerConfig *config;
 }
 
 + (void)muteAllWithRoomUuid:(NSString *)roomUuid param:(NSDictionary *)param classType:(Class)classType success:(void (^ _Nullable) (id objModel))successBlock failure:(void (^ _Nullable) (NSError * _Nullable error, NSInteger statusCode))failureBlock {
-    NSString *urlStr = [NSString stringWithFormat:HTTP_LESSON_MUTE, config.baseURL, config.appId, config.version, roomUuid];
+    NSString *urlStr = [NSString stringWithFormat:HTTP_LESSON_MUTE, config.baseURL, config.appKey, config.version, roomUuid];
     [HttpManager put:urlStr token:nil params:param headers:nil success:^(id responseObj) {
         id model = [classType yy_modelWithDictionary:responseObj];
         if(successBlock){
@@ -166,7 +167,7 @@ static HttpManagerConfig *config;
 }
 
 + (void)muteAllTextWithRoomUuid:(NSString *)roomUuid param:(NSDictionary *)param classType:(Class)classType success:(void (^ _Nullable) (id objModel))successBlock failure:(void (^ _Nullable) (NSError * _Nullable error, NSInteger statusCode))failureBlock {
-    NSString *urlStr = [NSString stringWithFormat:HTTP_LESSON_MUTE_CHAT, config.baseURL, config.appId, config.version, roomUuid];
+    NSString *urlStr = [NSString stringWithFormat:HTTP_LESSON_MUTE_CHAT, config.baseURL, config.appKey, config.version, roomUuid];
     [HttpManager put:urlStr token:nil params:param headers:nil success:^(id responseObj) {
         id model = [classType yy_modelWithDictionary:responseObj];
         if(successBlock){
@@ -176,7 +177,7 @@ static HttpManagerConfig *config;
 }
 
 + (void)getMessageWithRoomUuid:(NSString *)roomUuid nextId:(NSInteger)nextId classType:(Class)classType success:(void (^ _Nullable) (id objModel))successBlock failure:(void (^ _Nullable) (NSError * _Nullable error, NSInteger statusCode))failureBlock {
-    NSString *urlStr = [NSString stringWithFormat:HTTP_MESSAGE_GET, config.baseURL, config.appId, config.version, roomUuid,nextId];
+    NSString *urlStr = [NSString stringWithFormat:HTTP_MESSAGE_GET, config.baseURL, config.appKey, config.version, roomUuid,nextId];
     [HttpManager get:urlStr token:nil params:nil headers:nil success:^(id data, NSInteger ts) {
         id model = [classType yy_modelWithDictionary:data];
         if(successBlock){
@@ -272,7 +273,6 @@ static HttpManagerConfig *config;
     } failure:failure];
 }
 
-
 + (NSDictionary *)httpHeader {
     NSMutableDictionary *headers = [NSMutableDictionary dictionary];
     if(config.authorization) {
@@ -289,8 +289,13 @@ static HttpManagerConfig *config;
         headers[@"token"] = config.userToken;
     }
     headers[@"clientType"] = @"ios";
+    
+    NSString *versionCode = [NSString stringWithFormat:@"%@%@",[NEAppInfo appVersion],[NEAppInfo buildVersion]];
+    versionCode = [versionCode stringByReplacingOccurrencesOfString:@"." withString:@""];
+    headers[@"versionCode"] = versionCode;
     return [headers copy];
 }
+
 + (NSError *)errorWithErrorCode:(NSInteger)code {
     NSString *message = @"未知错误";
     switch (code) {

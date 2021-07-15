@@ -19,5 +19,5 @@ FOUNDATION_EXPORT const unsigned char EduUIVersionString[];
 #import <EduUI/NEEduClassRoomVC.h>
 #import <EduUI/NEEduOneMemberVC.h>
 #import <EduUI/NEEduSmallClassVC.h>
-#import <EduUI/NEEduBigClassVC.h>
+#import <EduUI/NEEduBigClassStudentVC.h>
 

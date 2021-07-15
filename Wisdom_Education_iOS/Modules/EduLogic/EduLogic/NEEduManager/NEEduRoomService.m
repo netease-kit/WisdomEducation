@@ -11,7 +11,7 @@
 #import "NEEduCreateRoomRequest.h"
 #import "NEEduEnterRoomRequest.h"
 #import "NEEduEnterRoomResponse.h"
-#import "EduManager.h"
+#import "NEEduManager.h"
 
 @interface NEEduRoomService ()
 
@@ -100,10 +100,10 @@
         strongSelf.room.roomUuid = objModel.snapshot.room.roomUuid;
         strongSelf.room.roomName = objModel.snapshot.room.roomName;
         
-        [[EduManager shared].userService setupProfile:objModel];
-        [[EduManager shared].messageService updateProfile:objModel];
+        [[NEEduManager shared].userService setupProfile:objModel];
+        [[NEEduManager shared].messageService updateProfile:objModel];
         objModel.snapshot.members = [strongSelf sortMembers:objModel.snapshot.members];
-        [EduManager shared].profile = objModel;
+        [NEEduManager shared].profile = objModel;
         if (completion) {
             completion(nil,objModel);
         }
@@ -176,8 +176,8 @@
         //规则：老师第一位 自己第二位
         if ([obj1.role isEqualToString:NEEduRoleHost]) return NSOrderedAscending;
         if ([obj2.role isEqualToString:NEEduRoleHost]) return NSOrderedDescending;
-        if ([obj1.userUuid isEqualToString:[EduManager shared].localUser.userUuid]) return NSOrderedAscending;
-        if ([obj2.userUuid isEqualToString:[EduManager shared].localUser.userUuid]) return NSOrderedDescending;
+        if ([obj1.userUuid isEqualToString:[NEEduManager shared].localUser.userUuid]) return NSOrderedAscending;
+        if ([obj2.userUuid isEqualToString:[NEEduManager shared].localUser.userUuid]) return NSOrderedDescending;
         return NSOrderedSame;
     }];
 }

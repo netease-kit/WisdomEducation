@@ -14,25 +14,28 @@
 
 #import <NEWhiteBoard/WhiteBoardStateModel.h>
 #import <NEWhiteBoard/NMCTool.h>
-#import "NEEduLessonStateView.h"
 #import "NEEduLessonOverView.h"
 #import "NEEduLessonInfoView.h"
 #import "UIView+NE.h"
 #import "NSString+NE.h"
+#import "UIImage+NE.h"
+#import "NEEduNavigationViewController.h"
+#import <SDWebImage/SDWebImage.h>
 
 @interface NEEduClassRoomVC ()<NEEduRoomViewMaskViewDelegate,NMCWhiteboardManagerDelegate,NEScreenShareHostDelegate,NEEduVideoServiceDelegate,NEEduIMChatDelegate,NEEduMessageServiceDelegate,NEEduRoomServiceDelegate>
 
 /// 自己是否在共享
 @property (nonatomic, assign) BOOL isSharing;
-@property (nonatomic, strong) NEEduLessonStateView *lessonStateView;
 @property (nonatomic, strong) NEEduLessonOverView *classOverView;
 @property (nonatomic, strong) NEEduChatViewController *chatVC;
 @property (nonatomic, strong) NEEduLessonInfoView *infoView;
 //用于chatVC新创建时同步上一次数据
 @property (nonatomic, strong) NSMutableArray<NEEduChatMessage *> *messages;
 @property (nonatomic, assign) BOOL netReachable;
+@property (nonatomic, strong) UILabel *shareScreenMask;
 
 @end
+
 static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
 
 @implementation NEEduClassRoomVC
@@ -42,10 +45,10 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
     self.netReachable = YES;
     [self.navigationController setNavigationBarHidden:NO];
     self.view.backgroundColor = [UIColor whiteColor];
-    [EduManager shared].messageService.delegate = self;
-    [EduManager shared].videoService.delegate = self;
-    [EduManager shared].roomService.delegate = self;
-    [EduManager shared].imService.chatDelegate = self;
+    [NEEduManager shared].messageService.delegate = self;
+    [NEEduManager shared].rtcService.delegate = self;
+    [NEEduManager shared].roomService.delegate = self;
+    [NEEduManager shared].imService.chatDelegate = self;
     self.whiteboardWritable = YES;
     [self initMenuItems];
     [self setupSubviews];
@@ -94,13 +97,14 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
     NSLayoutConstraint *shareViewBottom = [NSLayoutConstraint constraintWithItem:self.shareScreenView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self.boardView attribute:NSLayoutAttributeBottom multiplier:1.0 constant:0];
     [self.view addConstraints:@[shareViewLeft,shareViewRight,shareViewTop,shareViewBottom]];
     
+    
+    
     [self.view addSubview:self.lessonStateView];
     NSLayoutConstraint *stateViewLeft = [NSLayoutConstraint constraintWithItem:self.lessonStateView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self.boardView attribute:NSLayoutAttributeLeft multiplier:1.0 constant:0];
     NSLayoutConstraint *stateViewRight = [NSLayoutConstraint constraintWithItem:self.lessonStateView attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self.boardView attribute:NSLayoutAttributeRight multiplier:1.0 constant:0];
     NSLayoutConstraint *stateViewTop = [NSLayoutConstraint constraintWithItem:self.lessonStateView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.boardView attribute:NSLayoutAttributeTop multiplier:1.0 constant:0];
     NSLayoutConstraint *stateViewBottom = [NSLayoutConstraint constraintWithItem:self.lessonStateView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self.boardView attribute:NSLayoutAttributeBottom multiplier:1.0 constant:0];
     [self.view addConstraints:@[stateViewLeft,stateViewRight,stateViewTop,stateViewBottom]];
-    
     
     [self.view addSubview:self.collectionView];
     NSLayoutConstraint *collectionViewRight = [NSLayoutConstraint constraintWithItem:self.collectionView attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeRight multiplier:1.0 constant:- 20];
@@ -120,6 +124,14 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
     [self.view addConstraints:@[collectionViewRight,collectionViewTop,collectionViewBottom,collectionViewLeft]];
     [self.collectionView addConstraint:collectionViewWidth];
     
+    [self.view addSubview:self.shareScreenMask];
+    [NSLayoutConstraint activateConstraints:@[
+        [self.shareScreenMask.topAnchor constraintEqualToAnchor:self.shareScreenView.topAnchor],
+        [self.shareScreenMask.leftAnchor constraintEqualToAnchor:self.shareScreenView.leftAnchor],
+        [self.shareScreenMask.rightAnchor constraintEqualToAnchor:self.view.rightAnchor],
+        [self.shareScreenMask.bottomAnchor constraintEqualToAnchor:self.shareScreenView.bottomAnchor]
+    ]];
+    
     [self.view addSubview:self.classOverView];
     NSLayoutConstraint *classOverLeft = [NSLayoutConstraint constraintWithItem:self.classOverView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeLeft multiplier:1.0 constant:0];
     NSLayoutConstraint *classOverRight = [NSLayoutConstraint constraintWithItem:self.classOverView attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeRight multiplier:1.0 constant:0];
@@ -129,7 +141,7 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
 }
 - (void)initMenuItems {
     NEEduMenuItem *audoItem = [[NEEduMenuItem alloc] initWithTitle:@"静音" image:[UIImage ne_imageNamed:@"menu_audio"]];
-    audoItem.selectTitle = @"取消静音";
+    audoItem.selectTitle = @"解除静音";
     audoItem.type = NEEduMenuItemTypeAudio;
     [audoItem setSelctedImage:[UIImage ne_imageNamed:@"menu_audio_off"]];
     
@@ -140,13 +152,14 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
 
     NEEduMenuItem *shareItem = [[NEEduMenuItem alloc] initWithTitle:@"共享屏幕" image:[UIImage ne_imageNamed:@"menu_share_screen"]];
     shareItem.type = NEEduMenuItemTypeShareScreen;
+    shareItem.selectTitle = @"停止共享";
     [shareItem setSelctedImage:[UIImage ne_imageNamed:@"menu_share_screen_stop"]];
     
     NEEduMenuItem *membersItem = [[NEEduMenuItem alloc] initWithTitle:@"课堂成员" image:[UIImage ne_imageNamed:@"menu_members"]];
     membersItem.type = NEEduMenuItemTypeMembers;
-    NEEduMenuItem *chatItem = [[NEEduMenuItem alloc] initWithTitle:@"聊天室" image:[UIImage ne_imageNamed:@"menu_chat"]];
-    chatItem.type = NEEduMenuItemTypeChat;
-    self.menuItems = @[audoItem,videoItem,shareItem,membersItem,chatItem];
+    self.chatItem = [[NEEduMenuItem alloc] initWithTitle:@"聊天室" image:[UIImage ne_imageNamed:@"menu_chat"]];
+    self.chatItem.type = NEEduMenuItemTypeChat;
+    self.menuItems = @[audoItem,videoItem,shareItem,membersItem,self.chatItem];
 }
 
 - (void)showViewWithItem:(NEEduMenuItem *)item {
@@ -175,22 +188,22 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
 }
 
 - (void)turnOnAudio:(BOOL)isOn {
-    [[EduManager shared].userService localUserAudioEnable:isOn result:^(NSError * _Nonnull error) {
+    [[NEEduManager shared].userService localUserAudioEnable:isOn result:^(NSError * _Nonnull error) {
         if (error) {
             [self.view makeToast:error.localizedDescription];
         }
     }];
 }
 - (void)turnOnVideo:(BOOL)isOn {
-    [[EduManager shared].userService localUserVideoEnable:isOn result:^(NSError * _Nonnull error) {
+    [[NEEduManager shared].userService localUserVideoEnable:isOn result:^(NSError * _Nonnull error) {
         if (error) {
             [self.view makeToast:error.localizedDescription];
         }
     }];
 }
 - (void)turnOnShareScreen:(BOOL)isOn item:(NEEduMenuItem *)item {
-    if ([EduManager shared].profile.snapshot.room.states.step.value == NEEduLessonStateNone) {
-        [self.view makeToast:@"还未开始上课"];
+    if ([NEEduManager shared].profile.snapshot.room.states.step.value == NEEduLessonStateNone) {
+        [self.view makeToast:@"请先开始上课"];
         return;
     }
     if (@available(iOS 12.0, *)) {
@@ -231,12 +244,13 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
         return;
     }
     __weak typeof(self)weakSelf = self;
-    [[EduManager shared].userService localShareScreenEnable:YES result:^(NSError * _Nonnull error) {
+    [[NEEduManager shared].userService localShareScreenEnable:YES result:^(NSError * _Nonnull error) {
         if (error) {
             [weakSelf.view makeToast:error.localizedDescription];
             [self.shareHost stopBroadcaster];
         }else {
             weakSelf.isSharing = YES;
+            weakSelf.shareScreenMask.hidden = NO;
             [weakSelf updateShareItemWithSelected:YES];
         }
     }];
@@ -248,11 +262,12 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
         return;
     }
     __weak typeof(self)weakSelf = self;
-    [[EduManager shared].userService localShareScreenEnable:NO result:^(NSError * _Nonnull error) {
+    [[NEEduManager shared].userService localShareScreenEnable:NO result:^(NSError * _Nonnull error) {
         if (error) {
             [self.view makeToast:error.localizedDescription];
         }else {
             weakSelf.isSharing = NO;
+            weakSelf.shareScreenMask.hidden = YES;
             [weakSelf updateShareItemWithSelected:NO];
             [weakSelf.shareHost stopBroadcaster];
             [NERtcEngine.sharedEngine stopScreenCapture];
@@ -262,6 +277,7 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
 /// 仅停止录制和rtc辅流，不发送请求。
 - (void)stopRecord {
     self.isSharing = NO;
+    self.shareScreenMask.hidden = YES;
     [self.shareHost stopBroadcaster];
     [NERtcEngine.sharedEngine stopScreenCapture];
 }
@@ -278,11 +294,12 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
             return;
         }
         __weak typeof(self)weakSelf = self;
-        [[EduManager shared].userService localShareScreenEnable:NO result:^(NSError * _Nonnull error) {
+        [[NEEduManager shared].userService localShareScreenEnable:NO result:^(NSError * _Nonnull error) {
             if (error) {
                 [self.view makeToast:error.localizedDescription];
             }else {
                 weakSelf.isSharing = NO;
+                weakSelf.shareScreenMask.hidden = YES;
                 [weakSelf updateShareItemWithSelected:NO];
             }
         }];
@@ -331,16 +348,13 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
     }
 }
 
+
 - (void)showMembersViewWithitem:(NEEduMenuItem *)item {
-    if ([EduManager shared].profile.snapshot.room.states.step.value == NEEduLessonStateNone) {
-        [self.view makeToast:@"还未开始上课"];
-        return;
-    }
     if (!self.membersVC) {
         NSMutableArray *memberArray = [NSMutableArray array];
         self.membersVC = [[NEEduMembersVC alloc] init];
-        self.membersVC.muteChat = [EduManager shared].profile.snapshot.room.states.muteChat.value;
-        for (NEEduHttpUser *user in [EduManager shared].profile.snapshot.members) {
+        self.membersVC.muteChat = [NEEduManager shared].profile.snapshot.room.states.muteChat.value;
+        for (NEEduHttpUser *user in [NEEduManager shared].profile.snapshot.members) {
             if (![user.role isEqualToString:NEEduRoleHost]) {
                 NEEduMember *member = [self memberFromHttpUser:user];
                 [memberArray addObject:member];
@@ -360,12 +374,12 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
     member.shareScreenEnable = user.properties.screenShare.value;
     member.whiteboardEnable = user.properties.whiteboard.drawable;
     member.online = user.properties.avHandsUp.value == NEEduHandsupStateTeaAccept ? YES : NO;
-    if ([EduManager shared].localUser.roleType == NEEduRoleTypeTeacher) {
+    if ([[NEEduManager shared].localUser isTeacher]) {
         member.videoEnable = YES;
         member.audioEnable = YES;
         member.showMoreButton = YES;
     }else {
-        if ([user.userUuid isEqualToString:[EduManager shared].localUser.userUuid]) {
+        if ([user.userUuid isEqualToString:[NEEduManager shared].localUser.userUuid]) {
             member.videoEnable = YES;
             member.audioEnable = YES;
         }else {
@@ -374,7 +388,7 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
         }
         member.showMoreButton = NO;
     }
-    if ([EduManager shared].roomService.room.sceneType == NEEduSceneTypeBig) {
+    if ([NEEduManager shared].roomService.room.sceneType == NEEduSceneTypeBig) {
         member.isBigClass = YES;
     }
     return member;
@@ -382,16 +396,12 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
 - (void)showChatViewWithitem:(NEEduMenuItem *)item {
     self.chatVC = [[NEEduChatViewController alloc] init];
     self.chatVC.messages = self.messages;
-    self.chatVC.muteChat = [EduManager shared].profile.snapshot.room.states.muteChat.value;
-    self.chatVC.modalPresentationStyle = UIModalPresentationFullScreen;
-    [self presentViewController:self.chatVC animated:YES completion:nil];
+    self.chatVC.muteChat = [NEEduManager shared].profile.snapshot.room.states.muteChat.value;
+    NEEduNavigationViewController *chatNav = [[NEEduNavigationViewController alloc] initWithRootViewController:self.chatVC];
+    chatNav.modalPresentationStyle = UIModalPresentationFullScreen;
+    [self presentViewController:chatNav animated:YES completion:nil];
     //更新菜单底部聊天室红点
-    for (NEEduMenuItem *item in self.maskView.stackView.arrangedSubviews) {
-        if (item.type == NEEduMenuItemTypeChat) {
-            item.badgeLabel.hidden = YES;
-            break;
-        }
-    }
+    self.chatItem.badgeLabel.hidden = YES;
 }
 //放在子类中实现
 - (void)handsupItem:(NEEduMenuItem *)item {
@@ -447,24 +457,10 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
     self.members = array;
     [self.collectionView reloadData];
     [self updateMyselfAVItemWithUser:user];
-//    if ([user.userUuid isEqualToString:[EduManager shared].localUser.userUuid]) {
-//        for (int i = 0; i < self.maskView.stackView.arrangedSubviews.count; i ++) {
-//            NEEduMenuItem *item = self.maskView.stackView.arrangedSubviews[i];
-//            if (item.type == NEEduMenuItemTypeVideo) {
-//                item.isSelected = !user.streams.video.value;
-//            }
-//            if (item.type == NEEduMenuItemTypeAudio) {
-//                item.isSelected = !user.streams.audio.value;
-//            }
-//            if (item.type == NEEduMenuItemTypeShareScreen) {
-//                item.isSelected = user.streams.subVideo.value;
-//            }
-//        }
-//    }
 }
 
 - (void)onSubVideoStreamEnable:(BOOL)enable user:(NEEduHttpUser *)user {
-    if ([user.userUuid isEqualToString:[EduManager shared].localUser.userUuid]) {
+    if ([user.userUuid isEqualToString:[NEEduManager shared].localUser.userUuid]) {
         //FIXME:自己在共享的状态处理
 //        if (self.isSharing) {
 //            [self stopAllScreenShare];
@@ -482,25 +478,25 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
     }
     self.members = members;
     // 设置屏幕共享画布
+    NERtcVideoCanvasExtention *canvas = [[NERtcVideoCanvasExtention alloc] init];
+    canvas.uid = user.rtcUid;
     if (enable) {
-        NERtcVideoCanvasExtention *canvas = [[NERtcVideoCanvasExtention alloc] init];
         canvas.container = self.shareScreenView;
-        canvas.uid = user.rtcUid;
-        [[EduManager shared].videoService setupSubStreamVideo:canvas];
     }else {
-        [[EduManager shared].videoService setupSubStreamVideo:nil];
+        canvas.container = nil;
     }
+    [[NEEduManager shared].rtcService setupSubStreamVideo:canvas];
     self.shareScreenView.hidden = !enable;
 }
 
 - (void)onVideoAuthorizationEnable:(BOOL)enable user:(NEEduHttpUser *)user {
-    if ([user.userUuid isEqualToString:[EduManager shared].localUser.userUuid]) {
+    if ([user.userUuid isEqualToString:[NEEduManager shared].localUser.userUuid]) {
         [self.view makeToast:[NSString stringWithFormat:@"老师%@了你的摄像头",enable ? @"打开" : @"关闭"]];
         [self turnOnVideo:enable];
     }
 }
 - (void)onAudioAuthorizationEnable:(BOOL)enable user:(NEEduHttpUser *)user {
-    if ([user.userUuid isEqualToString:[EduManager shared].localUser.userUuid]) {
+    if ([user.userUuid isEqualToString:[NEEduManager shared].localUser.userUuid]) {
         [self.view makeToast:[NSString stringWithFormat:@"老师%@了你的麦克风",enable ? @"打开" : @"关闭"]];
         [self turnOnAudio:enable];
     }
@@ -516,7 +512,7 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
     self.members = members;
     self.whiteboardWritable = enable;
     //如果是自己的权限被修改 设置白板
-    if ([user.userUuid isEqualToString:[EduManager shared].localUser.userUuid]) {
+    if ([user.userUuid isEqualToString:[NEEduManager shared].localUser.userUuid]) {
         NSString *toast = enable?@"老师授予了你白板权限":@"老师取消了你白板权限";
         [self.view makeToast:toast];
         [[NMCWhiteboardManager sharedManager] callEnableDraw:self.whiteboardWritable];
@@ -546,12 +542,13 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
     }
     self.members = members;
     //如果是自己的权限被修改 更新底部菜单栏
-    if ([user.userUuid isEqualToString:[EduManager shared].localUser.userUuid]) {
+    if ([user.userUuid isEqualToString:[NEEduManager shared].localUser.userUuid]) {
         NSString *toast = enable?@"老师授予了你共享权限":@"老师取消了你共享权限";
         [self.view makeToast:toast];
         if (enable) {
             NEEduMenuItem *shareItem = [[NEEduMenuItem alloc] initWithTitle:@"共享屏幕" image:[UIImage ne_imageNamed:@"menu_share_screen"]];
             shareItem.type = NEEduMenuItemTypeShareScreen;
+            shareItem.selectTitle = @"停止共享";
             [shareItem setSelctedImage:[UIImage ne_imageNamed:@"menu_share_screen_stop"]];
             [self.maskView insertItem:shareItem atIndex:2];
         }else {
@@ -580,7 +577,7 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
         [self classOver];
         return;
     }
-    if ([EduManager shared].localUser.roleType == NEEduRoleTypeStudent) {
+    if (![[NEEduManager shared].localUser isTeacher]) {
         if (step.value == NEEduLessonStateClassIn) {
             self.lessonStateView.hidden = YES;
         }
@@ -588,7 +585,7 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
 }
 
 - (void)onLessonMuteAllText:(BOOL)mute roomUuid:(NSString *)roomUuid {
-    if ([EduManager shared].localUser.roleType == NEEduRoleTypeStudent) {
+    if (![[NEEduManager shared].localUser isTeacher]) {
         if (self.chatVC) {
             [self.chatVC updateMuteChat:mute];
         }
@@ -601,13 +598,19 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
     [self.view makeToast:@"音视频断开连接"];
     [self leaveClass];
 }
-
+- (void)onSubStreamDidStop:(UInt64)userID {
+    NERtcVideoCanvasExtention *canvas = [[NERtcVideoCanvasExtention alloc] init];
+    canvas.uid = userID;
+    canvas.container = nil;
+    [[NEEduManager shared].rtcService setupSubStreamVideo:canvas];
+    self.shareScreenView.hidden = YES;
+}
 - (void)onNetQuality:(NERtcNetworkQualityStats *)quality {
     if (!self.netReachable) {
         self.maskView.navView.netStateView.image = [UIImage ne_imageNamed:@"net_0"];
         return;
     }
-    if (quality.userId == [EduManager shared].localUser.rtcUserId) {
+    if (quality.userId == [NEEduManager shared].localUser.rtcUid) {
         int level = 0;
         NERtcNetworkQuality max = MAX(quality.txQuality, quality.rxQuality);
         switch (max) {
@@ -650,10 +653,10 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
         [self stopAllScreenShare];
     }
     //老师学生离开音视频、聊天室、白板
-    [[EduManager shared] leaveClassroom];
+    [[NEEduManager shared] leaveClassroom];
     [[NMCWhiteboardManager sharedManager] callWebLogoutIM];
     [[NMCWhiteboardManager sharedManager] clearWebViewCache];
-    [[EduManager shared] destoryClassroom];
+    [[NEEduManager shared] destoryClassroom];
 }
 - (void)dismissVC {
     if (self.chatVC) {
@@ -668,6 +671,9 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
 - (void)classOver {
     //展示课堂结束页面
     self.classOverView.hidden = NO;
+    long minutes = self.maskView.navView.timeCount / 60;
+    long seconds = self.maskView.navView.timeCount % 60;
+    self.classOverView.timeLabel.text = [NSString stringWithFormat:@"课堂结束(%.2ld:%.2ld)",minutes,seconds];
     if (self.chatVC) {
         [self.chatVC dismissViewControllerAnimated:YES completion:nil];
     }
@@ -678,10 +684,10 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
         [self stopAllScreenShare];
     }
     
-    [[EduManager shared] leaveClassroom];
+    [[NEEduManager shared] leaveClassroom];
     [[NMCWhiteboardManager sharedManager] callWebLogoutIM];
     [[NMCWhiteboardManager sharedManager] clearWebViewCache];
-    [[EduManager shared] destoryClassroom];
+    [[NEEduManager shared] destoryClassroom];
 }
 
 
@@ -689,14 +695,14 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
     [self showViewWithItem:item];
 }
 - (void)rightButton:(UIButton *)button selected:(BOOL)selected {
-    if ([EduManager shared].localUser.roleType == NEEduRoleTypeTeacher) {
+    if ([[NEEduManager shared].localUser isTeacher]) {
         int state = selected ? 2 : 1;
         NSString *title = selected ? @"结束课堂":@"确认开始上课";
         NSString *msg = selected ? @"结束课堂后老师和学生均会跳转课堂结束画面，支持查看课程回放":@"开始教学内容将同步至学生端，并正式开始课堂录制";
         __weak typeof(self)weakSelf = self;
         [weakSelf.view showAlertViewOnVC:weakSelf withTitle:title subTitle:msg confirm:^{
             button.userInteractionEnabled = NO;
-            [[EduManager shared].roomService startLesson:state completion:^(NSError * _Nonnull error, NEEduPropertyItem * _Nonnull item) {
+            [[NEEduManager shared].roomService startLesson:state completion:^(NSError * _Nonnull error, NEEduPropertyItem * _Nonnull item) {
                 button.userInteractionEnabled = YES;
                 if (error) {
                     [weakSelf.view makeToast:error.localizedDescription];
@@ -717,53 +723,99 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
     NIMMessage *imMessage = messages.firstObject;
     NIMMessageChatroomExtension *ext = imMessage.messageExt;
     NEEduChatMessage *message = [[NEEduChatMessage alloc] init];
+    message.imMessage = imMessage;
     message.userName = ext.roomNickname;
     message.content = imMessage.text;
     message.myself = NO;
-    message.textSize = [imMessage.text sizeWithWidth:(self.view.bounds.size.width - 112) font:[UIFont systemFontOfSize:14]];
     message.timestamp = [[NSDate date] timeIntervalSince1970];
-    message.type = NEEduChatMessageTypeText;
-    
-    [self addTimeMessage:message];
-    
-    [self.messages addObject:message];
-    if (self.chatVC.presentingViewController) {
-        [self.chatVC reloadTableViewToBottom:YES];
-    }else {
-        for (NEEduMenuItem *item in self.maskView.stackView.arrangedSubviews) {
-            if (item.type == NEEduMenuItemTypeChat) {
-                item.badgeLabel.hidden = NO;
-                break;
+    if([imMessage messageType] == NIMMessageTypeImage) {
+        message.type = NEEduChatMessageTypeImage;
+        NIMImageObject *originMessageObject = [imMessage messageObject];
+        message.imageUrl = originMessageObject.url;
+        message.imageThumbUrl = originMessageObject.thumbUrl;
+        [[SDWebImageDownloader sharedDownloader] downloadImageWithURL:[NSURL URLWithString:originMessageObject.thumbUrl] completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, BOOL finished) {
+            if (error) {
+                return;
             }
-        }
-    }
-}
-- (void)didSendMessage:(NIMMessage *)message error:(NSError *)error {
-    //发送成功
-    if (error) {
-        [self.view makeToast:@"消息发送失败"];
-    }else {
-        NEEduChatMessage *eduMessage = [[NEEduChatMessage alloc] init];
-        NSString *role = [EduManager shared].localUser.roleType == NEEduRoleTypeTeacher ? @"老师":@"学生";
-        eduMessage.userName = [NSString stringWithFormat:@"%@(%@)",[EduManager shared].localUser.userName,role];
-        eduMessage.content = message.text;
-        eduMessage.myself = YES;
-        eduMessage.textSize = [message.text sizeWithWidth:(self.view.bounds.size.width - 112) font:[UIFont systemFontOfSize:14]];
-        eduMessage.timestamp = [[NSDate date] timeIntervalSince1970];
-        eduMessage.type = NEEduChatMessageTypeText;
+            message.thumbImage = image;
+            message.contentSize = [image ne_showSizeWithMaxWidth:176 maxHeight:190];
+            [self addTimeMessage:message];
+            [self.messages addObject:message];
+            if (self.chatVC.presentingViewController) {
+                [self.chatVC reloadTableViewToBottom:YES];
+            }else {
+                self.chatItem.badgeLabel.hidden = NO;
+            }
+        }];
         
-        [self addTimeMessage:eduMessage];
-        
-        [self.messages addObject:eduMessage];
-        if (self.chatVC) {
+    } else {
+        message.type = NEEduChatMessageTypeText;
+        message.contentSize = [imMessage.text sizeWithWidth:(self.view.bounds.size.width - 112) font:[UIFont systemFontOfSize:14]];
+        [self addTimeMessage:message];
+        [self.messages addObject:message];
+        if (self.chatVC.presentingViewController) {
             [self.chatVC reloadTableViewToBottom:YES];
+        }else {
+            self.chatItem.badgeLabel.hidden = NO;
         }
-//        [self.tableView reloadData];
-//        if (self.messages.count > 0) {
-//            [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:[self.messages count] - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
-//         }
     }
 }
+
+- (void)willSendMessage:(NIMMessage *)message {
+    //去重
+    NSLog(@"willSendMessage:%@ state:%d",message.messageId,message.deliveryState);
+    for (NEEduChatMessage *eduMessage in self.messages) {
+        if ([eduMessage.imMessage.messageId isEqualToString:message.messageId]) {
+            eduMessage.sendState = NEEduChatMessageSendStateNone;
+            if (self.chatVC.presentingViewController) {
+                [self.chatVC reloadTableViewToBottom:NO];
+            }
+            return;
+        }
+    }
+    NEEduChatMessage *eduMessage = [[NEEduChatMessage alloc] init];
+    eduMessage.imMessage = message;
+    NSString *role = [[NEEduManager shared].localUser isTeacher] ? @"老师":@"学生";
+    eduMessage.userName = [NSString stringWithFormat:@"%@(%@)",[NEEduManager shared].localUser.userName,role];
+    eduMessage.content = message.text;
+    if([message messageType] == NIMMessageTypeImage) {
+        NIMImageObject *originMessageObject = [message messageObject];
+        UIImage *thumbImage = [UIImage imageWithContentsOfFile:originMessageObject.thumbPath];
+        eduMessage.contentSize = [thumbImage ne_showSizeWithMaxWidth:176 maxHeight:190];
+        eduMessage.thumbImage = thumbImage;
+        eduMessage.imageUrl = originMessageObject.path;
+        eduMessage.imageThumbUrl = originMessageObject.thumbPath;
+        eduMessage.type = NEEduChatMessageTypeImage;
+    }else {
+        eduMessage.type = NEEduChatMessageTypeText;
+        eduMessage.contentSize = [message.text sizeWithWidth:(self.view.bounds.size.width - 112) font:[UIFont systemFontOfSize:14]];
+    }
+    eduMessage.myself = YES;
+    eduMessage.timestamp = [[NSDate date] timeIntervalSince1970];
+    eduMessage.sendState = NEEduChatMessageSendStateNone;
+    
+    [self addTimeMessage:eduMessage];
+    
+    [self.messages addObject:eduMessage];
+    NSLog(@"sendMessage count:%d",self.messages.count);
+    if (self.chatVC) {
+        [self.chatVC reloadTableViewToBottom:YES];
+    }
+}
+
+- (void)didSendMessage:(NIMMessage *)message error:(NSError *)error {
+    NSLog(@"didSendMessage:%@ error:%@",message.messageId,error);
+    for (NEEduChatMessage *eduMessage in self.messages) {
+        if ([eduMessage.imMessage.messageId isEqualToString:message.messageId]) {
+            eduMessage.sendState = error ? NEEduChatMessageSendStateFailure :NEEduChatMessageSendStateSuccess;;
+            if (self.chatVC.presentingViewController) {
+                [self.chatVC reloadTableViewToBottom:NO];
+            }
+            return;
+        }
+    }
+}
+
 - (void)addTimeMessage:(NEEduChatMessage *)message {
     //添加时间显示消息
     NEEduChatMessage *lastMessage = self.messages.lastObject;
@@ -774,7 +826,7 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
             NEEduChatMessage *timeMessage = [[NEEduChatMessage alloc] init];
             timeMessage.content = [NSString stringFromDate:[NSDate date]];
             timeMessage.myself = NO;
-            timeMessage.textSize = [timeMessage.content sizeWithWidth:(self.view.bounds.size.width - 112) font:[UIFont systemFontOfSize:14]];
+            timeMessage.contentSize = [timeMessage.content sizeWithWidth:(self.view.bounds.size.width - 112) font:[UIFont systemFontOfSize:14]];
             timeMessage.type = NEEduChatMessageTypeTime;
             [self.messages addObject:timeMessage];
         }
@@ -791,19 +843,19 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
         // 请求房间快照
         self.netReachable = YES;
         __weak typeof(self)weakSelf = self;
-        [[EduManager shared].roomService getRoomProfile:self.room.roomUuid completion:^(NSError * _Nonnull error, NEEduRoomProfile * _Nonnull profile) {
+        [[NEEduManager shared].roomService getRoomProfile:self.room.roomUuid completion:^(NSError * _Nonnull error, NEEduRoomProfile * _Nonnull profile) {
             weakSelf.room = profile.snapshot.room;
             /**
              1.房间状态刷新
              2.更新学生列表
-             3.底部音视频按钮状态更新
+             3.更新用户权限的变化（音视频开关/白板/屏幕共享）
              4.更新屏幕共享
              5.更新举手 上台
              6.更新成员列表
              */
             [weakSelf updateUIWithRoom:profile.snapshot.room];
             [weakSelf membersWithProfile:profile];
-            [weakSelf updateAVItemWithProfile:profile];
+            [weakSelf updateMemberAuthorizationWithProfile:profile];
             [weakSelf updateScreenShare];
             [weakSelf updateHandsupStateWithProfile:profile];
             [weakSelf updateMemberVCWithProfile:profile];
@@ -812,11 +864,11 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
 }
 - (void)updateUIWithRoom:(NEEduHttpRoom *)room {
     //FIXME:房间信息 房间状态
-    [self.maskView.navView updateRoomState:room serverTime:[EduManager shared].profile.ts];
+    [self.maskView.navView updateRoomState:room serverTime:[NEEduManager shared].profile.ts];
     //初始化上课按钮
-    if ([EduManager shared].localUser.roleType == NEEduRoleTypeTeacher) {
+    if ([[NEEduManager shared].localUser isTeacher]) {
         //开始上课/结束上课
-        if ([EduManager shared].profile.snapshot.room.states.step.value ==  NEEduLessonStateClassIn) {
+        if ([NEEduManager shared].profile.snapshot.room.states.step.value ==  NEEduLessonStateClassIn) {
             [self.maskView selectButton:YES];
         }else {
             [self.maskView selectButton:NO];
@@ -825,7 +877,7 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
 //        学生在线的话 下讲台
         [self.maskView.startLesson setTitle:@"下讲台" forState:UIControlStateSelected];
         self.maskView.startLesson.hidden = YES;
-        if ([EduManager shared].profile.snapshot.room.states.step.value == NEEduLessonStateClassIn) {
+        if ([NEEduManager shared].profile.snapshot.room.states.step.value == NEEduLessonStateClassIn) {
             self.lessonStateView.hidden = YES;
         }else {
             self.lessonStateView.hidden = NO;
@@ -842,18 +894,44 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
         [[NMCWhiteboardManager sharedManager] hiddenTools:!self.whiteboardWritable];
     }
 }
-- (void)updateAVItemWithProfile:(NEEduRoomProfile *)profile {
+- (void)updateMemberAuthorizationWithProfile:(NEEduRoomProfile *)profile {
+    NSLog(@"video:%@ audio:%@",[NEEduManager shared].localUser.properties.streamAV.video,[NEEduManager shared].localUser.properties.streamAV.audio);
     for (NEEduHttpUser *user in profile.snapshot.members) {
-        if ([user.userUuid isEqualToString:[EduManager shared].localUser.userUuid]) {
-            [self updateMyselfAVItemWithUser:user];
-            [self updateWhiteboardWritable:user.properties.whiteboard.drawable];
+        if ([user.userUuid isEqualToString:[NEEduManager shared].localUser.userUuid]) {
+            NEEduHttpUser *localUser = [NEEduManager shared].localUser;
+            
+            if (user.properties.streamAV.video) {
+                //update video
+                if (localUser.properties.streamAV.video && ![user.properties.streamAV.video isEqualToNumber:localUser.properties.streamAV.video]) {
+                    [self onVideoAuthorizationEnable:user.properties.streamAV.video.boolValue user:user];
+                }else {
+                    localUser.properties.streamAV.video = user.properties.streamAV.video;
+                    [self onVideoAuthorizationEnable:user.properties.streamAV.video.boolValue user:user];
+                }
+            }
+            if (user.properties.streamAV.audio) {
+                //update audio
+                if (localUser.properties.streamAV.audio && ![user.properties.streamAV.audio isEqualToNumber:localUser.properties.streamAV.audio]) {
+                    [self onAudioAuthorizationEnable:user.properties.streamAV.audio.boolValue user:user];
+                }else {
+                    localUser.properties.streamAV.audio = user.properties.streamAV.audio;
+                    [self onAudioAuthorizationEnable:user.properties.streamAV.audio.boolValue user:user];
+                }
+            }
+            
+            if (user.properties.whiteboard.drawable != localUser.properties.whiteboard.drawable) {
+                [self onWhiteboardAuthorizationEnable:user.properties.whiteboard.drawable user:user];
+            }
+            if (user.properties.screenShare.value != localUser.properties.screenShare.value) {
+                [self onScreenShareAuthorizationEnable:user.properties.screenShare.value user:user];
+            }
             break;
         }
     }
 }
 
 - (void)updateScreenShare {
-    NEEduHttpUser *user = [[EduManager shared].userService userIsShareScreen];
+    NEEduHttpUser *user = [[NEEduManager shared].userService userIsShareScreen];
     if (user) {
         //共享按钮状态改变为选择
         [self onSubVideoStreamEnable:YES user:user];
@@ -881,7 +959,7 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
 }
 #pragma mark - private
 - (void)updateMyselfAVItemWithUser:(NEEduHttpUser *)user {
-    if ([user.userUuid isEqualToString:[EduManager shared].localUser.userUuid]) {
+    if ([user.userUuid isEqualToString:[NEEduManager shared].localUser.userUuid]) {
         for (int i = 0; i < self.maskView.stackView.arrangedSubviews.count; i ++) {
             NEEduMenuItem *item = self.maskView.stackView.arrangedSubviews[i];
             if (item.type == NEEduMenuItemTypeVideo) {
@@ -897,17 +975,17 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
     }
 }
 - (void)showAlertViewWithMember:(NEEduHttpUser *)member cell:(NEEduVideoCell *)cell {
-    if ([EduManager shared].localUser.roleType != NEEduRoleTypeTeacher) {
+    if (![[NEEduManager shared].localUser isTeacher] && ![member.userUuid isEqualToString:[NEEduManager shared].localUser.userUuid] ) {
         //只有老师角色有操作权限
         return;
     }
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil message:@"更多操作" preferredStyle:UIAlertControllerStyleActionSheet];
-    NSString *audioTitle = member.streams.audio.value ? @"静音":@"取消静音";
-    NSString *videoTitle = member.streams.video.value ? @"关闭摄像头":@"开启摄像头";
+    NSString *audioTitle = member.streams.audio.value ? @"静音":@"解除静音";
+    NSString *videoTitle = member.streams.video.value ? @"关闭视频":@"开启视频";
     UIAlertAction *audioAction = [UIAlertAction actionWithTitle:audioTitle style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         __weak typeof(self)weakSelf = self;
-        if ([member.userUuid isEqualToString:[EduManager shared].localUser.userUuid]) {
-            [[EduManager shared].userService localUserAudioEnable:!member.streams.audio.value result:^(NSError * _Nonnull error) {
+        if ([member.userUuid isEqualToString:[NEEduManager shared].localUser.userUuid]) {
+            [[NEEduManager shared].userService localUserAudioEnable:!member.streams.audio.value result:^(NSError * _Nonnull error) {
                 if (error) {
                     [weakSelf.view makeToast:error.description];
                 }else {
@@ -915,7 +993,7 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
                 }
             }];
         }else {
-            [[EduManager shared].userService remoteUserAudioEnable:!member.streams.audio.value userID:member.userUuid result:^(NSError * _Nonnull error) {
+            [[NEEduManager shared].userService remoteUserAudioEnable:!member.streams.audio.value userID:member.userUuid result:^(NSError * _Nonnull error) {
                 if (error) {
                     [weakSelf.view makeToast:error.description];
                 }else {
@@ -926,8 +1004,8 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
     }];
     UIAlertAction *videoAction = [UIAlertAction actionWithTitle:videoTitle style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         __weak typeof(self)weakSelf = self;
-        if ([member.userUuid isEqualToString:[EduManager shared].localUser.userUuid]) {
-            [[EduManager shared].userService localUserVideoEnable:!member.streams.video.value result:^(NSError * _Nonnull error) {
+        if ([member.userUuid isEqualToString:[NEEduManager shared].localUser.userUuid]) {
+            [[NEEduManager shared].userService localUserVideoEnable:!member.streams.video.value result:^(NSError * _Nonnull error) {
                 if (error) {
                     [weakSelf.view makeToast:error.description];
                 }else {
@@ -935,7 +1013,7 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
                 }
             }];
         }else {
-            [[EduManager shared].userService remoteUserVideoEnable:!member.streams.video.value userID:member.userUuid result:^(NSError * _Nonnull error) {
+            [[NEEduManager shared].userService remoteUserVideoEnable:!member.streams.video.value userID:member.userUuid result:^(NSError * _Nonnull error) {
                 if (error) {
                     [weakSelf.view makeToast:error.description];
                 }else {
@@ -947,17 +1025,18 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
     [alert addAction:audioAction];
     [alert addAction:videoAction];
     
-    if (![member.role isEqualToString:NEEduRoleHost]) {
+    if ([[NEEduManager shared].localUser isTeacher] && ![member.role isEqualToString:NEEduRoleHost]) {
+        //老师点击学生视频窗口
         NSString *whiteboardTitle = member.properties.whiteboard.drawable ? @"取消白板权限":@"授予白板权限";
         NSString *shareTitle = member.properties.screenShare.value ? @"取消共享权限":@"授予共享权限";
         UIAlertAction *whiteboardAction = [UIAlertAction actionWithTitle:whiteboardTitle style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-            if ([EduManager shared].profile.snapshot.room.states.step.value != NEEduLessonStateClassIn) {
-                [self.view makeToast:@"还未开始上课"];
+            if ([NEEduManager shared].profile.snapshot.room.states.step.value != NEEduLessonStateClassIn) {
+                [self.view makeToast:@"请先开始上课"];
                 return;
             }
             //授予/取消白板权限
             __weak typeof(self)weakSelf = self;
-            [[EduManager shared].userService whiteboardDrawable:!member.properties.whiteboard.drawable userID:member.userUuid result:^(NSError * _Nonnull error) {
+            [[NEEduManager shared].userService whiteboardDrawable:!member.properties.whiteboard.drawable userID:member.userUuid result:^(NSError * _Nonnull error) {
                 if (!error) {
                     [weakSelf.view makeToast:@"授权白板权限成功"];
                 }else {
@@ -966,13 +1045,13 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
             }];
         }];
         UIAlertAction *shareAction = [UIAlertAction actionWithTitle:shareTitle style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-            if ([EduManager shared].profile.snapshot.room.states.step.value != NEEduLessonStateClassIn) {
-                [self.view makeToast:@"还未开始上课"];
+            if ([NEEduManager shared].profile.snapshot.room.states.step.value != NEEduLessonStateClassIn) {
+                [self.view makeToast:@"请先开始上课"];
                 return;
             }
             //授予/取消屏幕共享
             __weak typeof(self)weakSelf = self;
-            [[EduManager shared].userService screenShareAuthorization:!member.properties.screenShare.value userID:member.userUuid result:^(NSError * _Nonnull error) {
+            [[NEEduManager shared].userService screenShareAuthorization:!member.properties.screenShare.value userID:member.userUuid result:^(NSError * _Nonnull error) {
                 if (!error) {
                     [weakSelf.view makeToast:@"授权屏幕共享权限成功"];
                 }else {
@@ -986,7 +1065,7 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
         if (member.properties.avHandsUp.value == NEEduHandsupStateTeaAccept) {
             UIAlertAction *offStage = [UIAlertAction actionWithTitle:@"请他下台" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
                 __weak typeof(self)weakSelf = self;
-                [[EduManager shared].userService handsupStateChange:NEEduHandsupStateTeaOffStage userID:member.userUuid result:^(NSError * _Nonnull error) {
+                [[NEEduManager shared].userService handsupStateChange:NEEduHandsupStateTeaOffStage userID:member.userUuid result:^(NSError * _Nonnull error) {
                     if (!error) {
                         [weakSelf.view makeToast:@"操作成功"];
                     }else {
@@ -1098,6 +1177,19 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
     }
     return _infoView;
 }
+- (UILabel *)shareScreenMask {
+    if (!_shareScreenMask) {
+        _shareScreenMask = [[UILabel alloc] init];
+        _shareScreenMask.translatesAutoresizingMaskIntoConstraints = NO;
+        _shareScreenMask.backgroundColor = [UIColor blackColor];
+        _shareScreenMask.font = [UIFont systemFontOfSize:17];
+        _shareScreenMask.textColor = [UIColor whiteColor];
+        _shareScreenMask.text = @"您正在进行共享屏幕";
+        _shareScreenMask.hidden = YES;
+        _shareScreenMask.textAlignment = NSTextAlignmentCenter;
+    }
+    return _shareScreenMask;
+}
 #pragma mark - whiteboard
 - (WKWebView *)boardView {
     if (!_boardView) {
@@ -1122,14 +1214,14 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
 #pragma mark - NMCWhiteboardManagerDelegate
 - (void)onWebPageLoaded {
     NMCWebLoginParam *param = [[NMCWebLoginParam alloc] init];
-    param.appKey = [EduManager shared].localUser.imKey;
-    param.account = [EduManager shared].localUser.userUuid;
-    param.token = [EduManager shared].localUser.imToken;
-    param.ownerAccount = [EduManager shared].profile.snapshot.room.properties.chatRoom.roomCreatorId;
-    param.channelName = [EduManager shared].profile.snapshot.room.properties.whiteboard.channelName;
+    param.appKey = [NEEduManager shared].imKey;
+    param.account = [NEEduManager shared].localUser.userUuid;
+    param.token = [NEEduManager shared].imToken;
+    param.ownerAccount = [NEEduManager shared].profile.snapshot.room.properties.chatRoom.roomCreatorId;
+    param.channelName = [NEEduManager shared].profile.snapshot.room.properties.whiteboard.channelName;
     param.record = YES;
     param.debug = NO;
-    param.nickname = [EduManager shared].localUser.userName;
+    param.nickname = [NEEduManager shared].localUser.userName;
     [[NMCWhiteboardManager sharedManager] callWebLoginIM:param];
 }
 

@@ -10,7 +10,7 @@
 #import "AppDelegate.h"
 //#import <EduUI/EduUI.h>
 #import "EnterLessonViewController.h"
-#import "ENavigationViewController.h"
+#import "NEEduNavigationViewController.h"
 #import <Bugly/Bugly.h>
 
 @interface AppDelegate ()
@@ -22,7 +22,7 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
     EnterLessonViewController *enterLessonVC = [[EnterLessonViewController alloc] init];
-    ENavigationViewController *navgationViewController = [[ENavigationViewController alloc] initWithRootViewController:enterLessonVC];
+    NEEduNavigationViewController *navgationViewController = [[NEEduNavigationViewController alloc] initWithRootViewController:enterLessonVC];
     self.window.rootViewController = navgationViewController;
     [self.window makeKeyAndVisible];
     [Bugly startWithAppId:@"d35c7e8098"];

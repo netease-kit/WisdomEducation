@@ -12,6 +12,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface NEEduLessonOverView : UIView
+@property (nonatomic, strong) UILabel *timeLabel;
 @property (nonatomic, strong) UILabel *label;
 @property (nonatomic, strong) UIButton *backButton;
 @end

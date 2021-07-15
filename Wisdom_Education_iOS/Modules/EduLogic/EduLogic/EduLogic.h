@@ -18,7 +18,7 @@ FOUNDATION_EXPORT const unsigned char EduLogicVersionString[];
 // In this header, you should import all the public headers of your framework using statements like #import <EduLogic/PublicHeader.h>
 
 #import <EduLogic/NEEduRoom.h>
-#import <EduLogic/EduManager.h>
+#import <EduLogic/NEEduManager.h>
 #import <EduLogic/NEEduEnterRoomParam.h>
 #import <EduLogic/NEEduRoomService.h>
 #import <EduLogic/NEEduMessageService.h>

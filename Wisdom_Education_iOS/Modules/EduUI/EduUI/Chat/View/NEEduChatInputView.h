@@ -15,6 +15,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, strong) UITextField *textField;
 @property (nonatomic, strong) UIButton *sendButton;
+@property (nonatomic, strong) UIButton *emojiButton;
+@property (nonatomic, strong) UIButton *pictureButton;
 - (void)updateUIWithMute:(BOOL)mute;
 @end
 

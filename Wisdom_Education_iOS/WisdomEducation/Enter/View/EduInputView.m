@@ -46,6 +46,13 @@
         [self.delegate textFieldDidChange:textField];
     }
 }
+
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
+    if (self.delegate && [self.delegate respondsToSelector:@selector(textField:shouldChangeCharactersInRange:replacementString:)]) {
+        return [self.delegate textField:textField shouldChangeCharactersInRange:range replacementString:string];
+    }
+    return YES;
+}
 - (void)setPlaceholder:(NSString *)placeholder {
 //    self.textField.placeholder = placeholder;
     NSAttributedString *string = [[NSAttributedString alloc] initWithString:placeholder attributes:@{NSForegroundColorAttributeName:[UIColor lightGrayColor]}];
@@ -61,10 +68,9 @@
 - (UITextField *)textField {
     if (!_textField) {
         _textField = [[UITextField alloc] initWithFrame:CGRectZero];
-//        _textField.placeholder = self.placeholder ?: @"请输入...";
+        _textField.textColor = [UIColor blackColor];
         _textField.clearButtonMode = UITextFieldViewModeWhileEditing;
         _textField.font = [UIFont systemFontOfSize:17];
-        _textField.textColor = [UIColor colorWithRed:51/255.0 green:126/255.0 blue:255/255.0 alpha:1.0];
         _textField.delegate = self;
         _textField.keyboardType = UIKeyboardTypeNumberPad;
         _textField.translatesAutoresizingMaskIntoConstraints = NO;

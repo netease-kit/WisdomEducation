@@ -10,7 +10,7 @@
 #ifndef NEEduErrorType_h
 #define NEEduErrorType_h
 
-static NSString *NEEduErrorDomain = @"netease.edukit.error";
+static NSString *NEEduErrorDomain = @"netease.edu.logic.error";
 
 typedef NS_ENUM(NSInteger, NEEduErrorType) {
     // No error.
