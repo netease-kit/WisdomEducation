@@ -299,6 +299,7 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
                 [self.view makeToast:error.localizedDescription];
             }else {
                 weakSelf.isSharing = NO;
+                weakSelf.shareScreenMask.hidden = YES;
                 [weakSelf updateShareItemWithSelected:NO];
             }
         }];

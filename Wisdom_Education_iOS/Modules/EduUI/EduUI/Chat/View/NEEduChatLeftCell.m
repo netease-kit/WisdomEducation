@@ -52,7 +52,7 @@
     self.contentLabel.text = message.content;
     for (NSLayoutConstraint *constraint in self.bgView.constraints) {
         if (constraint.firstAttribute == NSLayoutAttributeWidth) {
-            constraint.constant = message.contentSize.width + 20;
+            constraint.constant = message.contentSize.width + 25;
         }
     }
 }
