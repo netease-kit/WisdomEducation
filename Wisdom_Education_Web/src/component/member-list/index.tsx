@@ -1,3 +1,7 @@
+/*
+ * @Copyright (c) 2021 NetEase, Inc.  All rights reserved.
+ * Use of this source code is governed by a MIT license that can be found in the LICENSE file
+ */
 import React, { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import { observer } from 'mobx-react';
 import { Button, Tooltip, Modal, Checkbox, Tabs, Input, message } from 'antd';

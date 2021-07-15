@@ -1,12 +1,8 @@
-/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 /*
- * @Author: your name
- * @Date: 2021-05-12 09:38:46
- * @LastEditTime: 2021-06-29 14:09:57
- * @LastEditors: Please set LastEditors
- * @Description: In User Settings Edit
- * @FilePath: /app_wisdom_education_web/src/services/index.ts
- */
+* @Copyright (c) 2021 NetEase, Inc.  All rights reserved.
+* Use of this source code is governed by a MIT license that can be found in the LICENSE file
+*/
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 
 
 import axios, { AxiosResponse } from 'axios';

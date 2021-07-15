@@ -1,10 +1,6 @@
 /*
- * @Author: lizhaoxuan
- * @Date: 2021-05-20 14:40:20
- * @LastEditTime: 2021-05-20 14:41:37
- * @LastEditors: Please set LastEditors
- * @Description: 调整response
- * @FilePath: /app_wisdom_education_web/src/services/axios.d.ts
+ * @Copyright (c) 2021 NetEase, Inc.  All rights reserved.
+ * Use of this source code is governed by a MIT license that can be found in the LICENSE file
  */
 
 import * as axios from 'axios'
