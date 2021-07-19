@@ -41,9 +41,6 @@ const DeviceCheckPage: React.FC = observer(() => {
         onOk={() => {
           history.push('/')
         }}
-        theme={{
-          iconColor: "#5174F6"
-        }}
       />
     </div>
   )
