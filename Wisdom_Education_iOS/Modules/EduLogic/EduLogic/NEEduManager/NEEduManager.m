@@ -12,12 +12,14 @@
 #import "HttpManager.h"
 #import "NEEduUser.h"
 #import "NERtcVideoCanvasExtention.h"
-
+#import "NEEduErrorType.h"
 
 @interface NEEduManager ()
 @property (nonatomic, strong, readwrite) NEEduHttpUser *localUser;
 @property (nonatomic, copy, readwrite) NSString *imKey;
 @property (nonatomic, copy, readwrite) NSString *imToken;
+@property (nonatomic, strong) NEEduEnterRoomParam *roomParam;
+@property (nonatomic, strong) NEEduHttpRoom *room;
 @end
 
 @implementation NEEduManager
@@ -29,36 +31,46 @@
     });
     return manager;
 }
-
 - (void)setupAppKey:(NSString * _Nonnull)appKey options:(NEEduKitOptions *)options {
     HttpManagerConfig *config = [HttpManager getHttpManagerConfig];
     config.appKey = appKey;
     config.authorization = options.authorization;
     config.baseURL = options.baseURL;
+    [self handleHttpRequestError];
 }
-
-- (void)login:(NSString * _Nullable)userID success:(void(^)(NEEduUser *user))success failure:(void(^)(NSError *error))failure {
-    // 1.login http
-    __weak typeof(self)weakSelf = self;
-    [HttpManager loginWithParam:nil analysisClass:[NEEduUser class] success:^(NEEduUser * _Nonnull objModel) {
-        weakSelf.imKey = objModel.imKey;
-        weakSelf.imToken = objModel.imToken;
-        //登录成功，更新HttpManager token
-        HttpManagerConfig *config = [HttpManager getHttpManagerConfig];
-        config.userUuid = objModel.userUuid;
-        config.userToken = objModel.userToken;
-        [self setupSDKWithImKey:objModel.imKey rtcKey:objModel.rtcKey];
+- (void)login:(NSString *)userID token:(NSString *)token success:(void(^)(NEEduUser *user))success failure:(void(^)(NSError *error))failure {
+    [HttpManager loginWithUserId:userID token:token analysisClass:[NEEduUser class] success:^(NEEduUser * _Nonnull objModel) {
+        self.imKey = objModel.imKey;
+        self.imToken = objModel.imToken;
+        [self.rtcService setupAppkey:objModel.rtcKey];
+        
+        [self.imService addIMDelegate];
+        self.imService.delegate = self.messageService;
+        
+        if (self.reuseIM) {
+            if (self.imService.isLogined) {
+                if (success) {
+                    success(objModel);
+                }
+            }else {
+                NSError *error = [NSError errorWithDomain:NEEduErrorDomain code:NEEduErrorTypeUnsupportOperation userInfo:@{NSLocalizedDescriptionKey:@"复用IM时，请先登录IM"}];
+                if (failure) {
+                    failure(error);
+                }
+            }
+            return;
+        }
+        //不复用的情况下，初始化IM并登录
+        [self.imService setupAppkey:objModel.imKey];
+        __weak typeof(self)weakSelf = self;
         [self.imService login:objModel.userUuid token:objModel.imToken completion:^(NSError * _Nullable error) {
             if (error) {
-                //IM登录失败，更新HttpManager token
-                HttpManagerConfig *config = [HttpManager getHttpManagerConfig];
-                config.userUuid = nil;
-                config.userToken = nil;
                 if (failure) {
                     failure(error);
                 }
             }else {
-                weakSelf.localUser.userUuid = objModel.userUuid;
+                __strong typeof(self)strongSelf = weakSelf;
+                strongSelf.localUser.userUuid = objModel.userUuid;
                 if (success) {
                     success(objModel);
                 }
@@ -70,68 +82,152 @@
         }
     }];
 }
-- (void)enterClassroom:(NEEduEnterRoomParam *)roomOption success:(void(^)(NEEduRoomProfile *roomProfile))success failure:(void(^)(NSError *error))failure {
-    __weak typeof(self)weakSelf = self;
-    // 1.http entry
-    [self.roomService enterRoom:roomOption completion:^(NSError * _Nonnull error, NEEduEnterRoomResponse * _Nonnull response) {
-        __strong typeof(self)strongSelf = weakSelf;
-        if (error) {
-            if (failure) {
-                failure(error);
-            }
-        }else {
-            //2.Rtc join
-            weakSelf.localUser = response.member;
-            weakSelf.userService = [[NEEduUserService alloc] initLocalUser:response.member];
-            weakSelf.messageService.localUser = response.member;
-            NEEduRtcJoinChannelParam *param = [[NEEduRtcJoinChannelParam alloc] init];
-            param.channelID = roomOption.roomUuid;
-            param.rtcToken = response.member.rtcToken;
-            param.userID = response.member.rtcUid;
-            param.subscribeAudio = roomOption.autoSubscribeAudio;
-            param.subscribeVideo = roomOption.autoSubscribeVideo;
-            __strong typeof(self)weakSelf = strongSelf;
-            [strongSelf.rtcService joinChannel:(NEEduRtcJoinChannelParam *)param completion:^(NSError * _Nonnull error, uint64_t channelID) {
-                __strong typeof(self)strongSelf = weakSelf;
-                if (error) {
-                    if (failure) {
-                        failure(error);
-                    }
-                }else {
-                    //4.http snapshot
-                    __strong typeof(self)weakSelf = strongSelf;
-                    [strongSelf.roomService getRoomProfile:roomOption.roomUuid completion:^(NSError * _Nonnull error, NEEduRoomProfile * _Nonnull profile) {
-                        __strong typeof(self)strongSelf = weakSelf;
-                        if (error) {
-                            strongSelf.profile = nil;
-                            if (failure) {
-                                failure(error);
-                            }
-                        }else {
-                            //推流
-                            [strongSelf.rtcService enableLocalAudio:roomOption.autoPublish];
-                            [strongSelf.rtcService enableLocalVideo:roomOption.autoPublish];
-                            if (success) {
-                                success(profile);
-                            }
-                        }
-                    }];
+// 匿名登录
+- (void)easyLoginWithSuccess:(void(^)(NEEduUser *user))success failure:(void(^)(NSError *error))failure {
+    [HttpManager loginWithAnalysisClass:[NEEduUser class] success:^(NEEduUser * _Nonnull objModel) {
+        self.imKey = objModel.imKey;
+        self.imToken = objModel.imToken;
+        if (objModel.userUuid && objModel.userToken) {
+            [HttpManager addHeaderFromDictionary:@{@"user":objModel.userUuid,@"token":objModel.userToken}];
+        }
+        [self.rtcService setupAppkey:objModel.rtcKey];
+        
+        [self.imService setupAppkey:objModel.imKey];
+        [self.imService addIMDelegate];
+        self.imService.delegate = self.messageService;
+        
+        if (self.reuseIM) {
+            if (self.imService.isLogined) {
+                if (success) {
+                    success(objModel);
                 }
-            }];
-//            3.IM enter chatRoom
-            NEEduChatRoomParam *chatparam = [[NEEduChatRoomParam alloc] init];
-            chatparam.chatRoomID = response.room.properties.chatRoom.chatRoomId;
-            if (roomOption.role == NEEduRoleTypeTeacher) {
-                chatparam.nickname = [NSString stringWithFormat:@"%@(老师)",response.member.userName];
             }else {
-                chatparam.nickname = [NSString stringWithFormat:@"%@(学生)",response.member.userName];
+                NSError *error = [NSError errorWithDomain:NEEduErrorDomain code:NEEduErrorTypeUnsupportOperation userInfo:@{NSLocalizedDescriptionKey:@"复用IM的情况下，请先登录IM"}];
+                if (failure) {
+                    failure(error);
+                }
             }
-            [strongSelf.imService enterChatRoomWithParam:chatparam success:^(NEEduChatRoomResponse * _Nonnull response) {
-            } failed:^(NSError * _Nonnull error) {
-            }];
+            return;
+        }
+        
+        __weak typeof(self)weakSelf = self;
+        [self.imService login:objModel.userUuid token:objModel.imToken completion:^(NSError * _Nullable error) {
+            if (error) {
+                if (failure) {
+                    failure(error);
+                }
+            }else {
+                __strong typeof(self)strongSelf = weakSelf;
+                strongSelf.localUser.userUuid = objModel.userUuid;
+                if (success) {
+                    success(objModel);
+                }
+            }
+        }];
+    } failure:^(NSError * _Nullable error, NSInteger statusCode) {
+        if (failure) {
+            failure(error);
         }
     }];
 }
+- (void)enterClassroom:(NEEduEnterRoomParam *)roomOption completion:(void(^)(NSError *error,NEEduEnterRoomResponse * response))completion {
+    self.roomParam = roomOption;
+    __weak typeof(self)weakSelf = self;
+    // 2.http entry
+    [self.roomService enterRoom:roomOption completion:^(NSError * _Nonnull error, NEEduEnterRoomResponse * _Nonnull response) {
+        __strong typeof(self)strongSelf = weakSelf;
+        if (error) {
+            strongSelf.localUser = nil;
+            strongSelf.room = nil;
+            strongSelf.userService = nil;
+            strongSelf.messageService = nil;
+            if (completion) {
+                completion(error,nil);
+            }
+        }else {
+            //1.Rtc join
+            strongSelf.localUser = response.member;
+            strongSelf.room = response.room;
+            strongSelf.userService = [[NEEduUserService alloc] initLocalUser:response.member];
+            strongSelf.messageService.localUser = response.member;
+            if (completion) {
+                completion(nil,response);
+            }
+        }
+    }];
+}
+- (void)joinRtcAndGetProfileCompletion:(void(^)(NSError *error,NEEduRoomProfile *profile))completion {
+    dispatch_queue_t queue = dispatch_queue_create("NEEdu.logic.join", DISPATCH_QUEUE_SERIAL);
+    __weak typeof(self)weakSelf = self;
+    dispatch_async(queue, ^{
+        [weakSelf joinRtcRoomCompletion:^(NSError *error, uint64_t channelID) {
+            if (error) {
+                if (completion) {
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        completion(error,nil);
+                    });
+                }
+            }else {
+                [weakSelf getProfileCompletion:^(NSError *error, NEEduRoomProfile *profile) {
+                    if (error) {
+                        if (completion) {
+                            dispatch_async(dispatch_get_main_queue(), ^{
+                                completion(error,nil);
+                            });
+                        }
+                    }else {
+                        if (completion) {
+                            dispatch_async(dispatch_get_main_queue(), ^{
+                                completion(nil,profile);
+                            });
+                        }
+                    }
+                }];
+            }
+        }];
+    });
+}
+- (void)joinRtcRoomCompletion:(void(^)(NSError *error,uint64_t channelID))completion {
+    NEEduRtcJoinChannelParam *param = [[NEEduRtcJoinChannelParam alloc] init];
+    param.channelID = self.roomParam.roomUuid;
+    param.rtcToken = self.localUser.rtcToken;
+    param.userID = self.localUser.rtcUid;
+    param.subscribeAudio = self.roomParam.autoSubscribeAudio;
+    param.subscribeVideo = self.roomParam.autoSubscribeVideo;
+    [self.rtcService joinChannel:param completion:completion];
+}
+- (void)joinChatRoomSuccess:(void(^)(NEEduChatRoomResponse *response))success failed:(void(^)(NSError *error))failed {
+    NEEduChatRoomParam *chatparam = [[NEEduChatRoomParam alloc] init];
+    chatparam.chatRoomID = self.room.properties.chatRoom.chatRoomId;
+    if (self.roomParam.role == NEEduRoleTypeTeacher) {
+        chatparam.nickname = [NSString stringWithFormat:@"%@(老师)",self.localUser.userName];
+    }else {
+        chatparam.nickname = [NSString stringWithFormat:@"%@(学生)",self.localUser.userName];
+    }
+    [self.imService enterChatRoomWithParam:chatparam success:success failed:failed];
+}
+
+- (void)getProfileCompletion:(void(^)(NSError *error,NEEduRoomProfile *profile))completion {
+    __weak typeof(self)weakSelf = self;
+    [self.roomService getRoomProfile:self.roomParam.roomUuid completion:^(NSError * _Nonnull error, NEEduRoomProfile * _Nonnull profile) {
+        __strong typeof(self)strongSelf = weakSelf;
+        if (error) {
+            strongSelf.profile = nil;
+            if (completion) {
+                completion(error,nil);
+            }
+        }else {
+            strongSelf.profile = profile;
+            //推流
+            [strongSelf.rtcService enableLocalAudio:self.roomParam.autoPublish];
+            [strongSelf.rtcService enableLocalVideo:self.roomParam.autoPublish];
+            if (completion) {
+                completion(nil,profile);
+            }
+        }
+    }];
+}
+
 - (void)setCanvasView:(UIView *)view forMember:(NEEduHttpUser *)member {
     NERtcVideoCanvasExtention *canvas = [[NERtcVideoCanvasExtention alloc] init];
     canvas.uid = member.rtcUid;
@@ -146,25 +242,16 @@
 
 - (void)leaveClassroom {
     [self.rtcService leaveChannel];
-    [self.imService destroy];
+    if (!self.reuseIM) {
+        [self.imService destroy];
+    }
 }
 
 - (void)destoryClassroom {
     [self.rtcService destroy];
-    self.rtcService = nil;
-    self.imService = nil;
-    self.roomService = nil;
 }
 
 #pragma mark - private
-/// 初始化IMSDK & RtcSDK
-/// @param imKey IMSDK的Key
-/// @param rtcKey RtcSDK的Key
-- (void)setupSDKWithImKey:(NSString *)imKey rtcKey:(NSString *)rtcKey {
-    [self.imService setupAppkey:imKey];
-    [self.rtcService setupAppkey:rtcKey];
-    self.imService.delegate = self.messageService;
-}
 
 - (BOOL)myselfWithUserID:(NSString *)userID {
     if (!self.localUser) {
@@ -175,9 +262,15 @@
     }
     return NO;
 }
-
-
-
+- (void)handleHttpRequestError {
+    [HttpManager setErrorBlock:^(NSInteger code) {
+        if (code == 401) {
+            if (self.messageService.delegate && [self.messageService.delegate respondsToSelector:@selector(onUserTokenExpired:)]) {
+                [self.messageService.delegate onUserTokenExpired:self.localUser];
+            }
+        }
+    }];
+}
 #pragma mark - get
 - (NEEduIMService *)imService {
     if (!_imService) {

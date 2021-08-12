@@ -23,8 +23,6 @@ NS_ASSUME_NONNULL_BEGIN
 //header
 @property(nonatomic, strong) NSString *authorization;
 @property(nonatomic, strong) NSString *deviceId;
-@property(nonatomic, strong) NSString *userUuid;
-@property(nonatomic, strong) NSString *userToken;
 
 @end
 
@@ -32,8 +30,24 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (HttpManagerConfig *)getHttpManagerConfig;
 + (void)setupHttpManagerConfig:(HttpManagerConfig *)httpConfig;
++ (void)setErrorBlock:(void(^)(NSInteger))errorBlock;
+/// 添加请求头内容
+/// @param dictionary 添加内容
++ (void)addHeaderFromDictionary:(NSDictionary *)dictionary;
 
-+ (void)loginWithParam:(NSDictionary * _Nullable)param analysisClass:(Class)classType success:(void (^ _Nullable) (id objModel))successBlock failure:(void (^ _Nullable) (NSError * _Nullable error, NSInteger statusCode))failureBlock;
+/// 匿名登录，已设备ID作为唯一表示
+/// @param classType 返回参数类型
+/// @param successBlock 成功回调
+/// @param failureBlock 失败回调
++ (void)loginWithAnalysisClass:(Class)classType success:(void (^ _Nullable) (id objModel))successBlock failure:(void (^ _Nullable) (NSError * _Nullable error, NSInteger statusCode))failureBlock;
+
+/// 用户登录，已用户ID作为唯一表示
+/// @param userId    用户ID
+/// @param token     用户token
+/// @param classType 返回参数类型
+/// @param successBlock 成功回调
+/// @param failureBlock 失败回调
++ (void)loginWithUserId:(NSString *)userId token:(NSString *)token analysisClass:(Class)classType success:(void (^ _Nullable) (id objModel))successBlock failure:(void (^ _Nullable) (NSError * _Nullable error, NSInteger statusCode))failureBlock;
 
 + (void)createRoom:(NSString *)roomUuid param:(NSDictionary *)param classType:(Class)classType success:(void (^ _Nullable) (id objModel))successBlock failure:(void (^ _Nullable) (NSError * _Nullable error, NSInteger statusCode))failureBlock;
 

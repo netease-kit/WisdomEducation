@@ -46,8 +46,11 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, weak) id<NEEduIMChatDelegate> chatDelegate;
 @property (nonatomic, strong ,readonly) NSMutableArray *chatMessages;
 @property (nonatomic, strong ,readonly) NIMChatroom *chatRoom;
+@property (nonatomic, assign ,readonly) BOOL isLogined;
 
 - (void)setupAppkey:(NSString *)appKey;
+
+- (void)addIMDelegate;
 
 - (void)login:(NSString *)userID token:(NSString *)token completion:(void(^)(NSError * _Nullable error))completion;
 

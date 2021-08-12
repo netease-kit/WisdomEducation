@@ -19,6 +19,7 @@
     [super viewDidLoad];
     self.whiteboardWritable = YES;
 }
+
 - (NSArray <NEEduHttpUser *>*)membersWithProfile:(NEEduRoomProfile *)profile {
     NEEduHttpUser *teacher = [[NEEduHttpUser alloc] init];
     teacher.role = NEEduRoleHost;

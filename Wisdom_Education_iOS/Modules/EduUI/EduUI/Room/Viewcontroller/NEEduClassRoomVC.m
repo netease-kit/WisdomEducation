@@ -26,6 +26,7 @@
 
 /// 自己是否在共享
 @property (nonatomic, assign) BOOL isSharing;
+@property (nonatomic, strong) UIView *contentView;
 @property (nonatomic, strong) NEEduLessonOverView *classOverView;
 @property (nonatomic, strong) NEEduChatViewController *chatVC;
 @property (nonatomic, strong) NEEduLessonInfoView *infoView;
@@ -45,18 +46,62 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
     self.netReachable = YES;
     [self.navigationController setNavigationBarHidden:NO];
     self.view.backgroundColor = [UIColor whiteColor];
-    [NEEduManager shared].messageService.delegate = self;
-    [NEEduManager shared].rtcService.delegate = self;
-    [NEEduManager shared].roomService.delegate = self;
-    [NEEduManager shared].imService.chatDelegate = self;
+    
     self.whiteboardWritable = YES;
     [self initMenuItems];
     [self setupSubviews];
     [self.maskView.navView.infoButton addTarget:self action:@selector(infoButtonClick:) forControlEvents:UIControlEventTouchUpInside];
     [[UIApplication sharedApplication] setIdleTimerDisabled:YES];
 
-    [self updateUIWithRoom:self.room];
-    [self updateScreenShare];
+    //占位数据
+    self.members = [NSMutableArray arrayWithArray:[self placeholderMembers]];
+    //请求
+    __weak typeof(self)weakSelf = self;
+    [[NEEduManager shared] joinRtcAndGetProfileCompletion:^(NSError * _Nonnull error, NEEduRoomProfile * _Nonnull profile) {
+        if (error) {
+            [self.view makeToast:[NSString stringWithFormat:@"加入房间失败，请退出重进 %@",error.localizedDescription]];
+            return;
+        }
+        __strong typeof(self)strongSelf = weakSelf;
+        [NEEduManager shared].messageService.delegate = weakSelf;
+        [NEEduManager shared].rtcService.delegate = weakSelf;
+        [NEEduManager shared].roomService.delegate = weakSelf;
+        [NEEduManager shared].imService.chatDelegate = weakSelf;
+        
+        // update room info
+        strongSelf.room = profile.snapshot.room;
+        [strongSelf updateUIWithRoom:strongSelf.room];
+        
+        // update members list
+        strongSelf.members = [strongSelf showMembersWithJoinedMembers:profile.snapshot.members].mutableCopy;
+        [strongSelf.collectionView reloadData];
+        [strongSelf updateScreenShare];
+        
+        //subclass update UI
+        [strongSelf updateUIWithMembers:profile.snapshot.members];
+        
+        //load whiteboard view
+        [strongSelf addWhiteboardView];
+        
+    }];
+    [[NEEduManager shared] joinChatRoomSuccess:^(NEEduChatRoomResponse * _Nonnull response) {
+        
+    } failed:^(NSError * _Nonnull error) {
+        [self.view makeToast:error.localizedDescription];
+    }];
+}
+- (NSArray <NEEduHttpUser *> *)placeholderMembers {
+    return @[[NEEduHttpUser teacher]];
+}
+- (NSArray <NEEduHttpUser *> *)showMembersWithJoinedMembers:(NSArray <NEEduHttpUser *> *)members {
+    NSMutableArray *muteMembers = [members mutableCopy];
+    NEEduHttpUser *member = muteMembers.firstObject;
+    if (!member.isTeacher) {
+        [muteMembers insertObject:[NEEduHttpUser teacher] atIndex:0];
+    }
+    return muteMembers.copy;
+}
+- (void)updateUIWithMembers:(NSArray *)members {
     
 }
 - (void)viewWillAppear:(BOOL)animated {
@@ -66,64 +111,72 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
 - (void)setupSubviews {
     self.view.backgroundColor = [UIColor colorWithRed:26/255.0 green:32/255.0 blue:40/255.0 alpha:1.0];
     [self.view addSubview:self.maskView];
-    NSLayoutConstraint *left = [NSLayoutConstraint constraintWithItem:self.maskView attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeLeading multiplier:1.0 constant:0];
-    NSLayoutConstraint *top;
     if (@available(iOS 11.0, *)) {
-        top = [NSLayoutConstraint constraintWithItem:self.maskView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.view.safeAreaLayoutGuide attribute:NSLayoutAttributeTop multiplier:1.0 constant:0];
-    } else {
-        top = [NSLayoutConstraint constraintWithItem:self.maskView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeTop multiplier:1.0 constant:0];
-    }
-    NSLayoutConstraint *right = [NSLayoutConstraint constraintWithItem:self.maskView attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeRight multiplier:1.0 constant:0];
-    NSLayoutConstraint *bottom = [NSLayoutConstraint constraintWithItem:self.maskView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self.view.safeAreaLayoutGuide attribute:NSLayoutAttributeBottom multiplier:1.0 constant:0];
-    [self.view addConstraints:@[left,top,right,bottom]];
-    
-    [self.view addSubview:self.boardView];
-    NSLayoutConstraint *editeLeft = [NSLayoutConstraint constraintWithItem:self.boardView attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeLeading multiplier:1.0 constant:0];
-    NSLayoutConstraint *editeTop;
-    NSLayoutConstraint *editeBottom;
-    if (@available(iOS 11.0, *)) {
-        editeTop = [NSLayoutConstraint constraintWithItem:self.boardView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.view.safeAreaLayoutGuide attribute:NSLayoutAttributeTop multiplier:1.0 constant:40];
-        editeBottom = [NSLayoutConstraint constraintWithItem:self.boardView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self.view.safeAreaLayoutGuide attribute:NSLayoutAttributeBottom multiplier:1.0 constant:-60];
+        [NSLayoutConstraint activateConstraints:@[
+            [self.maskView.leftAnchor constraintEqualToAnchor:self.view.leftAnchor],
+            [self.maskView.topAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.topAnchor],
+            [self.maskView.rightAnchor constraintEqualToAnchor:self.view.rightAnchor],
+            [self.maskView.bottomAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.bottomAnchor],
+        ]];
     }else {
-        editeTop = [NSLayoutConstraint constraintWithItem:self.boardView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeTop multiplier:1.0 constant:40];
-        editeBottom = [NSLayoutConstraint constraintWithItem:self.boardView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeBottom multiplier:1.0 constant:-60];
+        [NSLayoutConstraint activateConstraints:@[
+            [self.maskView.leftAnchor constraintEqualToAnchor:self.view.leftAnchor],
+            [self.maskView.topAnchor constraintEqualToAnchor:self.view.topAnchor],
+            [self.maskView.rightAnchor constraintEqualToAnchor:self.view.rightAnchor],
+            [self.maskView.bottomAnchor constraintEqualToAnchor:self.view.bottomAnchor],
+        ]];
     }
-    [self.view addConstraints:@[editeLeft,editeTop,editeBottom]];
     
-    [self.view addSubview:self.shareScreenView];
-    NSLayoutConstraint *shareViewLeft = [NSLayoutConstraint constraintWithItem:self.shareScreenView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self.boardView attribute:NSLayoutAttributeLeft multiplier:1.0 constant:0];
-    NSLayoutConstraint *shareViewRight = [NSLayoutConstraint constraintWithItem:self.shareScreenView attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self.boardView attribute:NSLayoutAttributeRight multiplier:1.0 constant:0];
-    NSLayoutConstraint *shareViewTop = [NSLayoutConstraint constraintWithItem:self.shareScreenView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.boardView attribute:NSLayoutAttributeTop multiplier:1.0 constant:0];
-    NSLayoutConstraint *shareViewBottom = [NSLayoutConstraint constraintWithItem:self.shareScreenView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self.boardView attribute:NSLayoutAttributeBottom multiplier:1.0 constant:0];
-    [self.view addConstraints:@[shareViewLeft,shareViewRight,shareViewTop,shareViewBottom]];
-    
-    
-    
-    [self.view addSubview:self.lessonStateView];
-    NSLayoutConstraint *stateViewLeft = [NSLayoutConstraint constraintWithItem:self.lessonStateView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self.boardView attribute:NSLayoutAttributeLeft multiplier:1.0 constant:0];
-    NSLayoutConstraint *stateViewRight = [NSLayoutConstraint constraintWithItem:self.lessonStateView attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self.boardView attribute:NSLayoutAttributeRight multiplier:1.0 constant:0];
-    NSLayoutConstraint *stateViewTop = [NSLayoutConstraint constraintWithItem:self.lessonStateView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.boardView attribute:NSLayoutAttributeTop multiplier:1.0 constant:0];
-    NSLayoutConstraint *stateViewBottom = [NSLayoutConstraint constraintWithItem:self.lessonStateView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self.boardView attribute:NSLayoutAttributeBottom multiplier:1.0 constant:0];
-    [self.view addConstraints:@[stateViewLeft,stateViewRight,stateViewTop,stateViewBottom]];
+    [self.view addSubview:self.contentView];
+    if (@available(iOS 11.0, *)) {
+        [NSLayoutConstraint activateConstraints:@[
+            [self.contentView.topAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.topAnchor constant:40],
+            [self.contentView.leftAnchor constraintEqualToAnchor:self.view.leftAnchor constant:0],
+            [self.contentView.bottomAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.bottomAnchor constant:-60],
+        ]];
+    }else {
+        [NSLayoutConstraint activateConstraints:@[
+            [self.contentView.topAnchor constraintEqualToAnchor:self.view.topAnchor constant:40],
+            [self.contentView.leftAnchor constraintEqualToAnchor:self.view.leftAnchor constant:0],
+            [self.contentView.bottomAnchor constraintEqualToAnchor:self.view.bottomAnchor constant:-60],
+        ]];
+    }
     
     [self.view addSubview:self.collectionView];
-    NSLayoutConstraint *collectionViewRight = [NSLayoutConstraint constraintWithItem:self.collectionView attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeRight multiplier:1.0 constant:- 20];
-    
-    NSLayoutConstraint *collectionViewTop;
-    NSLayoutConstraint *collectionViewBottom;
     if (@available(iOS 11.0, *)) {
-        collectionViewTop = [NSLayoutConstraint constraintWithItem:self.collectionView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.view.safeAreaLayoutGuide attribute:NSLayoutAttributeTop multiplier:1.0 constant:50];
-        collectionViewBottom = [NSLayoutConstraint constraintWithItem:self.collectionView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self.view.safeAreaLayoutGuide attribute:NSLayoutAttributeBottom multiplier:1.0 constant:-60];
+        [NSLayoutConstraint activateConstraints:@[
+            [self.collectionView.leftAnchor constraintEqualToAnchor:self.contentView.rightAnchor constant:8],
+            [self.collectionView.rightAnchor constraintEqualToAnchor:self.view.rightAnchor constant:-40],
+            [self.collectionView.topAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.topAnchor constant:50],
+            [self.collectionView.bottomAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.bottomAnchor constant:-60],
+            [self.collectionView.widthAnchor constraintEqualToConstant:120]
+        ]];
     }else {
-        collectionViewTop = [NSLayoutConstraint constraintWithItem:self.collectionView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeTop multiplier:1.0 constant:50];
-        collectionViewBottom = [NSLayoutConstraint constraintWithItem:self.collectionView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeBottom multiplier:1.0 constant:-60];
+        [NSLayoutConstraint activateConstraints:@[
+            [self.collectionView.leftAnchor constraintEqualToAnchor:self.contentView.rightAnchor constant:8],
+            [self.collectionView.rightAnchor constraintEqualToAnchor:self.view.rightAnchor constant:-40],
+            [self.collectionView.topAnchor constraintEqualToAnchor:self.view.topAnchor constant:50],
+            [self.collectionView.bottomAnchor constraintEqualToAnchor:self.view.bottomAnchor constant:-60],
+            [self.collectionView.widthAnchor constraintEqualToConstant:120]
+        ]];
     }
-    NSLayoutConstraint *collectionViewWidth = [NSLayoutConstraint constraintWithItem:self.collectionView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:120];
-    NSLayoutConstraint *collectionViewLeft = [NSLayoutConstraint constraintWithItem:self.collectionView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self.boardView attribute:NSLayoutAttributeRight multiplier:1.0 constant:8];
-
-    [self.view addConstraints:@[collectionViewRight,collectionViewTop,collectionViewBottom,collectionViewLeft]];
-    [self.collectionView addConstraint:collectionViewWidth];
     
+    [self.contentView addSubview:self.shareScreenView];
+    [NSLayoutConstraint activateConstraints:@[
+        [self.shareScreenView.topAnchor constraintEqualToAnchor:self.contentView.topAnchor],
+        [self.shareScreenView.leftAnchor constraintEqualToAnchor:self.contentView.leftAnchor],
+        [self.shareScreenView.bottomAnchor constraintEqualToAnchor:self.contentView.bottomAnchor],
+        [self.shareScreenView.rightAnchor constraintEqualToAnchor:self.contentView.rightAnchor]
+    ]];
+
+    [self.view addSubview:self.lessonStateView];
+    [NSLayoutConstraint activateConstraints:@[
+        [self.lessonStateView.topAnchor constraintEqualToAnchor:self.contentView.topAnchor],
+        [self.lessonStateView.leftAnchor constraintEqualToAnchor:self.contentView.leftAnchor],
+        [self.lessonStateView.bottomAnchor constraintEqualToAnchor:self.contentView.bottomAnchor],
+        [self.lessonStateView.rightAnchor constraintEqualToAnchor:self.contentView.rightAnchor]
+    ]];
+
     [self.view addSubview:self.shareScreenMask];
     [NSLayoutConstraint activateConstraints:@[
         [self.shareScreenMask.topAnchor constraintEqualToAnchor:self.shareScreenView.topAnchor],
@@ -133,11 +186,21 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
     ]];
     
     [self.view addSubview:self.classOverView];
-    NSLayoutConstraint *classOverLeft = [NSLayoutConstraint constraintWithItem:self.classOverView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeLeft multiplier:1.0 constant:0];
-    NSLayoutConstraint *classOverRight = [NSLayoutConstraint constraintWithItem:self.classOverView attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeRight multiplier:1.0 constant:0];
-    NSLayoutConstraint *classOverTop = [NSLayoutConstraint constraintWithItem:self.classOverView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeTop multiplier:1.0 constant:0];
-    NSLayoutConstraint *classOverBottom = [NSLayoutConstraint constraintWithItem:self.classOverView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeBottom multiplier:1.0 constant:0];
-    [self.view addConstraints:@[classOverLeft,classOverRight,classOverTop,classOverBottom]];
+    [NSLayoutConstraint activateConstraints:@[
+        [self.classOverView.topAnchor constraintEqualToAnchor:self.view.topAnchor],
+        [self.classOverView.leftAnchor constraintEqualToAnchor:self.view.leftAnchor],
+        [self.classOverView.rightAnchor constraintEqualToAnchor:self.view.rightAnchor],
+        [self.classOverView.bottomAnchor constraintEqualToAnchor:self.view.bottomAnchor]
+    ]];
+}
+- (void)addWhiteboardView {
+    [self.contentView insertSubview:self.boardView belowSubview:self.shareScreenView];
+    [NSLayoutConstraint activateConstraints:@[
+        [self.boardView.topAnchor constraintEqualToAnchor:self.contentView.topAnchor],
+        [self.boardView.leftAnchor constraintEqualToAnchor:self.contentView.leftAnchor],
+        [self.boardView.bottomAnchor constraintEqualToAnchor:self.contentView.bottomAnchor],
+        [self.boardView.rightAnchor constraintEqualToAnchor:self.contentView.rightAnchor]
+    ]];
 }
 - (void)initMenuItems {
     NEEduMenuItem *audoItem = [[NEEduMenuItem alloc] initWithTitle:@"静音" image:[UIImage ne_imageNamed:@"menu_audio"]];
@@ -459,14 +522,9 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
     [self updateMyselfAVItemWithUser:user];
 }
 
+#pragma mark - NEEduMessageServiceDelegate
 - (void)onSubVideoStreamEnable:(BOOL)enable user:(NEEduHttpUser *)user {
     if ([user.userUuid isEqualToString:[NEEduManager shared].localUser.userUuid]) {
-        //FIXME:自己在共享的状态处理
-//        if (self.isSharing) {
-//            [self stopAllScreenShare];
-//        }
-//        [self startRecording];
-        
         return;
     }
     NSMutableArray *members = [NSMutableArray arrayWithArray:self.members];
@@ -495,12 +553,14 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
         [self turnOnVideo:enable];
     }
 }
+
 - (void)onAudioAuthorizationEnable:(BOOL)enable user:(NEEduHttpUser *)user {
     if ([user.userUuid isEqualToString:[NEEduManager shared].localUser.userUuid]) {
         [self.view makeToast:[NSString stringWithFormat:@"老师%@了你的麦克风",enable ? @"打开" : @"关闭"]];
         [self turnOnAudio:enable];
     }
 }
+
 - (void)onWhiteboardAuthorizationEnable:(BOOL)enable user:(NEEduHttpUser *)user {
     NSMutableArray *members = [NSMutableArray arrayWithArray:self.members];
     for (int i = 0; i < members.count; i++) {
@@ -532,6 +592,7 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
         [self.membersVC reloadData];
     }
 }
+
 - (void)onScreenShareAuthorizationEnable:(BOOL)enable user:(NEEduHttpUser *)user {
     NSMutableArray *members = [NSMutableArray arrayWithArray:self.members];
     for (int i = 0; i < members.count; i++) {
@@ -593,11 +654,20 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
         [[UIApplication sharedApplication].keyWindow makeToast:string];
     }
 }
+
+- (void)onUserTokenExpired:(NEEduHttpUser *)user {
+    __weak typeof(self)weakSelf = self;
+    [self.view makeToast:@"当前账号Token校验失败" duration:2.0 position:CSToastPositionCenter title:nil image:nil style:nil completion:^(BOOL didTap) {
+        [weakSelf leaveClass];
+    }];
+}
+
 #pragma mark- NEEduVideoServiceDelegate
 - (void)onRtcDisconnectWithReason:(NERtcError *)reason {
     [self.view makeToast:@"音视频断开连接"];
     [self leaveClass];
 }
+
 - (void)onSubStreamDidStop:(UInt64)userID {
     NERtcVideoCanvasExtention *canvas = [[NERtcVideoCanvasExtention alloc] init];
     canvas.uid = userID;
@@ -648,12 +718,12 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
 
 - (void)leaveClass {
     [self dismissVC];
+    //老师学生离开音视频、聊天室、白板
+    [[NEEduManager shared] leaveClassroom];
     //结束共享
     if (self.isSharing) {
         [self stopAllScreenShare];
     }
-    //老师学生离开音视频、聊天室、白板
-    [[NEEduManager shared] leaveClassroom];
     [[NMCWhiteboardManager sharedManager] callWebLogoutIM];
     [[NMCWhiteboardManager sharedManager] clearWebViewCache];
     [[NEEduManager shared] destoryClassroom];
@@ -689,8 +759,6 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
     [[NMCWhiteboardManager sharedManager] clearWebViewCache];
     [[NEEduManager shared] destoryClassroom];
 }
-
-
 - (void)onSectionStateChangeAtIndex:(NSInteger)index item:(NEEduMenuItem *)item {
     [self showViewWithItem:item];
 }
@@ -857,7 +925,7 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
             [weakSelf membersWithProfile:profile];
             [weakSelf updateMemberAuthorizationWithProfile:profile];
             [weakSelf updateScreenShare];
-            [weakSelf updateHandsupStateWithProfile:profile];
+            [weakSelf updateHandsupStateWithMembers:profile.snapshot.members];
             [weakSelf updateMemberVCWithProfile:profile];
         }];
     }
@@ -937,7 +1005,7 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
         [self onSubVideoStreamEnable:YES user:user];
     }
 }
-- (void)updateHandsupStateWithProfile:(NEEduRoomProfile *)profile {
+- (void)updateHandsupStateWithMembers:(NSArray<NEEduHttpUser *> *)members {
     //子类中实现
 }
 - (void)updateMemberVCWithProfile:(NEEduRoomProfile *)profile {
@@ -1190,6 +1258,16 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
     }
     return _shareScreenMask;
 }
+
+- (UIView *)contentView {
+    if (!_contentView) {
+        _contentView = [[UIView alloc] init];
+        _contentView.backgroundColor = [UIColor whiteColor];
+        _contentView.translatesAutoresizingMaskIntoConstraints = NO;
+    }
+    return _contentView;
+}
+
 #pragma mark - whiteboard
 - (WKWebView *)boardView {
     if (!_boardView) {
@@ -1210,9 +1288,9 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
     return _boardView;
 }
 
-
 #pragma mark - NMCWhiteboardManagerDelegate
 - (void)onWebPageLoaded {
+    NSLog(@"wb: onWebPageLoaded");
     NMCWebLoginParam *param = [[NMCWebLoginParam alloc] init];
     param.appKey = [NEEduManager shared].imKey;
     param.account = [NEEduManager shared].localUser.userUuid;

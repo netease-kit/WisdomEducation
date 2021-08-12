@@ -56,10 +56,10 @@
 
    如果需要基于 Demo 开发自己的应用，在 `keyCenter.m` 中将以下字段改为您的真实信息。
 
-   | 配置项        | 说明                                        |
-   | ------------- | ------------------------------------------- |
-   | appKey        | 应用的 AppKey。可以在网易云信控制台中查看。 |
-   | authorization | 调用服务端接口时，请求头中的校验参数。      |
+   | 配置项        | 说明                                       |
+   | ------------- | ------------------------------------------ |
+   | appId         | 应用的 AppId。可以在网易云信控制台中查看。 |
+   | authorization | 调用服务端接口时，请求头中的校验参数。     |
 
    **说明：**如果仅需要本地跑通示例项目，您可以使用[智慧云课堂体验账号](https://github.com/netease-kit/WisdomEducation/tree/main/Wisdom_Education_Docs)。体验账号的课堂时长限制为 30 分钟。
 
@@ -221,33 +221,32 @@ NEEduEnterRoomParam *room = [[NEEduEnterRoomParam alloc] init];
 
 - `EduManager`单例类，设置SDK的配置信息，持有子功能对象。
 
-  | 接口                            | 备注       |
-  | ------------------------------- | ---------- |
-  | setupAppKey:options:            | 初始化组件 |
-  | login:success:failure:          | 登录账户   |
-  | enterClassroom:success:failure: | 加入课堂   |
-  | setCanvasView:forMember:        | 设置画布   |
-  | leaveClassroom                  | 离开课堂   |
-  | destoryClassroom                | 销毁对象   |
-
+| 接口                            | 备注       |
+| ------------------------------- | ---------- |
+| setupAppKey:options:            | 初始化组件 |
+| login:success:failure:          | 登录账户   |
+| enterClassroom:success:failure: | 加入课堂   |
+| setCanvasView:forMember:        | 设置画布   |
+| leaveClassroom                  | 离开课堂   |
+| destoryClassroom                | 销毁对象   |
 
 - `NEEduVideoService`：音视频管理类。
 
-  | 接口                       | 备注                                                         |
-  | -------------------------- | ------------------------------------------------------------ |
-  | setupAppkey:               | 设置音视频SDK的Appkey，EduManager的setupAppKey:options:方法中已调用。 |
-  | joinChannel: completion:   | 加入音视频房间，EduManager的enterClassroom:success:failure:中已调用 |
-  | setupLocalVideo:           | 设置本地视频画布，EduManager的setCanvasView:forMember:方法中已调用。 |
-  | setupRemoteVideo:          | 设置远端视频画布，EduManager的setCanvasView:forMember:方法中已调用。 |
-  | setupSubStreamVideo:       | 设置辅流视频画布                                             |
-  | enableLocalAudio:          | 开关音频                                                     |
-  | enableLocalVideo:          | 开关视频                                                     |
-  | muteLocalVideo:            | 取消/发送视频，不开关硬件                                    |
-  | muteLocalAudio:            | 取消/发送音频，不开关硬件                                    |
-  | subscribeVideo: forUserID: | 订阅用户的视频                                               |
-  | subscribeAudio: forUserID: | 订阅用户的音频                                               |
-  | leaveChannel               | 离开音视频房间，EduManager的leaveClassroom方法中已调用。     |
-  | destroy                    | 销毁对象，EduManager的destoryClassroom方法中已调用。         |
+| 接口                       | 备注                                                         |
+| -------------------------- | ------------------------------------------------------------ |
+| setupAppkey:               | 设置音视频SDK的Appkey，EduManager的setupAppKey:options:方法中已调用。 |
+| joinChannel: completion:   | 加入音视频房间，EduManager的enterClassroom:success:failure:中已调用 |
+| setupLocalVideo:           | 设置本地视频画布，EduManager的setCanvasView:forMember:方法中已调用。 |
+| setupRemoteVideo:          | 设置远端视频画布，EduManager的setCanvasView:forMember:方法中已调用。 |
+| setupSubStreamVideo:       | 设置辅流视频画布                                             |
+| enableLocalAudio:          | 开关音频                                                     |
+| enableLocalVideo:          | 开关视频                                                     |
+| muteLocalVideo:            | 取消/发送视频，不开关硬件                                    |
+| muteLocalAudio:            | 取消/发送音频，不开关硬件                                    |
+| subscribeVideo: forUserID: | 订阅用户的视频                                               |
+| subscribeAudio: forUserID: | 订阅用户的音频                                               |
+| leaveChannel               | 离开音视频房间，EduManager的leaveClassroom方法中已调用。     |
+| destroy                    | 销毁对象，EduManager的destoryClassroom方法中已调用。         |
 
 - `NEEduIMService`：聊天、信令管理类。
 
@@ -289,5 +288,7 @@ NEEduEnterRoomParam *room = [[NEEduEnterRoomParam alloc] init];
   | onLessonMuteAllAudio: roomUuid:         | 全体静音回调                |
   | onLessonMuteAllText: roomUuid:          | 全体禁言回调                |
 
- 
+  
+
+
 

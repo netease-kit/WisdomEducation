@@ -24,7 +24,7 @@
     [super viewDidLoad];
     self.handsupState = NEEduHandsupStateIdle;
     self.whiteboardWritable = NO;
-    [self subscribeVideoForOnlineUser];
+    
 }
 
 - (void)subscribeVideoForOnlineUser {
@@ -58,6 +58,27 @@
     }
     self.chatItem = chatItem;
 }
+
+- (NSArray <NEEduHttpUser *> *)showMembersWithJoinedMembers:(NSArray <NEEduHttpUser *> *)members {
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"properties.avHandsUp.value = %d",NEEduHandsupStateTeaAccept];
+    NSArray *onlineMembers = [members filteredArrayUsingPredicate:predicate];
+    NSMutableArray *showMembers = onlineMembers.mutableCopy;
+    NEEduHttpUser *user = members.firstObject;
+    if (![user isTeacher]) {
+        [showMembers insertObject:[NEEduHttpUser teacher] atIndex:0];
+    }else{
+        [showMembers insertObject:user atIndex:0];
+    }
+    NSLog(@"onlineMembers:%@",onlineMembers);
+    return showMembers;
+}
+
+- (void)updateUIWithMembers:(NSArray *)members {
+    self.totalMembers = members.mutableCopy;
+    [self subscribeVideoForOnlineUser];
+    [self updateHandsupStateWithMembers:members];
+}
+
 - (NSArray <NEEduHttpUser *>*)membersWithProfile:(NEEduRoomProfile *)profile {
     NEEduHttpUser *teacher = [[NEEduHttpUser alloc] init];
     teacher.role = NEEduRoleHost;
@@ -88,9 +109,9 @@
     return onlineArray;
 }
 
-- (void)updateHandsupStateWithProfile:(NEEduRoomProfile *)profile {
+- (void)updateHandsupStateWithMembers:(NSArray<NEEduHttpUser *> *)members {
     //判断自己是否在举手中
-    for (NEEduHttpUser *user in profile.snapshot.members) {
+    for (NEEduHttpUser *user in members) {
         if ([user.userUuid isEqualToString:[NEEduManager shared].localUser.userUuid]) {
             self.handsupState = user.properties.avHandsUp.value;
             [self onHandsupStateChange:self.handsupState user:user];
@@ -318,6 +339,8 @@
 
 #pragma mark - NEEduMessageServiceDelegate
 - (void)onUserInWithUser:(NEEduHttpUser *)user members:(NSArray *)members {
+    NSLog(@"onUserIn user:%@ members:%@",user,members);
+    NSLog(@"onUserIn members:%@",self.members);
     if ([user.role isEqualToString:NEEduRoleHost]) {
         [self.members replaceObjectAtIndex:0 withObject:user];
         [self.totalMembers replaceObjectAtIndex:0 withObject:user];

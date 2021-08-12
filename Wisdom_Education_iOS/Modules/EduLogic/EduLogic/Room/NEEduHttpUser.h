@@ -30,6 +30,10 @@ extern NSString * const NEEduRoleAudience;
 /// 是否上台 默认为NO 仅大班课场景使用
 @property (nonatomic, assign) BOOL isOnStage;
 @property (nonatomic, assign) BOOL isTeacher;
+
++ (instancetype)teacher;
++ (instancetype)student;
+- (instancetype)initWithRole:(NSString *)role;
 @end
 
 NS_ASSUME_NONNULL_END

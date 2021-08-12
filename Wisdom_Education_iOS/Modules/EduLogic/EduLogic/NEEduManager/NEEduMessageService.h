@@ -17,6 +17,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)onUserInWithUser:(NEEduHttpUser *)user members:(NSArray *)members;
 - (void)onUserOutWithUser:(NEEduHttpUser *)user members:(NSArray *)members;
+
+/// 用户token校验失败或token过期，请求中出现校验失败回调到这里
+/// @param user 用户信息
+- (void)onUserTokenExpired:(NEEduHttpUser *)user;
+
 - (void)onVideoStreamEnable:(BOOL)enable user:(NEEduHttpUser *)user;
 - (void)onAudioStreamEnable:(BOOL)enable user:(NEEduHttpUser *)user;
 - (void)onSubVideoStreamEnable:(BOOL)enable user:(NEEduHttpUser *)user;

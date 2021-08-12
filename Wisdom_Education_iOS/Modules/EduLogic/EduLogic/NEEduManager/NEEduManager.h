@@ -33,29 +33,45 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, copy, readonly) NSString *imKey;
 @property (nonatomic, copy, readonly) NSString *imToken;
+@property (nonatomic, assign) BOOL reuseIM;
 
 + (instancetype)shared;
 
 - (void)setupAppKey:(NSString * _Nonnull)appKey options:(NEEduKitOptions * )options;
 
 /// 登录
-/// @param userID 用户ID，为nil则匿名登录
+/// @param userID 用户ID
+/// @param token 用户Token
 /// @param success 成功
 /// @param failure 失败
-- (void)login:(NSString * _Nullable)userID success:(void(^)(NEEduUser *user))success failure:(void(^)(NSError *error))failure;
+- (void)login:(NSString *)userID token:(NSString *)token success:(void(^)(NEEduUser *user))success failure:(void(^)(NSError *error))failure;
 
-/// 加入房间
-/// @param roomOption 参数
-/// @param success 成功
-/// @param failure 失败
-- (void)enterClassroom:(NEEduEnterRoomParam *)roomOption success:(void(^)(NEEduRoomProfile *roomProfile))success failure:(void(^)(NSError *error))failure;
+// 匿名登录（demo使用）
+- (void)easyLoginWithSuccess:(void(^)(NEEduUser *user))success failure:(void(^)(NSError *error))failure;
+
+///加入房间
+/// @param roomOption 房间设置
+/// @param completion 加入结果
+- (void)enterClassroom:(NEEduEnterRoomParam *)roomOption completion:(void(^)(NSError *error,NEEduEnterRoomResponse * response))completion;
+
+/// 加入Rtc房间并获取房间整体信息
+/// @param completion 结果
+- (void)joinRtcAndGetProfileCompletion:(void(^)(NSError *error,NEEduRoomProfile *profile))completion;
+
+/// 加入聊天室
+/// @param success 成功回调
+/// @param failed 失败回调
+- (void)joinChatRoomSuccess:(void(^)(NEEduChatRoomResponse *response))success failed:(void(^)(NSError *error))failed;
 
 /// 设置画布
 /// @param view 视频渲染View
 /// @param member 用户信息
 - (void)setCanvasView:(UIView *)view forMember:(NEEduHttpUser *)member;
 
+/// 业务上离开房间但不销毁Rtc实例
 - (void)leaveClassroom;
+
+/// 销毁Rtc实例
 - (void)destoryClassroom;
 
 @end

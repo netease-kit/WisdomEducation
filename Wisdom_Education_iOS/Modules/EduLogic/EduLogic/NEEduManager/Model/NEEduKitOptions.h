@@ -14,6 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface NEEduKitOptions : NSObject
 @property (nonatomic, copy) NSString *authorization;
 @property (nullable, nonatomic,copy) NSString *baseURL;
+
 @end
 
 NS_ASSUME_NONNULL_END

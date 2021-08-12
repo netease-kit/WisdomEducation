@@ -94,7 +94,7 @@ Pod::Spec.new do |spec|
 #  spec.exclude_files = "Classes/Exclude"
 
   spec.public_header_files = "EduLogic/**/*.h"
-  spec.prefix_header_contents = '#import "NEEduLog.h"'
+#  spec.prefix_header_contents = '#import "NEEduLog.h"'
 
   # ――― Resources ―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
   #
@@ -137,9 +137,7 @@ Pod::Spec.new do |spec|
   spec.dependency "AFNetworking", '~> 4.0.1'
   spec.dependency "YYModel", "1.0.4"
   spec.dependency "NERtcSDK", "4.2.1"
-  spec.dependency "NIMSDK_LITE", '8.3.3'
-  spec.dependency "YXAlog_iOS", '1.0.6'
-    
+  spec.dependency "NIMSDK_LITE", '8.3.3'    
 
 
 end

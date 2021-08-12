@@ -33,6 +33,23 @@
     [shareItem setSelctedImage:[UIImage ne_imageNamed:@"menu_share_screen_stop"]];
     self.menuItems = @[audoItem,videoItem,shareItem];
 }
+
+- (NSArray *)placeholderMembers {
+    return @[[NEEduHttpUser teacher],[NEEduHttpUser student]];
+}
+
+- (NSArray <NEEduHttpUser *> *)showMembersWithJoinedMembers:(NSArray <NEEduHttpUser *> *)members {
+    NSMutableArray *muteMembers = [NSMutableArray arrayWithArray:@[[NEEduHttpUser teacher],[NEEduHttpUser student]]];
+    for (NEEduHttpUser *user in members) {
+        if ([user isTeacher]) {
+            [muteMembers replaceObjectAtIndex:0 withObject:user];
+        }else {
+            [muteMembers replaceObjectAtIndex:1 withObject:user];
+        }
+    }
+    return muteMembers;
+}
+
 - (NSArray <NEEduHttpUser *>*)membersWithProfile:(NEEduRoomProfile *)profile {
     NEEduHttpUser *teacher = [[NEEduHttpUser alloc] init];
     teacher.role = NEEduRoleHost;

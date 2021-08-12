@@ -212,7 +212,7 @@ static HttpClient *manager = nil;
                      \nheaders==>\n%@\n\
                      \nparams==>\n%@\n\
                      ",NEHttpTypeStrings[type], url, headers, params];
-//    NEduLogInfo(@"%@",msg);
+    NSLog(@"%@",msg);
 }
 + (void)httpSuccessLogWithType:(NEHttpType)type url:(NSString *)url
                      responseObject:(id)responseObject {
@@ -223,7 +223,7 @@ static HttpClient *manager = nil;
                      \nResult==>\n%@\n\
                      ",NEHttpTypeStrings[type], url, responseObject];
     
-    NEduLogInfo(@"%@",msg);
+    NSLog(@"%@",msg);
 }
 
 + (void)httpErrorLogWithType:(NEHttpType)type url:(NSString *)url
@@ -234,7 +234,7 @@ static HttpClient *manager = nil;
                      \nurl==>\n%@\n\
                      \nError==>\n%@\n\
                      ",NEHttpTypeStrings[type], url, error.description];
-    NEduLogError(@"%@",msg);
+    NSLog(@"%@",msg);
 }
 
 #pragma mark Check

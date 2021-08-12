@@ -17,9 +17,15 @@
 - (void)setupAppkey:(NSString *)appKey {
     NIMSDKOption *option = [NIMSDKOption optionWithAppKey:appKey];
     [[NIMSDK sharedSDK] registerWithOption:option];
+}
+
+- (void)addIMDelegate {
     [[NIMSDK sharedSDK].passThroughManager addDelegate:self];
     [[NIMSDK sharedSDK].chatroomManager addDelegate:self];
     [[NIMSDK sharedSDK].chatManager addDelegate:self];
+}
+- (BOOL)isLogined {
+    return [NIMSDK sharedSDK].loginManager.isLogined;
 }
 - (void)login:(NSString *)userID token:(NSString *)token completion:(void(^)(NSError * _Nullable error))completion {
     [[NIMSDK sharedSDK].loginManager login:userID token:token completion:^(NSError * _Nullable error) {
@@ -135,13 +141,13 @@
 
 #pragma mark - NIMChatroomManagerDelegate
 - (void)chatroomBeKicked:(NIMChatroomBeKickedResult *)result {
-    YXAlogError(@"[IM Chatroom] %s",__func__);
+    NSLog(@"[IM Chatroom] %s",__func__);
 }
 - (void)chatroom:(NSString *)roomId autoLoginFailed:(NSError *)error {
-    YXAlogError(@"[IM Chatroom] %s",__func__);
+    NSLog(@"[IM Chatroom] %s",__func__);
 }
 - (void)chatroom:(NSString *)roomId connectionStateChanged:(NIMChatroomConnectionState)state {
-    YXAlogInfo(@"[IM Chatroom] %s  state:%d",__func__,state);
+    NSLog(@"[IM Chatroom] %s  state:%d",__func__,state);
 }
 
 - (void)destroy {

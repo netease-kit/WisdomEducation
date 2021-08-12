@@ -23,9 +23,8 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    [self updateHandsupStateWithProfile:[NEEduManager shared].profile];
-    [self subscribeVideoForOnlineUser];
 }
+
 - (void)subscribeVideoForOnlineUser {
     for (NEEduHttpUser *user in self.members) {
         if (user.streams.video.value) {
@@ -65,6 +64,27 @@
     self.menuItems = @[audoItem,videoItem,shareItem,membersItem,handsupItem,chatItem];
     self.chatItem = chatItem;
 }
+
+- (NSArray <NEEduHttpUser *> *)showMembersWithJoinedMembers:(NSArray <NEEduHttpUser *> *)members {
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"properties.avHandsUp.value = %d",NEEduHandsupStateTeaAccept];
+    NSArray *onlineMembers = [members filteredArrayUsingPredicate:predicate];
+    NSMutableArray *showMembers = onlineMembers.mutableCopy;
+    NEEduHttpUser *user = members.firstObject;
+    if (![user isTeacher]) {
+        [showMembers insertObject:[NEEduHttpUser teacher] atIndex:0];
+    }else {
+        [showMembers insertObject:user atIndex:0];
+    }
+    NSLog(@"onlineMembers:%@",onlineMembers);
+    return showMembers;
+}
+
+- (void)updateUIWithMembers:(NSArray *)members {
+    self.totalMembers = members.mutableCopy;
+    [self subscribeVideoForOnlineUser];
+    [self updateHandsupStateWithMembers:[NEEduManager shared].profile.snapshot.members];
+}
+
 - (NSArray <NEEduHttpUser *>*)membersWithProfile:(NEEduRoomProfile *)profile {
     NEEduHttpUser *teacher = [[NEEduHttpUser alloc] init];
     teacher.role = NEEduRoleHost;
@@ -94,10 +114,10 @@
     self.room = profile.snapshot.room;
     return onlineArray;
 }
-- (void)updateHandsupStateWithProfile:(NEEduRoomProfile *)profile {
+- (void)updateHandsupStateWithMembers:(NSArray<NEEduHttpUser *> *)members {
     //统计举手申请人数
     NSMutableArray *array = [NSMutableArray array];
-    for (NEEduHttpUser *user in profile.snapshot.members) {
+    for (NEEduHttpUser *user in members) {
         if (user.properties.avHandsUp.value == NEEduHandsupStateApply) {
             [array addObject:user];
         }
