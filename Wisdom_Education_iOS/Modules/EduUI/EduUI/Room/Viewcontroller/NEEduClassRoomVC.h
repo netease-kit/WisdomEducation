@@ -40,11 +40,14 @@ static NSString *cellID = @"NEEduVideoCellID";
 
 // 子类实现
 - (void)initMenuItems;
+- (NSArray <NEEduHttpUser *> *)placeholderMembers;
+- (NSArray <NEEduHttpUser *> *)showMembersWithJoinedMembers:(NSArray <NEEduHttpUser *> *)members;
+- (void)updateUIWithMembers:(NSArray *)members;
 - (void)handsupItem:(NEEduMenuItem *)item;
 // 对members数据进行重组 便于UI展示
 - (NSArray <NEEduHttpUser *>*)membersWithProfile:(NEEduRoomProfile *)profile;
 // 举手状态 UI更新
-- (void)updateHandsupStateWithProfile:(NEEduRoomProfile *)profile;
+- (void)updateHandsupStateWithMembers:(NSArray <NEEduHttpUser *> *)members;
 //更新底部菜单栏音频状态，更新右侧图像列表音视频状态
 - (void)updateAVEnable:(BOOL)enable user:(NEEduHttpUser *)user;
 //子类调用

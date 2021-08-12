@@ -20,6 +20,7 @@
 #import "NEAVAuthorization.h"
 #import <AFNetworking/AFNetworkReachabilityManager.h>
 #import "NEEduChatViewController.h"
+#import "IMLoginVC.h"
 
 // 隐私政策URL
 static NSString *kPrivatePolicyURL = @"https://yunxin.163.com/clauses?serviceType=3";
@@ -32,6 +33,9 @@ static NSString *kUserAgreementURL = @"http://yunxin.163.com/clauses";
 @property (nonatomic, strong) UILabel *subTileLabel;
 @property (nonatomic, strong) EduInputView *lessonIdView;
 @property (nonatomic, strong) EduInputView *nicknameView;
+@property (nonatomic, strong) EduInputView *userIdView;
+@property (nonatomic, strong) EduInputView *tokenView;
+
 @property (nonatomic, strong) EduSelectView *selectionView;
 @property (nonatomic, strong) UIButton *teacherRoleButton;
 @property (nonatomic, strong) UIButton *studentRoleButton;
@@ -39,8 +43,8 @@ static NSString *kUserAgreementURL = @"http://yunxin.163.com/clauses";
 @property (nonatomic, assign) NSInteger lessonType;
 @property (nonatomic, strong) UIButton *joinLessonBtn;
 @property (nonatomic, strong) UILabel *infoLabel;
+@property (nonatomic, strong) UIButton *settingButton;
 
-@property (nonatomic, strong) UITextView  *protocolView;
 @property (nonatomic, strong) NSArray <NSString *>*lessonTypes;
 
 @property (nonatomic, assign)   BOOL isLessonIdValide;
@@ -48,6 +52,8 @@ static NSString *kUserAgreementURL = @"http://yunxin.163.com/clauses";
 @property (nonatomic, strong) UIActivity *activity;
 @property (nonatomic, strong) UITableView *tableview;
 @property (nonatomic, strong) NEEduChatViewController *chatVC;
+
+@property (nonatomic, assign) NEEduRoleType role;
 
 @end
 
@@ -64,7 +70,7 @@ static NSString *kUserAgreementURL = @"http://yunxin.163.com/clauses";
 - (void)setupSubviews {
     self.view.backgroundColor = [UIColor whiteColor];
     [self.view addSubview:self.icon];
-    NSLayoutConstraint *iconTop = [NSLayoutConstraint constraintWithItem:self.icon attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeTop multiplier:1.0 constant:92];
+    NSLayoutConstraint *iconTop = [NSLayoutConstraint constraintWithItem:self.icon attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeTop multiplier:1.0 constant:62];
     NSLayoutConstraint *iconCenterX = [NSLayoutConstraint constraintWithItem:self.icon attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeCenterX multiplier:1.0 constant:- 67];
     NSLayoutConstraint *iconWidth = [NSLayoutConstraint constraintWithItem:self.icon attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:36];
     NSLayoutConstraint *iconHeight = [NSLayoutConstraint constraintWithItem:self.icon attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:28];
@@ -72,7 +78,7 @@ static NSString *kUserAgreementURL = @"http://yunxin.163.com/clauses";
     [self.icon addConstraints:@[iconWidth,iconHeight]];
     
     [self.view addSubview:self.titleLab];
-    NSLayoutConstraint *titleTop = [NSLayoutConstraint constraintWithItem:self.titleLab attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeTop multiplier:1.0 constant:92];
+    NSLayoutConstraint *titleTop = [NSLayoutConstraint constraintWithItem:self.titleLab attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeTop multiplier:1.0 constant:62];
     NSLayoutConstraint *titleLeft = [NSLayoutConstraint constraintWithItem:self.titleLab attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self.icon attribute:NSLayoutAttributeRight multiplier:1.0 constant:10];
     NSLayoutConstraint *titleWidth = [NSLayoutConstraint constraintWithItem:self.titleLab attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:125];
     NSLayoutConstraint *titleHeight = [NSLayoutConstraint constraintWithItem:self.titleLab attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:28];
@@ -80,20 +86,66 @@ static NSString *kUserAgreementURL = @"http://yunxin.163.com/clauses";
     [self.titleLab addConstraints:@[titleWidth,titleHeight]];
     
     [self.view addSubview:self.subTileLabel];
-    NSLayoutConstraint *subTitleTop = [NSLayoutConstraint constraintWithItem:self.subTileLabel attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeTop multiplier:1.0 constant:130];
+    NSLayoutConstraint *subTitleTop = [NSLayoutConstraint constraintWithItem:self.subTileLabel attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeTop multiplier:1.0 constant:100];
     NSLayoutConstraint *subTitleLeading = [NSLayoutConstraint constraintWithItem:self.subTileLabel attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeLeading multiplier:1.0 constant:30];
     NSLayoutConstraint *subTitleTrailing = [NSLayoutConstraint constraintWithItem:self.subTileLabel attribute:NSLayoutAttributeTrailing relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeTrailing multiplier:1.0 constant:-30];
     NSLayoutConstraint *subTitleHeight = [NSLayoutConstraint constraintWithItem:self.subTileLabel attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:40];
     [self.view addConstraints:@[subTitleTop,subTitleLeading,subTitleTrailing]];
     [self.subTileLabel addConstraint:subTitleHeight];
-
+    
+#ifdef DEBUG
+    EduInputView *userIDView = [[EduInputView alloc] initWithPlaceholder:@"请输入ID(可选)"];
+    userIDView.textField.keyboardType = UIKeyboardTypeDefault;
+    [self.view addSubview:userIDView];
+    [NSLayoutConstraint activateConstraints:@[
+        [userIDView.topAnchor constraintEqualToAnchor:self.subTileLabel.bottomAnchor constant:12],
+        [userIDView.leftAnchor constraintEqualToAnchor:self.view.leftAnchor constant:30],
+        [userIDView.rightAnchor constraintEqualToAnchor:self.view.rightAnchor constant:-30],
+        [userIDView.heightAnchor constraintEqualToConstant:44]
+    ]];
+    self.userIdView = userIDView;
+    EduInputView *tokenView = [[EduInputView alloc] initWithPlaceholder:@"请输入token(可选)"];
+    tokenView.textField.keyboardType = UIKeyboardTypeDefault;
+    [self.view addSubview:tokenView];
+    [NSLayoutConstraint activateConstraints:@[
+        [tokenView.topAnchor constraintEqualToAnchor:userIDView.bottomAnchor constant:12],
+        [tokenView.leftAnchor constraintEqualToAnchor:self.view.leftAnchor constant:30],
+        [tokenView.rightAnchor constraintEqualToAnchor:self.view.rightAnchor constant:-30],
+        [tokenView.heightAnchor constraintEqualToConstant:44]
+    ]];
+    self.tokenView = tokenView;
     [self.view addSubview:self.lessonIdView];
-    NSLayoutConstraint *leading = [NSLayoutConstraint constraintWithItem:self.lessonIdView attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeLeading multiplier:1.0 constant:30];
-    NSLayoutConstraint *trailing = [NSLayoutConstraint constraintWithItem:self.lessonIdView attribute:NSLayoutAttributeTrailing relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeTrailing multiplier:1.0 constant:-30];
-    NSLayoutConstraint *top = [NSLayoutConstraint constraintWithItem:self.lessonIdView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.subTileLabel attribute:NSLayoutAttributeBottom multiplier:1.0 constant:12];
-    NSLayoutConstraint *height = [NSLayoutConstraint constraintWithItem:self.lessonIdView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:44];
-    [self.lessonIdView addConstraint:height];
-    [self.view addConstraints:@[leading,trailing,top]];
+    [NSLayoutConstraint activateConstraints:@[
+        [self.lessonIdView.topAnchor constraintEqualToAnchor:tokenView.bottomAnchor constant:12],
+        [self.lessonIdView.leftAnchor constraintEqualToAnchor:self.view.leftAnchor constant:30],
+        [self.lessonIdView.rightAnchor constraintEqualToAnchor:self.view.rightAnchor constant:-30],
+        [self.lessonIdView.heightAnchor constraintEqualToConstant:44]
+    ]];
+    [self.view addSubview:self.settingButton];
+    if (@available(iOS 11.0, *)) {
+        [NSLayoutConstraint activateConstraints:@[
+            [self.settingButton.rightAnchor constraintEqualToAnchor:self.view.rightAnchor constant:-10],
+            [self.settingButton.topAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.topAnchor constant:20],
+            [self.settingButton.heightAnchor constraintEqualToConstant:40],
+            [self.settingButton.widthAnchor constraintEqualToConstant:60]
+        ]];
+    } else {
+        [NSLayoutConstraint activateConstraints:@[
+            [self.settingButton.rightAnchor constraintEqualToAnchor:self.view.rightAnchor constant:-10],
+            [self.settingButton.topAnchor constraintEqualToAnchor:self.view.topAnchor constant:20],
+            [self.settingButton.heightAnchor constraintEqualToConstant:40],
+            [self.settingButton.widthAnchor constraintEqualToConstant:60]
+        ]];
+    }
+#else
+    [self.view addSubview:self.lessonIdView];
+    [NSLayoutConstraint activateConstraints:@[
+        [self.lessonIdView.topAnchor constraintEqualToAnchor:self.subTileLabel.bottomAnchor constant:12],
+        [self.lessonIdView.leftAnchor constraintEqualToAnchor:self.view.leftAnchor constant:30],
+        [self.lessonIdView.rightAnchor constraintEqualToAnchor:self.view.rightAnchor constant:-30],
+        [self.lessonIdView.heightAnchor constraintEqualToConstant:44]
+    ]];
+#endif
     
     [self.view addSubview:self.nicknameView];
     NSLayoutConstraint *nicknameLeading = [NSLayoutConstraint constraintWithItem:self.nicknameView attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:self.lessonIdView attribute:NSLayoutAttributeLeading multiplier:1.0 constant:0];
@@ -140,16 +192,36 @@ static NSString *kUserAgreementURL = @"http://yunxin.163.com/clauses";
     NSLayoutConstraint *infoTrailing = [NSLayoutConstraint constraintWithItem:self.infoLabel attribute:NSLayoutAttributeTrailing relatedBy:NSLayoutRelationEqual toItem:self.joinLessonBtn attribute:NSLayoutAttributeTrailing multiplier:1.0 constant:0];
     NSLayoutConstraint *infoHeight = [NSLayoutConstraint constraintWithItem:self.infoLabel attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:40];
     [self.view addConstraints:@[infoTop,infoLeading,infoTrailing,infoHeight]];
-
-//    self.protocolView.frame = CGRectMake(20, self.joinLessonBtn.frame.origin.y + 50 + 15, self.view.bounds.size.width - 40, 30);
-//    [self.view addSubview:self.protocolView];
-//    self.protocolView.attributedText = [self protocolText];
-//    self.protocolView.textAlignment = NSTextAlignmentCenter;
-
-//    int classNum = arc4random() % 100000 + 10000;
-//    self.lessonIdView.text = [[NSNumber numberWithInt:classNum] stringValue];
-//    self.lessonIdView.text = @"66";
-//    self.nicknameView.text = @"goodStudent";
+    
+    UILabel *version = [[UILabel alloc] init];
+    version.translatesAutoresizingMaskIntoConstraints = NO;
+    version.font = [UIFont systemFontOfSize:12];
+    version.textColor = [UIColor lightGrayColor];
+    version.textAlignment = NSTextAlignmentCenter;
+    version.numberOfLines = 0;
+    version.text = [NSString stringWithFormat:@"Version:%@(%@)",[NEAppInfo appVersion],[NEAppInfo buildVersion]];
+    [self.view addSubview:version];
+    [NSLayoutConstraint activateConstraints:@[
+                                             [version.leadingAnchor constraintEqualToAnchor:self.infoLabel.leadingAnchor],
+                                             [version.trailingAnchor constraintEqualToAnchor:self.infoLabel.trailingAnchor],
+                                             [version.heightAnchor constraintEqualToConstant:30],
+                                             [version.bottomAnchor constraintEqualToAnchor:self.view.bottomAnchor constant:-10]
+    ]];
+    if (@available(iOS 13.0, *)) {
+        [NSLayoutConstraint activateConstraints:@[
+                                                 [version.leadingAnchor constraintEqualToAnchor:self.infoLabel.leadingAnchor],
+                                                 [version.trailingAnchor constraintEqualToAnchor:self.infoLabel.trailingAnchor],
+                                                 [version.heightAnchor constraintEqualToConstant:30],
+                                                 [version.bottomAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.bottomAnchor constant:-10]
+        ]];
+    } else {
+        [NSLayoutConstraint activateConstraints:@[
+                                                 [version.leadingAnchor constraintEqualToAnchor:self.infoLabel.leadingAnchor],
+                                                 [version.trailingAnchor constraintEqualToAnchor:self.infoLabel.trailingAnchor],
+                                                 [version.heightAnchor constraintEqualToConstant:30],
+                                                 [version.bottomAnchor constraintEqualToAnchor:self.view.bottomAnchor constant:-10]
+        ]];
+    }
 }
 
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
@@ -223,6 +295,11 @@ static NSString *kUserAgreementURL = @"http://yunxin.163.com/clauses";
     }
     button.selected = !button.selected;
     self.currentRoleButton = button;
+    if ([button isEqual:self.teacherRoleButton]) {
+        self.role = NEEduRoleTypeTeacher;
+    }else {
+        self.role = NEEduRoleTypeStudent;
+    }
     [self checkJoinButton];
 }
 - (void)enterLessonEvent:(UIButton *)button {
@@ -237,13 +314,12 @@ static NSString *kUserAgreementURL = @"http://yunxin.163.com/clauses";
                     return;
                 }else {
                     [self enterRoom];
-    
                 }
             }];
         }
     }];
-
 }
+
 - (void)enterRoom {
     [self.view makeToastActivity:CSToastPositionCenter];
     self.view.userInteractionEnabled = NO;
@@ -252,23 +328,55 @@ static NSString *kUserAgreementURL = @"http://yunxin.163.com/clauses";
     option.authorization = [KeyCenter authorization];
     option.baseURL = [KeyCenter baseURL];
     [[NEEduManager shared] setupAppKey:[KeyCenter appKey] options:option];
-//    2.登录
-    __weak typeof(self)weakSelf = self;
-    [[NEEduManager shared] login:nil success:^(NEEduUser * _Nonnull user) {
-        __strong typeof(self)strongSelf = weakSelf;
-//        3.创建房间
-        [strongSelf createRoom];
-        
-    } failure:^(NSError * _Nonnull error) {
-        __strong typeof(self)strongSelf = weakSelf;
-        [strongSelf.view hideToastActivity];
-        strongSelf.view.userInteractionEnabled = YES;
-        if (error.code == -1009) {
-            [strongSelf.view makeToast:@"网络连接失败，请稍后再试"];
-        }else {
-            [strongSelf.view makeToast:error.localizedDescription];
+    NSString *userId = [self.userIdView.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    NSString *token = [self.tokenView.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    if (userId.length && token.length) {
+        //userID login
+        __weak typeof(self)weakSelf = self;
+        [[NEEduManager shared] login:self.userIdView.text token:self.tokenView.text success:^(NEEduUser * _Nonnull user) {
+            __strong typeof(self)strongSelf = weakSelf;
+            [strongSelf createRoom];
+        } failure:^(NSError * _Nonnull error) {
+            __strong typeof(self)strongSelf = weakSelf;
+            [strongSelf.view hideToastActivity];
+            strongSelf.view.userInteractionEnabled = YES;
+            if (error.code == -1009) {
+                [strongSelf.view makeToast:@"网络连接失败，请稍后再试"];
+            }else {
+                [strongSelf.view makeToast:error.localizedDescription];
+            }
+        }];
+    }else {
+        if (userId.length) {
+            [self.view hideToastActivity];
+            self.view.userInteractionEnabled = YES;
+            [self.view makeToast:@"参数错误"];
+            return;
         }
-    }];
+        if (token.length) {
+            [self.view hideToastActivity];
+            self.view.userInteractionEnabled = YES;
+            [self.view makeToast:@"参数错误"];
+            return;
+        }
+        // 匿名登录
+        //    2.登录
+            __weak typeof(self)weakSelf = self;
+            [[NEEduManager shared] easyLoginWithSuccess:^(NEEduUser * _Nonnull user) {
+                __strong typeof(self)strongSelf = weakSelf;
+        //        3.创建房间
+                [strongSelf createRoom];
+            } failure:^(NSError * _Nonnull error) {
+                __strong typeof(self)strongSelf = weakSelf;
+                [strongSelf.view hideToastActivity];
+                strongSelf.view.userInteractionEnabled = YES;
+                if (error.code == -1009) {
+                    [strongSelf.view makeToast:@"网络连接失败，请稍后再试"];
+                }else {
+                    [strongSelf.view makeToast:error.localizedDescription];
+                }
+            }];
+    }
 }
 - (void)createRoom {
     NEEduRoom *room = [[NEEduRoom alloc] init];
@@ -307,134 +415,67 @@ static NSString *kUserAgreementURL = @"http://yunxin.163.com/clauses";
     }];
 }
 - (void)enterRoom:(NEEduCreateRoomRequest *)resRoom {
-    NEEduEnterRoomParam *room = [[NEEduEnterRoomParam alloc] init];
-    room.autoPublish = YES;
-    room.autoSubscribeVideo = YES;
-    room.autoSubscribeAudio = YES;
-    room.roomUuid = resRoom.roomUuid;
-    room.roomName = resRoom.roomName;
-    room.sceneType = self.lessonType;
-    if ([self.currentRoleButton.titleLabel.text isEqualToString:self.studentRoleButton.titleLabel.text]) {
-        room.role = NEEduRoleTypeStudent;
+    NEEduEnterRoomParam *param = [[NEEduEnterRoomParam alloc] init];
+    param.roomUuid = resRoom.roomUuid;
+    param.roomName = resRoom.roomName;
+    param.sceneType = self.lessonType;
+    param.userName = self.nicknameView.text;
+    param.role = self.role;
+    if (param.sceneType == NEEduSceneTypeBig) {
+        param.autoSubscribeVideo = NO;
+        param.autoSubscribeAudio = NO;
+        if (param.role == NEEduRoleTypeStudent) {
+            param.autoPublish = NO;
+        }else {
+            param.autoPublish = YES;
+        }
     }else {
-        room.role = NEEduRoleTypeTeacher;
+        param.autoPublish = YES;
+        param.autoSubscribeVideo = YES;
+        param.autoSubscribeAudio = YES;
     }
-    if (room.sceneType == NEEduSceneTypeBig) {
-        room.autoSubscribeVideo = NO;
-        room.autoSubscribeAudio = NO;
-        if (room.role == NEEduRoleTypeStudent) {
-            room.autoPublish = NO;
-        }
-    }
-    room.userName = self.nicknameView.text;
     __weak typeof(self)weakSelf = self;
-    [[NEEduManager shared] enterClassroom:room success:^(NEEduRoomProfile * _Nonnull roomProfile) {
+    [[NEEduManager shared] enterClassroom:param completion:^(NSError * _Nonnull error, NEEduEnterRoomResponse * _Nonnull response) {
         __strong typeof(self)strongSelf = weakSelf;
         [strongSelf.view hideToastActivity];
         strongSelf.view.userInteractionEnabled = YES;
-        NEEduHttpUser *teacher = [[NEEduHttpUser alloc] init];
-        teacher.role = NEEduRoleHost;
-        NEEduHttpUser *student = [[NEEduHttpUser alloc] init];
-        student.role = NEEduRoleBroadcaster;
-        if (room.sceneType == NEEduSceneType1V1) {
-            //一对一
-            NSMutableArray *placehlodArray = [NSMutableArray arrayWithArray:@[teacher,student]];
-            NEEduClassRoomVC *oneMemberVC;
-            for (NEEduHttpUser *user in roomProfile.snapshot.members) {
-                if ([user.role isEqualToString:NEEduRoleHost]) {
-                    [placehlodArray replaceObjectAtIndex:0 withObject:user];
-                }else {
-                    [placehlodArray replaceObjectAtIndex:1 withObject:user];
-                }
-            }
-            if ([[NEEduManager shared].localUser isTeacher]) {
-                oneMemberVC = [[NEEduOneMemberTeacherVC alloc] init];
-            }else {
-                oneMemberVC = [[NEEduOneMemberVC alloc] init];
-            }
-            oneMemberVC.members = placehlodArray;
-            oneMemberVC.room = roomProfile.snapshot.room;
-            oneMemberVC.modalPresentationStyle = UIModalPresentationFullScreen;
-            [strongSelf presentViewController:oneMemberVC animated:YES completion:nil];
-        }else if(room.sceneType == NEEduSceneTypeSmall) {
-            //小班课
-            NSMutableArray *placehlodArray = [NSMutableArray arrayWithArray:@[teacher]];
-            NEEduClassRoomVC *smallVC;
-            for (NEEduHttpUser *user in roomProfile.snapshot.members) {
-                if ([user.role isEqualToString:NEEduRoleHost]) {
-                    [placehlodArray replaceObjectAtIndex:0 withObject:user];
-                }else {
-                    if ([user.userUuid isEqualToString:[NEEduManager shared].localUser.userUuid]) {
-                        //自己
-                        [placehlodArray insertObject:user atIndex:1];
-                    }else  {
-                        [placehlodArray addObject:user];
-                    }
-                }
-            }
-            if ([[NEEduManager shared].localUser isTeacher]) {
-                smallVC = [[NEEduSmallClassTeacherVC alloc] init];
-            }else {
-                smallVC = [[NEEduSmallClassVC alloc] init];
-            }
-            smallVC.members = placehlodArray;
-            smallVC.room = roomProfile.snapshot.room;
-            smallVC.modalPresentationStyle = UIModalPresentationFullScreen;
-            [strongSelf presentViewController:smallVC animated:YES completion:nil];
-            
-        }else {
-            //大班课
-            NSMutableArray *totalArray = [NSMutableArray arrayWithObject:teacher];
-            NSMutableArray *onlineArray = [NSMutableArray arrayWithObject:teacher];
-            for (NEEduHttpUser *user in roomProfile.snapshot.members) {
-                if ([user.role isEqualToString:NEEduRoleHost]) {
-                    [totalArray replaceObjectAtIndex:0 withObject:user];
-                    [onlineArray replaceObjectAtIndex:0 withObject:user];
-                }else {
-                    if ([user.userUuid isEqualToString:[NEEduManager shared].localUser.userUuid]) {
-                        //自己
-                        [totalArray insertObject:user atIndex:1];
-                        if (user.properties.avHandsUp.value == NEEduHandsupStateTeaAccept) {
-                            [onlineArray insertObject:user atIndex:1];
-                        }
-                    }else  {
-                        [totalArray addObject:user];
-                        if (user.properties.avHandsUp.value == NEEduHandsupStateTeaAccept) {
-                            [onlineArray addObject:user];
-                        }
-                    }
-                }
-            }
-            NEEduClassRoomVC *classVC;
-            if ([[NEEduManager shared].localUser isTeacher]) {
-                classVC = [[NEEduBigClassTeacherVC alloc] init];
-                NEEduBigClassTeacherVC *teacherVC = (NEEduBigClassTeacherVC *)classVC;
-                teacherVC.totalMembers = totalArray;
-            }else {
-                classVC = [[NEEduBigClassStudentVC alloc] init];
-                NEEduBigClassTeacherVC *studentVC = (NEEduBigClassTeacherVC *)classVC;
-                studentVC.totalMembers = totalArray;
-            }
-            classVC.members = onlineArray;
-            classVC.room = roomProfile.snapshot.room;
-            classVC.modalPresentationStyle = UIModalPresentationFullScreen;
-            [strongSelf presentViewController:classVC animated:YES completion:nil];
-        }
-    } failure:^(NSError * _Nonnull error) {
-        __strong typeof(self)strongSelf = weakSelf;
-        [strongSelf.view hideToastActivity];
-        strongSelf.view.userInteractionEnabled = YES;
-        if (error.code == 1002) {
-            if (room.role == NEEduRoleTypeTeacher) {
-                [strongSelf.view makeToast:@"老师数量超过限制"];
-            }else {
-                [strongSelf.view makeToast:@"学生数量超过限制"];
-            }
-        }else {
+        if (error) {
             [strongSelf.view makeToast:error.localizedDescription];
+        }else {
+            [strongSelf pushViewController];
         }
     }];
 }
+- (void)pushViewController {
+    NEEduClassRoomVC *roomVC;
+    if (self.lessonType == NEEduSceneType1V1) {
+        //1v1
+        if (self.role == NEEduRoleTypeTeacher) {
+            roomVC = [[NEEduOneMemberTeacherVC alloc] init];
+        }else {
+            roomVC = [[NEEduOneMemberVC alloc] init];
+        }
+
+    }else if(self.lessonType == NEEduSceneTypeSmall) {
+        // 小班课
+        if (self.role == NEEduRoleTypeTeacher) {
+            roomVC = [[NEEduSmallClassTeacherVC alloc] init];
+        }else {
+            roomVC = [[NEEduSmallClassVC alloc] init];
+        }
+
+    }else if (self.lessonType == NEEduSceneTypeBig) {
+        //大班课
+        if (self.role == NEEduRoleTypeTeacher) {
+            roomVC = [[NEEduBigClassTeacherVC alloc] init];
+        }else {
+            roomVC = [[NEEduBigClassStudentVC alloc] init];
+        }
+    }
+    roomVC.modalPresentationStyle = UIModalPresentationFullScreen;
+    [self presentViewController:roomVC animated:YES completion:nil];
+}
+
 #pragma mark - UITableViewDataSource
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     return self.lessonTypes.count;
@@ -511,8 +552,12 @@ static NSString *kUserAgreementURL = @"http://yunxin.163.com/clauses";
     UIColor *color = enable ? [UIColor colorWithRed:81/255.0 green:116/255.0 blue:246/255.0 alpha:1.0] : [UIColor colorWithRed:144/255.0 green:166/255.0 blue:243/255.0 alpha:1.0];
     self.joinLessonBtn.backgroundColor = color;
 }
-#pragma mark - lazy method
+- (void)settingButtonEvent:(UIButton *)button {
+    IMLoginVC *vc = [[IMLoginVC alloc] init];
+    [self.navigationController pushViewController:vc animated:YES];
+}
 
+#pragma mark - lazy method
 - (UIImageView *)icon {
     if (!_icon) {
         _icon = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"enter_icon"]];
@@ -619,6 +664,17 @@ static NSString *kUserAgreementURL = @"http://yunxin.163.com/clauses";
     }
     return _joinLessonBtn;
 }
+- (UIButton *)settingButton {
+    if (!_settingButton) {
+        _settingButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        _settingButton.translatesAutoresizingMaskIntoConstraints = NO;
+        [_settingButton setTitle:@"设置" forState:UIControlStateNormal];
+        [_settingButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        [_settingButton setBackgroundColor:[UIColor colorWithRed:144/255.0 green:166/255.0 blue:243/255.0 alpha:1.0]];
+        [_settingButton addTarget:self action:@selector(settingButtonEvent:) forControlEvents:UIControlEventTouchUpInside];
+    }
+    return _settingButton;
+}
 
 - (UITableView *)tableview {
     if (!_tableview) {
@@ -634,16 +690,6 @@ static NSString *kUserAgreementURL = @"http://yunxin.163.com/clauses";
         _tableview.clipsToBounds = YES;
     }
     return _tableview;
-}
-- (UITextView *)protocolView {
-    if (!_protocolView) {
-        _protocolView = [[UITextView alloc] init];
-        _protocolView.textAlignment = NSTextAlignmentCenter;
-        _protocolView.editable = NO;
-        _protocolView.scrollEnabled = NO;
-        _protocolView.backgroundColor = [UIColor whiteColor];
-    }
-    return _protocolView;
 }
 
 #pragma mark - Orientations

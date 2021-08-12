@@ -14,12 +14,25 @@ NSString * const NEEduRoleBroadcaster       = @"broadcaster";
 NSString * const NEEduRoleAudience          = @"audience";
 
 @implementation NEEduHttpUser
-- (void)setRole:(NSString *)role {
-    _role = role;
-    NSLog(@"%s  role:%@",__func__,role);
+- (instancetype)initWithRole:(NSString *)role
+{
+    self = [super init];
+    if (self) {
+        self.role = role;
+    }
+    return self;
 }
+
++ (instancetype)teacher {
+    return [[NEEduHttpUser alloc] initWithRole:NEEduRoleHost];
+}
+
++ (instancetype)student {
+    return [[NEEduHttpUser alloc] initWithRole:NEEduRoleBroadcaster];
+}
+
 - (BOOL)isTeacher {
-    if ([self.role isEqualToString:@"host"]) {
+    if ([self.role isEqualToString:NEEduRoleHost]) {
         return YES;
     }
     return NO;

@@ -38,6 +38,7 @@
     self.menuItems = @[audoItem,videoItem,membersItem,chatItem];
     self.chatItem = chatItem;
 }
+
 - (NSArray <NEEduHttpUser *>*)membersWithProfile:(NEEduRoomProfile *)profile {
     NEEduHttpUser *teacher = [[NEEduHttpUser alloc] init];
     teacher.role = NEEduRoleHost;

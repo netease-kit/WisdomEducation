@@ -45,6 +45,7 @@
     [[NERtcEngine sharedEngine] setParameters:params];
     
     [[NERtcEngine sharedEngine] joinChannelWithToken:param.rtcToken channelName:param.channelID myUid:param.userID completion:^(NSError * _Nullable error, uint64_t channelId, uint64_t elapesd) {
+        NSLog(@"Rtc:joinError:%@",error);
         if (completion) {
             completion(error,channelId);
         }
@@ -53,7 +54,7 @@
 - (int)subscribeVideo:(BOOL)subscribe forUserID:(UInt64)userID {
     int code = [[NERtcEngine sharedEngine] subscribeRemoteVideo:subscribe forUserID:userID streamType:kNERtcRemoteVideoStreamTypeLow];
     if (code != 0) {
-        NEduLogError(@"[Rtc]subscribeVideo:%d userId:%ud code:%d",subscribe,userID,code);
+        NSLog(@"[Rtc]subscribeVideo:%d userId:%ud code:%d",subscribe,userID,code);
     }
     return code;
 }
@@ -98,6 +99,7 @@
 - (void)leaveChannel {
     [[NERtcEngine sharedEngine] leaveChannel];
 }
+
 - (void)destroy {
     [NERtcEngine destroyEngine];
 }
@@ -113,10 +115,7 @@
     if (self.subscribeVideo) {
         int code = [[NERtcEngine sharedEngine] subscribeRemoteVideo:YES forUserID:userID streamType:kNERtcRemoteVideoStreamTypeLow];
         NSLog(@"auto subscribeVideo code:%d",code);
-        
     }else {
-//        NSNumber *userId = @(userID);
-//        [self.subscribeCacheList containsIndex:userID];
         if ([self.subscribeCacheList containsIndex:userID]) {
             int code = [[NERtcEngine sharedEngine] subscribeRemoteVideo:YES forUserID:userID streamType:kNERtcRemoteVideoStreamTypeLow];
             [[NERtcEngine sharedEngine] subscribeRemoteAudio:YES forUserID:userID];
@@ -148,8 +147,32 @@
     }
 }
 - (void)onNERtcEngineDidDisconnectWithReason:(NERtcError)reason {
+    NSLog(@"RTC:%s reason:%d",__func__,reason);
     if (self.delegate && [self.delegate respondsToSelector:@selector(onRtcDisconnectWithReason:)]) {
         [self.delegate onRtcDisconnectWithReason:reason];
     }
 }
+
+- (void)onNERtcEngineDidError:(NERtcError)errCode {
+    NSLog(@"RTC:%s errCode:%d",__func__,errCode);
+}
+
+-(void)onNERtcEngineConnectionStateChangeWithState:(NERtcConnectionStateType)state
+                                             reason:(NERtcReasonConnectionChangedType)reason {
+    NSLog(@"RTC:%s reason:%d",__func__,reason);
+
+    
+}
+- (void)onNERtcEngineDidLeaveChannelWithResult:(NERtcError)result {
+    NSLog(@"RTC:%s result:%d",__func__,result);
+}
+
+- (void)onNERtcEngineUserDidLeaveWithUserID:(uint64_t)userID reason:(NERtcSessionLeaveReason)reason {
+    NSLog(@"RTC:%s reason:%d",__func__,reason);
+}
+
+- (void)onNERtcEngineReconnectingStart {
+    NSLog(@"RTC:%s",__func__);
+}
+
 @end

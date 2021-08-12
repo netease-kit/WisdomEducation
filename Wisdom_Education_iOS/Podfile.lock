@@ -19,7 +19,6 @@ PODS:
     - AFNetworking (~> 4.0.1)
     - NERtcSDK (= 4.2.1)
     - NIMSDK_LITE (= 8.3.3)
-    - YXAlog_iOS (= 1.0.6)
     - YYModel (= 1.0.4)
   - EduUI (0.0.1):
     - EduLogic (~> 0.0.1)
@@ -37,7 +36,6 @@ PODS:
   - SDWebImage (5.11.1):
     - SDWebImage/Core (= 5.11.1)
   - SDWebImage/Core (5.11.1)
-  - YXAlog_iOS (1.0.6)
   - YYModel (1.0.4)
 
 DEPENDENCIES:
@@ -57,7 +55,6 @@ SPEC REPOS:
     - NEScreenShareHost
     - NIMSDK_LITE
     - SDWebImage
-    - YXAlog_iOS
     - YYModel
 
 EXTERNAL SOURCES:
@@ -71,7 +68,7 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   AFNetworking: 7864c38297c79aaca1500c33288e429c3451fdce
   Bugly: 88bc32c0acc6fef7b74d610f0319ee7560d6b9fe
-  EduLogic: 983c9a51c0c170c1c2d1e971bc2795cac30ed588
+  EduLogic: 26ed099a5ebeae3e39671efb5476efd1be03cbd5
   EduUI: b90e3347e5833769d87e67059821d1b6bf680f13
   NEDyldYuv: 6b47adff16186768bf2f8b165697fdee8e94d7ac
   NERtcSDK: 14c7a371b04bb264ed629a89425305be3eb23df9
@@ -80,7 +77,6 @@ SPEC CHECKSUMS:
   NEWhiteBoard: fd5013962c9c7c3e9ee4d690b4c9be27ecc58eec
   NIMSDK_LITE: f196e9ea550528a7da2104c63ef09d825e26a16a
   SDWebImage: a7f831e1a65eb5e285e3fb046a23fcfbf08e696d
-  YXAlog_iOS: 3948d6f7c0173c9dc0117a9445fc9411f97b314e
   YYModel: 2a7fdd96aaa4b86a824e26d0c517de8928c04b30
 
 PODFILE CHECKSUM: bfd9310f0c3c615c7f79fcc9b74917493ed8916e

@@ -32,7 +32,7 @@
 }
 #pragma mark - NEEduIMServiceDelegate
 - (void)didRecieveSignalMessage:(NSString *)message fromUser:(NSString *)fromUser {
-    NEduLogInfo(@"IM:%@",message);
+    NSLog(@"IM:%@",message);
     NEEduSignalMessage *messageModel = [NEEduSignalMessage yy_modelWithJSON:message];
     //过滤不同房间的消息
     if (![self.profileInfo.snapshot.room.roomUuid isEqualToString:messageModel.roomUuid]) {
@@ -54,16 +54,16 @@
      */
     if (messageModel.sequence - self.currentSequence > 1 && messageModel.sequence - self.currentSequence < 5) {
         //请求丢失的消息
-        NEduLogError(@"sequence不连续 currentS:%d msgS:%d",self.currentSequence,messageModel.sequence);
+        NSLog(@"sequence不连续 currentS:%d msgS:%d",self.currentSequence,messageModel.sequence);
         [HttpManager getMessageWithRoomUuid:self.profileInfo.snapshot.room.roomUuid nextId:self.currentSequence + 1 classType:[NEEduLostMessages class] success:^(NEEduLostMessages *  _Nonnull objModel) {
             NEEduSignalMessage *lastMessage = objModel.list.lastObject;
             self.currentSequence = lastMessage.sequence;
             for (NEEduSignalMessage *messageModel in objModel.list) {
-                NEduLogError(@"sequence不连续 重新拉取%d",messageModel.sequence);
+                NSLog(@"sequence不连续 重新拉取%d",messageModel.sequence);
                 [self dispatchMessage:messageModel];
             }
         } failure:^(NSError * _Nullable error, NSInteger statusCode) {
-            NEduLogError(@"sequence不连续 重新拉取失败:%error",error);
+            NSLog(@"sequence不连续 重新拉取失败:%error",error);
         }];
     }else {
         //消息分发

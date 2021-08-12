@@ -11,6 +11,7 @@
 #import "URL.h"
 #import <YYModel/YYModel.h>
 #import "NEAppInfo.h"
+#import "NEEduErrorType.h"
 
 #define LocalErrorDomain @"com.netease.needuhttpdomain"
 #define LocalError(errCode,reason) ([NSError errorWithDomain:LocalErrorDomain \
@@ -20,6 +21,8 @@ userInfo:@{NSLocalizedDescriptionKey:(reason)}])
 #define HTTP_STATUE_OK 200
 
 static HttpManagerConfig *config;
+static NSMutableDictionary *header;
+static void(^_errorBlock)(NSInteger);
 
 @implementation HttpManagerConfig
 @end
@@ -32,17 +35,40 @@ static HttpManagerConfig *config;
         config.baseURL = @"https://yiyong-xedu-v2.netease.im";
         NSString *UUIDStr = [[[UIDevice currentDevice] identifierForVendor] UUIDString];
         config.deviceId = UUIDStr;
-        
     }
     return config;
 }
 + (void)setupHttpManagerConfig:(HttpManagerConfig *)httpConfig {
     config = httpConfig;
 }
++ (void)setErrorBlock:(void(^)(NSInteger))errorBlock {
+    _errorBlock = errorBlock;
+}
 
-+ (void)loginWithParam:(NSDictionary * _Nullable)param analysisClass:(Class)classType success:(void (^ _Nullable) (id objModel))successBlock failure:(void (^ _Nullable) (NSError * _Nullable error, NSInteger statusCode))failureBlock {
++ (void)loginWithAnalysisClass:(Class)classType success:(void (^ _Nullable) (id objModel))successBlock failure:(void (^ _Nullable) (NSError * _Nullable error, NSInteger statusCode))failureBlock {
     NSString *urlStr = [NSString stringWithFormat:HTTP_EASY_LOGIN, config.baseURL,config.appKey,config.version];
-    [HttpManager post:urlStr token:nil params:param headers:nil success:^(id responseObj) {
+    [HttpManager post:urlStr token:nil params:nil headers:nil success:^(id responseObj) {
+        id model = [classType yy_modelWithDictionary:responseObj];
+        if(successBlock){
+            successBlock(model);
+        }
+    } failure:^(NSError *error, NSInteger statusCode) {
+        if(failureBlock) {
+            failureBlock(error, statusCode);
+        }
+    }];
+}
+
++ (void)loginWithUserId:(NSString *)userId token:(NSString *)token analysisClass:(Class)classType success:(void (^ _Nullable) (id objModel))successBlock failure:(void (^ _Nullable) (NSError * _Nullable error, NSInteger statusCode))failureBlock {
+    NSString *urlStr = [NSString stringWithFormat:HTTP_LOGIN, config.baseURL,config.appKey,config.version];
+    if (!userId || !token) {
+        if(failureBlock) {
+            failureBlock(LocalError(NEEduErrorTypeInvalidParemeter, @"参数错误"), HTTP_STATUE_OK);
+        }
+        return;
+    }
+    [self addHeaderFromDictionary:@{@"user":userId,@"token":token}];
+    [HttpManager post:urlStr token:nil params:nil headers:nil success:^(id responseObj) {
         id model = [classType yy_modelWithDictionary:responseObj];
         if(successBlock){
             successBlock(model);
@@ -216,6 +242,7 @@ static HttpManagerConfig *config;
             if (failure) {
                 NSError *error = [self errorWithErrorCode:code];
                 failure(error,HTTP_STATUE_OK);
+                [self handleErrorCode:code];
             }
         }
     } failure:failure];
@@ -233,6 +260,7 @@ static HttpManagerConfig *config;
             if (failure) {
                 NSError *error = [self errorWithErrorCode:code];
                 failure(error,HTTP_STATUE_OK);
+                [self handleErrorCode:code];
             }
         }
     } failure:failure];
@@ -242,7 +270,7 @@ static HttpManagerConfig *config;
 
     [HttpClient put:url params:params headers:[HttpManager httpHeader] success:^(id  _Nonnull responseObj) {
         NSInteger code = [[responseObj objectForKey:@"code"] integerValue];
-        if (code == 0 || code == 409) {
+        if (code == EduErrorTypeNone || code == NEEduErrorTypeRoomAlreadyExists) {
             NSDictionary *data = [responseObj objectForKey:@"data"];
             if (success) {
                 success(data);
@@ -251,6 +279,7 @@ static HttpManagerConfig *config;
             if (failure) {
                 NSError *error = [self errorWithErrorCode:code];
                 failure(error,HTTP_STATUE_OK);
+                [self handleErrorCode:code];
             }
         }
     } failure:failure];
@@ -268,119 +297,121 @@ static HttpManagerConfig *config;
             if (failure) {
                 NSError *error = [self errorWithErrorCode:code];
                 failure(error,HTTP_STATUE_OK);
+                [self handleErrorCode:code];
             }
         }
     } failure:failure];
 }
-
-+ (NSDictionary *)httpHeader {
-    NSMutableDictionary *headers = [NSMutableDictionary dictionary];
-    if(config.authorization) {
-        NSString *auth = [NSString stringWithFormat:@"Basic %@", config.authorization];
-        headers[@"Authorization"] = auth;
++ (NSMutableDictionary *)httpHeader {
+    if (!header) {
+        header = [NSMutableDictionary dictionary];
+        header[@"clientType"] = @"ios";
+        NSString *versionCode = [NSString stringWithFormat:@"%@%@",[NEAppInfo appVersion],[NEAppInfo buildVersion]];
+        versionCode = [versionCode stringByReplacingOccurrencesOfString:@"." withString:@""];
+        header[@"versionCode"] = versionCode;
+        if(config.authorization) {
+            NSString *auth = [NSString stringWithFormat:@"Basic %@", config.authorization];
+            header[@"Authorization"] = auth;
+        }
+        if (config.deviceId) {
+            header[@"deviceId"] = config.deviceId;
+        }
     }
-    if (config.deviceId) {
-        headers[@"deviceId"] = config.deviceId;
-    }
-    if (config.userUuid) {
-        headers[@"user"] = config.userUuid;
-    }
-    if (config.userToken) {
-        headers[@"token"] = config.userToken;
-    }
-    headers[@"clientType"] = @"ios";
-    
-    NSString *versionCode = [NSString stringWithFormat:@"%@%@",[NEAppInfo appVersion],[NEAppInfo buildVersion]];
-    versionCode = [versionCode stringByReplacingOccurrencesOfString:@"." withString:@""];
-    headers[@"versionCode"] = versionCode;
-    return [headers copy];
+    return header;
+}
+ 
++ (void)addHeaderFromDictionary:(NSDictionary *)dictionary {
+    [[self httpHeader] addEntriesFromDictionary:dictionary];
 }
 
 + (NSError *)errorWithErrorCode:(NSInteger)code {
     NSString *message = @"未知错误";
     switch (code) {
-        case 304:
+        case NEEduErrorTypeNotModified:
             message = @"未修改";
             break;
-        case 400:
+        case NEEduErrorTypeInvalidParemeter:
             message = @"参数错误";
             break;
-        case 401:
+        case NEEduErrorTypeUnauthorized:
             message = @"鉴权失败";
             break;
-        case 403:
+        case NEEduErrorTypeForbidden:
             message = @"没有操作权限";
             break;
-        case 404:
+        case NEEduErrorTypeNotFound:
             message = @"没有该操作";
             break;
-        case 405:
+        case NEEduErrorTypeMethodNotAllowed:
             message = @"方法不支持";
             break;
-        case 409:
+        case NEEduErrorTypeRoomAlreadyExists:
             message = @"房间已存在";
             break;
-        case 415:
+        case NEEduErrorTypeUnsurpportedType:
             message = @"数据格式不支持";
             break;
-        case 500:
+        case NEEduErrorTypeInternalServerError:
             message = @"服务器内部异常";
             break;
-        case 503:
+        case NEEduErrorTypeServiceBusy:
             message = @"服务繁忙";
             break;
-        case 1001:
+        case NEEduErrorTypeConfigError:
             message = @"服务出错了";
             break;
-        case 1002:
+        case NEEduErrorTypeRoleNumberOutOflimit:
             message = @"该角色人数超出限制";
             break;
-        case 1003:
+        case NEEduErrorTypeRoleUndefined:
             message = @"该角色未定义";
             break;
-        case 1004:
+        case NEEduErrorTypeRoomNotFound:
             message = @"房间不存在";
             break;
-        case 1005:
+        case NEEduErrorTypeBadRoomConfig:
             message = @"房间配置不存在";
             break;
-        case 1006:
+        case NEEduErrorTypeRoomPropertyExists:
             message = @"房间属性已存在";
             break;
-        case 1007:
+        case NEEduErrorTypeMemberPropertyExists:
             message = @"成员属性已存在";
             break;
-        case 1008:
+        case NEEduErrorTypeSeatConflict:
             message = @"超大房间设置的座位号已经存在";
             break;
-        case 1009:
+        case NEEduErrorTypeSeatIsFull:
             message = @"超大房间座位已满";
             break;
-        case 1010:
+        case NEEduErrorTypeUserIsSeated:
             message = @"超大房间用户已入座";
             break;
-        case 1011:
+        case NEEduErrorTypeSeatNotExist:
             message = @"超大房间座位号不存在";
             break;
-        case 1012:
+        case NEEduErrorTypeOutOfConcurrentLimit:
             message = @"人数超过限制";
             break;
-        case 1014:
+        case NEEduErrorTypeInvalidSeatConfig:
             message = @"坐席配置不正确";
             break;
-        case 1015:
+        case NEEduErrorTypeUserNotFound:
             message = @"成员不存在";
             break;
-        case 700:
+        case NEEduErrorTypeUserIsAlreadyInRoom:
+            message = @"用户已在房间中";
+            break;
+        case NEEduErrorTypeCreateIMUserFailed:
             message = @"创建IM账户失败";
             break;
-        case 701:
+        case NEEduErrorTypeIMUserNotExist:
             message = @"IM账户不存在";
             break;
-        case 702:
+        case NEEduErrorTypeBadImService:
             message = @"IM服务异常";
             break;
-        case 703:
+        case NEEduErrorTypeNimUserExist:
             message = @"IM账户已存在";
             break;
             
@@ -388,5 +419,11 @@ static HttpManagerConfig *config;
             break;
     }
     return LocalError(code, message);
+}
+
++ (void)handleErrorCode:(NSInteger)code {
+    if (code == 401) {
+        _errorBlock(code);
+    }
 }
 @end

@@ -7,10 +7,10 @@
 //  Use of this source code is governed by a MIT license that can be found in the LICENSE file
 //
 
-// /scene/apps/{appKey}/v1/users/{userUuid}/login
-#define HTTP_LOGIN @"%@/scene/apps/%@/%@/users/%@/login"
+// 登录：/scene/apps/{appKey}/v1/login
+#define HTTP_LOGIN @"%@/scene/apps/%@/%@/login"
 
-// 登录：/scene/apps/{appKey}/v1/anonymous/login
+// 匿名登录：/scene/apps/{appKey}/v1/anonymous/login
 #define HTTP_EASY_LOGIN @"%@/scene/apps/%@/%@/anonymous/login"
 
 //创建房间: /scene/apps/{appKey}/v1/rooms/{roomUuid}
