@@ -5,7 +5,6 @@
 
 package com.netease.yunxin.app.wisdom.edu.ui.base
 
-import com.netease.yunxin.app.wisdom.base.util.CommonUtil.setOnClickThrottleFirst
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -13,6 +12,7 @@ import android.graphics.Rect
 import android.media.projection.MediaProjection
 import android.media.projection.MediaProjectionManager
 import android.os.Bundle
+import android.text.TextUtils
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
@@ -27,6 +27,7 @@ import com.netease.lava.api.model.RTCVideoProfile
 import com.netease.lava.nertc.sdk.video.NERtcScreenConfig
 import com.netease.nimlib.sdk.chatroom.model.ChatRoomMessage
 import com.netease.yunxin.app.wisdom.base.network.NEResult
+import com.netease.yunxin.app.wisdom.base.util.CommonUtil.setOnClickThrottleFirst
 import com.netease.yunxin.app.wisdom.base.util.ToastUtil
 import com.netease.yunxin.app.wisdom.base.util.observeForeverOnce
 import com.netease.yunxin.app.wisdom.edu.logic.NEEduErrorCode
@@ -91,7 +92,7 @@ abstract class BaseClassActivity(layoutId: Int = R.layout.activity_clazz) : AppC
         it.let {
             if (it) {
                 val localMediaUser = eduManager.getMemberService().getLocalUser()
-                if(!entryMember.isHost()) {
+                if (!entryMember.isHost()) {
                     if (localMediaUser!!.hasAudio()) {
                         switchLocalAudio(false).observe(this@BaseClassActivity, {})
                     }
@@ -134,10 +135,16 @@ abstract class BaseClassActivity(layoutId: Int = R.layout.activity_clazz) : AppC
         entryMember = eduManager.getEntryMember()
         eduManager.errorLD.observe(this, { t ->
             if (t != null && t != NEEduErrorCode.SUCCESS.code) {
-                ToastUtil.showLong(getString(R.string.left_class_due_to_network_problems))
+                var tip = NEEduErrorCode.tipsWithErrorCode(baseContext, t)
+                if (!TextUtils.isEmpty(tip)) {
+                    ToastUtil.showLong(tip)
+                } else {
+                    ToastUtil.showLong(getString(R.string.left_class_due_to_network_problems))
+                }
                 NEEduUiKit.destroy()
                 finish()
             }
+
         })
     }
 
@@ -344,16 +351,6 @@ abstract class BaseClassActivity(layoutId: Int = R.layout.activity_clazz) : AppC
     }
 
     open fun onMemberJoin(t: List<NEEduMember>) {
-        t.forEach {
-            if (isLegalMember(it)) {
-                updateRtcAudio(it)
-                enableLocalVideo(it)
-            }
-        }
-    }
-
-    open fun isLegalMember(member: NEEduMember): Boolean {
-        return true
     }
 
     private fun onMemberPropertiesChange(member: NEEduMember, properties: NEEduMemberProperties) {
@@ -420,8 +417,6 @@ abstract class BaseClassActivity(layoutId: Int = R.layout.activity_clazz) : AppC
     }
 
     open fun onStreamChange(member: NEEduMember, updateVideo: Boolean) {
-        updateRtcAudio(member)
-        enableLocalVideo(member)
         memberVideoAdapter.refreshDataAndNotify(member, updateVideo)
     }
 
@@ -508,7 +503,9 @@ abstract class BaseClassActivity(layoutId: Int = R.layout.activity_clazz) : AppC
                     it.observe(this, {})
                 }
             } else {
-                if (!entryMember.isHost() && eduManager.getMemberService().getLocalUser()?.isGrantedScreenShare() != true) {
+                if (!entryMember.isHost() && eduManager.getMemberService().getLocalUser()
+                        ?.isGrantedScreenShare() != true
+                ) {
                     ToastUtil.showShort(getString(R.string.share_screen_fail))
                     return
                 }
@@ -536,16 +533,6 @@ abstract class BaseClassActivity(layoutId: Int = R.layout.activity_clazz) : AppC
         if (!member.isHolder()) {
             //updateRtcAudio(member)
             if (updateVideo) updateRtcVideo(rtcVideoAudioView, member)
-        }
-    }
-
-    open fun updateRtcAudio(member: NEEduMember) {
-        eduManager.getRtcService().updateRtcAudio(member)
-    }
-
-    open fun enableLocalVideo(member: NEEduMember) {
-        if (eduManager.isSelf(member.userUuid)) {
-            eduManager.getRtcService().enableLocalVideo(member)
         }
     }
 

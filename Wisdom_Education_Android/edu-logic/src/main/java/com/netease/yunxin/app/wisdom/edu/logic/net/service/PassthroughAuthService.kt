@@ -16,8 +16,8 @@ object PassthroughAuthService : AuthService, BaseService {
 
     private val authService = getService(AuthService::class.java)
 
-    override fun login(appKey: String, userUuid: String): LiveData<NEResult<NEEduLoginRes>> {
-        return authService.login(appKey, userUuid)
+    override fun login(appKey: String, user: String, token: String): LiveData<NEResult<NEEduLoginRes>> {
+        return authService.login(appKey, user, token)
     }
 
     override fun anonymousLogin(appKey: String): LiveData<NEResult<NEEduLoginRes>> {

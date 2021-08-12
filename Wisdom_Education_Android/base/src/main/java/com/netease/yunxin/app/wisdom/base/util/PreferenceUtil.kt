@@ -13,25 +13,33 @@ import java.util.*
 object PreferenceUtil {
     private const val KEY_POLICY_SHOW = "KEY_POLICY_SHOW"
     private const val KEY_DEVICE_ID = "KEY_DEVICE_ID"
+    private const val KEY_REUSE_IM = "KEY_REUSE_IM"
     private var sharedPreferences: SharedPreferences? = null
     fun init(context: Context) {
+        if (sharedPreferences != null) return
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(
             context.applicationContext
         )
     }
 
-    fun put(key: String, value: Any?) {
+    private fun put(key: String, value: Any?) {
         val sp = getSharedPreferences()
-        if (value is Boolean) {
-            sp!!.edit().putBoolean(key, (value as Boolean?)!!).apply()
-        } else if (value is Int) {
-            sp!!.edit().putInt(key, (value as Int?)!!).apply()
-        } else if (value is String) {
-            sp!!.edit().putString(key, value as String?).apply()
-        } else if (value is Float) {
-            sp!!.edit().putFloat(key, (value as Float?)!!).apply()
-        } else if (value is Long) {
-            sp!!.edit().putLong(key, (value as Long?)!!).apply()
+        when (value) {
+            is Boolean -> {
+                sp!!.edit().putBoolean(key, (value as Boolean?)!!).apply()
+            }
+            is Int -> {
+                sp!!.edit().putInt(key, (value as Int?)!!).apply()
+            }
+            is String -> {
+                sp!!.edit().putString(key, value as String?).apply()
+            }
+            is Float -> {
+                sp!!.edit().putFloat(key, (value as Float?)!!).apply()
+            }
+            is Long -> {
+                sp!!.edit().putLong(key, (value as Long?)!!).apply()
+            }
         }
     }
 
@@ -83,5 +91,14 @@ object PreferenceUtil {
         }
         set(deviceId) {
             put(KEY_DEVICE_ID, deviceId)
+        }
+
+
+    var reuseIM: Boolean
+        get() {
+            return get(KEY_REUSE_IM, false) == true
+        }
+        set(enable) {
+            put(KEY_REUSE_IM, enable)
         }
 }

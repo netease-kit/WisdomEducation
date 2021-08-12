@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) 2021 NetEase, Inc.  All rights reserved.
+  ~ Use of this source code is governed by a MIT license that can be found in the LICENSE file.
+  -->
+
+<resources>
+    <string name="should_login_im">复用IM时，请先登录IM</string>
+    <string name="im_login_error">IM登录失败</string>
+    <string name="rtc_init_error">音视频初始化失败</string>
+    <string name="bad_request">参数错误</string>
+    <string name="unauthorized">认证失败</string>
+    <string name="forbidden">没有操作权限</string>
+    <string name="not_found">没有该操作</string>
+    <string name="method_not_allowed">方法不支持</string>
+    <string name="conflict">房间已存在</string>
+    <string name="unsupported_media_type">数据格式不支持</string>
+    <string name="internal_server_error">服务器内部异常</string>
+    <string name="service_unavailable">服务繁忙</string>
+    <string name="room_not_prepared">服务出错了</string>
+    <string name="room_role_exceed">该角色人数超出限制</string>
+    <string name="room_role_undefined">该角色未定义</string>
+    <string name="room_not_exist">房间不存在</string>
+    <string name="room_bad_config">房间配置不存在</string>
+    <string name="room_property_exists">房间属性已存在</string>
+    <string name="room_member_property_exists">成员属性已存在</string>
+    <string name="room_sit_conflict">超大房间设置的座位号已经存在</string>
+    <string name="room_sit_full">超大房间座位已满</string>
+    <string name="room_sit_user_conflict">超大房间用户已入座</string>
+    <string name="room_sit_not_exist">超大房间座位号不存在</string>
+    <string name="room_stream_concurrency_out">人数超过限制</string>
+    <string name="room_sits_bad">坐席配置不正确</string>
+    <string name="room_destination_member_not_exist">成员不存在</string>
+    <string name="room_member_exist">用户已在房间中</string>
+    <string name="nim_user_create_error">创建IM账户失败</string>
+    <string name="nim_user_not_exist">IM账户不存在</string>
+    <string name="nim_service_error">IM服务异常</string>
+    <string name="nim_user_exist">IM账户已存在</string>
+    <string name="engine_error_connect_fail">由于网络问题已经离开课堂</string>
+    <string name="engine_error_server_kicked">正在其他设备登录</string>
+    <string name="engine_error_room_closed">房间已关闭</string>
+</resources>

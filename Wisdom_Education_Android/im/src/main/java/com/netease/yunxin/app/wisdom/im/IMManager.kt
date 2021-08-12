@@ -6,6 +6,7 @@
 package com.netease.yunxin.app.wisdom.im
 
 import android.content.Context
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import com.netease.nimlib.sdk.*
 import com.netease.nimlib.sdk.auth.AuthService
@@ -83,11 +84,10 @@ object IMManager {
             value.appKey = appKey
             value.disableAwake = true
             NIMClient.config(context, null, value)
-            if (NIMUtil.isMainProcess(context)) {
-                NIMClient.initSDK()
-            }
         }
         if (NIMUtil.isMainProcess(context)) {
+            // protect async init
+            NIMClient.initSDK()
             initService()
         }
     }
@@ -101,31 +101,45 @@ object IMManager {
         chatRoomServiceObserver = NIMClient.getService(ChatRoomServiceObserver::class.java)
     }
 
-    fun login(loginInfo: LoginInfo) {
+    fun login(loginInfo: LoginInfo): LiveData<Boolean> {
         this.loginInfo = loginInfo
+        val loginLD: MediatorLiveData<Boolean> = MediatorLiveData()
         if (!reuseIM) {
             authService.login(loginInfo).setCallback(object : RequestCallback<LoginInfo> {
                 override fun onSuccess(param: LoginInfo) {
-                    authLD.postValue(true)
+                    observer()
+                    loginLD.postValue(true)
                 }
 
                 override fun onFailed(code: Int) {
                     ALog.i(TAG, "login failed $code")
-                    authLD.postValue(false)
+                    loginLD.postValue(false)
                 }
 
                 override fun onException(exception: Throwable?) {
                     ALog.i(TAG, "login exception ${exception?.message}")
-                    authLD.postValue(false)
+                    loginLD.postValue(false)
                 }
             })
+        } else {
+            val status = NIMClient.getStatus()
+            if (status == StatusCode.LOGINED) {
+                observer()
+                loginLD.postValue(true)
+            } else {
+                loginLD.postValue(false)
+            }
         }
+        return loginLD
+    }
+
+    private fun observer() {
         authServiceObserver.observeOnlineStatus(onlineObserver, true)
         passthroughServiceObserve.observePassthroughNotify(passthrougthObserver, true)
     }
 
     /**
-     * may be check login states
+     * http proxy
      */
     fun httpProxy(data: PassthroughProxyData): InvocationFuture<PassthroughProxyData> {
         return passthroughService.httpProxy(data)

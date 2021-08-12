@@ -22,7 +22,7 @@ object StreamServiceRepository : BaseRepository() {
         streamType: String,
         streamStatusReq: CommonReq,
     ): LiveData<NEResult<NEEduState>> {
-        return streamService.updateStreamInfo(appKey, roomUuid, userUuid, streamType, streamStatusReq)
+        return interceptor(streamService.updateStreamInfo(appKey, roomUuid, userUuid, streamType, streamStatusReq))
     }
 
     fun deleteStream(
@@ -30,10 +30,10 @@ object StreamServiceRepository : BaseRepository() {
         userUuid: String,
         streamType: String,
     ): LiveData<NEResult<Void>> {
-        return streamService.deleteStream(appKey, roomUuid, userUuid, streamType)
+        return interceptor(streamService.deleteStream(appKey, roomUuid, userUuid, streamType))
     }
 
     fun batchStreams(roomUuid: String, req: BatchReq): LiveData<NEResult<BatchStreamRes>> {
-        return streamService.batchStreams(appKey, roomUuid, req)
+        return interceptor(streamService.batchStreams(appKey, roomUuid, req))
     }
 }

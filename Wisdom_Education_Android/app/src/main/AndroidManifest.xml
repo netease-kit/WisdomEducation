@@ -19,7 +19,7 @@
         <activity
             android:name=".ui.MainActivity"
             android:configChanges="keyboardHidden|screenSize|orientation"
-            android:screenOrientation="sensorPortrait">
+            android:screenOrientation="unspecified">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

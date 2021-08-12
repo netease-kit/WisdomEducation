@@ -7,19 +7,20 @@ package com.netease.yunxin.app.wisdom.edu.logic.net.service
 
 import androidx.lifecycle.LiveData
 import com.netease.yunxin.app.wisdom.base.network.NEResult
-import com.netease.yunxin.app.wisdom.base.network.RetrofitManager
-import com.netease.yunxin.app.wisdom.edu.logic.BuildConfig
 import com.netease.yunxin.app.wisdom.edu.logic.net.service.response.NEEduLoginRes
-import retrofit2.http.*
+import retrofit2.http.Header
+import retrofit2.http.POST
+import retrofit2.http.Path
 
 /**
 
  */
 internal interface AuthService {
-    @POST("/scene/apps/{appKey}/v1/users/{userUuid}/login")
+    @POST("/scene/apps/{appKey}/v1/login")
     fun login(
         @Path("appKey") appKey: String,
-        @Path("userUuid") userUuid: String,
+        @Header("user") user: String,
+        @Header("token") token: String,
     ): LiveData<NEResult<NEEduLoginRes>>
 
     @POST("/scene/apps/{appKey}/v1/anonymous/login")

@@ -8,6 +8,8 @@
     <string name="powered_by_netease" translatable="false">Powered by netease</string>
     <string name="wisdom_edu_title">Wisdom Cloud Class</string>
     <string name="create_romm_warn">If the class number does not exist, the class will be created</string>
+    <string name="hint_user">Your user id</string>
+    <string name="hint_token">Your token</string>
     <string name="hint_room_id">Your Name</string>
     <string name="hint_roon_name">Room Name</string>
     <string name="hint_role">Your Name</string>

@@ -182,6 +182,13 @@ internal class NEEduRtcServiceImpl : NEEduRtcService() {
         }
     }
 
+    private fun isLegalMember(member: NEEduMember): Boolean {
+        if (NEEduManagerImpl.roomConfig.isBig()) {
+            return member.isHost() || member.isOnStage()
+        }
+        return true
+    }
+
     override fun updateRtcAudio(member: NEEduMember) {
         val enable = member.hasAudio()
         if (NEEduManagerImpl.isSelf(member.userUuid)) {
@@ -192,7 +199,17 @@ internal class NEEduRtcServiceImpl : NEEduRtcService() {
     }
 
     override fun enableLocalVideo(member: NEEduMember) {
-        rtcManager.enableLocalVideo(member.hasVideo())
+        if (NEEduManagerImpl.isSelf(member.userUuid)) {
+            rtcManager.enableLocalVideo(member.hasVideo())
+        }
+    }
+
+    private fun updateAudioVideo(member: NEEduMember) {
+        if (!isLegalMember(member)) {
+            return
+        }
+        updateRtcAudio(member)
+        enableLocalVideo(member)
     }
 
     override fun updateRtcVideo(rtcView: ViewGroup?, member: NEEduMember) {
@@ -232,10 +249,12 @@ internal class NEEduRtcServiceImpl : NEEduRtcService() {
     }
 
     override fun updateStreamChange(member: NEEduMember, updateVideo: Boolean) {
+        updateAudioVideo(member)
         streamChangeLD.value = Pair(member, updateVideo)
     }
 
     override fun updateStreamRemove(member: NEEduMember, updateVideo: Boolean) {
+        updateAudioVideo(member)
         streamChangeLD.postValue(Pair(member, updateVideo))
     }
 
@@ -243,10 +262,16 @@ internal class NEEduRtcServiceImpl : NEEduRtcService() {
         NEEduRtcVideoViewPool.batchRecycleWithoutKeepMember(list)
     }
 
+    override fun updateMemberJoin(list: MutableList<NEEduMember>, increment: Boolean) {
+        list.forEach {
+            updateAudioVideo(it)
+        }
+    }
+
     override fun updateMemberLeave(list: MutableList<NEEduMember>) {
         list.forEach {
             it.streams?.reset()
-            updateRtcAudio(it)
+            updateAudioVideo(it)
             updateRtcVideo(null, member = it)
             updateRtcSubVideo(null, member = it)
         }
@@ -254,7 +279,7 @@ internal class NEEduRtcServiceImpl : NEEduRtcService() {
 
     override fun updateMemberOffStageStreamChange(member: NEEduMember) {
         member.streams?.reset()
-        updateRtcAudio(member)
+        updateAudioVideo(member)
         updateRtcVideo(null, member = member)
         updateRtcSubVideo(null, member = member)
     }

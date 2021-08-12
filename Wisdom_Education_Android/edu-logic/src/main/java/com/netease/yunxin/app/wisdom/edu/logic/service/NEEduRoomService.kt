@@ -99,7 +99,7 @@ abstract class NEEduRoomService : INEEduService() {
      * @param value
      * @return
      */
-    abstract fun updateProperties(roomUuid: String, key: String, value: Int): LiveData<NEResult<Void>>
+    internal abstract fun updateProperties(roomUuid: String, key: String, value: Int): LiveData<NEResult<Void>>
 
     /**
      *网络变更通知

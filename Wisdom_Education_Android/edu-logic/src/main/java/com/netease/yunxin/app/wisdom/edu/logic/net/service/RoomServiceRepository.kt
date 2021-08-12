@@ -25,13 +25,13 @@ object RoomServiceRepository : BaseRepository() {
         roomUuid: String,
         roomConfigOptsReq: RoomConfigOptsReq,
     ): LiveData<NEResult<NEEduRoomConfigRes>> {
-        return roomService.config(appKey, roomUuid, roomConfigOptsReq)
+        return interceptor(roomService.config(appKey, roomUuid, roomConfigOptsReq))
     }
 
     fun getConfig(
         roomUuid: String,
     ): LiveData<NEResult<NEEduRoomConfig>> {
-        return roomService.getConfig(appKey, roomUuid)
+        return interceptor(roomService.getConfig(appKey, roomUuid))
     }
 
     fun sendP2PMessage(
@@ -39,20 +39,20 @@ object RoomServiceRepository : BaseRepository() {
         toUserUuid: String,
         userMsgReq: UserMsgReq,
     ): LiveData<NEResult<String>> {
-        return roomService.sendP2PMessage(appKey, roomUuid, toUserUuid, userMsgReq)
+        return interceptor(roomService.sendP2PMessage(appKey, roomUuid, toUserUuid, userMsgReq))
     }
 
     fun fetchSnapshot(
         roomUuid: String,
     ): LiveData<NEResult<NEEduSnapshotRes>> {
-        return roomService.fetchSnapshot(appKey, roomUuid)
+        return interceptor(roomService.fetchSnapshot(appKey, roomUuid))
     }
 
     fun fetchNextSequences(
         roomUuid: String,
         nextId: Long,
     ): LiveData<NEResult<NEEduSequenceList>> {
-        return roomService.fetchNextSequences(appKey, roomUuid, nextId)
+        return interceptor(roomService.fetchNextSequences(appKey, roomUuid, nextId))
     }
 
     fun updateRoomStates(
@@ -60,14 +60,14 @@ object RoomServiceRepository : BaseRepository() {
         key: String,
         commonReq: CommonReq,
     ): LiveData<NEResult<Void>> {
-        return roomService.updateRoomStates(appKey, roomId, key, commonReq)
+        return interceptor(roomService.updateRoomStates(appKey, roomId, key, commonReq))
     }
 
     fun deleteRoomStates(
         roomId: String,
         key: String,
     ): LiveData<NEResult<String>> {
-        return roomService.deleteRoomStates(appKey, roomId, key)
+        return interceptor(roomService.deleteRoomStates(appKey, roomId, key))
     }
 
     fun updateRoomProperties(
@@ -75,13 +75,13 @@ object RoomServiceRepository : BaseRepository() {
         key: String,
         commonReq: CommonReq,
     ): LiveData<NEResult<Void>> {
-        return roomService.updateRoomProperties(appKey, roomId, key, commonReq)
+        return interceptor(roomService.updateRoomProperties(appKey, roomId, key, commonReq))
     }
 
     fun deleteRoomProperties(
         roomId: String,
         key: String,
     ): LiveData<NEResult<String>> {
-        return roomService.deleteRoomProperties(appKey, roomId, key)
+        return interceptor(roomService.deleteRoomProperties(appKey, roomId, key))
     }
 }
