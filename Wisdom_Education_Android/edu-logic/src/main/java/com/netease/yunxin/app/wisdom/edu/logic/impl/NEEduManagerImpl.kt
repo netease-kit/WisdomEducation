@@ -20,10 +20,10 @@ import com.netease.yunxin.app.wisdom.edu.logic.foreground.NEEduForegroundService
 import com.netease.yunxin.app.wisdom.edu.logic.foreground.NEEduForegroundServiceConfig
 import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduRoomConfig
 import com.netease.yunxin.app.wisdom.edu.logic.net.service.AuthServiceRepository
+import com.netease.yunxin.app.wisdom.edu.logic.net.service.BaseRepository
 import com.netease.yunxin.app.wisdom.edu.logic.net.service.response.NEEduEntryMember
 import com.netease.yunxin.app.wisdom.edu.logic.net.service.response.NEEduEntryRes
 import com.netease.yunxin.app.wisdom.edu.logic.net.service.response.NEEduLoginRes
-import com.netease.yunxin.app.wisdom.edu.logic.net.service.response.NEEduRoomConfigRes
 import com.netease.yunxin.app.wisdom.edu.logic.options.NEEduClassOptions
 import com.netease.yunxin.app.wisdom.edu.logic.service.*
 import com.netease.yunxin.app.wisdom.edu.logic.service.impl.*
@@ -85,40 +85,58 @@ internal object NEEduManagerImpl : NEEduManager {
         }
     }
 
-    fun init(): LiveData<NEResult<Boolean>> {
+    fun init(uuid: String, token: String): LiveData<NEResult<Boolean>> {
         val initLD: MediatorLiveData<NEResult<Boolean>> = MediatorLiveData()
-        AuthServiceRepository.anonymousLogin().also {
-
-            it.observeForeverOnce { t ->
-                val ok = t.success() && t.data != null
-                if (ok) {
-                    eduLoginRes = t.data!!
-                    initRtc(initLD)
-                    RetrofitManager.instance().addHeader("user", eduLoginRes.userUuid)
-                        .addHeader("token", eduLoginRes.userToken)
-                } else {
-                    initLD.postValue(NEResult(t.code, t.requestId, t.msg, 0, false))
-                }
-            }
+        if (TextUtils.isEmpty(uuid) && TextUtils.isEmpty(token)) AuthServiceRepository.anonymousLogin().also {
+            onLoginCallback(it, initLD)
+        } else if (!TextUtils.isEmpty(uuid) && !TextUtils.isEmpty(token)) AuthServiceRepository.login(uuid, token).also {
+            onLoginCallback(it, initLD)
+        } else {
+            initLD.postValue(NEResult(NEEduErrorCode.BAD_REQUEST.code, false))
         }
         return initLD
     }
 
-    private fun initRtc(initLD: MediatorLiveData<NEResult<Boolean>>) {
-        rtcManager.initEngine(NEEduManager.context, eduLoginRes.rtcKey).also {
-            it.observeForeverOnce { t ->
-                if (t) {
-                    initInnerOthers()
-                    initLD.postValue(NEResult(NEEduErrorCode.SUCCESS.code, true))
-                } else {
-                    initLD.postValue(NEResult(NEEduErrorCode.RTC_INIT_ERROR.code, false))
-                }
+    private fun onLoginCallback(
+        result: LiveData<NEResult<NEEduLoginRes>>,
+        initLD: MediatorLiveData<NEResult<Boolean>>,
+    ) {
+        result.observeForeverOnce { t ->
+            val ok = t.success() && t.data != null
+            if (ok) {
+                eduLoginRes = t.data!!
+                initRtcAndLoginIM(initLD)
+                RetrofitManager.instance().addHeader("user", eduLoginRes.userUuid)
+                    .addHeader("token", eduLoginRes.userToken)
+            } else {
+                initLD.postValue(NEResult(t.code, t.requestId, t.msg, 0, false))
             }
         }
     }
 
+    private fun initRtcAndLoginIM(initLD: MediatorLiveData<NEResult<Boolean>>) {
+        val mergeLD: MediatorLiveData<Boolean> = MediatorLiveData()
+        val rtcLD = rtcManager.initEngine(NEEduManager.context, eduLoginRes.rtcKey)
+        val imLoginLD = imManager.login(LoginInfo(eduLoginRes.userUuid, eduLoginRes.imToken, eduLoginRes.imKey))
+        val onChanged = Observer<Boolean> {
+            if (rtcLD.value == null || imLoginLD.value == null) {
+                return@Observer
+            }
+            if (rtcLD.value == true && imLoginLD.value == true) {
+                initInnerOthers()
+                initLD.postValue(NEResult(NEEduErrorCode.SUCCESS.code, true))
+            } else if (rtcLD.value == false) {
+                initLD.postValue(NEResult(NEEduErrorCode.RTC_INIT_ERROR.code, false))
+            } else {
+                initLD.postValue(NEResult(NEEduErrorCode.IM_LOGIN_ERROR.code, false))
+            }
+        }
+        mergeLD.addSource(rtcLD, onChanged)
+        mergeLD.addSource(imLoginLD, onChanged)
+        mergeLD.observeForeverOnce {}
+    }
+
     private fun initInnerOthers() {
-        imManager.login(LoginInfo(eduLoginRes.userUuid, eduLoginRes.imToken, eduLoginRes.imKey))
         cmdDispatcher = CMDDispatcher(this)
         neEduSync = NEEduSync(this)
         initService()
@@ -131,8 +149,9 @@ internal object NEEduManagerImpl : NEEduManager {
     private fun handleError() {
         errorLD.addSource(imManager.errorLD) { t -> errorLD.postValue(t) }
         errorLD.addSource(rtcManager.errorLD) { t -> errorLD.postValue(t) }
+        BaseRepository.errorLD.value = null// reset last value
+        errorLD.addSource(BaseRepository.errorLD) { t -> errorLD.postValue(t) }
     }
-
 
     override fun enterClass(neEduClassOptions: NEEduClassOptions): LiveData<NEResult<NEEduEntryRes>> {
         val enterLD = MediatorLiveData<NEResult<NEEduEntryRes>>()
@@ -164,8 +183,10 @@ internal object NEEduManagerImpl : NEEduManager {
                 if (t.success()) {
                     eduEntryRes = t.data!!
                     joinRtc()
-                    NEEduForegroundService.start(context = NEEduManager.context, NEEduManager.eduOptions
-                        .foregroundServiceConfig ?: NEEduForegroundServiceConfig())
+                    NEEduForegroundService.start(
+                        context = NEEduManager.context, NEEduManager.eduOptions
+                            .foregroundServiceConfig ?: NEEduForegroundServiceConfig()
+                    )
                     observerAuth()
                     enterLiveData.postValue(t)
                 } else {

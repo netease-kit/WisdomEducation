@@ -8,7 +8,13 @@ package com.netease.yunxin.app.wisdom.edu.logic.options
 import com.netease.yunxin.app.wisdom.edu.logic.model.*
 
 /**
- * Created by hzsunyj on 4/21/21.
+ * 课堂配置
+ *
+ * @property classId 课程号
+ * @property className 课程名称
+ * @property nickName 用户在课堂中的昵称
+ * @property sceneType 课堂类型，有三种类型： 1v1， 小班课， 大班课
+ * @property roleType 角色类型：host：教育场景中映射为老师，broadcaster: 教育场景中映射为学生
  */
 class NEEduClassOptions(
     private var classId: String,
@@ -18,6 +24,11 @@ class NEEduClassOptions(
     var roleType: NEEduRoleType,
 ) {
 
+    /**
+     * 系统课程号：classId + sceneType值
+     *
+     * @return 系统课程号
+     */
     fun classId(): String {
         return "$classId${sceneType.configId()}"
     }

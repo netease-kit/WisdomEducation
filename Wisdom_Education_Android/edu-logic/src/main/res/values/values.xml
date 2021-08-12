@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) 2021 NetEase, Inc.  All rights reserved.
+  ~ Use of this source code is governed by a MIT license that can be found in the LICENSE file.
+  -->
+
+<resources>
+    <string name="should_login_im">when reuse im, you should login im first</string>
+    <string name="im_login_error">im login error</string>
+    <string name="rtc_init_error">rtc init error</string>
+    <string name="bad_request">bad request</string>
+    <string name="unauthorized">unauthorized</string>
+    <string name="forbidden">forbidden</string>
+    <string name="not_found">not found</string>
+    <string name="method_not_allowed">method not allowed</string>
+    <string name="conflict">conflict</string>
+    <string name="unsupported_media_type">unsupported media type</string>
+    <string name="internal_server_error">internal server error</string>
+    <string name="service_unavailable">service unavailable</string>
+    <string name="room_not_prepared">room not prepared</string>
+    <string name="room_role_exceed">room role exceed</string>
+    <string name="room_role_undefined">room role undefined</string>
+    <string name="room_not_exist">room not exist</string>
+    <string name="room_bad_config">room bad config</string>
+    <string name="room_property_exists">room property exists</string>
+    <string name="room_member_property_exists">room member property exists</string>
+    <string name="room_sit_conflict">room sit conflict</string>
+    <string name="room_sit_full">room sit full</string>
+    <string name="room_sit_user_conflict">room sit user conflict</string>
+    <string name="room_sit_not_exist">room sit not exist</string>
+    <string name="room_stream_concurrency_out">room stream concurrency out</string>
+    <string name="room_sits_bad">room sits bad</string>
+    <string name="room_destination_member_not_exist">room destination member not exist</string>
+    <string name="room_member_exist">room member exist</string>
+    <string name="nim_user_create_error">nim user create error</string>
+    <string name="nim_user_not_exist">nim user not exist</string>
+    <string name="nim_service_error">nim service error</string>
+    <string name="nim_user_exist">nim user exist</string>
+    <string name="engine_error_connect_fail">engine error connect fail</string>
+    <string name="engine_error_server_kicked">engine error server kicked</string>
+    <string name="engine_error_room_closed">engine error room closed</string>
+</resources>

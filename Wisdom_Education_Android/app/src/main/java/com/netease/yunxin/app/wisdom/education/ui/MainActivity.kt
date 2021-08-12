@@ -7,11 +7,15 @@ package com.netease.yunxin.app.wisdom.education.ui
 
 import android.Manifest
 import android.os.Bundle
+import android.view.View
+import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import com.netease.yunxin.app.wisdom.base.util.StatusBarUtil
 import com.netease.yunxin.app.wisdom.education.R
 import com.netease.yunxin.app.wisdom.education.ui.main.MainFragment
+import com.netease.yunxin.app.wisdom.education.ui.main.SettingFragment
 import com.permissionx.guolindev.PermissionX
 import com.permissionx.guolindev.request.ExplainScope
 import com.permissionx.guolindev.request.ForwardScope
@@ -30,9 +34,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.main_activity)
 
         if (savedInstanceState == null) {
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.container, MainFragment.newInstance())
-                .commitNow()
+            replaceFragment(R.id.container, MainFragment.newInstance())
+            replaceFragment(R.id.layout_setting, SettingFragment.newInstance())
         }
     }
 
@@ -60,11 +63,25 @@ class MainActivity : AppCompatActivity() {
             }
             .request { allGranted: Boolean, _: List<String?>?, deniedList: List<String?> ->
                 if (!allGranted) {
-                    Toast.makeText(this@MainActivity,
+                    Toast.makeText(
+                        this@MainActivity,
                         resources.getString(R.string.not_granted_permissions, deniedList),
-                        Toast.LENGTH_SHORT)
+                        Toast.LENGTH_SHORT
+                    )
                         .show()
                 }
             }
+    }
+
+    private fun replaceFragment(id: Int, fragment: Fragment) {
+        supportFragmentManager.beginTransaction().replace(id, fragment).commitNow()
+    }
+
+    fun showSettingFragment() {
+        findViewById<FrameLayout>(R.id.layout_setting).visibility = View.VISIBLE
+    }
+
+    fun hideSettingFragment() {
+        findViewById<FrameLayout>(R.id.layout_setting).visibility = View.GONE
     }
 }

@@ -5,6 +5,11 @@
 
 package com.netease.yunxin.app.wisdom.edu.logic.net.service
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.map
+import com.netease.yunxin.app.wisdom.base.network.NEResult
+import com.netease.yunxin.app.wisdom.edu.logic.NEEduErrorCode
 import java.lang.reflect.Method
 import java.lang.reflect.Type
 
@@ -15,8 +20,20 @@ open class BaseRepository {
 
     companion object {
         lateinit var appKey: String
-        lateinit var baseUrl: String
         val passthrough: Boolean = true
+        val errorLD: MediatorLiveData<Int> = MediatorLiveData()
+    }
+
+    fun <T> interceptor(result: LiveData<NEResult<T>>): LiveData<NEResult<T>> {
+        return result.map {
+            if (!it.success()) {
+                /// handle error
+                if (it.code == NEEduErrorCode.UNAUTHORIZED.code) {
+                    errorLD.postValue(it.code)
+                }
+            }
+            it
+        }
     }
 
     /**

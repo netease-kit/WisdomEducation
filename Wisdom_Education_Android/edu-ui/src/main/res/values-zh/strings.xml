@@ -32,6 +32,8 @@
     <string name="assistant">助教</string>
     <string name="wisdom_edu_title">智慧云课堂</string>
     <string name="create_romm_warn">若课堂号不存在则会创建课堂</string>
+    <string name="hint_user">请输入ID</string>
+    <string name="hint_token">请输入token</string>
     <string name="hint_room_id">请输入课堂号</string>
     <string name="hint_roon_name">请输入课堂名称</string>
     <string name="hint_role">请选择身份</string>

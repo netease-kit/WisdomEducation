@@ -9,7 +9,6 @@ import android.app.Application
 import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.Observer
 import com.netease.yunxin.app.wisdom.base.network.NEResult
 import com.netease.yunxin.app.wisdom.base.util.observeForeverOnce
 import com.netease.yunxin.app.wisdom.edu.logic.NEEduManager
@@ -20,7 +19,7 @@ import com.netease.yunxin.app.wisdom.edu.logic.options.NEEduOptions
 import com.netease.yunxin.app.wisdom.edu.ui.impl.NEEduUiKitImpl
 
 /**
- * Created by hzsunyj on 4/21/21.
+ * 提供SDK配置，SDK初始化等基础能力，同时获取NEEduManager
  */
 interface NEEduUiKit {
 
@@ -28,10 +27,17 @@ interface NEEduUiKit {
 
         var instance: NEEduUiKit? = null
 
-        fun init(): LiveData<NEResult<NEEduUiKit>> {
+        /**
+         * 初始化组件
+         *
+         * @param uuid 用户鉴权userUuid。匿名登录时请设置为空字符串""
+         * @param token 用户鉴权userToken。匿名登录时请设置为空字符串""
+         * @return 接口回调
+         */
+        fun init(uuid: String, token: String): LiveData<NEResult<NEEduUiKit>> {
             val liveData: MediatorLiveData<NEResult<NEEduUiKit>> = MediatorLiveData()
             val eduUiKit = NEEduUiKitImpl()
-            eduUiKit.init().also {
+            eduUiKit.init(uuid, token).also {
                 it.observeForeverOnce { t ->
                     if (t.success()) {
                         instance = eduUiKit
@@ -49,7 +55,12 @@ interface NEEduUiKit {
             instance = null
         }
 
-        /// must call application onCreate
+        /**
+         * 全局配置 SDK，必须在application的onCreate中调用
+         *
+         * @param context 应用上下文
+         * @param eduOptions 配置项
+         */
         fun config(context: Application, eduOptions: NEEduOptions) {
             NEEduManager.config(context, eduOptions)
         }

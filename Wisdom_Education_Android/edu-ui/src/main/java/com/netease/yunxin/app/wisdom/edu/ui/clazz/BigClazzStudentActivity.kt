@@ -58,10 +58,6 @@ class BigClazzStudentActivity : BigClassBaseActivity(R.layout.activity_clazz) {
         onStageListChange()
     }
 
-    override fun isLegalMember(member: NEEduMember): Boolean {
-        return member.isOnStage() || member.isHost()
-    }
-
     override fun onStreamChange(member: NEEduMember, updateVideo: Boolean) {
         super.onStreamChange(member, updateVideo)
         // 刷新底部状态栏

@@ -2,237 +2,290 @@
   ~ Copyright (c) 2021 NetEase, Inc.  All rights reserved.
   ~ Use of this source code is governed by a MIT license that can be found in the LICENSE file.
   -->
-
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.main.MainFragment">
+    android:fillViewport="true">
 
-    <TextView
-        android:id="@+id/tv_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/common_dp_86"
-        android:drawableLeft="@drawable/ic_logo"
-        android:gravity="top|center"
-        android:text="@string/wisdom_edu_title"
-        android:textColor="@color/color_222222"
-        android:textSize="@dimen/ts_25_dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/tv_desc"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/common_dp_16"
-        android:layout_marginTop="@dimen/common_dp_10"
-        android:text="@string/create_romm_warn"
-        android:textSize="@dimen/ts_12_dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_title" />
-
-    <androidx.appcompat.widget.AppCompatEditText
-        android:id="@+id/et_room_id"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/main"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/common_dp_46"
-        android:layout_marginStart="@dimen/common_dp_35"
-        android:layout_marginTop="@dimen/common_dp_12"
-        android:layout_marginEnd="@dimen/common_dp_35"
-        android:background="@drawable/input_underline"
-        android:hint="@string/hint_room_id"
-        android:inputType="number"
-        android:maxLength="10"
-        android:singleLine="true"
-        android:textColor="@color/gray_333333"
-        android:textSize="@dimen/ts_16_dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_desc" />
+        android:layout_height="match_parent"
+        tools:context=".ui.main.MainFragment">
 
-    <androidx.appcompat.widget.AppCompatEditText
-        android:id="@+id/et_nick_name"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/common_dp_46"
-        android:layout_marginStart="@dimen/common_dp_35"
-        android:layout_marginTop="@dimen/common_dp_12"
-        android:layout_marginEnd="@dimen/common_dp_35"
-        android:background="@drawable/input_underline"
-        android:hint="@string/hint_your_name"
-        android:maxLength="20"
-        android:singleLine="true"
-        android:textColor="@color/gray_333333"
-        android:textSize="@dimen/ts_16_dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/et_room_id" />
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/tv_setting"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/common_dp_40"
+            android:layout_marginTop="@dimen/common_dp_30"
+            android:layout_marginEnd="@dimen/common_dp_35"
+            android:background="@drawable/bg_submit_btn"
+            android:text="@string/setting"
+            android:textColor="@color/white"
+            android:textSize="@dimen/ts_16_dp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.appcompat.widget.AppCompatEditText
-        android:id="@+id/et_scene_type"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/common_dp_46"
-        android:layout_marginStart="@dimen/common_dp_35"
-        android:layout_marginTop="@dimen/common_dp_12"
-        android:layout_marginEnd="@dimen/common_dp_35"
-        android:background="@drawable/input_underline"
-        android:clickable="true"
-        android:editable="false"
-        android:focusableInTouchMode="false"
-        android:hint="@string/hint_room_type"
-        android:textColor="@color/gray_333333"
-        android:textSize="@dimen/ts_16_dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/et_nick_name" />
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/common_dp_86"
+            android:drawableLeft="@drawable/ic_logo"
+            android:gravity="top|center"
+            android:text="@string/wisdom_edu_title"
+            android:textColor="@color/color_222222"
+            android:textSize="@dimen/ts_25_dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/iv_room_type"
-        android:layout_width="@dimen/common_dp_8"
-        android:layout_height="@dimen/common_dp_4"
-        android:src="@drawable/ic_arrow_down"
-        app:layout_constraintBottom_toBottomOf="@id/et_scene_type"
-        app:layout_constraintEnd_toEndOf="@id/et_scene_type"
-        app:layout_constraintTop_toTopOf="@id/et_scene_type" />
+        <TextView
+            android:id="@+id/tv_desc"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/common_dp_16"
+            android:layout_marginTop="@dimen/common_dp_10"
+            android:text="@string/create_romm_warn"
+            android:textSize="@dimen/ts_12_dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_title" />
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/card_room_type"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/common_dp_35"
-        android:layout_marginTop="@dimen/common_dp_13"
-        android:visibility="gone"
-        app:cardBackgroundColor="@color/white"
-        app:cardCornerRadius="@dimen/common_dp_4"
-        app:cardElevation="@dimen/common_dp_3"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/et_scene_type">
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/et_user"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/common_dp_46"
+            android:layout_marginStart="@dimen/common_dp_35"
+            android:layout_marginTop="@dimen/common_dp_12"
+            android:layout_marginEnd="@dimen/common_dp_35"
+            android:background="@drawable/input_underline"
+            android:hint="@string/hint_user"
+            android:singleLine="true"
+            android:textColor="@color/gray_333333"
+            android:textSize="@dimen/ts_16_dp"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_desc" />
 
-        <LinearLayout
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/et_token"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/common_dp_46"
+            android:layout_marginStart="@dimen/common_dp_35"
+            android:layout_marginTop="@dimen/common_dp_12"
+            android:layout_marginEnd="@dimen/common_dp_35"
+            android:background="@drawable/input_underline"
+            android:hint="@string/hint_token"
+            android:singleLine="true"
+            android:textColor="@color/gray_333333"
+            android:textSize="@dimen/ts_16_dp"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/et_user" />
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/et_room_id"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/common_dp_46"
+            android:layout_marginStart="@dimen/common_dp_35"
+            android:layout_marginTop="@dimen/common_dp_12"
+            android:layout_marginEnd="@dimen/common_dp_35"
+            android:background="@drawable/input_underline"
+            android:hint="@string/hint_room_id"
+            android:inputType="number"
+            android:maxLength="10"
+            android:singleLine="true"
+            android:textColor="@color/gray_333333"
+            android:textSize="@dimen/ts_16_dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/et_token" />
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/et_nick_name"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/common_dp_46"
+            android:layout_marginStart="@dimen/common_dp_35"
+            android:layout_marginTop="@dimen/common_dp_12"
+            android:layout_marginEnd="@dimen/common_dp_35"
+            android:background="@drawable/input_underline"
+            android:hint="@string/hint_your_name"
+            android:maxLength="20"
+            android:singleLine="true"
+            android:textColor="@color/gray_333333"
+            android:textSize="@dimen/ts_16_dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/et_room_id" />
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/et_scene_type"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/common_dp_46"
+            android:layout_marginStart="@dimen/common_dp_35"
+            android:layout_marginTop="@dimen/common_dp_12"
+            android:layout_marginEnd="@dimen/common_dp_35"
+            android:background="@drawable/input_underline"
+            android:clickable="true"
+            android:editable="false"
+            android:focusableInTouchMode="false"
+            android:hint="@string/hint_room_type"
+            android:textColor="@color/gray_333333"
+            android:textSize="@dimen/ts_16_dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/et_nick_name" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_room_type"
+            android:layout_width="@dimen/common_dp_8"
+            android:layout_height="@dimen/common_dp_4"
+            android:src="@drawable/ic_arrow_down"
+            app:layout_constraintBottom_toBottomOf="@id/et_scene_type"
+            app:layout_constraintEnd_toEndOf="@id/et_scene_type"
+            app:layout_constraintTop_toTopOf="@id/et_scene_type" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/card_room_type"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/common_dp_35"
+            android:layout_marginTop="@dimen/common_dp_13"
+            android:visibility="gone"
+            app:cardBackgroundColor="@color/white"
+            app:cardCornerRadius="@dimen/common_dp_4"
+            app:cardElevation="@dimen/common_dp_3"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/et_scene_type">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_one2one"
+                    android:layout_width="@dimen/common_dp_303"
+                    android:layout_height="@dimen/common_dp_36"
+                    android:layout_marginTop="@dimen/common_dp_10"
+                    android:background="@drawable/bg_class_type"
+                    android:gravity="center_vertical"
+                    android:paddingStart="@dimen/common_dp_20"
+                    android:paddingEnd="@dimen/common_dp_20"
+                    android:text="@string/one2one_class"
+                    android:textColor="@color/gray_333333"
+                    android:textSize="@dimen/ts_16_dp" />
+
+                <TextView
+                    android:id="@+id/tv_small_class"
+                    android:layout_width="@dimen/common_dp_303"
+                    android:layout_height="@dimen/common_dp_36"
+                    android:background="@drawable/bg_class_type"
+                    android:gravity="center_vertical"
+                    android:paddingStart="@dimen/common_dp_20"
+                    android:paddingEnd="@dimen/common_dp_20"
+                    android:text="@string/small_class"
+                    android:textColor="@color/gray_333333"
+                    android:textSize="@dimen/ts_16_dp" />
+
+                <TextView
+                    android:id="@+id/tv_large_class"
+                    android:layout_width="@dimen/common_dp_303"
+                    android:layout_height="@dimen/common_dp_36"
+                    android:layout_marginBottom="@dimen/common_dp_10"
+                    android:background="@drawable/bg_class_type"
+                    android:gravity="center_vertical"
+                    android:paddingStart="@dimen/common_dp_20"
+                    android:paddingEnd="@dimen/common_dp_20"
+                    android:text="@string/big_class"
+                    android:textColor="@color/gray_333333"
+                    android:textSize="@dimen/ts_16_dp" />
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <RadioGroup
+            android:id="@+id/radio_group_role"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/common_dp_30"
+            android:layout_marginStart="@dimen/common_dp_36"
+            android:layout_marginTop="@dimen/common_dp_17"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/et_scene_type">
+
+            <RadioButton
+                android:id="@+id/rb_teacher"
+                android:layout_width="@dimen/common_dp_22"
+                android:layout_height="@dimen/common_dp_30"
+                android:button="@drawable/cb_role_type"
+                android:checked="true"
+                android:gravity="center_vertical" />
+
+            <TextView
+                android:id="@+id/tv_teacher"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/common_dp_30"
+                android:gravity="center_vertical"
+                android:text="@string/teacher"
+                android:textColor="@color/gray_333333"
+                android:textSize="@dimen/ts_16_dp" />
+
+            <RadioButton
+                android:id="@+id/rb_student"
+                android:layout_width="@dimen/common_dp_22"
+                android:layout_height="@dimen/common_dp_30"
+                android:layout_marginStart="@dimen/common_dp_24"
+                android:button="@drawable/cb_role_type"
+                android:checked="false"
+                android:gravity="center_vertical" />
+
+            <TextView
+                android:id="@+id/tv_student"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/common_dp_30"
+                android:gravity="center_vertical"
+                android:text="@string/student"
+                android:textColor="@color/gray_333333"
+                android:textSize="@dimen/ts_16_dp" />
+
+        </RadioGroup>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_join"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/common_dp_40"
+            android:layout_marginStart="@dimen/common_dp_35"
+            android:layout_marginTop="@dimen/common_dp_26"
+            android:layout_marginEnd="@dimen/common_dp_35"
+            android:background="@drawable/bg_submit_btn"
+            android:enabled="false"
+            android:gravity="center"
+            android:text="@string/join"
+            android:textColor="@color/white"
+            android:textSize="@dimen/ts_16_dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/radio_group_role" />
+
+        <TextView
+            android:id="@+id/tips"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_marginLeft="@dimen/common_dp_31"
+            android:layout_marginTop="@dimen/common_dp_20"
+            android:layout_marginRight="@dimen/common_dp_31"
+            android:layout_marginBottom="@dimen/common_dp_78"
+            android:gravity="center"
+            android:text="@string/app_tips"
+            android:textColor="@color/color_999999"
+            android:textSize="@dimen/ts_12"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/btn_join" />
 
-            <TextView
-                android:id="@+id/tv_one2one"
-                android:layout_width="@dimen/common_dp_303"
-                android:layout_height="@dimen/common_dp_36"
-                android:layout_marginTop="@dimen/common_dp_10"
-                android:background="@drawable/bg_class_type"
-                android:gravity="center_vertical"
-                android:paddingStart="@dimen/common_dp_20"
-                android:paddingEnd="@dimen/common_dp_20"
-                android:text="@string/one2one_class"
-                android:textColor="@color/gray_333333"
-                android:textSize="@dimen/ts_16_dp" />
-
-            <TextView
-                android:id="@+id/tv_small_class"
-                android:layout_width="@dimen/common_dp_303"
-                android:layout_height="@dimen/common_dp_36"
-                android:background="@drawable/bg_class_type"
-                android:gravity="center_vertical"
-                android:paddingStart="@dimen/common_dp_20"
-                android:paddingEnd="@dimen/common_dp_20"
-                android:text="@string/small_class"
-                android:textColor="@color/gray_333333"
-                android:textSize="@dimen/ts_16_dp" />
-
-            <TextView
-                android:id="@+id/tv_large_class"
-                android:layout_width="@dimen/common_dp_303"
-                android:layout_height="@dimen/common_dp_36"
-                android:layout_marginBottom="@dimen/common_dp_10"
-                android:background="@drawable/bg_class_type"
-                android:gravity="center_vertical"
-                android:paddingStart="@dimen/common_dp_20"
-                android:paddingEnd="@dimen/common_dp_20"
-                android:text="@string/big_class"
-                android:textColor="@color/gray_333333"
-                android:textSize="@dimen/ts_16_dp" />
-
-        </LinearLayout>
-
-    </androidx.cardview.widget.CardView>
-
-    <RadioGroup
-        android:id="@+id/radio_group_role"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/common_dp_30"
-        android:layout_marginStart="@dimen/common_dp_36"
-        android:layout_marginTop="@dimen/common_dp_17"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/et_scene_type">
-
-        <RadioButton
-            android:id="@+id/rb_teacher"
-            android:layout_width="@dimen/common_dp_22"
-            android:layout_height="@dimen/common_dp_30"
-            android:button="@drawable/cb_role_type"
-            android:checked="true"
-            android:gravity="center_vertical" />
-
-        <TextView
-            android:id="@+id/tv_teacher"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/common_dp_30"
-            android:gravity="center_vertical"
-            android:text="@string/teacher"
-            android:textColor="@color/gray_333333"
-            android:textSize="@dimen/ts_16_dp" />
-
-        <RadioButton
-            android:id="@+id/rb_student"
-            android:layout_width="@dimen/common_dp_22"
-            android:layout_height="@dimen/common_dp_30"
-            android:layout_marginStart="@dimen/common_dp_24"
-            android:button="@drawable/cb_role_type"
-            android:checked="false"
-            android:gravity="center_vertical" />
-
-        <TextView
-            android:id="@+id/tv_student"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/common_dp_30"
-            android:gravity="center_vertical"
-            android:text="@string/student"
-            android:textColor="@color/gray_333333"
-            android:textSize="@dimen/ts_16_dp" />
-
-    </RadioGroup>
-
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/btn_join"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/common_dp_40"
-        android:layout_marginStart="@dimen/common_dp_35"
-        android:layout_marginTop="@dimen/common_dp_26"
-        android:layout_marginEnd="@dimen/common_dp_35"
-        android:background="@drawable/bg_submit_btn"
-        android:enabled="false"
-        android:gravity="center"
-        android:text="@string/join"
-        android:textColor="@color/white"
-        android:textSize="@dimen/ts_16_dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/radio_group_role" />
-
-    <TextView
-        android:id="@+id/tips"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/common_dp_31"
-        android:layout_marginRight="@dimen/common_dp_31"
-        android:layout_marginBottom="@dimen/common_dp_78"
-        android:gravity="center"
-        android:text="@string/app_tips"
-        android:textColor="@color/color_999999"
-        android:textSize="@dimen/ts_12"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

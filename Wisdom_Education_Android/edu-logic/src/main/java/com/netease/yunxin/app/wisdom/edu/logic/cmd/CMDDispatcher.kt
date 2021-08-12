@@ -75,6 +75,7 @@ internal class CMDDispatcher(private val neEduManager: NEEduManagerImpl) {
     }
 
     private fun onMemberJoin(action: RoomMemberJoinAction) {
+        neEduManager.getRtcService().updateMemberJoin(action.members, true)
         neEduManager.getMemberService().updateMemberJoin(action.members, true)
         neEduManager.getShareScreenService().updateMemberJoin(action.members, true)
         neEduManager.getHandsUpService().updateMemberJoin(action.members, true)

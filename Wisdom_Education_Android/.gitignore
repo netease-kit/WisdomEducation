@@ -10,6 +10,9 @@
 /.idea/jarRepositories.xml
 /.idea/misc.xml
 /.idea/
+/.idea/copyright/copyright.xml
+/.idea/copyright/profiles_settings.xml
+/.idea/runConfigurations.xml
 .DS_Store
 /build
 /captures

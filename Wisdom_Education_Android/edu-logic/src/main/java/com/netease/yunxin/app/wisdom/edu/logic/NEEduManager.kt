@@ -8,23 +8,28 @@ package com.netease.yunxin.app.wisdom.edu.logic
 import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.Observer
+import com.netease.nimlib.sdk.util.NIMUtil
 import com.netease.yunxin.app.wisdom.base.network.NEResult
+import com.netease.yunxin.app.wisdom.base.network.RetrofitManager
+import com.netease.yunxin.app.wisdom.base.util.CryptoUtil
+import com.netease.yunxin.app.wisdom.base.util.PreferenceUtil
 import com.netease.yunxin.app.wisdom.base.util.observeForeverOnce
+import com.netease.yunxin.app.wisdom.edu.logic.extras.NEEduClientType
+import com.netease.yunxin.app.wisdom.edu.logic.extras.NEEduExtras
 import com.netease.yunxin.app.wisdom.edu.logic.impl.NEEduManagerImpl
 import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduRoomConfig
-import com.netease.yunxin.app.wisdom.edu.logic.net.service.response.NEEduLoginRes
-import com.netease.yunxin.app.wisdom.edu.logic.options.NEEduOptions
 import com.netease.yunxin.app.wisdom.edu.logic.net.service.BaseRepository
 import com.netease.yunxin.app.wisdom.edu.logic.net.service.BaseService
 import com.netease.yunxin.app.wisdom.edu.logic.net.service.response.NEEduEntryMember
 import com.netease.yunxin.app.wisdom.edu.logic.net.service.response.NEEduEntryRes
+import com.netease.yunxin.app.wisdom.edu.logic.net.service.response.NEEduLoginRes
 import com.netease.yunxin.app.wisdom.edu.logic.options.NEEduClassOptions
+import com.netease.yunxin.app.wisdom.edu.logic.options.NEEduOptions
 import com.netease.yunxin.app.wisdom.edu.logic.service.*
 import com.netease.yunxin.app.wisdom.im.IMManager
 
 /**
- * Created by hzsunyj on 4/20/21.
+ * 提供各种业务服务
  */
 interface NEEduManager {
 
@@ -36,19 +41,43 @@ interface NEEduManager {
 
         lateinit var instance: NEEduManager
 
-        /// im must call application onCreate
+        // sdk inner version code
+        private const val VERSION_CODE = 20
+
+
+        /**
+         * @suppress
+         *
+         * @param context
+         * @param eduOptions
+         */
         fun config(context: Application, eduOptions: NEEduOptions) {
             this.context = context
             this.eduOptions = eduOptions
             BaseRepository.appKey = eduOptions.appKey
             BaseService.baseUrl = eduOptions.baseUrl
             IMManager.config(context, eduOptions.appKey, eduOptions.reuseIM ?: false)
-            NEEduActivityManger.init(context)
+            if (NIMUtil.isMainProcess(context)) {
+                NEEduActivityManger.init(context)
+                PreferenceUtil.init(context)
+                RetrofitManager.instance()
+                    .addHeader(NEEduExtras.AUTHORIZATION, CryptoUtil.getAuth(eduOptions.authorization))
+                    .addHeader(NEEduExtras.DEVICE_ID, PreferenceUtil.deviceId)
+                    .addHeader(NEEduExtras.CLIENT_TYPE, NEEduClientType.ANDROID.type)
+                    .addHeader(NEEduExtras.VERSION_CODE, VERSION_CODE.toString())
+            }
         }
 
-        fun init(): LiveData<NEResult<NEEduManager>> {
+        /**
+         * @suppress
+         *
+         * @param uuid
+         * @param token
+         * @return
+         */
+        fun init(uuid: String, token: String): LiveData<NEResult<NEEduManager>> {
             val managerLD: MediatorLiveData<NEResult<NEEduManager>> = MediatorLiveData<NEResult<NEEduManager>>()
-            NEEduManagerImpl.init().also {
+            NEEduManagerImpl.init(uuid, token).also {
                 it.observeForeverOnce { t ->
                     if (t.success()) {
                         instance = NEEduManagerImpl

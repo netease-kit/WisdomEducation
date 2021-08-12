@@ -5,7 +5,6 @@
 
 package com.netease.yunxin.app.wisdom.education.ui.main
 
-import com.netease.yunxin.app.wisdom.base.util.CommonUtil.throttleFirst
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextUtils
@@ -13,7 +12,9 @@ import android.text.TextWatcher
 import android.view.View
 import androidx.fragment.app.Fragment
 import com.netease.yunxin.app.wisdom.base.network.NEResult
+import com.netease.yunxin.app.wisdom.base.util.CommonUtil.throttleFirst
 import com.netease.yunxin.app.wisdom.base.util.NetworkUtil
+import com.netease.yunxin.app.wisdom.base.util.PreferenceUtil
 import com.netease.yunxin.app.wisdom.base.util.ToastUtil
 import com.netease.yunxin.app.wisdom.base.util.observeOnce
 import com.netease.yunxin.app.wisdom.edu.logic.NEEduErrorCode
@@ -25,6 +26,8 @@ import com.netease.yunxin.app.wisdom.edu.ui.viewbinding.viewBinding
 import com.netease.yunxin.app.wisdom.education.BuildConfig
 import com.netease.yunxin.app.wisdom.education.R
 import com.netease.yunxin.app.wisdom.education.databinding.MainFragmentBinding
+import com.netease.yunxin.app.wisdom.education.ui.MainActivity
+import com.netease.yunxin.kit.alog.ALog
 import com.superlht.htloading.view.HTLoading
 
 class MainFragment : Fragment(R.layout.main_fragment) {
@@ -54,6 +57,11 @@ class MainFragment : Fragment(R.layout.main_fragment) {
         binding.radioGroupRole.setOnCheckedChangeListener { _, _ -> switchJoinBtn() }
         if (BuildConfig.ENV == "test") {
             binding.tips.text = "${context?.getString(R.string.app_tips)}(test)"
+            binding.etUser.visibility = View.VISIBLE
+            binding.etToken.visibility = View.VISIBLE
+            // 以下代码用于演示IM复用
+            binding.tvSetting.visibility = View.VISIBLE
+            binding.tvSetting.setOnClickListener(onClickListener)
         }
     }
 
@@ -77,7 +85,17 @@ class MainFragment : Fragment(R.layout.main_fragment) {
         if (!t.success()) {
             starting = false
             htLoading?.dismiss()
-            ToastUtil.showShort(getString(R.string.join_class_fail_try_again))// show error whit error code
+            ALog.i("init failed, code ${t.code}")
+            if (t.code == NEEduErrorCode.IM_LOGIN_ERROR.code && PreferenceUtil.reuseIM) {
+                ToastUtil.showLong(R.string.should_login_im)
+            } else {
+                var tip = context?.let { NEEduErrorCode.tipsWithErrorCode(it, t.code) }
+                if (!TextUtils.isEmpty(tip)) {
+                    ToastUtil.showLong(tip!!)
+                } else {
+                    ToastUtil.showLong(getString(R.string.join_class_fail_try_again))// show error whit error code
+                }
+            }
         } else {
             enterClassroom(t.data!!, classOptions)
         }
@@ -99,6 +117,8 @@ class MainFragment : Fragment(R.layout.main_fragment) {
         starting = true
         htLoading = HTLoading(requireActivity())
         htLoading?.show()
+        val uuid: String = binding.etUser.text.toString().trim()
+        val token: String = binding.etToken.text.toString().trim()
         val classId: String = binding.etRoomId.text.toString()
         val nickname: String = binding.etNickName.text.toString()
         val className: String = getString(R.string.clazz_name, nickname)
@@ -107,7 +127,7 @@ class MainFragment : Fragment(R.layout.main_fragment) {
             roleType = NEEduRoleType.AUDIENCE
         }
         classOptions = NEEduClassOptions(classId, className, nickname, sceneType!!, roleType)
-        NEEduUiKit.init().observeOnce(viewLifecycleOwner, initObserver)
+        NEEduUiKit.init(uuid, token).observeOnce(viewLifecycleOwner, initObserver)
     }
 
     private fun enterClassroom(eduUiKit: NEEduUiKit, neEduClassOptions: NEEduClassOptions) {
@@ -129,6 +149,9 @@ class MainFragment : Fragment(R.layout.main_fragment) {
                         )
                     )
                 }
+                t.code == NEEduErrorCode.ROOM_MEMBER_EXIST.code -> {
+                    ToastUtil.showShort(R.string.room_member_exist)
+                }
                 else -> {
                     ToastUtil.showShort(getString(R.string.join_class_fail_try_again))
                 }
@@ -137,6 +160,8 @@ class MainFragment : Fragment(R.layout.main_fragment) {
     }
 
     private fun clearInput() {
+        binding.etUser.text?.clear()
+        binding.etToken.text?.clear()
         binding.etRoomId.text?.clear()
         binding.etNickName.text?.clear()
         binding.etSceneType.text?.clear()
@@ -169,6 +194,9 @@ class MainFragment : Fragment(R.layout.main_fragment) {
                 binding.cardRoomType.let {
                     if (it.visibility == View.GONE) showCardRoomType() else hideCardRoomType()
                 }
+            }
+            binding.tvSetting -> {
+                (activity as MainActivity).showSettingFragment()
             }
         }
     }.throttleFirst()

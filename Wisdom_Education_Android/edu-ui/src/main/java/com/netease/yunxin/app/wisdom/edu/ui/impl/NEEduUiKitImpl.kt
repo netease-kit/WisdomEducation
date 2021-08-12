@@ -10,8 +10,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.map
 import com.netease.yunxin.app.wisdom.base.network.NEResult
 import com.netease.yunxin.app.wisdom.edu.logic.NEEduManager
-import com.netease.yunxin.app.wisdom.edu.logic.net.service.response.NEEduLoginRes
 import com.netease.yunxin.app.wisdom.edu.logic.net.service.response.NEEduEntryRes
+import com.netease.yunxin.app.wisdom.edu.logic.net.service.response.NEEduLoginRes
 import com.netease.yunxin.app.wisdom.edu.logic.options.NEEduClassOptions
 import com.netease.yunxin.app.wisdom.edu.logic.options.NEEduRoleType
 import com.netease.yunxin.app.wisdom.edu.logic.options.NEEduSceneType
@@ -32,9 +32,9 @@ internal class NEEduUiKitImpl : NEEduUiKit {
         get() = eduManager
 
 
-    fun init(): LiveData<NEResult<NEEduManager>> {
-        return NEEduManager.init().map {
-            if(it.data != null) {
+    fun init(uuid: String, token: String): LiveData<NEResult<NEEduManager>> {
+        return NEEduManager.init(uuid, token).map {
+            if (it.data != null) {
                 eduManager = it.data!!
             }
             it

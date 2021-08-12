@@ -18,36 +18,32 @@ object UserServiceRepository : BaseRepository() {
 
     fun joinClassroom(
         roomUuid: String,
-        eduJoinClassroomReq: JoinClassroomReq
+        eduJoinClassroomReq: JoinClassroomReq,
     ): LiveData<NEResult<NEEduEntryRes>> {
-        return userService.joinClassroom(
-            appKey,
-            roomUuid,
-            eduJoinClassroomReq
-        )
+        return interceptor(userService.joinClassroom(appKey, roomUuid, eduJoinClassroomReq))
     }
 
     fun updateProperty(
         roomId: String,
         userUuid: String,
         key: String,
-        req: NEEduUpdateMemberPropertyReq
+        req: NEEduUpdateMemberPropertyReq,
     ): LiveData<NEResult<Void>> {
-        return userService.updateProperty(appKey, roomId, userUuid, key, req)
+        return interceptor(userService.updateProperty(appKey, roomId, userUuid, key, req))
     }
 
     fun updateInfo(
         roomId: String,
-        userUuid: String
+        userUuid: String,
     ): LiveData<NEResult<String>> {
-        return userService.updateInfo(appKey, roomId, userUuid)
+        return interceptor(userService.updateInfo(appKey, roomId, userUuid))
     }
 
     fun recordPlayback(
         roomId: String,
-        userUuid: String
+        userUuid: String,
     ): LiveData<NEResult<String>> {
-        return userService.recordPlayback(appKey, roomId, userUuid)
+        return interceptor(userService.recordPlayback(appKey, roomId, userUuid))
     }
 
 }

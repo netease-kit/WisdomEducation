@@ -128,6 +128,11 @@ abstract class NEEduRtcService : INEEduService() {
     internal abstract fun updateSnapshotMember(list: MutableList<NEEduMember>)
 
     /**
+     * 成员进入流变更
+     */
+    internal abstract fun updateMemberJoin(list: MutableList<NEEduMember>, increment: Boolean)
+
+    /**
      * 成员离开流变更
      */
     internal abstract fun updateMemberLeave(list: MutableList<NEEduMember>)

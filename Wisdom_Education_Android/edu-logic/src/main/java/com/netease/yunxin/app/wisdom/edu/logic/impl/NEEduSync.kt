@@ -155,6 +155,7 @@ internal class NEEduSync(val neEduManager: NEEduManagerImpl) {
                         neEduManager.getRtcService().updateSnapshotMember(it.snapshot.members)
                         val lastJoinList: MutableList<NEEduMember> = mutableListOf()
                         lastJoinList.addAll(neEduManager.getMemberService().getMemberList())
+                        neEduManager.getRtcService().updateMemberJoin(it.snapshot.members, false)
                         neEduManager.getMemberService().updateMemberJoin(it.snapshot.members, false)
                         it.snapshot.members.firstOrNull { t -> NEEduManagerImpl.isSelf(t.userUuid) }
                             ?.also { member ->
