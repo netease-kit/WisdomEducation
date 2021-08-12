@@ -10,7 +10,7 @@ import { NeWebrtc } from '@/lib/rtc';
 import { NENim } from '@/lib/im';
 import logger from '@/lib/logger';
 import { EnhancedEventEmitter } from '@/lib/event';
-import { GlobalStorage, debounce, history } from '@/utils';
+import { GlobalStorage, debounce, history, trimStr } from '@/utils';
 import { RoleTypes, RoomTypes, UserComponentData, NIMNotifyTypes, HandsUpTypes } from '@/config';
 
 
@@ -21,6 +21,8 @@ interface JoinOptions {
   role: string;
   userName: string;
   userUuid: string;
+  uuid?: string;
+  token?: string;
 }
 
 export interface Streams {
@@ -343,15 +345,27 @@ export class RoomStore extends EnhancedEventEmitter {
       this.classDuration = 0;
       this.setPrevToNowTime('');
     });
-    const localUserInfo = await anonymousLogin();
-    this.localUserInfo = {
-      ...joinOptions,
-      ...localUserInfo,
-    };
-    GlobalStorage.save('user', this.localUserInfo);
-    logger.log('获取个人信息', this.localUserInfo);
-    if (!this.appStore.roomInfo.roomUuid) {
-      this.appStore.setRoomInfo(joinOptions);
+    let { uuid = '', token = '' } = joinOptions;
+    [uuid, token] = [trimStr(uuid), trimStr(token)]
+    const isParamError = (uuid && !token) || (!uuid && token);
+    if (isParamError) {
+      throw new Error("400");
+    }
+    try {
+      const userToken = (uuid && token)
+      const localUserInfo = userToken ? await login(uuid, token) : await anonymousLogin();
+      this.localUserInfo = {
+        ...joinOptions,
+        ...localUserInfo,
+      };
+      GlobalStorage.save('user', this.localUserInfo);
+      logger.log('获取个人信息', this.localUserInfo);
+      // throw Error('400');
+      if (!this.appStore.roomInfo.roomUuid) {
+        this.appStore.setRoomInfo(joinOptions);
+      }
+    } catch (error: any) {
+      throw Error(error?.code);
     }
     logger.log('会议信息', this.appStore.roomInfo);
     const { roomUuid, roomName, sceneType } = this.appStore.roomInfo;
@@ -606,6 +620,14 @@ export class RoomStore extends EnhancedEventEmitter {
         case (NIMNotifyTypes.RoomMemberLeave): {
           this.getMemberList();
           // this.syncMember();
+          // const { members } = data;
+          // for (const ele of members) {
+          //   if (ele.userUuid === this.localData.userUuid) {
+          //     this.appStore.uiStore.showToast('该账号在其他设备登录', 'error')
+          //     this.leave();
+          //     history.push(`/`);
+          //   }
+          // }
           break;
         }
         case (NIMNotifyTypes.StreamChange): {
@@ -834,6 +856,8 @@ export class RoomStore extends EnhancedEventEmitter {
       this._joined = false;
     });
     this._webRtcInstance?.leave();
+    this._webRtcInstance = null;
+    this._nimInstance.logoutImServer();
     // this.classDuration = 0;
     this.setFinishBtnShow(false);
     this.appStore.whiteBoardStore.destroy();

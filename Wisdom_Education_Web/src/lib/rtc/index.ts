@@ -207,7 +207,8 @@ export class NeWebrtc extends EnhancedEventEmitter {
       logger.log('屏幕共享被关闭')
       this.emit('stopScreenSharing', _data)
     })
-
+    // @ts-ignore
+    window._client = this._client;
   }
 
   _bindStreamEvents (): void{
@@ -256,7 +257,7 @@ export class NeWebrtc extends EnhancedEventEmitter {
   }
 
   async leave(): Promise<void> {
-    logger.log('leave()')
+    logger.log('leave()', this._client)
     this._localStream && this._localStream.destroy();
     this._localStream = null;
     this._mapRemoteStreams.clear();
@@ -378,6 +379,7 @@ export class NeWebrtc extends EnhancedEventEmitter {
         microphoneId: this._pubConf.microphoneId,
         video: this._pubConf.video,
         cameraId: this._pubConf.cameraId,
+        client: this._client
       })
 
       this._bindStreamEvents()

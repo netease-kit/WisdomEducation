@@ -67,3 +67,7 @@ export enum NIMNotifyTypes {
   StreamRemove = 41,
   CustomMessage = 99,
 }
+
+export const Authorization = `Basic ${process.env.REACT_APP_SDK_AUTHORIZATION}`;
+
+export const isDev = process.env.REACT_APP_ENV === 'development'

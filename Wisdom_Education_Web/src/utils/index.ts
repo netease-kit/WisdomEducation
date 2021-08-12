@@ -6,6 +6,7 @@
 import { Md5 } from 'ts-md5';
 import { createHashHistory } from 'history';
 
+
 export const history = createHashHistory();
 
 export const uuid = (): string => {
@@ -145,3 +146,12 @@ export const getQueryString = (name) => {
   }
   return '';
 };
+
+/**
+ * @description: 去除首尾空格
+ * @param {string} str
+ * @return {string}
+ */
+export function trimStr(str: string): string {
+  return str.replace(/(^\s*)|(\s*$)/g,"");
+}
