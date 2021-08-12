@@ -56,6 +56,11 @@ const RoomControl: React.FC = observer(({ children }) => {
               uiStore.showToast('学生数量超过限制');
             }
             break;
+          case 400:
+            uiStore.showToast('参数错误');
+            break;
+          case 401:
+            break;
           default:
             uiStore.showToast('加入房间失败');
             break;

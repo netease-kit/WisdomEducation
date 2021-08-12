@@ -26,7 +26,7 @@ import {
   Route,
 } from "react-router-dom";
 
-const defaultStore = new AppStore()
+export const defaultStore = new AppStore()
 
 
 ReactDOM.render(

@@ -4,8 +4,8 @@
  */
 
 import { post, put, get, reqDelete } from './index';
-import { GlobalStorage } from '@/utils';
-import { RoomTypes, RoleTypes } from '@/config';
+import { GlobalStorage, trimStr } from '@/utils';
+import { RoomTypes, RoleTypes, Authorization } from '@/config';
 
 interface LoginResponse {
   imKey: string;
@@ -140,8 +140,13 @@ export interface DeleteRoomStateOptions {
  * @param {string} userUuid
  * @return {*}
  */
-export async function login(userUuid: string|number): Promise<LoginResponse>  {
-  const res = await post(`/v1/users/${userUuid}/login`);
+export async function login(user = '', token = ''): Promise<LoginResponse>  {
+  const res = await post(`/v1/login`, {} ,{
+    headers: {
+      user: trimStr(user),
+      token: trimStr(token),
+    }
+  });
   return res;
 }
 
