@@ -40,6 +40,8 @@
 
 - 在云信控制台创建应用，并获取对应的 AppKey。
 
+- AUTHORIZATION： 请联系[联系云信商务经理](https://yunxin.163.com/bizQQWPA.html)
+
 - 为此应用开通以下相关服务与抄送：
   - 产品服务：音视频通话 2.0、IM 专业版、聊天室、信令、互动白板、云端录制、点播。
 
@@ -76,9 +78,9 @@
 
 在智慧云课堂Demo体验页面下载需要体验的示例项目或 Demo 源码工程。
 
-1. 开启 Android 设备的开发者选项，通过 USB 连接线将 Android 设备接入电脑。
-2. 通过 Android Studio 打开项目。
-3. 在示例项目中配置相关字段。
+2. 开启 Android 设备的开发者选项，通过 USB 连接线将 Android 设备接入电脑。
+3. 通过 Android Studio 打开项目。
+4. 在示例项目中配置相关字段。
 
 如果需要基于 Demo 开发自己的应用，在 `config.properties` 中将以下字段改为您的真实信息。
 
@@ -91,7 +93,7 @@
 注意：如果仅需要本地跑通示例项目，您可以使用``网易云信体验账号``。体验账号的课堂时长限制为 30 分钟。
 ```
 
-4. 选中设备直接运行，即可体验 Demo。
+5. 选中设备直接运行，即可体验 Demo。
 
 ### 功能实现
 
@@ -128,9 +130,9 @@
 
 ### 1 集成到项目
 
-1. 新建 Android 工程。
-   a. 运行 Android Sudio，在顶部菜单依次选择 “File -> New -> New Project...” 新建工程。
-   b. 选择 'Phone and Tablet' -> 'Empty Activity' ，并单击Next。
+1. 新建 Android 工程。  
+   a. 运行 Android Sudio，在顶部菜单依次选择 “File -> New -> New Project...” 新建工程。  
+   b. 选择 'Phone and Tablet' -> 'Empty Activity' ，并单击Next。  
    c. 配置工程相关信息。
 
 注意： Minimum API Level 为 API 21。
@@ -138,7 +140,7 @@
    d. 单击 'Finish'，完成工程创建。
 
 2. 添加依赖模块。  
-   a. 复制示例项目中的Modules和config.gradle、config.properties等相关配置文件至当前目录。
+   a. 复制示例项目中的Modules和config.gradle、config.properties等相关配置文件至当前目录。  
    b. settings.gradle引入Modules。
 
 ```
