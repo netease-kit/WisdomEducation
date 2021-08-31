@@ -17,10 +17,6 @@ export class AppStore {
   @observable
   private _roomInfo: Record<string, string> = {}
 
-  @computed
-  get roomInfo(): Record<string, string> {
-    return this._roomInfo;
-  }
 
   roomStore: RoomStore;
   whiteBoardStore: WhiteBoardStore;
@@ -42,6 +38,11 @@ export class AppStore {
     this.whiteBoardStore = new WhiteBoardStore(this);
     this.uiStore = new UIStore(this);
     this.recordStore = new RecordStore(this);
+  }
+
+  @computed
+  get roomInfo(): Record<string, string> {
+    return this._roomInfo;
   }
 
   /**

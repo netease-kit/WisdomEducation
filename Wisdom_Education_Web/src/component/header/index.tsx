@@ -11,10 +11,15 @@ import copy from 'copy-to-clipboard';
 import { NetStatusItem } from '@/store/room';
 import './index.less';
 import copyImg from '@/assets/imgs/copy.png';
+import { LeftOutlined } from '@ant-design/icons';
+import { history } from '@/utils';
 
 interface HeaderShowProps {
   isHave?: boolean;
   title?: string;
+  hasBack?: boolean;
+  backUrl?: string;
+  backMsg?: string;
 }
 
 const netInfoImgMap = {
@@ -79,6 +84,10 @@ const Header: React.FC<HeaderShowProps> = observer((props) => {
 
   return (
     <div className="head-component">
+      {props.hasBack && <div className="head-back" onClick={() => history.push(`${props.backUrl}`)}>
+        <LeftOutlined className="back-icon"/>
+        {props?.backMsg}
+      </div>}
       <div className="head-courseState">{props.title || roomStore.roomState}&nbsp;
         <span>{roomStore.prevToNowTime}</span>
       </div>

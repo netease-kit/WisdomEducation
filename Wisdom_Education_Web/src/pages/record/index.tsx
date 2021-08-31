@@ -13,6 +13,7 @@ import Replay from '@/component/web-record';
 import { getQueryString } from '@/utils/index';
 import Empty from './empty';
 import './index.less';
+import { isElectron } from '@/config';
 export interface IEvent {
   userId: string
   action: 'show' | 'hide',
@@ -61,7 +62,7 @@ const Record: React.FC = observer(() => {
 
   return (
     <div className="record-wrap">
-      <Header title="课程回放" isHave={true} />
+      <Header title="课程回放" isHave={true} hasBack={true} backMsg="返回登录页" backUrl="/" />
       {uiStore.loading ? <div className="room-loading"><Spin className="room-loading-spin" /></div> : null}
       {
         isValid ? (

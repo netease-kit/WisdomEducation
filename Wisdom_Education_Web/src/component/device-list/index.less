@@ -40,3 +40,37 @@
   }
 }
 
+.share-modal{
+  .ant-modal-content{
+    height: auto;
+    width: auto;
+    .share-item {
+      width: 185px;
+      height: 138px;
+      margin: 8px;
+      p{
+        text-align: center;
+      }
+      img{
+        width: 90%;
+        height: 90%;
+        padding: 10%;
+        border-radius: 5px;
+      }
+    }
+    .share-item-select img{
+      border: 1px solid #337EFF;
+    }
+  }
+  .ant-modal-body {
+    display: flex;
+    flex-wrap: wrap;
+    min-height: 400px;
+    max-height: 400px;
+    overflow-y: auto;
+  }
+  .ant-btn{
+    flex: 1;
+  }
+}
+

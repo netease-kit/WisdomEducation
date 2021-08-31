@@ -14,10 +14,10 @@ const WhiteBoard:React.FC = observer(() => {
   const whiteBoardStore = useWhiteBoardStore();
   const roomStore = useRoomStore();
   const wbRef = useRef<HTMLDivElement>(null);
-  const { localWbDrawEnable, joined, snapRoomInfo } = roomStore;
+  const { localWbDrawEnable, joinFinish, snapRoomInfo } = roomStore;
 
   useEffect(() => {
-    if (joined && wbRef.current) {
+    if (joinFinish && wbRef.current) {
       const { localUserInfo: { imKey, userUuid, imToken, userName, role }, entryData, roomInfo: { sceneType } } = roomStore;
       const { room: { properties: { chatRoom: { chatRoomId } } } } = entryData;
       const enbaleDraw = role === RoleTypes.host || Number(sceneType) === RoomTypes.oneToOne;
@@ -49,7 +49,7 @@ const WhiteBoard:React.FC = observer(() => {
         }
       }
     }
-  }, [roomStore, joined, whiteBoardStore, wbRef, snapRoomInfo?.properties?.whiteboard?.channelName]);
+  }, [roomStore, joinFinish, whiteBoardStore, wbRef, snapRoomInfo?.properties?.whiteboard?.channelName]);
 
 
   useEffect(() => {

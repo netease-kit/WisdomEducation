@@ -12,6 +12,7 @@ import { message } from "antd";
 import { Authorization } from "@/config";
 import { AppStore } from "@/store";
 import { defaultStore } from "@/index";
+import { isElectron } from "@/config";
 
 export const baseUrl = process.env.REACT_APP_SDK_DOMAIN;
 
@@ -22,14 +23,14 @@ localStorage.setItem("edu-deviceId", deviceId);
 const defaultHeaders = {
   "Content-Type": "application/json",
   Authorization: Authorization,
-  clientType: "web",
   versionCode: 20,
+  clientType: isElectron ? "electron" : "web",
   deviceId,
 };
 
 // axios的实例及拦截器配置
 const req = axios.create({
-  baseURL: `${window.location.protocol}//${baseUrl}/scene/apps/${process.env.REACT_APP_SDK_APPKEY}/`,
+  baseURL: `https://${baseUrl}/scene/apps/${process.env.REACT_APP_SDK_APPKEY}/`,
   timeout: 30000, // 超时时间
   responseType: "json", // default
   headers: defaultHeaders,
@@ -63,6 +64,11 @@ req.interceptors.response.use(
           break;
         case 1003:
           message.error("指定角色未定义");
+          break;
+        case 1004:
+          message.error('房间不存在');
+          defaultStore.roomStore.leave();
+          history.push("/");
           break;
         case 1016:
           message.error("用户已在房间中");

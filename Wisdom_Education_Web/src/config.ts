@@ -3,7 +3,6 @@
  * Use of this source code is governed by a MIT license that can be found in the LICENSE file
  */
 
-
 export enum RoomTypes {
   oneToOne = 5,
   smallClass = 6,
@@ -11,9 +10,9 @@ export enum RoomTypes {
 }
 
 export enum RoleTypes {
-  host = 'host',
-  broadcaster = 'broadcaster',
-  audience = 'audience'
+  host = "host",
+  broadcaster = "broadcaster",
+  audience = "audience",
 }
 
 export enum StepTypes {
@@ -40,18 +39,18 @@ export interface UserComponentData {
   userName: string;
   userUuid: string;
   role: string;
-  rtcUid: string|number;
-  hasAudio: boolean,
-  hasVideo: boolean,
-  hasScreen: boolean,
-  audioStream: any,
+  rtcUid: string | number;
+  hasAudio: boolean;
+  hasVideo: boolean;
+  hasScreen: boolean;
+  audioStream: any;
   basicStream: any;
   isLocal: boolean;
   showUserControl: boolean;
   showMoreBtn: boolean;
   canScreenShare?: boolean;
   wbDrawEnable?: boolean;
-  avHandsUp?: number|null;
+  avHandsUp?: number | null;
 }
 
 export enum NIMNotifyTypes {
@@ -70,4 +69,19 @@ export enum NIMNotifyTypes {
 
 export const Authorization = `Basic ${process.env.REACT_APP_SDK_AUTHORIZATION}`;
 
-export const isDev = process.env.REACT_APP_ENV === 'development'
+export const isDev = process.env.REACT_APP_ENV === "development";
+export const isElectron = process.env.REACT_APP_PLATFORM === "electron";
+
+export enum PlatForms {
+  mac = "darwin",
+  linux = "linux",
+  win = "win32",
+}
+
+export interface ShareListItem {
+  id: string;
+  displayId: string;
+  thumbnail: string;
+  appIcon: string;
+  name: string;
+}
