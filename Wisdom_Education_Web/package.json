@@ -1,8 +1,11 @@
 {
   "name": "app-wisdon-education-web",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "homepage": "./",
   "private": true,
+  "main": "./build/app/main.js",
+  "author": "netease",
+  "license": "MIT",
   "dependencies": {
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
@@ -13,12 +16,14 @@
     "@types/react-dom": "^17.0.0",
     "antd": "^4.15.5",
     "axios": "^0.21.1",
+    "concurrently": "^6.2.0",
     "copy-to-clipboard": "^3.3.1",
     "dotenv-cli": "^4.0.0",
     "kit-devicecheck-web": "^1.0.3",
     "less": "^4.1.1",
     "mobx": "^6.3.0",
     "mobx-react": "^7.1.0",
+    "nertc-electron-sdk": "^4.1.111-rc-927",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-router-dom": "^5.2.0",
@@ -26,17 +31,33 @@
     "styled-components": "^5.3.0",
     "ts-md5": "^1.2.7",
     "typescript": "^4.1.2",
+    "wait-on": "^6.0.0",
     "web-vitals": "^1.0.1",
     "yunxin-log-debug": "^1.0.1"
   },
   "scripts": {
-    "start": "cross-env HTTPS=true PORT=3001 react-app-rewired start",
-    "start:pro": "cross-env HTTPS=true PORT=3001 dotenv -e .env.production react-app-rewired start",
+    "start": "cross-env HTTPS=true REACT_APP_PLATFORM=web PORT=3001 react-app-rewired start",
+    "start:pro": "cross-env HTTPS=true REACT_APP_PLATFORM=web PORT=3001 dotenv -e .env.production react-app-rewired start",
+    "start:client": "cross-env MODE=local electron ./app/main.js",
+    "start:ele": "concurrently \"cross-env REACT_APP_PLATFORM=electron HTTPS=true PORT=3001 react-app-rewired start\"  \"wait-on https://localhost:3001/ && npm run start:client\"",
+    "start:ele-pro": "concurrently \"cross-env REACT_APP_PLATFORM=electron HTTPS=true PORT=3001 dotenv -e .env.production react-app-rewired start\"  \"wait-on https://localhost:3001/ && npm run start:client\"",
     "build:dev": "cross-env NODE_ENV=development dotenv -e .env.development react-app-rewired build",
     "build": "dotenv -e .env.production react-app-rewired build",
+    "build:dev-ele": "cross-env REACT_APP_PLATFORM=electron NODE_ENV=development dotenv -e .env.development react-app-rewired build",
+    "build:ele": "cross-env REACT_APP_PLATFORM=electron dotenv -e .env.production react-app-rewired build",
+    "cp-ele": "node scripts/copy-app.js",
+    "build:mac-dev": "npm run build:dev-ele && npm run cp-ele && npm run build-mac:ele",
+    "build:win-dev": "npm run build:dev-ele && npm run cp-ele && npm run build-win:ele",
+    "build:mac": "npm run build:ele && npm run cp-ele && npm run build-mac:ele",
+    "build:win": "npm run build:ele && npm run cp-ele && npm run build-win:ele",
     "test": "react-app-rewired test",
     "eject": "react-scripts eject",
-    "lint:fix": "eslint --ext .ts,.tsx src/ --fix"
+    "lint:fix": "eslint --ext .ts,.tsx src/ --fix",
+    "lint": "eslint --ext .ts,.tsx src/",
+    "rebuild": "electron-rebuild -f -w nertc-electron-sdk",
+    "postinstall": "electron-builder install-app-deps",
+    "build-mac:ele": "electron-builder --mac",
+    "build-win:ele": "electron-builder --win"
   },
   "eslintConfig": {
     "extends": [
@@ -56,6 +77,42 @@
       "last 1 safari version"
     ]
   },
+  "build": {
+    "productName": "智慧云课堂",
+    "appId": "com.netease.nmc.xxx",
+    "copyright": "Copyright © year netease",
+    "directories": {
+      "output": "builder"
+    },
+    "files": [
+      "build/**/*",
+      "build/app/main.js"
+    ],
+    "asarUnpack": [
+      "node_modules/nertc-electron-sdk"
+    ],
+    "forceCodeSigning": false,
+    "mac": {
+      "icon": "build/icon.png",
+      "entitlements": "entitlements.mac.plist",
+      "hardenedRuntime": true,
+      "identity": null,
+      "extendInfo": {
+        "NSMicrophoneUsageDescription": "请允许本程序访问您的麦克风",
+        "NSCameraUsageDescription": "请允许本程序访问您的摄像头"
+      },
+      "artifactName": "WisdomEducation-${version}.${ext}"
+    },
+    "win": {
+      "icon": "build/icon.png",
+      "artifactName": "WisdomEducation-${version}.${ext}",
+      "target": [
+        "nsis",
+        "zip"
+      ]
+    },
+    "extends": null
+  },
   "devDependencies": {
     "@babel/plugin-proposal-decorators": "^7.13.15",
     "@babel/preset-typescript": "^7.13.0",
@@ -66,6 +123,9 @@
     "cache-loader": "^4.1.0",
     "cross-env": "^7.0.3",
     "customize-cra": "^1.0.0",
+    "electron": "^11.4.3",
+    "electron-builder": "^22.11.7",
+    "electron-rebuild": "^2.3.5",
     "esbuild-loader": "^2.13.1",
     "eslint": "^7.26.0",
     "eslint-plugin-react": "^7.23.2",

@@ -7,6 +7,7 @@ import * as WebRTC2 from './sdk/NIM_Web_WebRTC2_v4.2.1.js';
 
 import { EnhancedEventEmitter } from '../event';
 import logger from '../logger';
+import { ShareListItem } from '@/config'
 
 
 // 测试要求加版本信息提示
@@ -223,7 +224,14 @@ export class NeWebrtc extends EnhancedEventEmitter {
     /*this._pubConf.audio = options.audio
     this._pubConf.video = options.video*/
     try {
-      await this._client.join(options)
+      await this._client.join({
+        ...options,
+        joinChannelRecordConfig: {
+          recordAudio: true,
+          recordVideo: true,
+          recordType: 0,
+        }
+      })
       logger.log('join() successed')
       // reporter.send({
       //   'action_name': 'join_channel_success'
@@ -611,6 +619,10 @@ export class NeWebrtc extends EnhancedEventEmitter {
       logger.log('getLocalAudioStats() fail:', e);
       throw new Error(e);
     }
+  }
+
+  async getShareList(): Promise<ShareListItem[]> {
+    return []
   }
 
   // 获取远端音频流数据

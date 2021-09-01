@@ -2,15 +2,16 @@
  * @Copyright (c) 2021 NetEase, Inc.  All rights reserved.
  * Use of this source code is governed by a MIT license that can be found in the LICENSE file
  */
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { useHistory } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { useRoomStore } from '@/hooks/store';
-import { RoomTypes, StepTypes, PauseTypes, RoleTypes, HandsUpTypes } from '@/config';
+import { RoomTypes, StepTypes, PauseTypes, RoleTypes, HandsUpTypes, isElectron } from '@/config';
 import { Button, Modal } from 'antd';
 import DeviceList from '@/component/device-list';
 import MemberList from '@/component/member-list';
 import './index.less';
+import eleIpc from '@/lib/ele-ipc';
 import logger from '@/lib/logger';
 
 let startInterval;
@@ -27,6 +28,9 @@ const Footer: React.FC = observer(() => {
   const roomStore = useRoomStore();
   const { snapRoomInfo: { states: { step, pause } = {} }, roomInfo, classDuration } = roomStore;
   const userInfo = roomStore?.localUserInfo || {};
+  const [isEleClose, setIsEleClose] = useState(false);
+
+  const eleIpcIns = useMemo(() => (isElectron ? eleIpc.getInstance() : null), []);
 
   const handleEndModal = async () => {
     // setModalVisible(true);
@@ -105,11 +109,22 @@ const Footer: React.FC = observer(() => {
   useEffect(() => {
     return () => {
       classTimeStop();
-      roomStore.setRoomState('课程未开始');
+      // roomStore.setRoomState('课程未开始');
     }
   }, [])
 
-
+  useEffect(() => {
+    if (eleIpcIns) {
+      eleIpcIns.on('main-close-before', () => {
+        logger.debug('main-close-before');
+        setIsEleClose(true);
+        handleStartModal();
+      });
+    }
+    return () => {
+      eleIpcIns?.removeAllListeners();
+    }
+  }, [eleIpcIns])
 
 
 
@@ -145,12 +160,12 @@ const Footer: React.FC = observer(() => {
     const { roomUuid } = roomInfo;
     if (isHost && !leavemodalVisible) {
       switch (true) {
-        case roomStep === StepTypes.init:
+        case roomStep === StepTypes.init && !isEleClose:
           await roomStore.startClassRoom();
           setRoomStep(StepTypes.isStart)
           setModalVisible(false);
           break;
-        case roomStep === StepTypes.isStart:
+        case roomStep === StepTypes.isStart || isEleClose:
           await roomStore.endClassRoom();
           await classTimeStop();
           await roomStore.leave();
@@ -204,6 +219,7 @@ const Footer: React.FC = observer(() => {
   const handleModalCancel = () => {
     setModalVisible(false);
     setLeaveModalVisible(false);
+    setIsEleClose(false);
   }
 
   const handleFinishModal = async () => {
@@ -225,6 +241,7 @@ const Footer: React.FC = observer(() => {
 
   // RTC受到消息需要结束
   const channelClosed = async () => {
+    await roomStore.leave();
     history.push('/');
     setTimeout(() => {
       location.reload();
@@ -277,13 +294,13 @@ const Footer: React.FC = observer(() => {
             {
               !isHost || leavemodalVisible ?
                 '确认离开' :
-                roomStep === StepTypes.init ? '确认开始上课' : '结束课堂'
+                roomStep === StepTypes.init && !isEleClose ? '确认开始上课' : '结束课堂'
             }
           </p>
           <p className="desc">
             {
               !isHost ? '离开教室后将暂停教学，学生需等待您再次进入课堂方可继续上课' :
-                (roomStep === StepTypes.init ? '开课后教学内容将同步至学生端，并正式开始课堂录制' : '结束课堂后老师和学生均会跳转课堂结束画面，支持查看课程回放')
+                (roomStep === StepTypes.init && !isEleClose ? '开课后教学内容将同步至学生端，并正式开始课堂录制' : '结束课堂后老师和学生均会跳转课堂结束画面，支持查看课程回放')
             }
           </p>
         </Modal>

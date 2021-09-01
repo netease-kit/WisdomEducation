@@ -2,7 +2,7 @@
  * @Copyright (c) 2021 NetEase, Inc.  All rights reserved.
  * Use of this source code is governed by a MIT license that can be found in the LICENSE file
  */
-import React, { FC, useState, useEffect } from "react";
+import React, { FC, useState, useEffect, useMemo } from "react";
 import { useHistory } from "react-router-dom";
 import { Input, Select, Button, Radio, Form } from "antd";
 import logger from "@/lib/logger";
@@ -11,7 +11,7 @@ import android from "@/assets/imgs/android.png";
 import ios from "@/assets/imgs/ios.png";
 import "./index.less";
 import { observer } from "mobx-react";
-import { RoomTypes, RoleTypes, isDev } from "@/config";
+import { RoomTypes, RoleTypes, isDev, isElectron } from "@/config";
 import { useRoomStore } from "@/hooks/store";
 import { GlobalStorage } from "@/utils";
 
@@ -51,6 +51,7 @@ const Join: FC = observer(() => {
   const roomStore = useRoomStore();
   const history = useHistory();
   const [roomNum, setRoomNum] = useState<undefined | string>(undefined);
+  const recordUrl = useMemo(() => localStorage.getItem('record-url'), [])
 
   const handleFormChange = (changedValues, allValues) => {
     const formValue = Object.keys(allValues).some(
@@ -221,6 +222,14 @@ const Join: FC = observer(() => {
                   加入课堂
                 </Button>
               </Form.Item>
+              {recordUrl && isElectron && <Form.Item>
+                <Button
+                  onClick={() => history.push(`${recordUrl}`)}
+                  className="joinForm-btn record-btn"
+                >
+                  查看回放
+                </Button>
+              </Form.Item>}
             </Form>
             <p className="tips-message">
               *本产品仅用于演示产品功能，课堂最长30分钟，不可商用

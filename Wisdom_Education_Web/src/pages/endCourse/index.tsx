@@ -2,7 +2,7 @@
  * @Copyright (c) 2021 NetEase, Inc.  All rights reserved.
  * Use of this source code is governed by a MIT license that can be found in the LICENSE file
  */
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 import logger from '@/lib/logger';
 import { observer } from 'mobx-react';
@@ -16,6 +16,10 @@ const EndCourse = observer(() => {
     return new URLSearchParams(useLocation().search);
   }
   const query = useQuery();
+
+  useEffect(() => {
+    localStorage.setItem('record-url', `/record?roomUuid=${query.get('roomUuid')}&rtcCid=${query.get('rtcCid')}`)
+  }, [])
 
   return (
     <div className="endCourse-wrapper">
