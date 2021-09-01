@@ -34,6 +34,7 @@
 - [跑通示例项目Android](https://doc.yunxin.163.com/docs/Tk4NjU1MDI/DEyOTQ2NzU?platformId=50695)
 - [跑通示例项目iOS](https://doc.yunxin.163.com/docs/Tk4NjU1MDI/TgxNzE0NDE?platformId=50696)
 - [跑通示例项目Web](https://doc.yunxin.163.com/docs/Tk4NjU1MDI/TAwNzU2NzQ?platformId=50697)
+- [跑通示例项目Electron](https://doc.yunxin.163.com/docs/Tk4NjU1MDI/TAwNzU2NzQ?platformId=120194)
 
 ## 代码许可
 示例项目遵守 MIT 许可证。

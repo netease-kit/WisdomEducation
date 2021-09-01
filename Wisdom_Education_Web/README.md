@@ -57,7 +57,7 @@
 └── config-overrides.js      配置文件
 ```
 
-## 运行示例源码
+## 运行Web示例源码
 
 1. 获取示例项目。
 
@@ -87,5 +87,40 @@
     npm run start:pro         // 线上环境
     npm run build:dev         // 打包测试环境
     npm run build             // 打包线上环境
+    ```
+
+
+## 运行Electron示例源码
+
+1. 获取示例项目。
+
+    在 GitHub 的 [WisdomEducation](https://github.com/netease-kit/WisdomEducation) 示例项目 下载 Demo 源码工程。
+
+2. 在示例项目中配置相关字段。
+
+    如果需要基于 Demo 开发自己的应用，在 `.env.development` 或 `.env.production` 中将以下字段改为您的真实信息。
+
+    | 配置项     | 说明                                      |
+    | ------------- | ------------------------------------------- |
+    | REACT_APP_SDK_APPKEY        | 应用的 AppKey。可以在网易云信控制台中查看。 |
+    | REACT_APP_SDK_AUTHORIZATION       | 调用服务端接口时，请求头中的校验参数。 |
+    
+    > 如果仅需要本地跑通示例项目，您可以使用[智慧云课堂体验账号](https://github.com/netease-kit/WisdomEducation/tree/main/Wisdom_Education_Docs/智慧云课堂体验账号.md)。体验账号的课堂时长限制为 30 分钟。
+
+3. 进入 `Wisdom_Educaiton_Web` 目录，安装依赖并启动项目。
+
+    ```
+    cd Wisdom_Educaiton_Web
+    npm install               // 安装依赖
+    npm run start:ele         // 开发环境
+    npm run start:ele-pro     // 线上环境
+    ```
+4. 构建项目。
+
+    ```
+    npm run build:mac-dev // 打包mac测试包
+    npm run build:win-dev // 打包win测试包
+    npm run build:mac    // 打包mac生产包
+    npm run build:win    // 打包win生产包
     ```
 
