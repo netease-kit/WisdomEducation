@@ -227,12 +227,12 @@ export class NeWebrtc extends EnhancedEventEmitter {
       await this._client.join({
         ...options,
         joinChannelRecordConfig: {
-          recordAudio: true,
-          recordVideo: true,
+          recordAudio: false,
+          recordVideo: false,
           recordType: 0,
         }
       })
-      logger.log('join() successed')
+      logger.log('join() successed', options)
       // reporter.send({
       //   'action_name': 'join_channel_success'
       // })

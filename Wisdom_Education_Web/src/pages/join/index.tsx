@@ -4,7 +4,7 @@
  */
 import React, { FC, useState, useEffect, useMemo } from "react";
 import { useHistory } from "react-router-dom";
-import { Input, Select, Button, Radio, Form } from "antd";
+import { Input, Select, Button, Radio, Form, Modal } from "antd";
 import logger from "@/lib/logger";
 import logo from "@/assets/imgs/book.png";
 import android from "@/assets/imgs/android.png";
@@ -14,6 +14,8 @@ import { observer } from "mobx-react";
 import { RoomTypes, RoleTypes, isDev, isElectron } from "@/config";
 import { useRoomStore } from "@/hooks/store";
 import { GlobalStorage } from "@/utils";
+import Icon from "@/component/icon";
+import JoinSetting from '@/component/setting';
 
 const courseOptions = [
   {
@@ -51,7 +53,8 @@ const Join: FC = observer(() => {
   const roomStore = useRoomStore();
   const history = useHistory();
   const [roomNum, setRoomNum] = useState<undefined | string>(undefined);
-  const recordUrl = useMemo(() => localStorage.getItem('record-url'), [])
+  const recordUrl = useMemo(() => localStorage.getItem('record-url'), []);
+  const [showSetting, setShowSetting] = useState(false);
 
   const handleFormChange = (changedValues, allValues) => {
     const formValue = Object.keys(allValues).some(
@@ -109,6 +112,7 @@ const Join: FC = observer(() => {
 
   useEffect(() => {
     GlobalStorage.clear();
+    roomStore.setClassDuration(0);
   }, []);
 
   return (
@@ -139,6 +143,7 @@ const Join: FC = observer(() => {
           </div>
         </div>
         <div className="wrapper-joinForm">
+          <Icon className="join-setting" type="iconyx-tv-settingx" onClick={() => setShowSetting(true)} />
           <div className="wrapper-joinForm-content">
             <div className="joinForm-title-outer">
               <img src={logo} alt="" className="joinForm-book" />
@@ -237,6 +242,15 @@ const Join: FC = observer(() => {
           </div>
         </div>
       </div>
+      <Modal
+        visible={showSetting}
+        title="设置"
+        centered
+        footer={null}
+        onCancel={() => setShowSetting(false)}
+      >
+        <JoinSetting />
+      </Modal>
     </div>
   );
 });

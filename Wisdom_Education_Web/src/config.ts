@@ -85,3 +85,9 @@ export interface ShareListItem {
   appIcon: string;
   name: string;
 }
+
+export enum SceneTypes {
+  ONE_TO_ONE = "EDU.1V1",
+  SMALL = "EDU.SMALL",
+  BIG = "EDU.BIG",
+}

@@ -27,6 +27,7 @@ const MemberList = observer(() => {
   const [searchValue, setSearchValue] = useState('');
   const [messageCount, setMessageCount] = useState<number>(0);
   const [muteAllBtnHover, setMuteAllBtnHover] = useState(false);
+  const [lastMemNum, setLastMemNum] = useState(0)
   // const count = useRef(0);
 
   const roomStore = useRoomStore();
@@ -422,8 +423,9 @@ const MemberList = observer(() => {
   }, [moreVisible])
 
   useEffect( () => {
-    if (userInfo.role === RoleTypes.host && memberAllLength > 0) {
+    if (userInfo.role === RoleTypes.host && memberAllLength > 0 && memberAllLength > lastMemNum) {
       message.info('有新的举手申请')
+      setLastMemNum(memberAllLength)
     }
   }, [memberAllLength, userInfo.role])
 
@@ -455,7 +457,7 @@ const MemberList = observer(() => {
           </div>
         </div>
       }
-      <div className="list-wrapper">
+      {snapRoomInfo?.properties?.chatRoom?.chatRoomId && <div className="list-wrapper">
         <div className="list-content">
           <Button
             onClick={handleChatModal}
@@ -467,7 +469,7 @@ const MemberList = observer(() => {
           }
           <p className="gray">聊天室</p>
         </div>
-      </div>
+      </div>}
       <Modal
         title={Number(roomInfo.sceneType) === RoomTypes.bigClass ? memberTabs() : `课堂成员 (${studentData?.length})`}
         wrapClassName="memberModal"

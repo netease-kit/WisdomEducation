@@ -1,12 +1,12 @@
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("react"), require("./lib/RecordPlayer/RecordPlayer_v3.1.2.js"));
+		module.exports = factory(require("react"), require("./lib/RecordPlayer/RecordPlayer_v3.4.1.js"));
 	else if(typeof define === 'function' && define.amd)
-		define(["react", "./lib/RecordPlayer/RecordPlayer_v3.1.2.js"], factory);
+		define(["react", "./lib/RecordPlayer/RecordPlayer_v3.4.1.js"], factory);
 	else if(typeof exports === 'object')
-		exports["NERTCReplay"] = factory(require("react"), require("./lib/RecordPlayer/RecordPlayer_v3.1.2.js"));
+		exports["NERTCReplay"] = factory(require("react"), require("./lib/RecordPlayer/RecordPlayer_v3.4.1.js"));
 	else
-		root["NERTCReplay"] = factory(root["react"], root["./lib/RecordPlayer/RecordPlayer_v3.1.2.js"]);
+		root["NERTCReplay"] = factory(root["react"], root["./lib/RecordPlayer/RecordPlayer_v3.4.1.js"]);
 })(self, function(__WEBPACK_EXTERNAL_MODULE_react__, __WEBPACK_EXTERNAL_MODULE_RecordPlayer__) {
 return /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
@@ -40,7 +40,7 @@ function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o =
 
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
-function _iterableToArrayLimit(arr, i) { var _i = arr && (typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"]); if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+function _iterableToArrayLimit(arr, i) { var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"]; if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
@@ -56,7 +56,7 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
 
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } else if (call !== void 0) { throw new TypeError("Derived constructors may only return object or undefined"); } return _assertThisInitialized(self); }
 
 function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
 
@@ -380,7 +380,7 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
 
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } else if (call !== void 0) { throw new TypeError("Derived constructors may only return object or undefined"); } return _assertThisInitialized(self); }
 
 function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
 
@@ -553,7 +553,9 @@ var VideoBox = /*#__PURE__*/function (_React$Component) {
         console.log('李四 props');
       }
 
-      var hidden = this.props.hidden || !this.state.videoOn;
+      var hidden = !this.state.videoOn;
+      var _this$props$needContr = this.props.needControl,
+          needControl = _this$props$needContr === void 0 ? true : _this$props$needContr;
       return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
         className: 'videobox'
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("video", {
@@ -561,14 +563,14 @@ var VideoBox = /*#__PURE__*/function (_React$Component) {
         onWaiting: this.handleWait,
         onCanPlay: this.handleCanPlay,
         src: this.props.url,
-        muted: !this.state.audioOn || hidden,
+        muted: !this.state.audioOn || this.props.hidden,
         style: {
           width: '100%',
           visibility: hidden ? 'hidden' : 'visible'
         }
       }), hidden && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
         className: 'video-black'
-      }), this.renderControls());
+      }), needControl && this.renderControls());
     }
   }, {
     key: "renderControls",
@@ -627,7 +629,7 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
 
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } else if (call !== void 0) { throw new TypeError("Derived constructors may only return object or undefined"); } return _assertThisInitialized(self); }
 
 function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
 
@@ -685,7 +687,7 @@ var VideoGroup = /*#__PURE__*/function (_React$Component) {
           width: this.props.videoWidth + 20
         }
       }, this.props.videos.map(function (v) {
-        return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+        return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement((react__WEBPACK_IMPORTED_MODULE_0___default().Fragment), null, _this2.props.showIds.includes(v.id) && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
           key: v.id,
           style: {
             marginBottom: 10
@@ -705,7 +707,7 @@ var VideoGroup = /*#__PURE__*/function (_React$Component) {
           onCanPlay: function onCanPlay() {
             return _this2.handleCanPlay(v.id);
           }
-        }));
+        })));
       }));
     }
   }]);
@@ -745,7 +747,7 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
 
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } else if (call !== void 0) { throw new TypeError("Derived constructors may only return object or undefined"); } return _assertThisInitialized(self); }
 
 function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
 
@@ -1000,14 +1002,17 @@ function _arrayLikeToArray(arr, len) {
 }
 
 function _iterableToArrayLimit(arr, i) {
-  if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return;
+  var _i = arr && (typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"]);
+
+  if (_i == null) return;
   var _arr = [];
   var _n = true;
   var _d = false;
-  var _e = undefined;
+
+  var _s, _e;
 
   try {
-    for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
+    for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) {
       _arr.push(_s.value);
 
       if (i && _arr.length === i) break;
@@ -1034,6 +1039,10 @@ module.exports = function cssWithMappingToString(item) {
   var _item = _slicedToArray(item, 4),
       content = _item[1],
       cssMapping = _item[3];
+
+  if (!cssMapping) {
+    return content;
+  }
 
   if (typeof btoa === "function") {
     // eslint-disable-next-line no-undef
@@ -1778,7 +1787,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_cssWithMappingToString_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".replay-div {\n  height: 100%;\n}\n.replay-div div {\n  box-sizing: border-box;\n}\n.replay-div .main {\n  height: calc(100% - 45px);\n}\n.replay-div .main .main-wb {\n  padding: 10px;\n  height: 100%;\n  display: inline-block;\n}\n.replay-div .main .main-video {\n  overflow: auto;\n  padding: 10px;\n  height: 100%;\n  display: inline-flex;\n  flex-direction: column;\n  vertical-align: top;\n}\n.replay-div .footer {\n  width: 100%;\n  height: 34px;\n}\n", "",{"version":3,"sources":["webpack://./src/component/Replay.less"],"names":[],"mappings":"AAAA;EACI,YAAA;AACJ;AAFA;EAIQ,sBAAA;AACR;AALA;EAQQ,yBAAA;AAAR;AARA;EAWY,aAAA;EACA,YAAA;EACA,qBAAA;AAAZ;AAbA;EAiBY,cAAA;EACA,aAAA;EACA,YAAA;EACA,oBAAA;EACA,sBAAA;EACA,mBAAA;AADZ;AArBA;EA2BQ,WAAA;EACA,YAAA;AAHR","sourcesContent":[".replay-div {\n    height: 100%;\n\n    div {\n        box-sizing: border-box;\n    }\n\n    .main {\n        height: calc(100% - 45px);\n\n        .main-wb {\n            padding: 10px;\n            height: 100%;\n            display: inline-block;\n        }\n\n        .main-video {\n            overflow: auto;\n            padding: 10px;\n            height: 100%;\n            display: inline-flex;\n            flex-direction: column;\n            vertical-align: top;\n        }\n    }\n\n    .footer {\n        width: 100%;\n        height: 34px;\n    }\n}"],"sourceRoot":""}]);
+___CSS_LOADER_EXPORT___.push([module.id, ".replay-div {\n  height: 100%;\n}\n.replay-div div {\n  box-sizing: border-box;\n}\n.replay-div .main {\n  height: calc(100% - 45px);\n  position: relative;\n}\n.replay-div .main .main-wb {\n  padding: 10px;\n  height: 100%;\n  display: inline-block;\n}\n.replay-div .main .main-video {\n  overflow: auto;\n  padding: 10px;\n  height: 100%;\n  display: inline-flex;\n  flex-direction: column;\n  vertical-align: top;\n}\n.replay-div .main .screen-share {\n  position: absolute;\n  height: 100%;\n  left: 0;\n  top: 0;\n  overflow: hidden;\n}\n.replay-div .main .screen-share .videobox {\n  width: 100%;\n  height: 100%;\n  padding: 10px;\n}\n.replay-div .main .screen-share .videobox video {\n  height: 100%;\n  background: #000;\n}\n.replay-div .footer {\n  width: 100%;\n  height: 34px;\n}\n", "",{"version":3,"sources":["webpack://./src/component/Replay.less"],"names":[],"mappings":"AAAA;EACI,YAAA;AACJ;AAFA;EAIQ,sBAAA;AACR;AALA;EAQQ,yBAAA;EACA,kBAAA;AAAR;AATA;EAWY,aAAA;EACA,YAAA;EACA,qBAAA;AACZ;AAdA;EAiBY,cAAA;EACA,aAAA;EACA,YAAA;EACA,oBAAA;EACA,sBAAA;EACA,mBAAA;AAAZ;AAtBA;EAyBY,kBAAA;EACA,YAAA;EACA,OAAA;EACA,MAAA;EACA,gBAAA;AAAZ;AA7BA;EA+BgB,WAAA;EACA,YAAA;EACA,aAAA;AAChB;AAlCA;EAmCoB,YAAA;EACA,gBAAA;AAEpB;AAtCA;EA2CQ,WAAA;EACA,YAAA;AAFR","sourcesContent":[".replay-div {\n    height: 100%;\n\n    div {\n        box-sizing: border-box;\n    }\n\n    .main {\n        height: calc(100% - 45px);\n        position: relative;\n        .main-wb {\n            padding: 10px;\n            height: 100%;\n            display: inline-block;\n        }\n\n        .main-video {\n            overflow: auto;\n            padding: 10px;\n            height: 100%;\n            display: inline-flex;\n            flex-direction: column;\n            vertical-align: top;\n        }\n        .screen-share{\n            position: absolute;\n            height: 100%;\n            left: 0;\n            top: 0;\n            overflow: hidden;\n            .videobox{\n                width: 100%;\n                height: 100%;\n                padding: 10px;\n                video{\n                    height: 100%;\n                    background: #000;\n                }\n            }\n        }\n    }\n\n    .footer {\n        width: 100%;\n        height: 34px;\n    }\n}"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -1955,7 +1964,7 @@ module.exports = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5v
 
 /***/ "RecordPlayer":
 /*!************************************************************!*\
-  !*** external "./lib/RecordPlayer/RecordPlayer_v3.1.2.js" ***!
+  !*** external "./lib/RecordPlayer/RecordPlayer_v3.4.1.js" ***!
   \************************************************************/
 /***/ ((module) => {
 
@@ -2062,6 +2071,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Control__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Control */ "./src/component/Control.tsx");
 /* harmony import */ var _Replay_less__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./Replay.less */ "./src/component/Replay.less");
 /* harmony import */ var _VideoGroup__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./VideoGroup */ "./src/component/VideoGroup.tsx");
+/* harmony import */ var _VideoBox__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./VideoBox */ "./src/component/VideoBox.tsx");
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -2076,7 +2086,7 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
 
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } else if (call !== void 0) { throw new TypeError("Derived constructors may only return object or undefined"); } return _assertThisInitialized(self); }
 
 function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
 
@@ -2090,6 +2100,14 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
 
 
 
+
+var SceneTypes;
+
+(function (SceneTypes) {
+  SceneTypes["ONE_TO_ONE"] = "EDU.1V1";
+  SceneTypes["SMALL"] = "EDU.SMALL";
+  SceneTypes["BIG"] = "EDU.BIG";
+})(SceneTypes || (SceneTypes = {}));
 
 var Replay = /*#__PURE__*/function (_React$Component) {
   _inherits(Replay, _React$Component);
@@ -2116,6 +2134,18 @@ var Replay = /*#__PURE__*/function (_React$Component) {
         playing: true,
         syncAt: _this.state.currTime,
         syncTimestamp: new Date().valueOf()
+      }, function () {
+        var _a;
+
+        if (_this.checkSecond(_this.state.currTime) >= _this.checkSecond(_this.state.endAt - _this.state.beginAt)) {
+          (_a = _this.ticktick) === null || _a === void 0 ? void 0 : _a.setCurrentTime(0);
+
+          _this.setState({
+            currTime: 0,
+            syncAt: 0,
+            syncTimestamp: new Date().valueOf()
+          });
+        }
       });
 
       (_a = _this.ticktick) === null || _a === void 0 ? void 0 : _a.play();
@@ -2130,6 +2160,7 @@ var Replay = /*#__PURE__*/function (_React$Component) {
         syncTimestamp: new Date().valueOf()
       });
 
+      console.log('handlePause time', _this.state.currTime);
       (_a = _this.ticktick) === null || _a === void 0 ? void 0 : _a.pause();
     };
 
@@ -2187,17 +2218,20 @@ var Replay = /*#__PURE__*/function (_React$Component) {
       }
     };
 
-    var store = props.store;
-    var beginAt = store.wbTracks.concat(store.videoTracks).reduce(function (prev, track) {
-      return Math.min(prev, track.start);
-    }, Number.POSITIVE_INFINITY);
-    var endAt = store.wbTracks.concat(store.videoTracks).reduce(function (prev, track) {
+    var store = props.store; // const beginAt = store.wbTracks.concat(store.videoTracks).reduce((prev, track) => {
+    //     return Math.min(prev, track.start)
+    // }, Number.POSITIVE_INFINITY)
+
+    var beginAt = store.record.startTime;
+    var endAt = store.videoTracks.reduce(function (prev, track) {
       return Math.max(prev, track.end);
     }, Number.NEGATIVE_INFINITY);
 
     if (store.wbTracks.length > 0) {
-      _this.wbBegin = store.wbTracks[0].start - beginAt;
-      _this.wbEnd = store.wbTracks[0].end - beginAt;
+      // this.wbBegin = store.wbTracks[0].start - beginAt
+      // this.wbEnd = store.wbTracks[0].end - beginAt
+      _this.wbBegin = beginAt;
+      _this.wbEnd = endAt;
     }
 
     store.videoTracks.forEach(function (t, index) {
@@ -2206,6 +2240,7 @@ var Replay = /*#__PURE__*/function (_React$Component) {
     });
     console.log('白板开始时间', _this.wbBegin);
     console.log('白板结束时间', _this.wbEnd);
+    console.log('开始和结束时间', beginAt, endAt);
     _this.state = {
       playing: false,
       currTime: 0,
@@ -2228,16 +2263,7 @@ var Replay = /*#__PURE__*/function (_React$Component) {
       var wbUrls = store.wbTracks.map(function (t) {
         return t.url;
       });
-      this.ticktick = new _utils_TickTick__WEBPACK_IMPORTED_MODULE_2__.default();
-      this.ticktick.on('tick', function (time) {
-        if(_this2.player) {
-          _this2.player.seekTo(time - _this2.wbBegin);
-          _this2.setState({
-            currTime: time
-          });
-        }
-        
-      });
+      console.log("RecordPlayer", (RecordPlayer__WEBPACK_IMPORTED_MODULE_1___default()));
       RecordPlayer__WEBPACK_IMPORTED_MODULE_1___default().getInstance({
         whiteboardParams: {
           urlArr: wbUrls,
@@ -2246,6 +2272,21 @@ var Replay = /*#__PURE__*/function (_React$Component) {
       }).then(function (_ref) {
         var player = _ref.player;
         _this2.player = player;
+        _this2.ticktick = new _utils_TickTick__WEBPACK_IMPORTED_MODULE_2__.default();
+
+        _this2.ticktick.on('tick', function (time) {
+          _this2.player.seekTo(time);
+
+          _this2.setState({
+            currTime: time
+          });
+
+          if (time > _this2.state.endAt - _this2.state.beginAt) {
+            _this2.handlePause();
+          }
+        });
+
+        player.setTimeRange(_this2.state.beginAt);
       });
     }
   }, {
@@ -2263,8 +2304,10 @@ var Replay = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "getVideosOfMoment",
     value: function getVideosOfMoment(time) {
+      var isScreen = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
       var store = this.props.store;
-      var visibleVIds = store.videoTracks.filter(function (t) {
+      var arr = isScreen ? store.screenTracks : store.videoTracks;
+      var visibleVIds = arr.filter(function (t) {
         var inRange = time >= t.start && time <= t.end;
 
         if (!inRange) {
@@ -2272,13 +2315,49 @@ var Replay = /*#__PURE__*/function (_React$Component) {
         } else {
           //看看是否因为进出事件，导致视频不应该播放
           var events = store.events.filter(function (ev) {
-            return ev.userId === t.userId && ev.timestamp <= time;
+            return ev.userId == t.userId && ev.timestamp <= time && (isScreen ? t.subStream : !t.subStream);
           });
 
-          if (events.length > 0) {
-            return events[events.length - 1].action === 'show';
+          if (events.length > 0 && isScreen) {
+            return events[events.length - 1].action === (isScreen ? 'showScreen' : 'show');
           } else {
+            return isScreen ? false : true;
+          }
+        }
+      }).map(function (t) {
+        return t.id;
+      });
+      return visibleVIds;
+    }
+    /**
+     * 获取时间time时，正在播放，且根据各种事件，应该被播放的视频文件
+     * @param time
+     */
+
+  }, {
+    key: "getShowVideosOfMoment",
+    value: function getShowVideosOfMoment(time) {
+      var store = this.props.store;
+      var arr = store.videoTracks;
+      var visibleVIds = arr.filter(function (t) {
+        var inRange = time >= t.start && time <= t.end;
+
+        if (!inRange) {
+          return SceneTypes.BIG === store.sceneType && t.role === 'host';
+        } else {
+          //看看是否因为进出事件，导致视频不应该播放
+          var events = store.events.filter(function (ev) {
+            return ev.userId == t.userId && ev.timestamp <= time;
+          });
+
+          if (SceneTypes.BIG === store.sceneType && t.role === 'host') {
             return true;
+          } else if (SceneTypes.BIG !== store.sceneType) {
+            return true;
+          } else if (events.length > 0) {
+            return events[events.length - 1].action !== 'remove';
+          } else {
+            return false;
           }
         }
       }).map(function (t) {
@@ -2287,13 +2366,18 @@ var Replay = /*#__PURE__*/function (_React$Component) {
       return visibleVIds;
     }
   }, {
+    key: "checkSecond",
+    value: function checkSecond(num) {
+      return Math.floor(num / 1000);
+    }
+  }, {
     key: "render",
     value: function render() {
       return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
         className: 'replay-div'
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
         className: 'main'
-      }, this.renderWhiteboard(), this.renderVideoGroup()), this.renderControls());
+      }, this.renderWhiteboard(), this.renderScreenGroup(), this.renderVideoGroup()), this.renderControls());
     }
   }, {
     key: "renderWhiteboard",
@@ -2310,6 +2394,7 @@ var Replay = /*#__PURE__*/function (_React$Component) {
     key: "renderVideoGroup",
     value: function renderVideoGroup() {
       var visibleVIds = this.getVideosOfMoment(this.state.currTime + this.state.beginAt);
+      var showIds = this.getShowVideosOfMoment(this.state.currTime + this.state.beginAt);
       return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_VideoGroup__WEBPACK_IMPORTED_MODULE_5__.default, {
         beginOffset: this.state.beginAt,
         videoWidth: this.props.config.videoWidth,
@@ -2321,8 +2406,32 @@ var Replay = /*#__PURE__*/function (_React$Component) {
         syncAt: this.state.syncAt,
         syncTimestamp: this.state.syncTimestamp,
         speed: this.state.speed,
-        visibleVIds: visibleVIds
+        visibleVIds: visibleVIds,
+        showIds: showIds
       });
+    }
+  }, {
+    key: "renderScreenGroup",
+    value: function renderScreenGroup() {
+      var visibleVIds = this.getVideosOfMoment(this.state.currTime + this.state.beginAt, true);
+      return this.props.store.screenTracks.length > 0 && visibleVIds.includes(this.props.store.screenTracks[0].id) && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+        className: "screen-share",
+        style: {
+          width: "calc(100% - ".concat(this.props.config.videoWidth + 20, "px)")
+        }
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_VideoBox__WEBPACK_IMPORTED_MODULE_6__.default, {
+        playing: this.state.playing,
+        url: this.props.store.screenTracks[0].url,
+        name: this.props.store.screenTracks[0].name,
+        role: this.props.store.screenTracks[0].role,
+        hidden: false,
+        speed: this.state.speed,
+        syncAt: this.state.syncAt,
+        syncTimestamp: this.state.syncTimestamp,
+        onWait: this.handleWait,
+        onCanPlay: this.handleCanPlay,
+        needControl: false
+      }));
     }
   }, {
     key: "renderControls",

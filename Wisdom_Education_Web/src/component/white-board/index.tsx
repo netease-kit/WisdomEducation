@@ -18,36 +18,38 @@ const WhiteBoard:React.FC = observer(() => {
 
   useEffect(() => {
     if (joinFinish && wbRef.current) {
-      const { localUserInfo: { imKey, userUuid, imToken, userName, role }, entryData, roomInfo: { sceneType } } = roomStore;
-      const { room: { properties: { chatRoom: { chatRoomId } } } } = entryData;
+      const { localUserInfo: { role }, roomInfo: { sceneType } } = roomStore;
       const enbaleDraw = role === RoleTypes.host || Number(sceneType) === RoomTypes.oneToOne;
+      whiteBoardStore.setContainer(wbRef.current);
+      whiteBoardStore.setToolCollection(wbRef.current)
       roomStore.setLocalWbDrawEnable(enbaleDraw);
-      if (snapRoomInfo?.properties?.whiteboard?.channelName) {
-        if (!whiteBoardStore.wbInstance) {
-          whiteBoardStore.initWhiteBoard({
-            appKey: imKey,
-            account: userUuid,
-            token: imToken,
-            container: wbRef.current,
-            nickname: userName,
-          }).then(async () => {
-            await whiteBoardStore.joinRoom({
-              channel: (snapRoomInfo?.properties?.whiteboard?.channelName as number),
-            })
-            whiteBoardStore.setEnableDraw(enbaleDraw);
-          }).catch((e) => {
-            logger.log('白板加入异常', e)
-          });
-        } else {
-          whiteBoardStore.joinRoom({
-            channel: chatRoomId,
-          }).then(() => {
-            whiteBoardStore.setEnableDraw(enbaleDraw);
-          }).catch((e) => {
-            logger.log('白板加入异常', e)
-          });
-        }
-      }
+      whiteBoardStore.setEnableDraw(enbaleDraw);
+      // if (snapRoomInfo?.properties?.whiteboard?.channelName) {
+      //   if (!whiteBoardStore.wbInstance) {
+      //     whiteBoardStore.initWhiteBoard({
+      //       appKey: imKey,
+      //       account: userUuid,
+      //       token: imToken,
+      //       container: wbRef.current,
+      //       nickname: userName,
+      //     }).then(async () => {
+      //       await whiteBoardStore.joinRoom({
+      //         channel: (snapRoomInfo?.properties?.whiteboard?.channelName as number),
+      //       })
+      //       whiteBoardStore.setEnableDraw(enbaleDraw);
+      //     }).catch((e) => {
+      //       logger.log('白板加入异常', e)
+      //     });
+      //   } else {
+      //     whiteBoardStore.joinRoom({
+      //       channel: chatRoomId,
+      //     }).then(() => {
+      //       whiteBoardStore.setEnableDraw(enbaleDraw);
+      //     }).catch((e) => {
+      //       logger.log('白板加入异常', e)
+      //     });
+      //   }
+      // }
     }
   }, [roomStore, joinFinish, whiteBoardStore, wbRef, snapRoomInfo?.properties?.whiteboard?.channelName]);
 

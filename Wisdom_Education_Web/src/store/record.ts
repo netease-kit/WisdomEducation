@@ -7,18 +7,22 @@ import { AppStore } from './index';
 import logger from '@/lib/logger';
 import { IEvent, ITrack } from '@/pages/record/index';
 import { getRecordInfo } from '@/services/api';
+import { SceneTypes, RoleTypes } from '@/config';
 
 interface IpStore {
   videoTracks: Array<ITrack>
   wbTracks: Array<ITrack>
   events: Array<IEvent>
+  record: Array<any>;
+  screenTracks: Array<ITrack>
+  sceneType: SceneTypes
 }
 
 export class RecordStore {
   public appStore: AppStore;
 
   @observable
-  _store: IpStore = { videoTracks: [], wbTracks: [], events: [] };
+  _store: IpStore = { videoTracks: [], wbTracks: [], events: [], record: [], screenTracks: [], sceneType: SceneTypes.ONE_TO_ONE };
   /**
    * uid到name，video, event的查询方法
    * 传递给Replay时，uname要拼接到video tracks，wb tracks中,
@@ -102,35 +106,60 @@ export class RecordStore {
     }
 
     const videoTracks: Array<ITrack> = []
+    const screenTracks: Array<ITrack> = []
     const wbTracks: Array<ITrack> = []
     const events: Array<IEvent> = []
-    for (const record of rawTracks) {
-      const member = this.uidToMember.get(record.rtcUid)
-      if (record.type === 'gz') {
+    const { record, sceneType } = entry;
+    for (const item of rawTracks) {
+      const member = this.uidToMember.get(item.rtcUid)
+      if (item.type === 'gz') {
         wbTracks.push({
-          id: record.id, // ?
-          userId: record.roomUid,
-          // name: member ? member.userName : record.roomUid, // ?
-          name: record.userName || record.roomUid, // ?
-          role: record.role || '未知身份',
-          // url: record.url.replace(/^(https|http)?\:/i,""),
-          url: record.url,
+          id: item.roomUid, // ?
+          userId: item.roomUid,
+          name: item.userName || item.roomUid, // ?
+          role: item.role || '未知身份',
+          url: item.url,
           type: 'whiteboard',
-          start: record.timestamp,
-          end: record.timestamp + (record.duration || 11) * 1000
+          start: record.startTime,
+          end: record.startTime + (item.duration || 11) * 1000
         })
+      } else if (!item.subStream) {
+        if (item.role === RoleTypes.host) {
+          videoTracks.unshift({
+            id: item.roomUid, // ?
+            userId: item.roomUid,
+            name: `${item.userName}(老师)` || item.roomUid, // ?
+            role: item.role || '未知身份',
+            url: item.url,
+            type: 'video',
+            start: record.startTime,
+            subStream: item.subStream,
+            end: record.startTime + (item.duration || 1) * 1000
+          })
+        } else {
+          videoTracks.push({
+            id: item.roomUid, // ?
+            userId: item.roomUid,
+            name: `${item.userName}(学生)` || item.roomUid, // ?
+            role: item.role || '未知身份',
+            url: item.url,
+            type: 'video',
+            start: record.startTime,
+            subStream: item.subStream,
+            end: record.startTime + (item.duration || 1) * 1000
+          })
+        }
       } else {
-        videoTracks.push({
-          id: record.id, // ?
-          userId: record.roomUid,
-          // name: member ? member.userName : record.roomUid, // ?
-          name: record.userName || record.roomUid, // ?
-          role: record.role || '未知身份',
-          // url: record.url.replace(/^(https|http)?\:/i,""),
-          url: record.url,
-          type: 'video',
-          start: record.timestamp,
-          end: record.timestamp + (record.duration || 1) * 1000
+        screenTracks.push({
+          id: item.roomUid, // ?
+          userId: item.roomUid,
+          name: item.userName || item.roomUid, // ?
+          role: item.role || '未知身份',
+          url: item.url,
+          type: 'screen',
+          start: item.timestamp,
+          end: item.timestamp + (item.duration || 1) * 1000,
+          subStream: item.subStream
         })
       }
     }
@@ -138,14 +167,44 @@ export class RecordStore {
     for (const event of rawEvents) {
       events.push({
         userId: event.roomUid,
-        action: (event.type === 1 || event.type === 3) ? 'show' : 'hide',
+        action: this.checkEventType(event.type, sceneType),
         timestamp: event.timestamp
       })
     }
+    console.log('events', events);
 
     this._store = {
-      videoTracks, wbTracks, events
+      videoTracks, wbTracks, events, record, screenTracks, sceneType
     }
 
+  }
+
+  private checkEventType = (type: number, sceneType: SceneTypes) => {
+    let result: "show" | "hide" | "showScreen" | "remove";
+    switch (true) {
+      case SceneTypes.BIG === sceneType && [3, 5, 9].includes(type):
+        result = 'show';
+        break;
+      case SceneTypes.BIG === sceneType && [1].includes(type):
+        result = 'remove';
+        break;
+      case SceneTypes.BIG !== sceneType && [1, 3, 5, 9].includes(type):
+        result = 'show';
+        break;
+      case [7].includes(type):
+        result = 'showScreen';
+        break;
+      case [2, 10].includes(type):
+        result = 'remove';
+        break;
+      default:
+        if (SceneTypes.BIG === sceneType && ![4, 6].includes(type)) {
+          result = 'remove';
+        } else {
+          result = 'hide';
+        }
+        break;
+    }
+    return result;
   }
 }

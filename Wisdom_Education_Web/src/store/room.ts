@@ -422,7 +422,7 @@ export class RoomStore extends EnhancedEventEmitter {
     // const localUserInfo = await login(joinOptions.userUuid);
     this.setRoomState("课程未开始");
     runInAction(() => {
-      this.classDuration = 0;
+      this.setClassDuration(0)
       this.setPrevToNowTime("");
       this._joined = true;
     });
@@ -457,7 +457,9 @@ export class RoomStore extends EnhancedEventEmitter {
     const { roomUuid, roomName, sceneType } = this.appStore.roomInfo;
     const { userUuid, userName, role, imKey, imToken } = this.localUserInfo;
     try {
-      await createRoom(roomUuid, `${userName}的课堂`, Number(sceneType)).catch(
+      const joinSettingInfo = localStorage.getItem('join-room-setting');
+      const resource = joinSettingInfo ? JSON.parse(joinSettingInfo) : {};
+      await createRoom(roomUuid, `${userName}的课堂`, Number(sceneType), resource).catch(
         (data) => {
           if (data?.code !== 409) {
             logger.error("创建异常", data);
@@ -479,8 +481,9 @@ export class RoomStore extends EnhancedEventEmitter {
       });
       throw Error(error?.code);
     }
-    const { member = {} } = this._entryData;
-    const { rtcKey, rtcToken, rtcUid } = member;
+    const { member = {}, room = {} } = this._entryData;
+    const { rtcKey, rtcToken, rtcUid, wbAuth } = member;
+    const { checksum, curTime, nonce } = wbAuth;
     // 每次加入房间重新实例化webRtc 否则在第二次登录进来，会导致共享有问题
     // if (!this._webRtcInstance) {
 
@@ -544,6 +547,10 @@ export class RoomStore extends EnhancedEventEmitter {
       logger.log("网络状态变更", _data);
       if (isElectron) {
         if ([1, 2, 3].includes(_data.reason)) {
+          this.channelClosed = true;
+        }
+      } else {
+        if (_data.curState === "DISCONNECTED" && this.joined) {
           this.channelClosed = true;
         }
       }
@@ -625,6 +632,22 @@ export class RoomStore extends EnhancedEventEmitter {
       video: mediaStatus,
       needPublish: mediaStatus,
     });
+    const enbaleDraw = role === RoleTypes.host || Number(sceneType) === RoomTypes.oneToOne;
+    if (!this.appStore.whiteBoardStore.wbInstance) {
+      await this.appStore.whiteBoardStore.initWhiteBoard({
+        appKey: imKey,
+        uid: rtcUid,
+        container: document.createElement('div'),
+        nickname: userName,
+        checksum,
+        nonce,
+        curTime: Number(curTime),
+      });
+      await this.appStore.whiteBoardStore.joinRoom({
+        channel: (room.properties?.whiteboard?.channelName as number),
+      })
+      // await this.appStore.whiteBoardStore.setEnableDraw(enbaleDraw);
+    }
     await this.getMemberList();
     runInAction(() => {
       this._joinFinish = true;
@@ -886,9 +909,15 @@ export class RoomStore extends EnhancedEventEmitter {
               if (item?.value === HandsUpTypes.teacherOff) {
                 this.appStore.uiStore.showToast("老师结束了你的上台操作");
                 this._webRtcInstance?.unpublish();
+                if (this._localWbDrawEnable) {
+                  this._localWbDrawEnable = false;
+                }
               }
               if (item?.value === HandsUpTypes.init) {
                 this._webRtcInstance?.unpublish();
+                if (this._localWbDrawEnable) {
+                  this._localWbDrawEnable = false;
+                }
               }
               break;
             default:
@@ -998,6 +1027,16 @@ export class RoomStore extends EnhancedEventEmitter {
   }
 
   /**
+   * @description: 设置课堂时间
+   * @param {number} time
+   * @return {*}
+   */
+  @action
+  public setClassDuration(time: number): void {
+    this.classDuration = time || 0;
+  }
+
+  /**
    * @description: 离开房间
    * @param {*}
    * @return {*}
@@ -1014,7 +1053,6 @@ export class RoomStore extends EnhancedEventEmitter {
     this._webRtcInstance?.leave();
     this._webRtcInstance?.destroy();
     this._webRtcInstance = null;
-    this._nimInstance.logoutImServer();
     // this.classDuration = 0;
     this.setFinishBtnShow(false);
     this.appStore.whiteBoardStore.destroy();
@@ -1022,6 +1060,7 @@ export class RoomStore extends EnhancedEventEmitter {
     this.setRoomState("");
     this.reset();
     GlobalStorage.clear();
+    await this._nimInstance.logoutImServer();
   }
 
   /**
@@ -1526,7 +1565,8 @@ export class RoomStore extends EnhancedEventEmitter {
             break;
           case "step":
             if (item.value === 1 && time) {
-              this.classDuration = time - item.time;
+              this.setClassDuration(time - item.time);
+              localStorage.setItem('record-url', `/record?roomUuid=${this.entryData.room.roomUuid}&rtcCid=${this.entryData.room.rtcCid}`)
             } else if (item.value === 2) {
               const { roomUuid } = this.snapRoomInfo;
               const {
