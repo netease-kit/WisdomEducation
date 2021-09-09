@@ -32,6 +32,7 @@
     NEEduCreateRoomRequest *request = [[NEEduCreateRoomRequest alloc] init];
     request.roomName = room.roomName;
     request.configId = room.configId;
+    request.config = room.config;
     self.room = room;
     NSDictionary *param = [request yy_modelToJSONObject];
     [HttpManager createRoom:room.roomUuid param:param classType:[NEEduCreateRoomRequest class] success:^(id  _Nonnull objModel) {

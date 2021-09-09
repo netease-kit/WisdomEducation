@@ -22,6 +22,10 @@
  web登录IM成功,可以忽略
  */
 - (void)onWebLoginIMSucceed;
+/**
+ web获取auth信息
+ */
+- (void)onWebGetAuth;
 
 /**
  web创建白板房间成功,可以忽略
@@ -32,14 +36,6 @@
  web加入白板房间成功,可以忽略
  */
 - (void)onWebJoinWBSucceed;
-
-/**
- 提示web登录IM的错误及原因
- 
- @param code 错误码
- @param error 具体错误信息
- */
-- (void)onWebLoginIMFailed:(NSInteger)code error:(NSString *)error;
 
 /**
  提示web加入白板房间的错误及原因
@@ -77,6 +73,18 @@
  */
 - (void)onWebJsError:(NSString *)error;
 
+@end
+
+
+@protocol NEWBRecordPlayDelegate <NSObject>
+
+- (void)onPrepared:(NSDictionary *)dic;
+
+- (void)onPlayTime:(NSInteger)time;
+
+- (void)onDurationChanged:(NSInteger)duration;
+
+- (void)onPlayFinished;
 @end
 
 #endif /* NMCWhiteboardManagerProtocol_h */

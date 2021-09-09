@@ -17,7 +17,6 @@
 @interface NEEduManager ()
 @property (nonatomic, strong, readwrite) NEEduHttpUser *localUser;
 @property (nonatomic, copy, readwrite) NSString *imKey;
-@property (nonatomic, copy, readwrite) NSString *imToken;
 @property (nonatomic, strong) NEEduEnterRoomParam *roomParam;
 @property (nonatomic, strong) NEEduHttpRoom *room;
 @end
@@ -41,7 +40,6 @@
 - (void)login:(NSString *)userID token:(NSString *)token success:(void(^)(NEEduUser *user))success failure:(void(^)(NSError *error))failure {
     [HttpManager loginWithUserId:userID token:token analysisClass:[NEEduUser class] success:^(NEEduUser * _Nonnull objModel) {
         self.imKey = objModel.imKey;
-        self.imToken = objModel.imToken;
         [self.rtcService setupAppkey:objModel.rtcKey];
         
         [self.imService addIMDelegate];
@@ -86,7 +84,6 @@
 - (void)easyLoginWithSuccess:(void(^)(NEEduUser *user))success failure:(void(^)(NSError *error))failure {
     [HttpManager loginWithAnalysisClass:[NEEduUser class] success:^(NEEduUser * _Nonnull objModel) {
         self.imKey = objModel.imKey;
-        self.imToken = objModel.imToken;
         if (objModel.userUuid && objModel.userToken) {
             [HttpManager addHeaderFromDictionary:@{@"user":objModel.userUuid,@"token":objModel.userToken}];
         }
@@ -242,8 +239,9 @@
 
 - (void)leaveClassroom {
     [self.rtcService leaveChannel];
+    [self.imService leaveChatRoom];
     if (!self.reuseIM) {
-        [self.imService destroy];
+        [self.imService logout];
     }
 }
 

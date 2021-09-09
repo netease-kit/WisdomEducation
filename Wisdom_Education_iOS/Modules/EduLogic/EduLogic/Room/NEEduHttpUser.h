@@ -17,6 +17,13 @@ extern NSString * const NEEduRoleHost;
 extern NSString * const NEEduRoleBroadcaster;
 extern NSString * const NEEduRoleAudience;
 
+@interface NEWebAuth : NSObject
+
+@property (nonatomic, strong) NSString *checksum;
+@property (nonatomic, strong) NSString *curTime;
+@property (nonatomic, strong) NSString *nonce;
+@end
+
 @interface NEEduHttpUser : NSObject
 @property (nonatomic , copy) NSString              * rtcKey;
 @property (nonatomic , assign) NSInteger              rtcUid;
@@ -26,6 +33,7 @@ extern NSString * const NEEduRoleAudience;
 @property (nonatomic , copy) NSString              * userUuid;
 @property (nonatomic , copy) NSString              * rtcToken;
 @property (nonatomic , strong) NEEduStreams        * streams;
+@property (nonatomic, strong) NEWebAuth *wbAuth;
 
 /// 是否上台 默认为NO 仅大班课场景使用
 @property (nonatomic, assign) BOOL isOnStage;

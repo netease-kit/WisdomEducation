@@ -14,6 +14,7 @@ PODS:
   - AFNetworking/Serialization (4.0.1)
   - AFNetworking/UIKit (4.0.1):
     - AFNetworking/NSURLSession
+  - Alamofire (5.4.3)
   - Bugly (2.5.90)
   - EduLogic (0.0.1):
     - AFNetworking (~> 4.0.1)
@@ -26,6 +27,13 @@ PODS:
     - NEWhiteBoard (~> 0.0.1)
     - SDWebImage (~> 5.11.1)
   - NEDyldYuv (0.0.1)
+  - NELivePlayer (2.9.0)
+  - NERecordPlay (0.0.1):
+    - Alamofire (~> 5.4.3)
+    - NELivePlayer (~> 2.9.0)
+    - NEWhiteBoard (~> 0.0.1)
+  - NERecordPlayUI (0.0.1):
+    - NERecordPlay (~> 0.0.1)
   - NERtcSDK (4.2.1)
   - NEScreenShareBroadcaster (0.1.0):
     - NEDyldYuv (= 0.0.1)
@@ -42,14 +50,18 @@ DEPENDENCIES:
   - Bugly
   - EduLogic (from `Modules/EduLogic/EduLogic.podspec`)
   - EduUI (from `Modules/EduUI/EduUI.podspec`)
+  - NERecordPlay (from `Modules/NERecordPlay/NERecordPlay.podspec`)
+  - NERecordPlayUI (from `Modules/NERecordPlayUI/NERecordPlayUI.podspec`)
   - NEScreenShareBroadcaster (~> 0.1.0)
   - NEWhiteBoard (from `Modules/NEWhiteBoard/NEWhiteBoard.podspec`)
 
 SPEC REPOS:
   trunk:
     - AFNetworking
+    - Alamofire
     - Bugly
     - NEDyldYuv
+    - NELivePlayer
     - NERtcSDK
     - NEScreenShareBroadcaster
     - NEScreenShareHost
@@ -62,15 +74,23 @@ EXTERNAL SOURCES:
     :path: Modules/EduLogic/EduLogic.podspec
   EduUI:
     :path: Modules/EduUI/EduUI.podspec
+  NERecordPlay:
+    :path: Modules/NERecordPlay/NERecordPlay.podspec
+  NERecordPlayUI:
+    :path: Modules/NERecordPlayUI/NERecordPlayUI.podspec
   NEWhiteBoard:
     :path: Modules/NEWhiteBoard/NEWhiteBoard.podspec
 
 SPEC CHECKSUMS:
   AFNetworking: 7864c38297c79aaca1500c33288e429c3451fdce
+  Alamofire: e447a2774a40c996748296fa2c55112fdbbc42f9
   Bugly: 88bc32c0acc6fef7b74d610f0319ee7560d6b9fe
   EduLogic: 26ed099a5ebeae3e39671efb5476efd1be03cbd5
   EduUI: b90e3347e5833769d87e67059821d1b6bf680f13
   NEDyldYuv: 6b47adff16186768bf2f8b165697fdee8e94d7ac
+  NELivePlayer: ea413988c847004efb675aac16e8cb0dbed4607c
+  NERecordPlay: 637478c7265888aa6a55d7ea32294f378bed355c
+  NERecordPlayUI: f1f951f373e5770f10c21483eadea35a19cca806
   NERtcSDK: 14c7a371b04bb264ed629a89425305be3eb23df9
   NEScreenShareBroadcaster: 6048110e58028d38c01b4fa70c478b530dbe1635
   NEScreenShareHost: be9b9fe5d0d264111e0e44956ad7c90b451951c0
@@ -79,6 +99,6 @@ SPEC CHECKSUMS:
   SDWebImage: a7f831e1a65eb5e285e3fb046a23fcfbf08e696d
   YYModel: 2a7fdd96aaa4b86a824e26d0c517de8928c04b30
 
-PODFILE CHECKSUM: bfd9310f0c3c615c7f79fcc9b74917493ed8916e
+PODFILE CHECKSUM: b88e4cf77bdb179eff2848c5fe7bc38f0a127c19
 
 COCOAPODS: 1.10.1

@@ -32,7 +32,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong ,readonly) NEEduHttpUser *localUser;
 
 @property (nonatomic, copy, readonly) NSString *imKey;
-@property (nonatomic, copy, readonly) NSString *imToken;
 @property (nonatomic, assign) BOOL reuseIM;
 
 + (instancetype)shared;

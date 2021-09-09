@@ -58,11 +58,7 @@
     handsupItem.type = NEEduMenuItemTypeHandsup;
     [handsupItem setSelctedImage:[UIImage ne_imageNamed:@"menu_handsup_select"]];
     self.handsupItem = handsupItem;
-    
-    NEEduMenuItem *chatItem = [[NEEduMenuItem alloc] initWithTitle:@"聊天室" image:[UIImage ne_imageNamed:@"menu_chat"]];
-    chatItem.type = NEEduMenuItemTypeChat;
-    self.menuItems = @[audoItem,videoItem,shareItem,membersItem,handsupItem,chatItem];
-    self.chatItem = chatItem;
+    self.menuItems = @[audoItem,videoItem,shareItem,membersItem,handsupItem];
 }
 
 - (NSArray <NEEduHttpUser *> *)showMembersWithJoinedMembers:(NSArray <NEEduHttpUser *> *)members {

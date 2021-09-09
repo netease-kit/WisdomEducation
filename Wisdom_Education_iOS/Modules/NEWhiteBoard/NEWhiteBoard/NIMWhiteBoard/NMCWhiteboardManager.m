@@ -11,7 +11,7 @@
 #import "NMCMessageHandlerDispatch.h"
 #import "NMCWebViewHeader.h"
 
-NSString * const NMCWhiteboardURL = @"https://yiyong-xedu-v2-static.netease.im/whiteboard/stable/webview.html";
+NSString * const NMCWhiteboardURL = @"https://yiyong-xedu-v2-static.netease.im/whiteboard-webview/g2/webview_vconsole.html";
 
 @interface NMCWhiteboardManager()<WKNavigationDelegate,WKUIDelegate>
 @property(nonatomic, strong) NMCWebView *webview;
@@ -47,33 +47,49 @@ NSString * const NMCWhiteboardURL = @"https://yiyong-xedu-v2-static.netease.im/w
     return _webview;
 }
 
-- (void)callWebLoginIM:(NMCWebLoginParam *)loginParam
+- (void)callWebJoinRoom:(NMCWebLoginParam *)loginParam
 {
     NSMutableDictionary *param = [NSMutableDictionary dictionary];
     // 白板房间名称 为 唯一值，业务层维护，用来创建、加入房间
-    [param setObject:loginParam.channelName forKey:@"channelName"];
+    if (loginParam.channelName.length) {
+        [param setObject:loginParam.channelName forKey:@"channelName"];
+    }
+    if (loginParam.appKey.length) {
+        // IM 账号体系 appKey
+        [param setObject:loginParam.appKey forKey:@"appKey"];
+    }
+    if (loginParam.nickname.length) {
+        // IM 账号体系 account
+        [param setObject:loginParam.nickname forKey:@"nickname"];
+    }
+    if (loginParam.uid) {
+        // IM 账号体系 密码
+        [param setObject:loginParam.uid forKey:@"uid"];
+    }
     // 开启 web 调试日志
     [param setObject:@(loginParam.debug) forKey:@"debug"];
-    // IM 账号体系 appKey
-    [param setObject:loginParam.appKey forKey:@"appKey"];
-    // IM 账号体系 account
-    [param setObject:loginParam.account forKey:@"account"];
-    [param setObject:loginParam.nickname forKey:@"nickname"];
-    // IM 账号体系 密码
-    [param setObject:loginParam.token forKey:@"token"];
     // 是否服务端录制
     [param setObject:@(loginParam.record) forKey:@"record"];
-    // ownerAccout 参数，owner 账号
-    [param setObject:loginParam.ownerAccount forKey:@"ownerAccount"];
     // platform 参数
     [param setObject:@"ios" forKey:@"platform"];
-
     [param setObject:@(loginParam.height) forKey:@"height"];
     [param setObject:@(loginParam.width) forKey:@"width"];
-    
-    [[NMCMessageHandlerDispatch sharedManager] nativeCallWebWithWebView:_webview action:NMCMethodActionWebLoginIM param:param];
+    [[NMCMessageHandlerDispatch sharedManager] nativeCallWebWithWebView:_webview action:NMCMethodActionWebJoin param:param];
 }
-
+- (void)sendAuthNonce:(NSString *)nonce curTime:(NSString *)curTime checksum:(NSString *)checksum {
+    NSMutableDictionary *dic = [NSMutableDictionary dictionary];
+    dic[@"code"] = @(200);
+    if (nonce.length) {
+        [dic setObject:nonce forKey:@"nonce"];
+    }
+    if (curTime.length) {
+        [dic setObject:curTime forKey:@"curTime"];
+    }
+    if (checksum.length) {
+        [dic setObject:checksum forKey:@"checksum"];
+    }
+    [[NMCMessageHandlerDispatch sharedManager] nativeCallWebWithWebView:_webview action:NMCMethodActionSendAuth param:dic];
+}
 - (void)callWebLogoutIM
 {
     [[NMCMessageHandlerDispatch sharedManager] nativeCallWebWithWebView:_webview action:NMCMethodActionWebLogout param:[NSMutableDictionary dictionary]];

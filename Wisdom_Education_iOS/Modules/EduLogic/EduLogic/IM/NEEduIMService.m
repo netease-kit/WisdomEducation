@@ -150,14 +150,17 @@
     NSLog(@"[IM Chatroom] %s  state:%d",__func__,state);
 }
 
-- (void)destroy {
-    if ([NIMSDK sharedSDK].loginManager.isLogined) {
-        [self logoutWithCompletion:nil];
-    }
+- (void)leaveChatRoom {
     if (self.chatRoom) {
         [self exitChatroom:self.chatRoom.roomId completion:nil];
         self.chatRoom = nil;
     }
     self.chatMessages = nil;
+}
+
+- (void)logout {
+    if ([NIMSDK sharedSDK].loginManager.isLogined) {
+        [self logoutWithCompletion:nil];
+    }
 }
 @end

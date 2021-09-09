@@ -41,22 +41,23 @@
 - (void)initMenuItems {
     NEEduMenuItem *membersItem = [[NEEduMenuItem alloc] initWithTitle:@"课堂成员" image:[UIImage ne_imageNamed:@"menu_members"]];
     membersItem.type = NEEduMenuItemTypeMembers;
-    
-    NEEduMenuItem *chatItem = [[NEEduMenuItem alloc] initWithTitle:@"聊天室" image:[UIImage ne_imageNamed:@"menu_chat"]];
-    chatItem.type = NEEduMenuItemTypeChat;
-    
     if ([NEEduManager shared].profile.snapshot.room.states.step.value == NEEduLessonStateClassIn) {
-        NEEduMenuItem *handsupItem = [[NEEduMenuItem alloc] initWithTitle:@"举手" image:[UIImage ne_imageNamed:@"menu_handsup"]];
-        handsupItem.selectTitle = @"举手中";
-        handsupItem.type = NEEduMenuItemTypeHandsup;
-        [handsupItem setSelctedImage:[UIImage ne_imageNamed:@"menu_handsup_select"]];
-        [handsupItem setSelctedTextColor:[UIColor colorWithRed:55/255.0 green:114/255.0 blue:255/255.0 alpha:1.0]];
-        self.handsupItem = handsupItem;
-        self.menuItems = @[membersItem,handsupItem,chatItem];
+//        NEEduMenuItem *handsupItem = [[NEEduMenuItem alloc] initWithTitle:@"举手" image:[UIImage ne_imageNamed:@"menu_handsup"]];
+//        handsupItem.selectTitle = @"举手中";
+//        handsupItem.type = NEEduMenuItemTypeHandsup;
+//        [handsupItem setSelctedImage:[UIImage ne_imageNamed:@"menu_handsup_select"]];
+//        [handsupItem setSelctedTextColor:[UIColor colorWithRed:55/255.0 green:114/255.0 blue:255/255.0 alpha:1.0]];
+//        self.handsupItem = handsupItem;
+        self.menuItems = @[membersItem,self.handsupItem];
     }else {
-        self.menuItems = @[membersItem,chatItem];
+        self.menuItems = @[membersItem];
     }
-    self.chatItem = chatItem;
+}
+
+- (void)updateMenueItemWithProfile:(NEEduRoomProfile *)profile {
+    if (profile.snapshot.room.states.step.value == NEEduLessonStateClassIn) {
+        [self.maskView addItem:self.handsupItem];
+    }
 }
 
 - (NSArray <NEEduHttpUser *> *)showMembersWithJoinedMembers:(NSArray <NEEduHttpUser *> *)members {
@@ -250,10 +251,6 @@
         self.handsupItem.isSelected = NO;
         [[NEEduManager shared].rtcService enableLocalVideo:NO];
         [[NEEduManager shared].rtcService enableLocalAudio:NO];
-//        [[NEEduManager shared].userService localUserVideoEnable:NO result:^(NSError * _Nonnull error) {
-//        }];
-//        [[NEEduManager shared].userService localUserAudioEnable:NO result:^(NSError * _Nonnull error) {
-//        }];
     }else {
         [[NEEduManager shared].rtcService subscribeAudio:NO forUserID:user.rtcUid];
         [[NEEduManager shared].rtcService subscribeVideo:NO forUserID:user.rtcUid];
@@ -336,7 +333,16 @@
         }];
     }];
 }
-
+- (NEEduMenuItem *)handsupItem {
+    if (!_handsupItem) {
+        _handsupItem = [[NEEduMenuItem alloc] initWithTitle:@"举手" image:[UIImage ne_imageNamed:@"menu_handsup"]];
+        _handsupItem.selectTitle = @"举手中";
+        _handsupItem.type = NEEduMenuItemTypeHandsup;
+        [_handsupItem setSelctedImage:[UIImage ne_imageNamed:@"menu_handsup_select"]];
+        [_handsupItem setSelctedTextColor:[UIColor colorWithRed:55/255.0 green:114/255.0 blue:255/255.0 alpha:1.0]];
+    }
+    return _handsupItem;
+}
 #pragma mark - NEEduMessageServiceDelegate
 - (void)onUserInWithUser:(NEEduHttpUser *)user members:(NSArray *)members {
     NSLog(@"onUserIn user:%@ members:%@",user,members);
@@ -434,16 +440,7 @@
             self.lessonStateView.hidden = YES;
         }
     }
-
-    if (!self.handsupItem) {
-        NEEduMenuItem *handsupItem = [[NEEduMenuItem alloc] initWithTitle:@"举手" image:[UIImage ne_imageNamed:@"menu_handsup"]];
-        handsupItem.selectTitle = @"举手中";
-        handsupItem.type = NEEduMenuItemTypeHandsup;
-        [handsupItem setSelctedImage:[UIImage ne_imageNamed:@"menu_handsup_select"]];
-        [handsupItem setSelctedTextColor:[UIColor colorWithRed:55/255.0 green:114/255.0 blue:255/255.0 alpha:1.0]];
-        self.handsupItem = handsupItem;
-        [self.maskView insertItem:handsupItem atIndex:1];
-    }
+    [self.maskView insertItem:self.handsupItem atIndex:1];
 }
 - (NSMutableIndexSet *)subscribeSet {
     if (!_subscribeSet) {

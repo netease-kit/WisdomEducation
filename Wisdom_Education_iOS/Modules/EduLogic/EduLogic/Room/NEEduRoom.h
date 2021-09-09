@@ -8,6 +8,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "NERoomConfig.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -26,7 +27,8 @@ typedef NS_ENUM(NSInteger, NEEduSceneType) {
 /// 班级类型
 @property (nonatomic, assign) NEEduSceneType sceneType;
 @property (nonatomic, assign) NSInteger configId;
-
+/// 房间功能开关配置
+@property (nonatomic, strong) NERoomConfig *config;
 @end
 
 NS_ASSUME_NONNULL_END

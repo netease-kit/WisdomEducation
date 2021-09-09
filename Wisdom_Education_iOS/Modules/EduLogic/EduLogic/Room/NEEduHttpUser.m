@@ -13,6 +13,10 @@ NSString * const NEEduRoleHost              = @"host";
 NSString * const NEEduRoleBroadcaster       = @"broadcaster";
 NSString * const NEEduRoleAudience          = @"audience";
 
+@implementation NEWebAuth
+
+@end
+
 @implementation NEEduHttpUser
 - (instancetype)initWithRole:(NSString *)role
 {

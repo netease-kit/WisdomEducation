@@ -9,9 +9,6 @@
 #ifndef NMCWebViewHeader_h
 #define NMCWebViewHeader_h
 
-//https://g.hz.netease.com/yunxin/web-whiteboard/tree/wbAndh5ppt/src/webview
-
-
 #define NMCNativeMethodMessage @"NMCNativeMethodMessage"
 #define NMCMethodAction @"action"
 #define NMCMethodParam @"param"
@@ -22,37 +19,24 @@
 
 
 //IM登录
-#define NMCMethodActionWebLoginIM @"jsLoginIMAndJoinWB"
+#define NMCMethodActionWebJoin @"jsJoinWB"
+// 发送授权信息
+#define NMCMethodActionSendAuth @"jsSendAuth"
+
 //设置白板是否可以绘制
 #define NMCMethodActionEnableDraw @"jsEnableDraw"
 //自定义调用JS方法
 #define NMCMethodActionCall @"jsDirectCall"
-
-//设置白板颜色
-//#define NMCMethodActionSetColor @"jsSetColor"
-
-//设置白板是否可以绘制
-//#define NMCMethodActionEnableDraw @"jsEnableDraw"
-//设置白板颜色
-//#define NMCMethodActionSetColor @"jsSetColor"
-
 //退出web
-#define NMCMethodActionWebLogout @"jsLogoutIMAndLeaveWB"
-
-
-
+#define NMCMethodActionWebLogout @"jsLeaveWB"
 //页面加载完成
 #define NMCMethodActionWebPageLoaded @"webPageLoaded"
-
-//IM登录成功
-#define NMCMethodActionWebLoginSucceed @"webLoginIMSucceed"
+// web获取Auth
+#define NMCMethodActionWebGetAuth @"webGetAuth"
 //创建房间成功
 #define NMCMethodActionWebCreateWBSucceed @"webCreateWBSucceed"
 //加入房间成功
 #define NMCMethodActionWebJoinWBSucceed @"webJoinWBSucceed"
-
-//IM登录失败
-#define NMCMethodActionWebLoginIMFailed @"webLoginIMFailed"
 //加入房间失败
 #define NMCMethodActionWebJoinWBFailed @"webJoinWBFailed"
 //创建房间失败

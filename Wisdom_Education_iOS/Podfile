@@ -1,5 +1,6 @@
 # Uncomment the next line to define a global platform for your project
- platform :ios, '10.0'
+ENV['SWIFT_VERSION'] = '5'
+platform :ios, '10.0'
 
 target 'WisdomEducation' do
   # Comment the next line if you don't want to use dynamic frameworks
@@ -9,6 +10,9 @@ target 'WisdomEducation' do
   pod 'EduLogic', :path => 'Modules/EduLogic/EduLogic.podspec'
   pod 'NEWhiteBoard', :path => 'Modules/NEWhiteBoard/NEWhiteBoard.podspec'
   pod 'EduUI', :path => 'Modules/EduUI/EduUI.podspec'
+  pod 'NERecordPlay', :path => 'Modules/NERecordPlay/NERecordPlay.podspec'
+  pod 'NERecordPlayUI', :path => 'Modules/NERecordPlayUI/NERecordPlayUI.podspec'
+  
   pod 'NEScreenShareBroadcaster', '~> 0.1.0'
   pod 'Bugly'
   

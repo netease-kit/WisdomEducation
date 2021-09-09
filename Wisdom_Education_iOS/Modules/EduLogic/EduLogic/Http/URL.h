@@ -39,4 +39,7 @@
 //拉取丢失的IM消息 scene/apps/{appKey}/v1/rooms/{roomId}/sequence?nextId=
 #define HTTP_MESSAGE_GET @"%@/scene/apps/%@/%@/rooms/%@/sequence?nextId=%ld"
 
+//拉取回放地址 /scene/apps/{appKey}/v1/rooms/{roomUuid}/{rtcCid}/record/playback
+#define HTTP_RECORD_GET @"%@/scene/apps/%@/%@/rooms/%@/%@/record/playback"
+
 

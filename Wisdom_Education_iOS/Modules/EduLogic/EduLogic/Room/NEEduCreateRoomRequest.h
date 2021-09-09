@@ -10,6 +10,7 @@
 #import <Foundation/Foundation.h>
 #import "NEEduRoleConfig.h"
 #import "NEEduRoomConfig.h"
+#import "NERoomConfig.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -18,9 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) NSString *roomName;
 @property (nonatomic, assign) NSInteger configId;
 @property (nonatomic, strong) NSString *roomUuid;
-
-//@property (nonatomic, strong) NEEduRoomConfig *config;
-
+@property (nonatomic, strong) NERoomConfig *config;
 
 @end
 
