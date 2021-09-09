@@ -73,8 +73,17 @@ class MainActivity : AppCompatActivity() {
             }
     }
 
+
     private fun replaceFragment(id: Int, fragment: Fragment) {
-        supportFragmentManager.beginTransaction().replace(id, fragment).commitNow()
+        supportFragmentManager.beginTransaction().replace(id, fragment).commitNowAllowingStateLoss()
+    }
+
+    fun addFragment(id: Int, fragment: Fragment) {
+        supportFragmentManager.beginTransaction().add(id, fragment).show(fragment).commitNowAllowingStateLoss()
+    }
+
+    fun removeFragment(fragment: Fragment) {
+        supportFragmentManager.beginTransaction().remove(fragment).commitAllowingStateLoss()
     }
 
     fun showSettingFragment() {

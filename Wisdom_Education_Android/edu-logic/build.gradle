@@ -43,6 +43,8 @@ dependencies {
     api project(':im')
     api project(':rtc')
     api project(':whiteboard')
+    api project(':edu-model')
+    api project(':recordplay-model')
 
     implementation deps.core_ktx
     implementation deps.appcompat

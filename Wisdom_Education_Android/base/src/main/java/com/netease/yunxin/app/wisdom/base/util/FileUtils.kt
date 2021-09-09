@@ -34,7 +34,7 @@ object FileUtils {
     }
 
     fun filePathFromUri(context: Context, uri: Uri): String? {
-        var path = uri!!.path
+        var path = uri.path
         if (path != null && File(path).exists()) {
             return path
         }

@@ -10,6 +10,10 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduMember
 import com.netease.yunxin.app.wisdom.edu.ui.databinding.ItemMemberTextListBinding
+import com.netease.yunxin.app.wisdom.rvadapter.BaseAdapter
+import com.netease.yunxin.app.wisdom.rvadapter.BaseDelegate
+import com.netease.yunxin.app.wisdom.rvadapter.BaseViewHolder
+import com.netease.yunxin.app.wisdom.rvadapter.OnItemClickListener
 
 class MemberTitleListAdapter(
     val context: Context,

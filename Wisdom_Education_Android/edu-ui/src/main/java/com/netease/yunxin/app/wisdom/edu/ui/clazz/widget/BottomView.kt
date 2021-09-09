@@ -10,7 +10,6 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.Button
 import androidx.constraintlayout.widget.ConstraintLayout
-import com.netease.yunxin.app.wisdom.edu.ui.base.BaseClassActivity
 import com.netease.yunxin.app.wisdom.edu.ui.databinding.LayoutBottomViewBinding
 
 class BottomView(context: Context, attrs: AttributeSet?, defStyleAttr: Int = 0) :

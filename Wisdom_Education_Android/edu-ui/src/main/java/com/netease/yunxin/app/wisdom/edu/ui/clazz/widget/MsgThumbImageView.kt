@@ -15,6 +15,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.netease.yunxin.app.wisdom.edu.ui.R
 import java.io.File
+import java.util.*
 
 class MsgThumbImageView : AppCompatImageView {
     constructor(context: Context?) : super(context!!)
@@ -66,7 +67,7 @@ class MsgThumbImageView : AppCompatImageView {
 
     companion object {
         fun isGif(extension: String): Boolean {
-            return !TextUtils.isEmpty(extension) && extension.toLowerCase() == "gif"
+            return !TextUtils.isEmpty(extension) && extension.lowercase(Locale.getDefault()) == "gif"
         }
     }
 

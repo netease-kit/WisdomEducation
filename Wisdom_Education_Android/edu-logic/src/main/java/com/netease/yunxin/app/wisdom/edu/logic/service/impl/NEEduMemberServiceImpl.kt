@@ -34,7 +34,7 @@ internal class NEEduMemberServiceImpl : NEEduMemberService() {
     }
 
     override fun getLocalUser(): NEEduMember? {
-        return joinList.firstOrNull { NEEduManagerImpl.getEntryMember() == it }
+        return joinList.firstOrNull { NEEduManagerImpl.getEntryMember() == it } ?: NEEduManagerImpl.getEntryMember()
     }
 
     override fun updateMemberPropertiesChange(member: NEEduMember, properties: NEEduMemberProperties) {

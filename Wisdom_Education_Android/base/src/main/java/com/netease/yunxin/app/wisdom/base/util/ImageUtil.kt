@@ -15,6 +15,8 @@ import android.graphics.drawable.Drawable
 import android.media.ExifInterface
 import android.text.TextUtils
 import java.io.*
+import java.util.*
+import kotlin.math.sqrt
 
 object ImageUtil {
 
@@ -94,16 +96,20 @@ object ImageUtil {
      * @param rotate
      * @return
      */
-    fun getImageRotate(rotate: Int): Float {
-        val f: Float
-        f = if (rotate == 6) {
-            90.0f
-        } else if (rotate == 3) {
-            180.0f
-        } else if (rotate == 8) {
-            270.0f
-        } else {
-            0.0f
+    private fun getImageRotate(rotate: Int): Float {
+        val f: Float = when (rotate) {
+            6 -> {
+                90.0f
+            }
+            3 -> {
+                180.0f
+            }
+            8 -> {
+                270.0f
+            }
+            else -> {
+                0.0f
+            }
         }
         return f
     }
@@ -291,7 +297,7 @@ object ImageUtil {
                 getImageRotate(rotateInt)
             }
             var dstBitmap: Bitmap?
-            val scale = Math.sqrt(
+            val scale = sqrt(
                 (dstMaxWH.toFloat() * dstMaxWH.toFloat() /
                         (srcBitmap.width.toFloat() * srcBitmap.height.toFloat())).toDouble()
             ).toFloat()
@@ -399,14 +405,14 @@ object ImageUtil {
     }
 
     fun isInvalidPictureFile(mimeType: String): Boolean {
-        val lowerCaseFilepath = mimeType.toLowerCase()
+        val lowerCaseFilepath = mimeType.lowercase(Locale.getDefault())
         return lowerCaseFilepath.contains("jpg") || lowerCaseFilepath.contains("jpeg") ||
-                lowerCaseFilepath.toLowerCase().contains("png") || lowerCaseFilepath.toLowerCase().contains("bmp") ||
-                lowerCaseFilepath.toLowerCase().contains("gif")
+                lowerCaseFilepath.lowercase(Locale.getDefault()).contains("png") || lowerCaseFilepath.lowercase(Locale.getDefault()).contains("bmp") ||
+                lowerCaseFilepath.lowercase(Locale.getDefault()).contains("gif")
     }
 
     fun isGif(extension: String): Boolean {
-        return !TextUtils.isEmpty(extension) && extension.toLowerCase() == "gif"
+        return !TextUtils.isEmpty(extension) && extension.lowercase(Locale.getDefault()) == "gif"
     }
 //
 //    fun getOptions(path: String?): BitmapFactory.Options? {

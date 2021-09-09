@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) 2021 NetEase, Inc.  All rights reserved.
+  ~ Use of this source code is governed by a MIT license that can be found in the LICENSE file.
+  -->
+
+<resources>
+    <string name="you_are_sharing_the_screen">您正在进行共享屏幕</string>
+    <string name="room_name">课堂名称</string>
+    <string name="teacher_name">老师</string>
+    <string name="room_id">课堂号</string>
+    <string name="playback">课程回放</string>
+    <string name="copy_success">复制成功</string>
+    <string name="teacher_label">(老师)</string>
+    <string name="student_label">(学生)</string>
+</resources>

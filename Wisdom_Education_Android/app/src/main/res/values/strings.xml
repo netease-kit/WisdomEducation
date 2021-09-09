@@ -11,4 +11,12 @@
     <string name="student_over_limit">student role over limit</string>
     <string name="app_tips">* This product is only used to demonstrate the function of the product, the longest class is 30 minutes, not commercial</string>
     <string name="clazz_name">%s classroom</string>
+    <string name="open_recordplay_fail_try_again">Internal Server exception</string>
+    <string name="course_playback_file_is_being_transcoded">At the end of the course, file transcoding is required, and the playback is expected to be available 20 minutes later</string>
+    <string name="setting">Setting</string>
+    <string name="open_chat_room">Open chat room</string>
+    <string name="im_reuse">IM reuse</string>
+    <string name="open_chatroom">After the chat room is closed, the interface does not display the chat room</string>
+    <string name="im_resue_desc">After IM multiplexing is enabled, the HOST application uses the IM channel</string>
+    <string name="im_login">IM login</string>
 </resources>

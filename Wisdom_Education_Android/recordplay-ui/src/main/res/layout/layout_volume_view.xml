@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) 2021 NetEase, Inc.  All rights reserved.
+  ~ Use of this source code is governed by a MIT license that can be found in the LICENSE file.
+  -->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="bottom|end">
+
+    <FrameLayout
+        android:layout_width="@dimen/common_dp_50"
+        android:layout_height="@dimen/common_dp_164"
+        android:layout_marginBottom="@dimen/common_dp_44"
+        android:layout_marginEnd="@dimen/common_dp_26"
+        android:background="@drawable/bg_volume_view">
+
+        <SeekBar
+            android:id="@+id/seekbar_volume"
+            android:layout_height="@dimen/common_dp_20"
+            android:layout_width="@dimen/common_dp_140"
+            style="@style/seekbar_volume"
+            android:layout_gravity="center"
+            android:focusable="true"
+            android:rotation="270"
+            android:progress="100"
+            android:max="100" />
+    </FrameLayout>
+</LinearLayout>

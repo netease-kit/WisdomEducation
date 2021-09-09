@@ -9,7 +9,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.map
 import com.netease.yunxin.app.wisdom.base.network.NEResult
-import com.netease.yunxin.app.wisdom.edu.logic.NEEduErrorCode
+import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduHttpCode
 import java.lang.reflect.Method
 import java.lang.reflect.Type
 
@@ -28,7 +28,7 @@ open class BaseRepository {
         return result.map {
             if (!it.success()) {
                 /// handle error
-                if (it.code == NEEduErrorCode.UNAUTHORIZED.code) {
+                if (it.code == NEEduHttpCode.UNAUTHORIZED.code) {
                     errorLD.postValue(it.code)
                 }
             }
@@ -39,7 +39,7 @@ open class BaseRepository {
     /**
      * method cannot over load
      */
-    fun findMethod(name: String): Method? {
+    private fun findMethod(name: String): Method? {
         return BaseService.methodMap[name]
     }
 

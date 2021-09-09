@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2021 NetEase, Inc.  All rights reserved.
+ * Use of this source code is governed by a MIT license that can be found in the LICENSE file.
+ */
+
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
@@ -10,10 +15,6 @@ if (configPropertiesFile.exists()) {
         reader -> configProperties.load(reader)
     }
 }
-/*
- * Copyright (c) 2021 NetEase, Inc.  All rights reserved.
- * Use of this source code is governed by a MIT license that can be found in the LICENSE file.
- */
 
 //def env = configProperties.getProperty("ENV")
 
@@ -23,18 +24,18 @@ print("xxxxxxxxxxxxxxxxxxxxxxx---$env")
 
 def appKey = configProperties.getProperty(env == "online" ? "APP_KEY_ONLINE" : "APP_KEY")
 if (appKey == null) {
-    appKey = '请替换为您申请的AppKey'
+    appKey = 'ed73b42de1b66244337a4cd54a9534cc'
 }
 
 def baseUrl = configProperties.getProperty(env == "online" ? "BASE_URL_ONLINE" : "BASE_URL")
 if (baseUrl == null) {
-    baseUrl = 'https://yiyong-xedu-v2.netease.im'
+    baseUrl = 'https://yiyong-xedu-v2-test.netease.im'
 }
 
 def authorization = configProperties.getProperty(env == "online" ? "AUTHORIZATION_ONLINE" :
         "AUTHORIZATION")
 if (authorization == null) {
-    authorization = '请替换为您申请的AUTHORIZATION'
+    authorization = 'Nzc0MWVjYzI2NTM1NGVhMzliMGIzNWE1MGE2ZjMyYjE6YjA3MWE0NzhjNmIxNDQ5MGE1NGVhODljYTYzNWM1MWI='
 }
 
 android {
@@ -87,6 +88,8 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 
     implementation project(':edu-ui')
+    implementation project(':recordplay-ui')
+    implementation project(':viewbinding')
 
     implementation deps.permissionx
     implementation deps.core_ktx
@@ -99,5 +102,4 @@ dependencies {
     testImplementation deps.junit
     androidTestImplementation deps.ext_junit
     androidTestImplementation deps.espresso_core
-    implementation deps.htloading
 }

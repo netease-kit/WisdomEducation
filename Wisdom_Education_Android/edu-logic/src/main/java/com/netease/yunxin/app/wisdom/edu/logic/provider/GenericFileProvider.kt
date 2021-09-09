@@ -6,4 +6,4 @@ package com.netease.yunxin.app.wisdom.edu.logic.provider
 
 import androidx.core.content.FileProvider
 
-public class GenericFileProvider : FileProvider()
+class GenericFileProvider : FileProvider()

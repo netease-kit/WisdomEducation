@@ -7,5 +7,5 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:drawable="@drawable/white_top_round_box_13dp_shape_hover" android:state_pressed="true">
     </item>
-    <item android:drawable="@drawable/white_top_round_box_13dp_shape"></item>
+    <item android:drawable="@drawable/white_top_round_box_13dp_shape" />
 </selector>

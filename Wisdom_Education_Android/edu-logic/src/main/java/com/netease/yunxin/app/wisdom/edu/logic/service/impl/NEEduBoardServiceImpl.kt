@@ -5,7 +5,6 @@
 
 package com.netease.yunxin.app.wisdom.edu.logic.service.impl
 
-import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import com.netease.yunxin.app.wisdom.base.network.NEResult
@@ -56,5 +55,9 @@ internal class NEEduBoardServiceImpl : NEEduBoardService() {
 
     override fun onPermissionGranted(): LiveData<NEEduMember> {
         return permissionLD
+    }
+
+    override fun dispose() {
+        whiteboardManager.finish()
     }
 }

@@ -20,6 +20,7 @@ import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import androidx.lifecycle.map
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -28,15 +29,15 @@ import com.netease.lava.nertc.sdk.video.NERtcScreenConfig
 import com.netease.nimlib.sdk.chatroom.model.ChatRoomMessage
 import com.netease.yunxin.app.wisdom.base.network.NEResult
 import com.netease.yunxin.app.wisdom.base.util.CommonUtil.setOnClickThrottleFirst
+import com.netease.yunxin.app.wisdom.base.util.PreferenceUtil
 import com.netease.yunxin.app.wisdom.base.util.ToastUtil
 import com.netease.yunxin.app.wisdom.base.util.observeForeverOnce
 import com.netease.yunxin.app.wisdom.edu.logic.NEEduErrorCode
 import com.netease.yunxin.app.wisdom.edu.logic.NEEduManager
 import com.netease.yunxin.app.wisdom.edu.logic.model.*
-import com.netease.yunxin.app.wisdom.edu.logic.net.service.response.NEEduEntryMember
+import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduEntryMember
 import com.netease.yunxin.app.wisdom.edu.ui.NEEduUiKit
 import com.netease.yunxin.app.wisdom.edu.ui.R
-import com.netease.yunxin.app.wisdom.edu.ui.clazz.adapter.BaseAdapter
 import com.netease.yunxin.app.wisdom.edu.ui.clazz.adapter.ItemClickListerAdapter
 import com.netease.yunxin.app.wisdom.edu.ui.clazz.adapter.MemberVideoListAdapter
 import com.netease.yunxin.app.wisdom.edu.ui.clazz.dialog.ActionSheetDialog
@@ -47,7 +48,8 @@ import com.netease.yunxin.app.wisdom.edu.ui.clazz.viewmodel.ChatRoomViewModel
 import com.netease.yunxin.app.wisdom.edu.ui.clazz.widget.RtcVideoAudioView
 import com.netease.yunxin.app.wisdom.edu.ui.clazz.widget.TitleView
 import com.netease.yunxin.app.wisdom.edu.ui.databinding.ActivityClazzBinding
-import com.netease.yunxin.app.wisdom.edu.ui.viewbinding.viewBinding
+import com.netease.yunxin.app.wisdom.rvadapter.BaseAdapter
+import com.netease.yunxin.app.wisdom.viewbinding.viewBinding
 import com.netease.yunxin.kit.alog.ALog
 
 abstract class BaseClassActivity(layoutId: Int = R.layout.activity_clazz) : AppCompatActivity(layoutId), BaseView,
@@ -87,8 +89,8 @@ abstract class BaseClassActivity(layoutId: Int = R.layout.activity_clazz) : AppC
         return null
     }
 
-    private val roomStatesChangeObserver: (t: NEEduRoomStates) -> Unit = { updateRoomStates(it) }
-    private val muteAllAudioObserver: (t: Boolean) -> Unit = { it ->
+    private val roomStatesChangeObserver = Observer<NEEduRoomStates> { updateRoomStates(it) }
+    private val muteAllAudioObserver = Observer<Boolean> { it ->
         it.let {
             if (it) {
                 val localMediaUser = eduManager.getMemberService().getLocalUser()
@@ -102,21 +104,20 @@ abstract class BaseClassActivity(layoutId: Int = R.layout.activity_clazz) : AppC
         }
     }
 
-    private val memberJoinObserver: (t: List<NEEduMember>) -> Unit = { t -> onMemberJoin(t) }
-    private val memberPropertiesChangeObserver: (t: Pair<NEEduMember, NEEduMemberProperties>) -> Unit = { t ->
+    private val memberJoinObserver = Observer<List<NEEduMember>> { t -> onMemberJoin(t) }
+    private val memberPropertiesChangeObserver = Observer<Pair<NEEduMember, NEEduMemberProperties>> { t ->
         onMemberPropertiesChange(t.first, t.second)
     }
 
-    private val streamChangeObserver: (t: Pair<NEEduMember, Boolean>) -> Unit =
-        { t -> onStreamChange(t.first, t.second) }
+    private val streamChangeObserver = Observer<Pair<NEEduMember, Boolean>> { t -> onStreamChange(t.first, t.second) }
 
-    private val screenShareChangeObserver: (t: List<NEEduMember>) -> Unit = { t -> onScreenShareChange(t) }
+    private val screenShareChangeObserver = Observer<List<NEEduMember>> { t -> onScreenShareChange(t) }
 
-    private val boardPermissionObserver: (t: NEEduMember) -> Unit = { t ->
+    private val boardPermissionObserver = Observer<NEEduMember> { t ->
         onBoardPermissionGranted(t)
     }
 
-    private val shareScreenPermissionObserver: (t: NEEduMember) -> Unit = { t ->
+    private val shareScreenPermissionObserver = Observer<NEEduMember> { t ->
         onScreenSharePermissionGranted(t)
     }
 
@@ -130,12 +131,15 @@ abstract class BaseClassActivity(layoutId: Int = R.layout.activity_clazz) : AppC
     }
 
     private fun initEduManager() {
+        if (NEEduUiKit.instance?.neEduManager == null) {
+            finish()
+        }
         eduManager = NEEduUiKit.instance!!.neEduManager!!
         eduRoom = eduManager.eduEntryRes.room
         entryMember = eduManager.getEntryMember()
         eduManager.errorLD.observe(this, { t ->
-            if (t != null && t != NEEduErrorCode.SUCCESS.code) {
-                var tip = NEEduErrorCode.tipsWithErrorCode(baseContext, t)
+            if (t != null && t != NEEduHttpCode.SUCCESS.code) {
+                val tip = NEEduErrorCode.tipsWithErrorCode(baseContext, t)
                 if (!TextUtils.isEmpty(tip)) {
                     ToastUtil.showLong(tip)
                 } else {
@@ -162,16 +166,9 @@ abstract class BaseClassActivity(layoutId: Int = R.layout.activity_clazz) : AppC
 
 
     open fun initViews() {
-        val self = entryMember
-        // 白板
-        replaceFragment(R.id.layout_whiteboard, whiteboardFragment)
-
-        getChatroomFragment()?.let {
-            addFragment(R.id.layout_chat_room, it)
-        }
-
+        val self = eduManager.getMemberService().getLocalUser()!!
         getMembersFragment()?.let {
-            addFragment(R.id.layout_members, it)
+            replaceFragment(R.id.layout_members, it)
         }
 
         // 底部按钮
@@ -210,16 +207,33 @@ abstract class BaseClassActivity(layoutId: Int = R.layout.activity_clazz) : AppC
             }
         }
 
-        getChatRoomView().setOnClickListener {
-            showFragmentWithChatRoom()
+        // 白板
+        eduRoom.whiteBoardCName()?.let {
+            replaceFragment(R.id.layout_whiteboard, whiteboardFragment)
         }
+
+        // 聊天室
+        eduRoom.chatRoomId()?.let {
+            if (!eduManager.roomConfig.is1V1()) {
+                getChatroomFragment()?.let {
+                    replaceFragment(R.id.layout_chat_room, it)
+                }
+
+                getChatRoomView().setOnClickListener {
+                    showFragmentWithChatRoom()
+                }
+
+                chatViewModel.onUnreadChange().observe(this, {
+                    getChatRoomView().setSmallUnread(it)
+                })
+
+                getChatRoomView().visibility = View.VISIBLE
+            }
+        }
+
         getMembersView().setOnClickListener {
             showFragmentWithMembers()
         }
-
-        chatViewModel.onUnreadChange().observe(this, {
-            getChatRoomView().setSmallUnread(it)
-        })
 
         // 顶部返回按钮
         handleBackBtn(getBackView())
@@ -306,6 +320,10 @@ abstract class BaseClassActivity(layoutId: Int = R.layout.activity_clazz) : AppC
         states.step?.value?.also {
             when (it) {
                 NEEduRoomStep.START.ordinal -> {
+                    // 保存回放请求参数
+                    PreferenceUtil.recordPlay =
+                        Pair(eduRoom.roomUuid, eduRoom.rtcCid)
+
                     getClazzTitleView().startClazzState(getString(R.string.having_class_now), states.duration ?: 0)
                     if (!clazzStart) {
                         getChangeClazzStateView()?.apply {
@@ -355,7 +373,7 @@ abstract class BaseClassActivity(layoutId: Int = R.layout.activity_clazz) : AppC
 
     private fun onMemberPropertiesChange(member: NEEduMember, properties: NEEduMemberProperties) {
         // 刷新视频列表白板 屏幕共享状态
-        memberVideoAdapter.refreshDataAndNotify(member, false)
+        memberVideoAdapter.refreshDataAndNotify<Boolean>(member, false)
         if (!isSelf(member) || member.isHost()) return
         properties.streamAV?.also {
             var videoEnabled: Boolean? = null
@@ -462,7 +480,7 @@ abstract class BaseClassActivity(layoutId: Int = R.layout.activity_clazz) : AppC
                 if (t.success()) {
                     requestScreenCapture(this.applicationContext, this)
                 } else {
-                    if (t.code == NEEduErrorCode.ROOM_STREAM_CONCURRENCY_OUT.code) {
+                    if (t.code == NEEduHttpCode.ROOM_STREAM_CONCURRENCY_OUT.code) {
                         ToastUtil.showShort(getString(R.string.someone_share))
                     } else {
                         ToastUtil.showShort(getString(R.string.share_screen_fail))
@@ -893,7 +911,7 @@ abstract class BaseClassActivity(layoutId: Int = R.layout.activity_clazz) : AppC
         getZoomImageLayout().visibility = View.VISIBLE
         zoomImageFragment = ZoomImageFragment().also {
             it.arguments = Bundle().apply { putSerializable(ZoomImageFragment.INTENT_EXTRA_IMAGE, message) }
-            addFragment(R.id.layout_zoom_image, it)
+            replaceFragment(R.id.layout_zoom_image, it)
         }
     }
 

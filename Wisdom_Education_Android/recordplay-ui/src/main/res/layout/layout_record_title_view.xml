@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) 2021 NetEase, Inc.  All rights reserved.
+  ~ Use of this source code is governed by a MIT license that can be found in the LICENSE file.
+  -->
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/common_dp_40"
+    android:background="@color/color_1a2028">
+
+    <ImageView
+        android:id="@+id/tv_back"
+        android:layout_width="@dimen/common_dp_32"
+        android:layout_height="match_parent"
+        android:layout_marginStart="@dimen/common_dp_40"
+        android:gravity="center"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_back_white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_clazz_state"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/common_dp_12"
+        android:gravity="center_vertical"
+        android:textColor="@color/white"
+        android:textSize="@dimen/ts_14_dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="录制回放" />
+
+    <TextView
+        android:id="@+id/tv_clazz_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/common_dp_20"
+        android:layout_marginTop="@dimen/common_dp_12"
+        android:layout_marginEnd="@dimen/common_dp_106"
+        android:ellipsize="end"
+        android:gravity="center_vertical|end"
+        android:singleLine="true"
+        android:textColor="@color/white"
+        android:textSize="@dimen/ts_14_dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/tv_clazz_state"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="第 1 节课 - 英文情景对话" />
+
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_info"
+        android:layout_width="@dimen/common_dp_21"
+        android:layout_height="@dimen/common_dp_21"
+        android:layout_marginTop="@dimen/common_dp_10"
+        android:layout_marginEnd="@dimen/common_dp_75"
+        android:src="@drawable/ic_clazz_info"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_quality"
+        android:layout_width="@dimen/common_dp_21"
+        android:layout_height="@dimen/common_dp_21"
+        android:layout_marginTop="@dimen/common_dp_10"
+        android:layout_marginEnd="@dimen/common_dp_46"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:src="@drawable/ic_clazz_signal_good" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

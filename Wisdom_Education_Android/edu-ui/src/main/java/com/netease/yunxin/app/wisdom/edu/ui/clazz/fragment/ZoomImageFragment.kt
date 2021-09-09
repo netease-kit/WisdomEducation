@@ -31,7 +31,7 @@ import com.netease.yunxin.app.wisdom.edu.ui.base.BaseFragment
 import com.netease.yunxin.app.wisdom.edu.ui.clazz.viewmodel.ChatRoomViewModel
 import com.netease.yunxin.app.wisdom.edu.ui.clazz.widget.MultiTouchZoomableImageView
 import com.netease.yunxin.app.wisdom.edu.ui.databinding.FragmentZoomImageBinding
-import com.netease.yunxin.app.wisdom.edu.ui.viewbinding.viewBinding
+import com.netease.yunxin.app.wisdom.viewbinding.viewBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -144,7 +144,7 @@ class ZoomImageFragment : BaseFragment(R.layout.fragment_zoom_image) {
     private fun isOriginImageHasDownloaded(message: IMMessage): Boolean {
         return (message.attachStatus == AttachStatusEnum.transferred &&
                 !TextUtils.isEmpty((message.attachment as ImageAttachment).path))
-                || message!!.direct == MsgDirectionEnum.Out
+                || message.direct == MsgDirectionEnum.Out
     }
 
     /**
@@ -222,7 +222,7 @@ class ZoomImageFragment : BaseFragment(R.layout.fragment_zoom_image) {
         ToastUtil.showShort(R.string.download_picture_fail)
     }
 
-    private val messageStatusChangeObserver = Observer { it: ChatRoomMessage ->
+    private val messageStatusChangeObserver = Observer<ChatRoomMessage> {
         if (!it.isTheSame(message)) {
             return@Observer
         }

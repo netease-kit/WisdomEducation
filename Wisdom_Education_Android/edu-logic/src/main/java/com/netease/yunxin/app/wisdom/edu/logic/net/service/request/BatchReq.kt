@@ -10,5 +10,4 @@ import com.google.gson.JsonArray
 /**
  * Created by hzsunyj on 2021/6/2.
  */
-data class BatchReq(val operations: JsonArray) {
-}
+data class BatchReq(val operations: JsonArray)

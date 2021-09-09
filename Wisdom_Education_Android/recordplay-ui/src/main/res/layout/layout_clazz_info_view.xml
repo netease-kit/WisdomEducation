@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) 2021 NetEase, Inc.  All rights reserved.
+  ~ Use of this source code is governed by a MIT license that can be found in the LICENSE file.
+  -->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="top|right">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="@dimen/common_dp_287"
+        android:layout_height="@dimen/common_dp_132"
+        android:layout_marginTop="@dimen/common_dp_46"
+        android:layout_marginEnd="@dimen/common_dp_75"
+        android:background="@drawable/bg_clazz_info_view">
+
+        <TextView
+            android:id="@+id/tv_room_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/common_dp_24"
+            android:layout_marginTop="@dimen/common_dp_24"
+            android:gravity="center_vertical|start"
+            android:text="@string/room_id"
+            android:textColor="@color/color_b4bfd0"
+            android:textSize="@dimen/ts_14_dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_room_id_value"
+            android:layout_width="@dimen/common_dp_82"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/common_dp_104"
+            android:layout_marginTop="@dimen/common_dp_24"
+            android:ellipsize="end"
+            android:gravity="center_vertical|start"
+            android:maxLines="1"
+            android:textColor="@color/color_b4bfd0"
+            android:textSize="@dimen/ts_14_dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="123456789" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_room_id_copy"
+            android:layout_width="@dimen/common_dp_16"
+            android:layout_height="@dimen/common_dp_16"
+            android:layout_marginStart="@dimen/common_dp_194"
+            android:layout_marginTop="@dimen/common_dp_26"
+            android:src="@drawable/ic_class_copy"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_room_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/common_dp_24"
+            android:layout_marginTop="@dimen/common_dp_56"
+            android:gravity="center_vertical|start"
+            android:text="@string/room_name"
+            android:textColor="@color/color_b4bfd0"
+            android:textSize="@dimen/ts_14_dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_room_name_value"
+            android:layout_width="@dimen/common_dp_156"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/common_dp_104"
+            android:layout_marginTop="@dimen/common_dp_56"
+            android:gravity="center_vertical|start"
+            android:textColor="@color/color_b4bfd0"
+            android:textSize="@dimen/ts_14_dp"
+            android:includeFontPadding="false"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="第 1 节课 - 英文情景对话" />
+
+        <TextView
+            android:id="@+id/tv_teacher_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/common_dp_24"
+            android:layout_marginTop="@dimen/common_dp_88"
+            android:gravity="center_vertical|start"
+            android:text="@string/teacher_name"
+            android:textColor="@color/color_b4bfd0"
+            android:textSize="@dimen/ts_14_dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_teacher_name_value"
+            android:layout_width="@dimen/common_dp_156"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/common_dp_104"
+            android:layout_marginTop="@dimen/common_dp_88"
+            android:gravity="center_vertical|start"
+            android:textColor="@color/color_b4bfd0"
+            android:textSize="@dimen/ts_14_dp"
+            android:includeFontPadding="false"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Seven" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

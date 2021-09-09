@@ -6,6 +6,7 @@
 package com.netease.yunxin.app.wisdom.edu.ui.clazz.adapter
 
 import android.view.View
+import com.netease.yunxin.app.wisdom.rvadapter.OnItemClickListener
 
 /**
  */

@@ -12,6 +12,7 @@ import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.ScaleGestureDetector.SimpleOnScaleGestureListener
 import com.netease.yunxin.kit.alog.ALog
+import kotlin.math.abs
 
 /*
 * Copyright 2012 Laurence Dawson
@@ -67,7 +68,7 @@ open class MultiTouchZoomableImageView : BaseZoomableImageView {
                     // Grab the scale
                     var targetScale = getScale() * detector.scaleFactor
                     // Correct for the min scale
-                    targetScale = Math.min(maxZoom(), Math.max(targetScale, 1.0f))
+                    targetScale = maxZoom().coerceAtMost(targetScale.coerceAtLeast(1.0f))
 
                     // Zoom and invalidate the view
                     zoomTo(targetScale, detector.focusX, detector.focusY)
@@ -116,7 +117,7 @@ open class MultiTouchZoomableImageView : BaseZoomableImageView {
                             mViewPager!!.requestDisallowInterceptTouchEvent(true)
                         }
                     }
-                    center(true, true, false)
+                    center(vertical = true, horizontal = true, animate = false)
                 } else {
                     if (mViewPager != null) {
                         mViewPager!!.requestDisallowInterceptTouchEvent(false)
@@ -143,22 +144,22 @@ open class MultiTouchZoomableImageView : BaseZoomableImageView {
         override fun onFling(e1: MotionEvent, e2: MotionEvent, velocityX: Float, velocityY: Float): Boolean {
             if (e1 != null && e1.pointerCount > 1 || e2 != null && e2.pointerCount > 1) return false
             if (mScaleDetector!!.isInProgress) return false
-            val FLING_MIN_DISTANCE = 100f
-            val FLING_MIN_VELOCITY = 200f
-            if (e1.x - e2.x > FLING_MIN_DISTANCE
-                && Math.abs(velocityX) > FLING_MIN_VELOCITY
+            val flingMinDistance = 100f
+            val flingMinVelocity = 200f
+            if (e1.x - e2.x > flingMinDistance
+                && abs(velocityX) > flingMinVelocity
             ) {
                 ALog.i("MultiTouchZoomableImageView", "Fling Left")
-            } else if (e2.x - e1.x > FLING_MIN_DISTANCE
-                && Math.abs(velocityX) > FLING_MIN_VELOCITY
+            } else if (e2.x - e1.x > flingMinDistance
+                && abs(velocityX) > flingMinVelocity
             ) {
                 ALog.i("MultiTouchZoomableImageView", "Fling Right")
-            } else if (e1.y - e2.y > FLING_MIN_DISTANCE
-                && Math.abs(velocityY) > FLING_MIN_VELOCITY
+            } else if (e1.y - e2.y > flingMinDistance
+                && abs(velocityY) > flingMinVelocity
             ) {
                 ALog.i("MultiTouchZoomableImageView", "Fling Up")
-            } else if (e2.y - e1.y > FLING_MIN_DISTANCE
-                && Math.abs(velocityY) > FLING_MIN_VELOCITY
+            } else if (e2.y - e1.y > flingMinDistance
+                && abs(velocityY) > flingMinVelocity
             ) {
                 ALog.i("MultiTouchZoomableImageView", "Fling Down")
                 if (!transIgnoreScale && getScale() <= zoomDefault()) {
@@ -169,7 +170,7 @@ open class MultiTouchZoomableImageView : BaseZoomableImageView {
             try {
                 val diffX = e2.x - e1.x
                 val diffY = e2.y - e1.y
-                if (Math.abs(velocityX) > 800 || Math.abs(velocityY) > 800) {
+                if (abs(velocityX) > 800 || abs(velocityY) > 800) {
                     scrollBy(diffX / 2, diffY / 2, 300f)
                     invalidate()
                 }

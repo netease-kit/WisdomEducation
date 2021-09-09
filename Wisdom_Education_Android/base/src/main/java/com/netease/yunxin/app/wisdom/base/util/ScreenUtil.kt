@@ -49,7 +49,7 @@ object ScreenUtil {
         densityDpi = dm.densityDpi
     }
 
-    fun GetInfo(context: Context?) {
+    fun getInfo(context: Context?) {
         if (null == context) {
             return
         }

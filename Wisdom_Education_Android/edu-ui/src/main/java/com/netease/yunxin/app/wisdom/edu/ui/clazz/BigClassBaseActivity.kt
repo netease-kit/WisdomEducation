@@ -6,10 +6,11 @@
 package com.netease.yunxin.app.wisdom.edu.ui.clazz
 
 import android.view.View
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import com.netease.yunxin.app.wisdom.base.util.ToastUtil
-import com.netease.yunxin.app.wisdom.edu.logic.NEEduErrorCode
 import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduHandsUpStateValue
+import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduHttpCode
 import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduMember
 import com.netease.yunxin.app.wisdom.edu.ui.R
 import com.netease.yunxin.app.wisdom.edu.ui.base.BaseClassActivity
@@ -21,20 +22,18 @@ import com.netease.yunxin.app.wisdom.edu.ui.clazz.fragment.HandsUpListFragment
 import com.netease.yunxin.app.wisdom.edu.ui.clazz.widget.ClazzInfoView
 import com.netease.yunxin.app.wisdom.edu.ui.clazz.widget.ItemBottomView
 import com.netease.yunxin.app.wisdom.edu.ui.clazz.widget.TitleView
-import com.netease.yunxin.app.wisdom.edu.ui.databinding.ActivityClazzBinding
-import com.netease.yunxin.app.wisdom.edu.ui.viewbinding.viewBinding
 import com.netease.yunxin.kit.alog.ALog
 
 /**
  * Created by hzsunyj on 2021/6/17.
  */
-abstract class BigClassBaseActivity(layoutId: Int) : BaseClassActivity(layoutId) {
+abstract class BigClassBaseActivity : BaseClassActivity() {
     private val bigClazzMembersFragment = BigClazzMembersFragment()
-    protected val chatRoomFragment = ChatRoomFragment()
+    private val chatRoomFragment = ChatRoomFragment()
 
     open var handsUpListFragment: HandsUpListFragment = HandsUpListFragment()
 
-    private val stageChangeObserver: (t: List<NEEduMember>?) -> Unit = { onStageListChange() }
+    private val stageChangeObserver = Observer<List<NEEduMember>?>{ onStageListChange() }
 
     override fun getIMLayout(): View {
         return binding.layoutIm
@@ -223,7 +222,7 @@ abstract class BigClassBaseActivity(layoutId: Int) : BaseClassActivity(layoutId)
             .observe(this,
                 { t ->
                     if (!t.success()) {
-                        if (t.code == NEEduErrorCode.ROOM_PROPERTY_CONCURRENCY_OUT.code) {
+                        if (t.code == NEEduHttpCode.ROOM_PROPERTY_CONCURRENCY_OUT.code) {
                             ToastUtil.showShort(getString(R.string.stage_student_over_limit))
                         } else {
                             ToastUtil.showShort(getString(R.string.operate_fail))

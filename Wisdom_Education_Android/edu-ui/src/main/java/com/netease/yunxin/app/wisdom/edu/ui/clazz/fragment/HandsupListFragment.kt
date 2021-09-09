@@ -5,17 +5,17 @@
 
 package com.netease.yunxin.app.wisdom.edu.ui.clazz.fragment
 
-import com.netease.yunxin.app.wisdom.base.util.CommonUtil.setOnClickThrottleFirst
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.netease.yunxin.app.wisdom.base.util.CommonUtil.setOnClickThrottleFirst
 import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduMember
 import com.netease.yunxin.app.wisdom.edu.ui.R
 import com.netease.yunxin.app.wisdom.edu.ui.base.BaseFragment
 import com.netease.yunxin.app.wisdom.edu.ui.clazz.BigClassBaseActivity
-import com.netease.yunxin.app.wisdom.edu.ui.clazz.adapter.BaseAdapter
 import com.netease.yunxin.app.wisdom.edu.ui.clazz.adapter.HandsUpListAdapter
 import com.netease.yunxin.app.wisdom.edu.ui.databinding.FragmentHandsUpListBinding
-import com.netease.yunxin.app.wisdom.edu.ui.viewbinding.viewBinding
+import com.netease.yunxin.app.wisdom.rvadapter.BaseAdapter
+import com.netease.yunxin.app.wisdom.viewbinding.viewBinding
 
 class HandsUpListFragment : BaseFragment(R.layout.fragment_hands_up_list),
     BaseAdapter.OnItemChildClickListener<NEEduMember> {

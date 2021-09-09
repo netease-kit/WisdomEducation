@@ -6,6 +6,8 @@ package com.netease.yunxin.app.wisdom.base.util
 
 import android.opengl.GLES10
 import com.netease.yunxin.app.wisdom.base.util.BitmapDecoder.decodeBound
+import kotlin.math.roundToInt
+import kotlin.math.sqrt
 
 object SampleSizeUtil {
     fun calculateSampleSize(imagePath: String?, totalPixel: Int): Int {
@@ -13,10 +15,10 @@ object SampleSizeUtil {
         return calculateSampleSize(bound!![0], bound[1], totalPixel)
     }
 
-    fun calculateSampleSize(width: Int, height: Int, totalPixel: Int): Int {
+    private fun calculateSampleSize(width: Int, height: Int, totalPixel: Int): Int {
         var ratio = 1
         if (width > 0 && height > 0) {
-            ratio = Math.sqrt(((width * height).toFloat() / totalPixel).toDouble()).toInt()
+            ratio = sqrt(((width * height).toFloat() / totalPixel).toDouble()).toInt()
             if (ratio < 1) {
                 ratio = 1
             }
@@ -58,8 +60,8 @@ object SampleSizeUtil {
         var inSampleSize = 1
         if (height > reqHeight || width > reqWidth) {
             // Calculate ratios of height and width to requested height and width
-            val heightRatio = Math.round(height.toFloat() / reqHeight.toFloat())
-            val widthRatio = Math.round(width.toFloat() / reqWidth.toFloat())
+            val heightRatio = (height.toFloat() / reqHeight.toFloat()).roundToInt()
+            val widthRatio = (width.toFloat() / reqWidth.toFloat()).roundToInt()
 
             // Choose the smallest ratio as inSampleSize value, this will
             // guarantee a final image

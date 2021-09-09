@@ -11,16 +11,13 @@ import android.view.View
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduMember
-import com.netease.yunxin.app.wisdom.edu.logic.options.NEEduRoleType
-import com.netease.yunxin.app.wisdom.edu.ui.R
+import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduRoleType
 import com.netease.yunxin.app.wisdom.edu.ui.base.BaseClassActivity
 import com.netease.yunxin.app.wisdom.edu.ui.clazz.widget.ClazzInfoView
 import com.netease.yunxin.app.wisdom.edu.ui.clazz.widget.ItemBottomView
 import com.netease.yunxin.app.wisdom.edu.ui.clazz.widget.TitleView
-import com.netease.yunxin.app.wisdom.edu.ui.databinding.ActivityClazzBinding
-import com.netease.yunxin.app.wisdom.edu.ui.viewbinding.viewBinding
 
-class OneToOneTeacherActivity : BaseClassActivity(R.layout.activity_clazz) {
+class OneToOneTeacherActivity : BaseClassActivity() {
 
     companion object {
         fun start(context: Context) {
@@ -115,7 +112,6 @@ class OneToOneTeacherActivity : BaseClassActivity(R.layout.activity_clazz) {
             getHandsUp().visibility = View.GONE
             getHandsUpApply().visibility = View.GONE
             getMembers().visibility = View.GONE
-            getChatRoom().visibility = View.GONE
         }
         getClassInitLayout().visibility = View.GONE
     }

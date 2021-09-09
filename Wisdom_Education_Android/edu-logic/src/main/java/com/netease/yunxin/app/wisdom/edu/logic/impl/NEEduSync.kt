@@ -160,7 +160,7 @@ internal class NEEduSync(val neEduManager: NEEduManagerImpl) {
                         it.snapshot.members.firstOrNull { t -> NEEduManagerImpl.isSelf(t.userUuid) }
                             ?.also { member ->
                                 member.properties?.let { it ->
-                                    var propertiesDiff =
+                                    val propertiesDiff =
                                         it.diff(lastJoinList.firstOrNull { it1 -> it1 == member }?.properties)
                                     neEduManager.getMemberService().updateMemberPropertiesChange(member, member
                                         .properties!!)

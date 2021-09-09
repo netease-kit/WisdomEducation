@@ -13,16 +13,13 @@ import com.netease.nimlib.sdk.auth.LoginInfo
 import com.netease.yunxin.app.wisdom.base.network.NEResult
 import com.netease.yunxin.app.wisdom.base.network.RetrofitManager
 import com.netease.yunxin.app.wisdom.base.util.observeForeverOnce
-import com.netease.yunxin.app.wisdom.edu.logic.NEEduErrorCode
 import com.netease.yunxin.app.wisdom.edu.logic.NEEduManager
 import com.netease.yunxin.app.wisdom.edu.logic.cmd.CMDDispatcher
 import com.netease.yunxin.app.wisdom.edu.logic.foreground.NEEduForegroundService
 import com.netease.yunxin.app.wisdom.edu.logic.foreground.NEEduForegroundServiceConfig
-import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduRoomConfig
+import com.netease.yunxin.app.wisdom.edu.logic.model.*
 import com.netease.yunxin.app.wisdom.edu.logic.net.service.AuthServiceRepository
 import com.netease.yunxin.app.wisdom.edu.logic.net.service.BaseRepository
-import com.netease.yunxin.app.wisdom.edu.logic.net.service.response.NEEduEntryMember
-import com.netease.yunxin.app.wisdom.edu.logic.net.service.response.NEEduEntryRes
 import com.netease.yunxin.app.wisdom.edu.logic.net.service.response.NEEduLoginRes
 import com.netease.yunxin.app.wisdom.edu.logic.options.NEEduClassOptions
 import com.netease.yunxin.app.wisdom.edu.logic.service.*
@@ -59,6 +56,10 @@ internal object NEEduManagerImpl : NEEduManager {
         return eduEntryRes.member
     }
 
+    override fun getWbAuth(): NEEduWbAuth? {
+        return eduEntryRes.member.wbAuth
+    }
+
     var cmdDispatcher: CMDDispatcher? = null
 
     var neEduSync: NEEduSync? = null
@@ -89,10 +90,11 @@ internal object NEEduManagerImpl : NEEduManager {
         val initLD: MediatorLiveData<NEResult<Boolean>> = MediatorLiveData()
         if (TextUtils.isEmpty(uuid) && TextUtils.isEmpty(token)) AuthServiceRepository.anonymousLogin().also {
             onLoginCallback(it, initLD)
-        } else if (!TextUtils.isEmpty(uuid) && !TextUtils.isEmpty(token)) AuthServiceRepository.login(uuid, token).also {
-            onLoginCallback(it, initLD)
-        } else {
-            initLD.postValue(NEResult(NEEduErrorCode.BAD_REQUEST.code, false))
+        } else if (!TextUtils.isEmpty(uuid) && !TextUtils.isEmpty(token)) AuthServiceRepository.login(uuid, token)
+            .also {
+                onLoginCallback(it, initLD)
+            } else {
+            initLD.postValue(NEResult(NEEduHttpCode.BAD_REQUEST.code, false))
         }
         return initLD
     }
@@ -124,11 +126,11 @@ internal object NEEduManagerImpl : NEEduManager {
             }
             if (rtcLD.value == true && imLoginLD.value == true) {
                 initInnerOthers()
-                initLD.postValue(NEResult(NEEduErrorCode.SUCCESS.code, true))
+                initLD.postValue(NEResult(NEEduHttpCode.SUCCESS.code, true))
             } else if (rtcLD.value == false) {
-                initLD.postValue(NEResult(NEEduErrorCode.RTC_INIT_ERROR.code, false))
+                initLD.postValue(NEResult(NEEduHttpCode.RTC_INIT_ERROR.code, false))
             } else {
-                initLD.postValue(NEResult(NEEduErrorCode.IM_LOGIN_ERROR.code, false))
+                initLD.postValue(NEResult(NEEduHttpCode.IM_LOGIN_ERROR.code, false))
             }
         }
         mergeLD.addSource(rtcLD, onChanged)
@@ -157,7 +159,7 @@ internal object NEEduManagerImpl : NEEduManager {
         val enterLD = MediatorLiveData<NEResult<NEEduEntryRes>>()
         getRoomService().config(neEduClassOptions).also {
             it.observeForeverOnce { t ->
-                if (t.success() || t.success(NEEduErrorCode.CONFLICT.code)) {
+                if (t.success() || t.success(NEEduHttpCode.CONFLICT.code)) {
                     roomConfig = t.data!!.config
                     realEnterClass(enterLD, neEduClassOptions)
                 } else {
@@ -213,6 +215,7 @@ internal object NEEduManagerImpl : NEEduManager {
         rtcManager.release()
         cmdDispatcher?.destroy()
         NEEduRtcVideoViewPool.clear()
+        boardService.dispose()
         ALog.i(TAG, "destroy")
         ALog.flush(true)
     }

@@ -12,14 +12,11 @@ import com.google.gson.reflect.TypeToken
 import com.netease.nimlib.sdk.RequestCallbackWrapper
 import com.netease.nimlib.sdk.ResponseCode
 import com.netease.nimlib.sdk.passthrough.model.PassthroughProxyData
-import com.netease.yunxin.app.wisdom.base.network.ErrorCode
 import com.netease.yunxin.app.wisdom.base.network.NEResult
 import com.netease.yunxin.app.wisdom.base.network.RetrofitManager
-import com.netease.yunxin.app.wisdom.edu.logic.BuildConfig
-import com.netease.yunxin.app.wisdom.edu.logic.NEEduErrorCode
 import com.netease.yunxin.app.wisdom.edu.logic.impl.NEEduManagerImpl
+import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduHttpCode
 import com.netease.yunxin.kit.alog.ALog
-import retrofit2.CallAdapter
 import java.lang.reflect.Method
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
@@ -53,7 +50,7 @@ internal interface BaseService {
             return getParameterUpperBound(0, returnType as ParameterizedType)
         }
 
-        fun getParameterUpperBound(index: Int, type: ParameterizedType): Type? {
+        private fun getParameterUpperBound(index: Int, type: ParameterizedType): Type? {
             val types = type.actualTypeArguments
             require(!(index < 0 || index >= types.size)) { "Index " + index + " not in range [0," + types.size + ") for " + type }
             val paramType = types[index]
@@ -102,7 +99,7 @@ internal interface BaseService {
             override fun onResult(code: Int, result: PassthroughProxyData?, exception: Throwable?) {
                 if (code == ResponseCode.RES_SUCCESS.toInt()) {
                     if (result == null) {
-                        completer.postValue(NEResult(NEEduErrorCode.SUCCESS.code))
+                        completer.postValue(NEResult(NEEduHttpCode.SUCCESS.code))
                     } else {
                         ALog.i("passthrougth <-- ${method.name} data: ${result.body}")
                         val data: NEResult<T> = gson.fromJson(result.body, TypeToken.get(observableType).type)

@@ -12,7 +12,7 @@ import android.view.View
 import android.widget.FrameLayout
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduMember
-import com.netease.yunxin.app.wisdom.edu.logic.options.NEEduRoleType
+import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduRoleType
 import com.netease.yunxin.app.wisdom.edu.ui.R
 import com.netease.yunxin.app.wisdom.edu.ui.databinding.RtcVideoAudioViewBinding
 

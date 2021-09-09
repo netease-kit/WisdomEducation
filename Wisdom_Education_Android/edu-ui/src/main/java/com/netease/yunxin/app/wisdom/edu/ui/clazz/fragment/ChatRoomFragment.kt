@@ -5,7 +5,6 @@
 
 package com.netease.yunxin.app.wisdom.edu.ui.clazz.fragment
 
-import com.netease.yunxin.app.wisdom.base.util.CommonUtil.setOnClickThrottleFirst
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -20,6 +19,7 @@ import androidx.activity.result.contract.ActivityResultContract
 import androidx.annotation.CallSuper
 import androidx.core.content.FileProvider
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.netease.nimlib.sdk.ResponseCode
 import com.netease.nimlib.sdk.chatroom.ChatRoomMessageBuilder
@@ -29,19 +29,20 @@ import com.netease.nimlib.sdk.chatroom.model.EnterChatRoomData
 import com.netease.nimlib.sdk.msg.constant.MsgTypeEnum
 import com.netease.nimlib.sdk.msg.model.AttachmentProgress
 import com.netease.yunxin.app.wisdom.base.util.ClipboardUtil
+import com.netease.yunxin.app.wisdom.base.util.CommonUtil.setOnClickThrottleFirst
 import com.netease.yunxin.app.wisdom.base.util.FileUtils
 import com.netease.yunxin.app.wisdom.base.util.ToastUtil
-import com.netease.yunxin.app.wisdom.edu.logic.options.NEEduRoleType
+import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduRoleType
 import com.netease.yunxin.app.wisdom.edu.ui.R
 import com.netease.yunxin.app.wisdom.edu.ui.base.BaseClassActivity
 import com.netease.yunxin.app.wisdom.edu.ui.base.BaseFragment
-import com.netease.yunxin.app.wisdom.edu.ui.clazz.adapter.BaseAdapter
 import com.netease.yunxin.app.wisdom.edu.ui.clazz.adapter.ChatAdapter
 import com.netease.yunxin.app.wisdom.edu.ui.clazz.adapter.ItemClickListerAdapter
 import com.netease.yunxin.app.wisdom.edu.ui.clazz.dialog.ActionSheetDialog
 import com.netease.yunxin.app.wisdom.edu.ui.clazz.viewmodel.ChatRoomViewModel
 import com.netease.yunxin.app.wisdom.edu.ui.databinding.FragmentChatroomBinding
-import com.netease.yunxin.app.wisdom.edu.ui.viewbinding.viewBinding
+import com.netease.yunxin.app.wisdom.rvadapter.BaseAdapter
+import com.netease.yunxin.app.wisdom.viewbinding.viewBinding
 import java.io.File
 
 class ChatRoomFragment : BaseFragment(R.layout.fragment_chatroom),
@@ -92,13 +93,15 @@ class ChatRoomFragment : BaseFragment(R.layout.fragment_chatroom),
         }
     }
 
-    val receiveMessageObserver = { it: List<ChatRoomMessage> ->
-        it?.also {
-            viewModel.addUnread(it.size)
-        }.forEach { t ->
-            addMessage(t)
+
+    private val receiveMessageObserver =
+        androidx.lifecycle.Observer<List<ChatRoomMessage>> { t ->
+            t.also {
+                viewModel.addUnread(t.size)
+            }.forEach { t ->
+                addMessage(t)
+            }
         }
-    }
 
     override fun initData() {
         enterRoom()
@@ -120,12 +123,13 @@ class ChatRoomFragment : BaseFragment(R.layout.fragment_chatroom),
     private fun enterRoom() {
         val activity = activity as BaseClassActivity?
         activity?.let {
-            val data = EnterChatRoomData(activity.eduRoom?.chatRoomId())
-            var suffix =
+            val data = EnterChatRoomData(activity.eduRoom.chatRoomId())
+            val suffix =
                 if (eduManager.getEntryMember().role == NEEduRoleType.HOST.value) getString(R.string.teacher_label) else getString(
                     R.string.student_label
                 )
             data.nick = "${activity.entryMember.userName}${suffix}"
+
             viewModel.enterChatRoom(data).observe(this, { t ->
                 if (t.success()) {
                     roomInfo = t.data?.roomInfo
@@ -190,7 +194,7 @@ class ChatRoomFragment : BaseFragment(R.layout.fragment_chatroom),
 
     private fun onMuteAllChat(isMuteAll: Boolean) {
         this.isMuteAll = isMuteAll
-        binding.editSendMsg?.let {
+        binding.editSendMsg.let {
             it.isEnabled = !isMuteAll
             if (isMuteAll) {
                 it.setHint(R.string.chat_muting)
@@ -201,8 +205,8 @@ class ChatRoomFragment : BaseFragment(R.layout.fragment_chatroom),
     }
 
     private fun addMessage(chatRoomMessage: ChatRoomMessage) {
-        binding.rcvMsg?.let {
-            if(adapter.containsData(chatRoomMessage)) {
+        binding.rcvMsg.let {
+            if (adapter.containsData(chatRoomMessage)) {
                 adapter.refreshDataAndNotify(chatRoomMessage, null, compare = { it1, it2 ->
                     it1.isTheSame(it2)
                 })
@@ -357,13 +361,13 @@ class ChatRoomFragment : BaseFragment(R.layout.fragment_chatroom),
         choosePictureLaunch.launch(null)
     }
 
-    private val messageStatusChangeObserver = { it: ChatRoomMessage ->
+    private val messageStatusChangeObserver = Observer<ChatRoomMessage> {
         adapter.refreshDataAndNotify(it!!, null, compare = { it1, it2 ->
             it1.isTheSame(it2)
         })
     }
 
-    private val attachmentProgressChangeObserver = { _: AttachmentProgress ->
+    private val attachmentProgressChangeObserver = Observer<AttachmentProgress> {
     }
 
     override fun onItemChildClick(adapter: BaseAdapter<ChatRoomMessage>?, v: View?, position: Int) {

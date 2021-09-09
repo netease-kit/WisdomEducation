@@ -19,7 +19,7 @@ import com.netease.yunxin.app.wisdom.edu.logic.service.NEEduIMService
 
 class ChatRoomViewModel : BaseViewModel() {
 
-    val imService: NEEduIMService = eduManager.getIMService()
+    private val imService: NEEduIMService = eduManager.getIMService()
 
     private var roomInfo: ChatRoomInfo? = null
 
@@ -27,16 +27,20 @@ class ChatRoomViewModel : BaseViewModel() {
 
     private var unreadMsgCount: Int = 0
 
+    private var onReceiveMessage = imService.onReceiveMessage().map { it.filter { t -> t.sessionId == roomInfo?.roomId } }
+
+    private var onMessageStatusChange = imService.onMessageStatusChange().filter { t -> t?.sessionId == roomInfo?.roomId }
+
     fun onMuteAllChat(): LiveData<Boolean> {
         return imService.onMuteAllChat()
     }
 
     fun onReceiveMessage(): LiveData<List<ChatRoomMessage>> {
-        return imService.onReceiveMessage().map { it.filter { t -> t.sessionId == roomInfo?.roomId } }
+        return onReceiveMessage
     }
 
     fun onMessageStatusChange(): LiveData<ChatRoomMessage> {
-        return imService.onMessageStatusChange().filter { t -> t?.sessionId == roomInfo?.roomId }
+        return onMessageStatusChange
     }
 
     fun onAttachmentProgressChange(): LiveData<AttachmentProgress> {

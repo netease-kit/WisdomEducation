@@ -12,9 +12,7 @@ object JsMessageAction {
 
     const val webPageLoaded: String = "webPageLoaded"
 
-    const val webLoginIMSucceed: String = "webLoginIMSucceed"
-
-    const val webLoginIMFailed: String = "webLoginIMFailed"
+    const val webJoinWBSucceed: String = "webJoinWBSucceed"
 
     const val webJoinWBFailed: String = "webJoinWBFailed"
 
@@ -25,4 +23,6 @@ object JsMessageAction {
     const val webError: String = "webError"
 
     const val webJsError: String = "webJsError"
+
+    const val webGetAuth: String = "webGetAuth"
 }

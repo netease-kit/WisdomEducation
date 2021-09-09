@@ -22,6 +22,8 @@ abstract class WhiteboardApi {
 
     abstract fun getAppKey(): String
 
+    abstract fun getUid(): Long
+
     abstract fun setEnableDraw(enable: Boolean)
 
     abstract fun isEnableDraw(): Boolean
@@ -31,4 +33,10 @@ abstract class WhiteboardApi {
     abstract fun getWhiteboardView(): WhiteboardView
 
     abstract fun finish()
+
+    abstract fun getChecksum(): String?
+
+    abstract fun getCurTime(): Long?
+
+    abstract fun getNonce(): String?
 }

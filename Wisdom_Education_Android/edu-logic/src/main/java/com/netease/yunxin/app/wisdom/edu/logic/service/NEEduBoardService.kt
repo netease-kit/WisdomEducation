@@ -5,7 +5,6 @@
 
 package com.netease.yunxin.app.wisdom.edu.logic.service
 
-import android.content.Context
 import androidx.lifecycle.LiveData
 import com.netease.yunxin.app.wisdom.base.network.NEResult
 import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduMember

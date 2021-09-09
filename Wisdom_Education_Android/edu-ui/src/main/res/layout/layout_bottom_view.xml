@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (c) 2021 NetEase, Inc.  All rights reserved.
   ~ Use of this source code is governed by a MIT license that can be found in the LICENSE file.
   -->
@@ -87,20 +86,21 @@
         android:id="@+id/item_handup_offstage"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/item_chatroom"
         app:layout_constraintStart_toEndOf="@id/item_handup_apply"
         app:layout_constraintTop_toTopOf="parent"
         app:src="@drawable/ic_bottom_handsup_unselected"
         app:text="@string/off_stage"
-        android:visibility="gone"
-        tools:visibility="visible"/>
+        tools:visibility="visible" />
 
     <com.netease.yunxin.app.wisdom.edu.ui.clazz.widget.ItemBottomView
         android:id="@+id/item_chatroom"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_marginEnd="@dimen/common_dp_70"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/btn_clazz_ctrl_left"
         app:layout_constraintStart_toEndOf="@id/item_handup_offstage"
@@ -123,8 +123,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_goneMarginEnd="@dimen/common_dp_46"
-        />
+        app:layout_goneMarginEnd="@dimen/common_dp_46" />
 
     <Button
         android:id="@+id/btn_clazz_ctrl_left"

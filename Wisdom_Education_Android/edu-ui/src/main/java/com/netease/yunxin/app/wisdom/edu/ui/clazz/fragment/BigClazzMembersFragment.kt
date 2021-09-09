@@ -5,13 +5,13 @@
 
 package com.netease.yunxin.app.wisdom.edu.ui.clazz.fragment
 
-import com.netease.yunxin.app.wisdom.base.util.CommonUtil.setOnClickThrottleFirst
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import com.netease.yunxin.app.wisdom.base.util.CommonUtil.setOnClickThrottleFirst
 import com.netease.yunxin.app.wisdom.base.util.ToastUtil
 import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduStateValue
 import com.netease.yunxin.app.wisdom.edu.ui.R
@@ -19,7 +19,7 @@ import com.netease.yunxin.app.wisdom.edu.ui.base.BaseClassActivity
 import com.netease.yunxin.app.wisdom.edu.ui.base.BaseFragment
 import com.netease.yunxin.app.wisdom.edu.ui.clazz.viewmodel.ChatRoomViewModel
 import com.netease.yunxin.app.wisdom.edu.ui.databinding.FragmentBigclazzMembersBinding
-import com.netease.yunxin.app.wisdom.edu.ui.viewbinding.viewBinding
+import com.netease.yunxin.app.wisdom.viewbinding.viewBinding
 import com.netease.yunxin.kit.alog.ALog
 
 class BigClazzMembersFragment : BaseFragment(R.layout.fragment_bigclazz_members) {
@@ -41,13 +41,13 @@ class BigClazzMembersFragment : BaseFragment(R.layout.fragment_bigclazz_members)
     }
 
     private fun updateAttachmentMembersText() {
-        eduManager?.getHandsUpService().getOnStageMemberList().filter { !it.isHost() }.let { t ->
+        eduManager.getHandsUpService().getOnStageMemberList().filter { !it.isHost() }.let { t ->
             binding.tablayout.getTabAt(0)?.text = getString(R.string.attachment_members, t.size)
         }
     }
 
     private fun updateAllMembersText() {
-        eduManager?.getMemberService().getMemberList().filter { !it.isHost() }.let { t ->
+        eduManager.getMemberService().getMemberList().filter { !it.isHost() }.let { t ->
             binding.tablayout.getTabAt(1)?.text = getString(R.string.all_members, t.size)
         }
     }
@@ -57,7 +57,7 @@ class BigClazzMembersFragment : BaseFragment(R.layout.fragment_bigclazz_members)
             fragmentList.add(MemberStageFragment())
             fragmentList.add(MemberStudentsFragment())
             //初始化viewPage
-            viewpager!!.adapter = object : FragmentStateAdapter(requireActivity()) {
+            viewpager.adapter = object : FragmentStateAdapter(requireActivity()) {
                 override fun getItemCount(): Int {
                     return fragmentList.size
                 }

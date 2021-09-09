@@ -10,11 +10,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.map
 import com.netease.yunxin.app.wisdom.base.network.NEResult
 import com.netease.yunxin.app.wisdom.edu.logic.NEEduManager
-import com.netease.yunxin.app.wisdom.edu.logic.net.service.response.NEEduEntryRes
+import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduEntryRes
 import com.netease.yunxin.app.wisdom.edu.logic.net.service.response.NEEduLoginRes
 import com.netease.yunxin.app.wisdom.edu.logic.options.NEEduClassOptions
-import com.netease.yunxin.app.wisdom.edu.logic.options.NEEduRoleType
-import com.netease.yunxin.app.wisdom.edu.logic.options.NEEduSceneType
+import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduRoleType
+import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduSceneType
 import com.netease.yunxin.app.wisdom.edu.ui.NEEduUiKit
 import com.netease.yunxin.app.wisdom.edu.ui.clazz.*
 

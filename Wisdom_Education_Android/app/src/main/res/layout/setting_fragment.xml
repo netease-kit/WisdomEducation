@@ -14,99 +14,120 @@
         android:id="@+id/main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white"
+        android:background="@color/color_f2f3f5"
         tools:context=".ui.main.SettingFragment">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/common_dp_88"
+            android:layout_marginBottom="@dimen/common_dp_10"
+            android:background="@color/white"
+            android:gravity="center"
+            android:paddingTop="@dimen/common_dp_44"
+            android:text="@string/setting"
+            android:textColor="@color/color_222222"
+            android:textSize="@dimen/ts_17_dp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/tv_back"
-            android:layout_width="@dimen/common_dp_32"
-            android:layout_height="@dimen/common_dp_32"
-            android:layout_marginStart="@dimen/common_dp_11"
-            android:layout_marginTop="@dimen/common_dp_30"
+            android:layout_width="@dimen/common_dp_44"
+            android:layout_height="@dimen/common_dp_44"
+            android:layout_marginStart="@dimen/common_dp_4"
+            android:layout_marginTop="@dimen/common_dp_44"
+            android:gravity="center_vertical"
             android:scaleType="centerInside"
             android:src="@drawable/ic_back"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-
         <TextView
-            android:id="@+id/title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/common_dp_10"
-            android:layout_marginTop="@dimen/common_dp_30"
-            android:layout_marginBottom="@dimen/common_dp_10"
-            android:text="IM登录"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            app:layout_constraintStart_toEndOf="@id/tv_back"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <EditText
-            android:id="@+id/firstEditor"
-            android:layout_width="0dp"
-            android:layout_height="56dp"
-            android:layout_margin="10dp"
-            android:hint="IM账号"
-            android:textSize="16sp"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
+            android:id="@+id/tv_chatroom"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/common_dp_56"
+            android:layout_marginTop="@dimen/common_dp_20"
+            android:background="@color/white"
+            android:gravity="start|center_vertical"
+            android:paddingStart="@dimen/common_dp_20"
+            android:text="@string/open_chat_room"
+            android:textColor="@color/color_222222"
+            android:textSize="@dimen/ts_17_dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/title" />
 
-        <EditText
-            android:id="@+id/secondEditor"
-            android:layout_width="0dp"
-            android:layout_height="56dp"
-            android:layout_margin="10dp"
-            android:hint="IM密码"
-            android:textSize="16sp"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/firstEditor"
-            tools:text="1234567" />
-
         <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/toggleIMReuse"
+            android:id="@+id/toggleChatroom"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:text="当前IM复用状态(修改后重启生效)："
-            android:textOff="已关闭"
-            android:textOn="已开启"
-            android:textSize="17sp"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/secondEditor" />
+            android:layout_height="@dimen/common_dp_31"
+            android:layout_marginEnd="@dimen/common_dp_20"
+            android:gravity="center"
+            android:thumb="@drawable/switch_thumb"
+            app:layout_constraintBottom_toBottomOf="@id/tv_chatroom"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tv_chatroom"
+            app:switchMinWidth="@dimen/common_dp_51"
+            app:track="@drawable/switch_track" />
 
         <TextView
-            android:id="@+id/imLoginState"
+            android:id="@+id/tv_chatroom_desc"
+            android:paddingStart="@dimen/common_dp_20"
+            android:paddingEnd="@dimen/common_dp_20"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="当前已登录IM账号:"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/toggleIMReuse" />
+            android:layout_marginTop="@dimen/common_dp_5"
+            android:ellipsize="marquee"
+            android:text="@string/open_chatroom"
+            android:textColor="@color/color_999999"
+            android:textSize="@dimen/ts_14_dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_chatroom"
+            android:singleLine="true" />
 
-        <Button
-            android:id="@+id/loginBtn"
-            android:layout_width="200dp"
-            android:layout_height="60dp"
-            android:text="登录"
-            android:textSize="20sp"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/imLoginState" />
+        <TextView
+            android:id="@+id/tv_im_reuse"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/common_dp_56"
+            android:layout_marginTop="@dimen/common_dp_45"
+            android:background="@color/white"
+            android:gravity="start|center_vertical"
+            android:paddingStart="@dimen/common_dp_20"
+            android:text="@string/im_reuse"
+            android:textColor="@color/color_222222"
+            android:textSize="@dimen/ts_17_dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_chatroom" />
 
-        <Button
-            android:id="@+id/logoutBtn"
-            android:layout_width="200dp"
-            android:layout_height="60dp"
-            android:text="注销"
-            android:textSize="20sp"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/loginBtn" />
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_im_reuse"
+            android:layout_width="@dimen/common_dp_31"
+            android:layout_height="@dimen/common_dp_56"
+            android:layout_marginEnd="@dimen/common_dp_20"
+            android:scaleType="centerInside"
+            app:layout_constraintBottom_toBottomOf="@id/tv_im_reuse"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tv_im_reuse"
+            app:srcCompat="@mipmap/goto_detail"/>
+
+        <TextView
+            android:id="@+id/tv_im_reuse_desc"
+            android:paddingStart="@dimen/common_dp_20"
+            android:paddingEnd="@dimen/common_dp_20"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/common_dp_5"
+            android:ellipsize="marquee"
+            android:text="@string/im_resue_desc"
+            android:textColor="@color/color_999999"
+            android:textSize="@dimen/ts_14_dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_im_reuse"
+            android:singleLine="true" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
