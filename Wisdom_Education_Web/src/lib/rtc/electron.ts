@@ -511,50 +511,50 @@ export class NeElertc extends EnhancedEventEmitter {
     //   }));
     // const windowDisplay = pcUtil.enumerateWindows() || [];
     // return [...screenDisplay, ...windowDisplay];
-    if (platform === PlatForms.mac) {
-      const sources = await eleRemote.desktopCapturer.getSources({ types: ['window', 'screen'], thumbnailSize: { width: 320, height: 180 }, fetchWindowIcons: true })
-      if (sources.length > 0) {
-        this._windowsList = sources.map((item) => ({
-          id: item.id.split(':')[1],
-          displayId: item.display_id,
-          name: item.name,
-          thumbnail: item.thumbnail.toDataURL(),
-          appIcon: item.appIcon?.toDataURL()
-        }))
-      }
-    } else if (platform === PlatForms.win) {
-      this._windowsList = [];
-      const source = await this._nertcEngine.enumerateScreenCaptureSourceInfo(206, 206, 206, 206);
-      const canvasDom = document.createElement('canvas');
-      const ctx = canvasDom.getContext('2d')
-      for (let i = 0; i < source.length; i++) {
-        const srcinfo = source[i]
-        if (srcinfo.thumbBGRA !== undefined && srcinfo.thumbBGRA.length !== 0) {
-          canvasDom.width = srcinfo.thumbBGRA.width
-          canvasDom.height = srcinfo.thumbBGRA.height
-          const imgData = new ImageData(new Uint8ClampedArray(srcinfo.thumbBGRA.buffer), srcinfo.thumbBGRA.width, srcinfo.thumbBGRA.height)
-          ctx?.putImageData(imgData, 0, 0)
-          srcinfo.captureThumbnail = canvasDom.toDataURL()
-          ctx?.clearRect(0, 0, canvasDom.width, canvasDom.height)
-        }
-        if (srcinfo.iconBGRA !== undefined && srcinfo.iconBGRA.length !== 0) {
-          canvasDom.width = srcinfo.iconBGRA.width
-          canvasDom.height = srcinfo.iconBGRA.height
-          const iconData = new ImageData(new Uint8ClampedArray(srcinfo.iconBGRA.buffer), srcinfo.iconBGRA.width, srcinfo.iconBGRA.height)
-          ctx?.putImageData(iconData, 0, 0)
-          srcinfo.captureIcon = canvasDom.toDataURL()
-          ctx?.clearRect(0, 0, canvasDom.width, canvasDom.height)
-        }
-        const sid = srcinfo.displayId || srcinfo.sourceId.toString()
-        this.windowsList.push({
-          id: sid,
-          name: srcinfo.sourceName,
-          displayId: srcinfo.displayId,
-          thumbnail: srcinfo.captureThumbnail,
-          appIcon: srcinfo.captureIcon
-        })
-      }
+    // if (platform === PlatForms.mac) {
+    const sources = await eleRemote.desktopCapturer.getSources({ types: ['window', 'screen'], thumbnailSize: { width: 320, height: 180 }, fetchWindowIcons: true })
+    if (sources.length > 0) {
+      this._windowsList = sources.map((item) => ({
+        id: item.id.split(':')[1],
+        displayId: item.display_id,
+        name: item.name,
+        thumbnail: item.thumbnail.toDataURL(),
+        appIcon: item.appIcon?.toDataURL()
+      }))
     }
+    // } else if (platform === PlatForms.win) {
+    //   this._windowsList = [];
+    //   const source = await this._nertcEngine.enumerateScreenCaptureSourceInfo(206, 206, 206, 206);
+    //   const canvasDom = document.createElement('canvas');
+    //   const ctx = canvasDom.getContext('2d')
+    //   for (let i = 0; i < source.length; i++) {
+    //     const srcinfo = source[i]
+    //     if (srcinfo.thumbBGRA !== undefined && srcinfo.thumbBGRA.length !== 0) {
+    //       canvasDom.width = srcinfo.thumbBGRA.width
+    //       canvasDom.height = srcinfo.thumbBGRA.height
+    //       const imgData = new ImageData(new Uint8ClampedArray(srcinfo.thumbBGRA.buffer), srcinfo.thumbBGRA.width, srcinfo.thumbBGRA.height)
+    //       ctx?.putImageData(imgData, 0, 0)
+    //       srcinfo.captureThumbnail = canvasDom.toDataURL()
+    //       ctx?.clearRect(0, 0, canvasDom.width, canvasDom.height)
+    //     }
+    //     if (srcinfo.iconBGRA !== undefined && srcinfo.iconBGRA.length !== 0) {
+    //       canvasDom.width = srcinfo.iconBGRA.width
+    //       canvasDom.height = srcinfo.iconBGRA.height
+    //       const iconData = new ImageData(new Uint8ClampedArray(srcinfo.iconBGRA.buffer), srcinfo.iconBGRA.width, srcinfo.iconBGRA.height)
+    //       ctx?.putImageData(iconData, 0, 0)
+    //       srcinfo.captureIcon = canvasDom.toDataURL()
+    //       ctx?.clearRect(0, 0, canvasDom.width, canvasDom.height)
+    //     }
+    //     const sid = srcinfo.displayId || srcinfo.sourceId.toString()
+    //     this.windowsList.push({
+    //       id: sid,
+    //       name: srcinfo.sourceName,
+    //       displayId: srcinfo.displayId,
+    //       thumbnail: srcinfo.captureThumbnail,
+    //       appIcon: srcinfo.captureIcon
+    //     })
+    //   }
+    // }
     logger.log('shareList', this._windowsList);
     return this._windowsList;
   }
@@ -567,8 +567,8 @@ export class NeElertc extends EnhancedEventEmitter {
   }
 
   public async setParameters(options:NERtcParams = {
-    record_audio_enabled: true,
-    record_video_enabled: true,
+    record_audio_enabled: false,
+    record_video_enabled: false,
     record_type: 0,
   }): Promise<void> {
     const res = await this._nertcEngine.setParameters(options);

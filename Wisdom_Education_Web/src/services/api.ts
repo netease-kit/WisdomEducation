@@ -134,6 +134,13 @@ export interface DeleteRoomStateOptions {
   state: 'step'|'pause'|'muteAudio';
 }
 
+export interface Resources {
+  live?: boolean;
+  rtc?: boolean;
+  chatroom?: boolean;
+  whiteboard?: boolean;
+}
+
 
 /**
  * @description: 登录请求
@@ -160,10 +167,18 @@ export async function anonymousLogin(): Promise<LoginResponse>  {
  * @param {string} roomUuid
  * @return {*}
  */
-export async function createRoom(roomUuid: string|number, roomName: string, roomType: RoomTypes): Promise<any> {
+export async function createRoom(roomUuid: string|number, roomName: string, roomType: RoomTypes, resource: Resources): Promise<any> {
   const reqConfig = {
     roomName: roomName,
     configId: roomType,
+    config: {
+      resource: {
+        ...resource,
+        live: false,
+        rtc: true,
+        whiteboard: true,
+      },
+    }
   };
   const res = await put(`/v1/rooms/${roomUuid}`, reqConfig,
     {

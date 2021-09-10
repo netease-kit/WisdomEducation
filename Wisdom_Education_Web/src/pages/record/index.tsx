@@ -6,7 +6,7 @@ import React, { useEffect, useRef } from 'react';
 import { toJS } from 'mobx';
 import { Spin } from "antd";
 import Header from '@/component/header';
-import { useRecordStore, useUIStore } from '@/hooks/store';
+import { useRecordStore, useUIStore, useRoomStore } from '@/hooks/store';
 import { useLocation } from "react-router-dom";
 import { observer } from 'mobx-react';
 import Replay from '@/component/web-record';
@@ -16,7 +16,7 @@ import './index.less';
 import { isElectron } from '@/config';
 export interface IEvent {
   userId: string
-  action: 'show' | 'hide',
+  action: 'show' | 'hide' | 'showScreen' | 'remove',
   timestamp: number,
   payload?: any
 }
@@ -27,10 +27,11 @@ export interface ITrack {
   name: string,
   role: 'student' | 'teacher'
   url: string,
-  type: 'video' | 'whiteboard'
+  type: 'video' | 'whiteboard' | 'screen'
   start: number,
   end: number,
-  payload?: any
+  payload?: any,
+  subStream?: boolean
 }
 
 const Record: React.FC = observer(() => {
@@ -41,6 +42,8 @@ const Record: React.FC = observer(() => {
 
   const location = useLocation();
 
+  const roomStore = useRoomStore();
+
   const replayRef = useRef<any>();
 
   const { store, isValid, seekToTime } = recordStore;
@@ -49,6 +52,8 @@ const Record: React.FC = observer(() => {
     const roomUuid = getQueryString('roomUuid')
     const rtcCid = getQueryString('rtcCid')
     recordStore.init(roomUuid, rtcCid)
+    roomStore.setClassDuration(0);
+    roomStore.setPrevToNowTime('')
   }, [])
 
   useEffect(() => {

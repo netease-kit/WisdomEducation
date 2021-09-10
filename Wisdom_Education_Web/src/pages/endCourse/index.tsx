@@ -17,10 +17,6 @@ const EndCourse = observer(() => {
   }
   const query = useQuery();
 
-  useEffect(() => {
-    localStorage.setItem('record-url', `/record?roomUuid=${query.get('roomUuid')}&rtcCid=${query.get('rtcCid')}`)
-  }, [])
-
   return (
     <div className="endCourse-wrapper">
       <Header isHave={true} />

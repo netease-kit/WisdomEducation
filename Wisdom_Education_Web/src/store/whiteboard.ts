@@ -59,7 +59,6 @@ export class WhiteBoardStore {
     try {
       await this.whiteboard.joinRoom(options);
       this.drawPlugin = this.whiteboard.drawPlugin;
-      this.toolCollection = this.whiteboard.toolCollection;
     } catch (error) {
       logger.error('加入白板错误', error);
     }
@@ -73,12 +72,43 @@ export class WhiteBoardStore {
    */
   @action
   public async setEnableDraw(enbale: boolean, options?: WhiteBoardSetEnableOtions): Promise<void> {
-    if (!this.drawPlugin || !this.toolCollection) {
+    if (!this.drawPlugin) {
       logger.log('白板尚未登录');
       return;
     }
     logger.log('设置白板-store', enbale);
     await this.whiteboard.setEnableDraw(enbale, options);
+  }
+
+  /**
+   * @description: 设置渲染dom
+   * @param {HTMLElement} dom
+   * @return {*}
+   */
+  @action
+  public async setContainer(dom: HTMLElement): Promise<void> {
+    if (!this.drawPlugin) {
+      logger.log('白板尚未登录');
+      return;
+    }
+    await this.whiteboard.setContainer(dom);
+    logger.log('设置白板Container');
+  }
+
+  /**
+   * @description: 设置工具栏dom
+   * @param {HTMLElement} dom
+   * @return {*}
+   */
+  @action
+  public async setToolCollection(dom?: HTMLElement): Promise<void> {
+    if (!this.drawPlugin) {
+      logger.log('白板尚未登录');
+      return;
+    }
+    await this.whiteboard.setToolCollection(dom);
+    this.toolCollection = this.whiteboard.toolCollection;
+    logger.log('设置白板工具栏');
   }
 
   /**
@@ -90,7 +120,9 @@ export class WhiteBoardStore {
   public destroy(): void {
     this.whiteboard && this.whiteboard.destroy();
     this.toolCollection && this.toolCollection.destroy();
-    this.wbInstance = null
+    this.toolCollection = null;
+    this.drawPlugin = null;
+    this.wbInstance = null;
     logger.log('白板销毁');
   }
 }
