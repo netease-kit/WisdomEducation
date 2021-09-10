@@ -13,28 +13,18 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface NMCWebLoginParam : NSObject
 
-/**
- IM 账号体系 account
- */
-@property(nonatomic, strong) NSString *account;
-
 /// 昵称
 @property (nonatomic, strong) NSString *nickname;
 
-/**
- 控制互动权限的账号
- */
-@property(nonatomic, strong) NSString *ownerAccount;
 
 /**
  开启 web 调试日志
  */
 @property(nonatomic, assign) BOOL debug;
 
-/**
- IM 账号体系 密码
- */
-@property(nonatomic, strong) NSString *token;
+
+@property(nonatomic, strong) NSNumber *uid;
+
 /**
  IM 账号体系 密码
  */

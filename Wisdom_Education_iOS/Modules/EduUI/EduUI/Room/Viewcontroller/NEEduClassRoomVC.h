@@ -18,8 +18,10 @@
 #import "NEEduLessonStateView.h"
 
 NS_ASSUME_NONNULL_BEGIN
-static NSString *cellID = @"NEEduVideoCellID";
+//临时记录上一次房间&用户信息，用于请求回放地址
+static NSString *kLastRoomUuid = @"lastRoomUuid";
 
+static NSString *cellID = @"NEEduVideoCellID";
 @interface NEEduClassRoomVC : UIViewController<NEEduMessageServiceDelegate,UICollectionViewDelegate,UICollectionViewDataSource,NEEduVideoCellDelegate>
 @property (nonatomic, strong) NSMutableArray<NEEduHttpUser *> *members;
 @property (nonatomic, strong) NEEduHttpRoom *room;
@@ -40,6 +42,8 @@ static NSString *cellID = @"NEEduVideoCellID";
 
 // 子类实现
 - (void)initMenuItems;
+// 子类根据课堂数据更新菜单
+- (void)updateMenueItemWithProfile:(NEEduRoomProfile *)profile;
 - (NSArray <NEEduHttpUser *> *)placeholderMembers;
 - (NSArray <NEEduHttpUser *> *)showMembersWithJoinedMembers:(NSArray <NEEduHttpUser *> *)members;
 - (void)updateUIWithMembers:(NSArray *)members;

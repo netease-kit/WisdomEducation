@@ -212,6 +212,16 @@ static void(^_errorBlock)(NSInteger);
     } failure:failureBlock];
 }
 
++ (void)getRecords:(NSString *)roomUuid rtcCid:(NSInteger)rtcCid classType:(Class)classType success:(void (^ _Nullable) (id objModel))successBlock failure:(void (^ _Nullable) (NSError * _Nullable error, NSInteger statusCode))failureBlock {
+    NSString *urlStr = [NSString stringWithFormat:HTTP_RECORD_GET, config.baseURL, config.appKey, config.version, roomUuid,rtcCid];
+    [HttpManager get:urlStr token:nil params:nil headers:nil success:^(id data, NSInteger ts) {
+        id model = [classType yy_modelWithDictionary:data];
+        if(successBlock){
+            successBlock(model);
+        }
+    } failure:failureBlock];
+}
+
 #pragma mark private
 
 + (void)get:(NSString *)url token:(NSString * _Nullable)token params:(NSDictionary *)params headers:(NSDictionary<NSString*, NSString*> *)headers success:(void (^)(id data,NSInteger ts))success failure:(void (^)(NSError *error, NSInteger statusCode))failure {

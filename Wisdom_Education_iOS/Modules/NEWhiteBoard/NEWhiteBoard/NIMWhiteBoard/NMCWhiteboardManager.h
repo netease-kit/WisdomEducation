@@ -15,7 +15,6 @@
 NS_ASSUME_NONNULL_BEGIN
 
 
-
 extern NSString *const NMCWhiteboardURL;
 
 @interface NMCWhiteboardManager : NSObject
@@ -30,8 +29,11 @@ extern NSString *const NMCWhiteboardURL;
 
  @param loginParam 登录参数
  */
-- (void)callWebLoginIM:(NMCWebLoginParam *)loginParam;
+- (void)callWebJoinRoom:(NMCWebLoginParam *)loginParam;
 
+/// 发送Auth信息
+
+- (void)sendAuthNonce:(NSString *)nonce curTime:(NSString *)curTime checksum:(NSString *)checksum;
 /**
  调用web退出登录，当不再使用白板之后
  */

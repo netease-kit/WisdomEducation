@@ -33,10 +33,7 @@
     [videoItem setSelctedImage:[UIImage ne_imageNamed:@"menu_video_off"]];
     NEEduMenuItem *membersItem = [[NEEduMenuItem alloc] initWithTitle:@"课堂成员" image:[UIImage ne_imageNamed:@"menu_members"]];
     membersItem.type = NEEduMenuItemTypeMembers;
-    NEEduMenuItem *chatItem = [[NEEduMenuItem alloc] initWithTitle:@"聊天室" image:[UIImage ne_imageNamed:@"menu_chat"]];
-    chatItem.type = NEEduMenuItemTypeChat;
-    self.menuItems = @[audoItem,videoItem,membersItem,chatItem];
-    self.chatItem = chatItem;
+    self.menuItems = @[audoItem,videoItem,membersItem];
 }
 
 - (NSArray <NEEduHttpUser *>*)membersWithProfile:(NEEduRoomProfile *)profile {

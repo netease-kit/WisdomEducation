@@ -64,7 +64,12 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)sendChatroomImageMessage:(UIImage *)image error:(NSError * __nullable *)error;
 - (void)resendMessage:(NIMMessage *)message error:(NSError * __nullable *)error;
 - (void)fetchChatroomInfo:(void(^)(NSError *error,NEEduChatRoomInfo *chatRoom))completion;
-- (void)destroy;
+
+/// 离开聊天室
+- (void)leaveChatRoom;
+/// 登出IM
+- (void)logout;
+
 @end
 
 NS_ASSUME_NONNULL_END

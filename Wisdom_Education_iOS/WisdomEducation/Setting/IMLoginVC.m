@@ -33,14 +33,6 @@
     [self setupUI];
 }
 
-- (void)viewWillAppear:(BOOL)animated {
-    [self.navigationController setNavigationBarHidden:NO];
-}
-
-- (void)viewWillDisappear:(BOOL)animated {
-    [self.navigationController setNavigationBarHidden:YES];
-}
-
 - (void)setupIMSDK {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
@@ -50,6 +42,7 @@
 
 - (void)setupUI {
     self.title = @"IM登录";
+    [self.navigationController setNavigationBarHidden:NO];
     _imMulEnableSwitcher.on = [NEEduManager shared].reuseIM;
     [self updateIMState];
 }

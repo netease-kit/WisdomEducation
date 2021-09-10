@@ -10,6 +10,10 @@
 #import "NMCCallWebMethodMessageHandler.h"
 #import "NMCWebViewHeader.h"
 
+static NSString *const recordAssetDidLoad = @"webAssetsLoaded";
+static NSString *const recordPlayTick = @"webPlayTick";
+static NSString *const recordDurationChange = @"webPlayDurationChange";
+static NSString *const recordPlayFinished = @"webPlayFinish";
 
 @implementation NMCMessageHandlerDispatch
 
@@ -29,14 +33,14 @@
 
 - (void)webCallNativeWithWebView:(WKWebView *)webview action:(NSString *)action param:(NSDictionary *)param
 {
-    
+//    NSLog(@"[whiteboard] fromWeb: action:%@ \n param:%@",action,param);
     if ([action isEqualToString: NMCMethodActionWebPageLoaded]){
         if (_delegate && [_delegate respondsToSelector:@selector(onWebPageLoaded)]) {
             [_delegate onWebPageLoaded];
         }
-    }else if ([action isEqualToString: NMCMethodActionWebLoginSucceed]){
-        if (_delegate && [_delegate respondsToSelector:@selector(onWebLoginIMSucceed)]) {
-            [_delegate onWebLoginIMSucceed];
+    }else if ([action isEqualToString: NMCMethodActionWebGetAuth]){
+        if (_delegate && [_delegate respondsToSelector:@selector(onWebGetAuth)]) {
+            [_delegate onWebGetAuth];
         }
     }else if ([action isEqualToString: NMCMethodActionWebCreateWBSucceed]){
         if (_delegate && [_delegate respondsToSelector:@selector(onWebCreateWBSucceed)]) {
@@ -46,13 +50,9 @@
         if (_delegate && [_delegate respondsToSelector:@selector(onWebJoinWBSucceed)]) {
             [_delegate onWebJoinWBSucceed];
         }
-    }else if ([action isEqualToString: NMCMethodActionWebLoginIMFailed]) {
-        if (_delegate && [_delegate respondsToSelector:@selector(onWebLoginIMFailed:error:)]) {
-            [_delegate onWebLoginIMFailed:[param[NMCMethodParamCode] integerValue] error:param[NMCMethodParamMsg]];
-        }
     }else if ([action isEqualToString: NMCMethodActionWebJoinWBFailed]) {
-        if (_delegate && [_delegate respondsToSelector:@selector(onWebLoginIMFailed:error:)]) {
-            [_delegate onWebLoginIMFailed:[param[NMCMethodParamCode] integerValue] error:param[NMCMethodParamMsg]];
+        if (_delegate && [_delegate respondsToSelector:@selector(onWebJoinWBFailed:error:)]) {
+            [_delegate onWebJoinWBFailed:[param[NMCMethodParamCode] integerValue] error:param[NMCMethodParamMsg]];
         }
     }else if ([action isEqualToString: NMCMethodActionWebCreateWBFailed]) {
         if (_delegate && [_delegate respondsToSelector:@selector(onWebCreateWBFailed:error:)]) {
@@ -75,8 +75,23 @@
         if ([logType isEqualToString:@"error"]) {
             NSLog(@"webLog:%@",param[@"msg"]);
         }
+    }else if ([action isEqualToString:recordAssetDidLoad]) {
+        if (self.recordDelegate && [self.recordDelegate respondsToSelector:@selector(onPrepared:)]) {
+            [self.recordDelegate onPrepared:param];
+        }
+    }else if ([action isEqualToString:recordPlayTick]) {
+        if (self.recordDelegate && [self.recordDelegate respondsToSelector:@selector(onPlayTime:)]) {
+            [self.recordDelegate onPlayTime:[param[@"time"] integerValue]];
+        }
+    }if ([action isEqualToString:recordDurationChange]) {
+        if (self.recordDelegate && [self.recordDelegate respondsToSelector:@selector(onDurationChanged:)]) {
+            [self.recordDelegate onDurationChanged:[param[@"duration"] integerValue]];
+        }
+    }if ([action isEqualToString:recordPlayFinished]) {
+        if (self.recordDelegate && [self.recordDelegate respondsToSelector:@selector(onPlayFinished)]) {
+            [self.recordDelegate onPlayFinished];
+        }
     }
-    
 }
 
 @end

@@ -74,6 +74,14 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param successBlock 成功回调
 /// @param failureBlock 失败回调
 + (void)getMessageWithRoomUuid:(NSString *)roomUuid nextId:(NSInteger)nextId classType:(Class)classType success:(void (^ _Nullable) (id objModel))successBlock failure:(void (^ _Nullable) (NSError * _Nullable error, NSInteger statusCode))failureBlock;
+
+/// 获取回放地址
+/// @param roomUuid 房间ID
+/// @param rtcCid Rtc Channel Id
+/// @param classType 返回数据类型
+/// @param successBlock 成功回调
+/// @param failureBlock 失败回调
++ (void)getRecords:(NSString *)roomUuid rtcCid:(NSInteger)rtcCid classType:(Class)classType success:(void (^ _Nullable) (id objModel))successBlock failure:(void (^ _Nullable) (NSError * _Nullable error, NSInteger statusCode))failureBlock;
 @end
 
 NS_ASSUME_NONNULL_END

@@ -14,6 +14,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface NMCMessageHandlerDispatch : NSObject
 @property(nonatomic, weak) id<NMCWhiteboardManagerDelegate> delegate;
+@property(nonatomic, weak) id<NEWBRecordPlayDelegate> recordDelegate;
+
 + (instancetype)sharedManager;
 - (void)nativeCallWebWithWebView:(WKWebView *)webview action:(NSString *)action param:(NSDictionary *)param;
 - (void)webCallNativeWithWebView:(WKWebView *)webview action:(NSString *)action param:(NSDictionary *)param;

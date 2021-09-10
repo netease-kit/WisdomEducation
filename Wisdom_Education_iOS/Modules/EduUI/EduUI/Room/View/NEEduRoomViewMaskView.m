@@ -128,6 +128,7 @@
     self.menuItems = array;
     self.bottomWidth.constant = self.menuItems.count * self.itemWidth;
 }
+
 - (void)insertItem:(NEEduMenuItem *)item atIndex:(NSInteger)index {
     for (NEEduMenuItem *menuItem in self.menuItems) {
         if (menuItem.type == item.type) {
@@ -148,17 +149,13 @@
     self.bottomWidth.constant = self.menuItems.count * self.itemWidth;
 }
 
-//- (void)updateItems:(NSArray <NEEduMenuItem *> *)items {
-//    self.menuItems = items;
-//    self.stackWidth.constant = items.count * self.itemWidth;
-//}
 - (void)backButtonEvent {
     if (self.delegate && [self.delegate respondsToSelector:@selector(backEvent)]) {
         [self.delegate backEvent];
     }
 }
+
 - (void)startLessonEvent:(UIButton *)button {
-//    button.selected = !button.selected;
     if (self.delegate && [self.delegate respondsToSelector:@selector(rightButton:selected:)]) {
         [self.delegate rightButton:button selected:button.selected];
     }
@@ -166,6 +163,8 @@
 }
 - (void)selectButton:(BOOL)seleted {
     self.startLesson.selected = seleted;
+    NSString *title = seleted? @"结束上课" : @"开始上课";
+    [self.startLesson setTitle:title forState:UIControlStateNormal];
     if (seleted) {
         self.startLesson.backgroundColor = [UIColor colorWithRed:26/255.0 green:32/255.0 blue:40/255.0 alpha:1.0];
         self.startLesson.layer.borderColor = [UIColor colorWithRed:137/255.0 green:144/255.0 blue:156/255.0 alpha:1.0].CGColor;
@@ -189,14 +188,6 @@
         [self.delegate onSectionStateChangeAtIndex:self.selectedIndex item:item];
     }
 }
-#pragma mark - 手势
-//- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
-//    NSLog(@"event:%@",event);
-//    if (self.hidenNav) {
-//        return nil;
-//    }
-//    return self;
-//}
 
 - (NEEduRoomNavigationView *)navView {
     if (!_navView) {
@@ -230,12 +221,12 @@
         _startLesson.clipsToBounds = YES;
         _startLesson.layer.borderWidth = 1.0;
         [_startLesson setTitle:@"开始上课" forState:UIControlStateNormal];
-        [_startLesson setTitle:@"结束课堂" forState:UIControlStateSelected];
         [_startLesson setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
         [_startLesson setTitleColor:[UIColor colorWithRed:137/255.0 green:144/255.0 blue:156/255.0 alpha:1.0] forState:UIControlStateSelected];
         _startLesson.layer.borderColor = [UIColor colorWithRed:55/255.0 green:114/255.0 blue:254/255.0 alpha:1.0].CGColor;
         [_startLesson addTarget:self action:@selector(startLessonEvent:) forControlEvents:UIControlEventTouchUpInside];
         _startLesson.titleLabel.font = [UIFont systemFontOfSize:14];
+        _startLesson.hidden = YES;
     }
     return _startLesson;
 }

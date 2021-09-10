@@ -46,7 +46,6 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
     self.netReachable = YES;
     [self.navigationController setNavigationBarHidden:NO];
     self.view.backgroundColor = [UIColor whiteColor];
-    
     self.whiteboardWritable = YES;
     [self initMenuItems];
     [self setupSubviews];
@@ -76,23 +75,45 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
         strongSelf.members = [strongSelf showMembersWithJoinedMembers:profile.snapshot.members].mutableCopy;
         [strongSelf.collectionView reloadData];
         [strongSelf updateScreenShare];
-        
         //subclass update UI
         [strongSelf updateUIWithMembers:profile.snapshot.members];
-        
         //load whiteboard view
         [strongSelf addWhiteboardView];
-        
-    }];
-    [[NEEduManager shared] joinChatRoomSuccess:^(NEEduChatRoomResponse * _Nonnull response) {
-        
-    } failed:^(NSError * _Nonnull error) {
-        [self.view makeToast:error.localizedDescription];
+        [strongSelf updateMenueItemWithProfile:profile];
+        //load chatroom function
+        [strongSelf addChatroom];
+        [[NSUserDefaults standardUserDefaults] setObject:self.room.roomUuid forKey:kLastRoomUuid];
     }];
 }
+
+- (void)addChatroom {
+    if (self.room.properties.chatRoom && [NEEduManager shared].roomService.room.sceneType != NEEduSceneType1V1) {
+        __weak typeof(self) weakSelf = self;
+        [[NEEduManager shared] joinChatRoomSuccess:^(NEEduChatRoomResponse * _Nonnull response) {
+            __strong typeof(self)strongSelf = weakSelf;
+            [strongSelf addChatMenue];
+        } failed:^(NSError * _Nonnull error) {
+            __strong typeof(self)strongSelf = weakSelf;
+            [strongSelf.view makeToast:error.localizedDescription];
+        }];
+    }
+}
+
+- (void)addChatMenue {
+    NEEduMenuItem *chatItem = [[NEEduMenuItem alloc] initWithTitle:@"聊天室" image:[UIImage ne_imageNamed:@"menu_chat"]];
+    chatItem.type = NEEduMenuItemTypeChat;
+    self.chatItem = chatItem;
+    [self.maskView addItem:self.chatItem];
+}
+
+- (void)updateMenueItemWithProfile:(NEEduRoomProfile *)profile {
+    
+}
+
 - (NSArray <NEEduHttpUser *> *)placeholderMembers {
     return @[[NEEduHttpUser teacher]];
 }
+
 - (NSArray <NEEduHttpUser *> *)showMembersWithJoinedMembers:(NSArray <NEEduHttpUser *> *)members {
     NSMutableArray *muteMembers = [members mutableCopy];
     NEEduHttpUser *member = muteMembers.firstObject;
@@ -220,9 +241,8 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
     
     NEEduMenuItem *membersItem = [[NEEduMenuItem alloc] initWithTitle:@"课堂成员" image:[UIImage ne_imageNamed:@"menu_members"]];
     membersItem.type = NEEduMenuItemTypeMembers;
-    self.chatItem = [[NEEduMenuItem alloc] initWithTitle:@"聊天室" image:[UIImage ne_imageNamed:@"menu_chat"]];
-    self.chatItem.type = NEEduMenuItemTypeChat;
-    self.menuItems = @[audoItem,videoItem,shareItem,membersItem,self.chatItem];
+    
+    self.menuItems = @[audoItem,videoItem,shareItem,membersItem];
 }
 
 - (void)showViewWithItem:(NEEduMenuItem *)item {
@@ -816,7 +836,7 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
             }
         }];
         
-    } else {
+    }else if ([imMessage messageType] == NIMMessageTypeText) {
         message.type = NEEduChatMessageTypeText;
         message.contentSize = [imMessage.text sizeWithWidth:(self.view.bounds.size.width - 112) font:[UIFont systemFontOfSize:14]];
         [self addTimeMessage:message];
@@ -936,6 +956,7 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
     //初始化上课按钮
     if ([[NEEduManager shared].localUser isTeacher]) {
         //开始上课/结束上课
+        self.maskView.startLesson.hidden = NO;
         if ([NEEduManager shared].profile.snapshot.room.states.step.value ==  NEEduLessonStateClassIn) {
             [self.maskView selectButton:YES];
         }else {
@@ -1293,17 +1314,21 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
     NSLog(@"wb: onWebPageLoaded");
     NMCWebLoginParam *param = [[NMCWebLoginParam alloc] init];
     param.appKey = [NEEduManager shared].imKey;
-    param.account = [NEEduManager shared].localUser.userUuid;
-    param.token = [NEEduManager shared].imToken;
-    param.ownerAccount = [NEEduManager shared].profile.snapshot.room.properties.chatRoom.roomCreatorId;
+    param.uid = @([NEEduManager shared].localUser.rtcUid);
     param.channelName = [NEEduManager shared].profile.snapshot.room.properties.whiteboard.channelName;
     param.record = YES;
     param.debug = NO;
     param.nickname = [NEEduManager shared].localUser.userName;
-    [[NMCWhiteboardManager sharedManager] callWebLoginIM:param];
+    [[NMCWhiteboardManager sharedManager] callWebJoinRoom:param];
+}
+
+- (void)onWebGetAuth {
+    NSLog(@"wb: onWebGetAuth");
+    [[NMCWhiteboardManager sharedManager] sendAuthNonce:[NEEduManager shared].localUser.wbAuth.nonce curTime:[NEEduManager shared].localUser.wbAuth.curTime checksum:[NEEduManager shared].localUser.wbAuth.checksum];
 }
 
 - (void)onWebLoginIMSucceed {
+    NSLog(@"wb: onWebLoginIMSucceed");
 }
 
 - (void)onWebCreateWBSucceed {
@@ -1348,10 +1373,6 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
     [[NMCWhiteboardManager sharedManager] hiddenTools:!self.whiteboardWritable];
 }
 
-- (void)onWebLoginIMFailed:(NSInteger)code error:(NSString *)error {
-    NSLog(@"wb:onWebLoginIMFailed : %ld, %@",(long)code, error);
-    [self showToastView:error];
-}
 
 - (void)onWebJoinWBFailed:(NSInteger)code error:(NSString *)error {
     NSLog(@"wb:onWebJoinWBFailed : %ld, %@",(long)code, error);
@@ -1384,7 +1405,6 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
 }
 - (void)leaveRoom {
     [[NMCWhiteboardManager sharedManager] callWebLogoutIM];
-    [self.boardView reload];
     [[NMCWhiteboardManager sharedManager] clearWebViewCache];
 }
 
