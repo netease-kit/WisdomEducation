@@ -101,6 +101,22 @@ static NSString *kLastUserToken = @"lastUserToken";
     NSLayoutConstraint *subTitleHeight = [NSLayoutConstraint constraintWithItem:self.subTileLabel attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:40];
     [self.view addConstraints:@[subTitleTop,subTitleLeading,subTitleTrailing]];
     [self.subTileLabel addConstraint:subTitleHeight];
+    [self.view addSubview:self.settingButton];
+    if (@available(iOS 11.0, *)) {
+        [NSLayoutConstraint activateConstraints:@[
+            [self.settingButton.rightAnchor constraintEqualToAnchor:self.view.rightAnchor constant:-30],
+            [self.settingButton.topAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.topAnchor constant:30],
+            [self.settingButton.heightAnchor constraintEqualToConstant:40],
+            [self.settingButton.widthAnchor constraintEqualToConstant:60]
+        ]];
+    } else {
+        [NSLayoutConstraint activateConstraints:@[
+            [self.settingButton.rightAnchor constraintEqualToAnchor:self.view.rightAnchor constant:-30],
+            [self.settingButton.topAnchor constraintEqualToAnchor:self.view.topAnchor constant:30],
+            [self.settingButton.heightAnchor constraintEqualToConstant:40],
+            [self.settingButton.widthAnchor constraintEqualToConstant:60]
+        ]];
+    }
 #ifdef DEBUG
     EduInputView *userIDView = [[EduInputView alloc] initWithPlaceholder:@"请输入ID"];
     userIDView.textField.keyboardType = UIKeyboardTypeDefault;
@@ -129,22 +145,6 @@ static NSString *kLastUserToken = @"lastUserToken";
         [self.lessonIdView.rightAnchor constraintEqualToAnchor:self.view.rightAnchor constant:-30],
         [self.lessonIdView.heightAnchor constraintEqualToConstant:44]
     ]];
-    [self.view addSubview:self.settingButton];
-    if (@available(iOS 11.0, *)) {
-        [NSLayoutConstraint activateConstraints:@[
-            [self.settingButton.rightAnchor constraintEqualToAnchor:self.view.rightAnchor constant:-30],
-            [self.settingButton.topAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.topAnchor constant:30],
-            [self.settingButton.heightAnchor constraintEqualToConstant:40],
-            [self.settingButton.widthAnchor constraintEqualToConstant:60]
-        ]];
-    } else {
-        [NSLayoutConstraint activateConstraints:@[
-            [self.settingButton.rightAnchor constraintEqualToAnchor:self.view.rightAnchor constant:-30],
-            [self.settingButton.topAnchor constraintEqualToAnchor:self.view.topAnchor constant:30],
-            [self.settingButton.heightAnchor constraintEqualToConstant:40],
-            [self.settingButton.widthAnchor constraintEqualToConstant:60]
-        ]];
-    }
 #else
     [self.view addSubview:self.lessonIdView];
     [NSLayoutConstraint activateConstraints:@[
@@ -153,6 +153,7 @@ static NSString *kLastUserToken = @"lastUserToken";
         [self.lessonIdView.rightAnchor constraintEqualToAnchor:self.view.rightAnchor constant:-30],
         [self.lessonIdView.heightAnchor constraintEqualToConstant:44]
     ]];
+    
 #endif
     [self.view addSubview:self.nicknameView];
     NSLayoutConstraint *nicknameLeading = [NSLayoutConstraint constraintWithItem:self.nicknameView attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:self.lessonIdView attribute:NSLayoutAttributeLeading multiplier:1.0 constant:0];

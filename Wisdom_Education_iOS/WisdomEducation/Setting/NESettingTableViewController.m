@@ -38,8 +38,10 @@
 //}
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    IMLoginVC *vc = [[IMLoginVC alloc] init];
-    [self.navigationController pushViewController:vc animated:YES];
+    if (indexPath.row == 1) {
+        IMLoginVC *vc = [[IMLoginVC alloc] init];
+        [self.navigationController pushViewController:vc animated:YES];
+    }
 }
 
 
