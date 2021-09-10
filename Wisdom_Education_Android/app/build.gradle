@@ -24,18 +24,18 @@ print("xxxxxxxxxxxxxxxxxxxxxxx---$env")
 
 def appKey = configProperties.getProperty(env == "online" ? "APP_KEY_ONLINE" : "APP_KEY")
 if (appKey == null) {
-    appKey = 'ed73b42de1b66244337a4cd54a9534cc'
+    appKey = '请替换为您申请的AppKey'
 }
 
 def baseUrl = configProperties.getProperty(env == "online" ? "BASE_URL_ONLINE" : "BASE_URL")
 if (baseUrl == null) {
-    baseUrl = 'https://yiyong-xedu-v2-test.netease.im'
+    baseUrl = 'https://yiyong-xedu-v2.netease.im'
 }
 
 def authorization = configProperties.getProperty(env == "online" ? "AUTHORIZATION_ONLINE" :
         "AUTHORIZATION")
 if (authorization == null) {
-    authorization = 'Nzc0MWVjYzI2NTM1NGVhMzliMGIzNWE1MGE2ZjMyYjE6YjA3MWE0NzhjNmIxNDQ5MGE1NGVhODljYTYzNWM1MWI='
+    authorization = '请替换为您申请的AUTHORIZATION'
 }
 
 android {
