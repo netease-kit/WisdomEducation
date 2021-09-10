@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) 2021 NetEase, Inc.  All rights reserved.
+  ~ Use of this source code is governed by a MIT license that can be found in the LICENSE file.
+  -->
+
+<resources>
+    <string name="you_are_sharing_the_screen">You are sharing the screen</string>
+    <string name="room_name">class name</string>
+    <string name="teacher_name">teacher name</string>
+    <string name="room_id">room id</string>
+    <string name="playback">playback</string>
+    <string name="copy_success">Copy success</string>
+    <string name="teacher_label">(teacher)</string>
+    <string name="student_label">(student)</string>
+</resources>

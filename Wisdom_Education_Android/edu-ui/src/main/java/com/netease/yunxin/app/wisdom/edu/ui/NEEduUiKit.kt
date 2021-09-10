@@ -12,7 +12,7 @@ import androidx.lifecycle.MediatorLiveData
 import com.netease.yunxin.app.wisdom.base.network.NEResult
 import com.netease.yunxin.app.wisdom.base.util.observeForeverOnce
 import com.netease.yunxin.app.wisdom.edu.logic.NEEduManager
-import com.netease.yunxin.app.wisdom.edu.logic.net.service.response.NEEduEntryRes
+import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduEntryRes
 import com.netease.yunxin.app.wisdom.edu.logic.net.service.response.NEEduLoginRes
 import com.netease.yunxin.app.wisdom.edu.logic.options.NEEduClassOptions
 import com.netease.yunxin.app.wisdom.edu.logic.options.NEEduOptions

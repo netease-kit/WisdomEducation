@@ -47,6 +47,8 @@ dependencies {
     api project(':edu-logic')
     api project(':whiteboard')
     api project(':im')
+    implementation project(':viewbinding')
+    implementation project(':rvadapter')
 
     implementation deps.glide
     annotationProcessor deps.glide_compiler

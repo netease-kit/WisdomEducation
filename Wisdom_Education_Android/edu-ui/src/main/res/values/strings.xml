@@ -107,7 +107,7 @@
     <string name="enable_video">enable video</string>
     <string name="more">more</string>
     <string name="sure">sure</string>
-    <string name="hands_up_apply">hands up applay</string>
+    <string name="hands_up_apply">hands up apply</string>
     <string name="hands_up_apply_msg">Apply for the stage to communicate with the teacher. After passing, your video screen will appear on the screen and you can speak with the teacher</string>
     <string name="someone_share">some one screen share</string>
     <string name="end_class_message">after finish class
@@ -153,4 +153,5 @@
     <string name="select_from_your_phone_photo_album">Select from your phone photo album</string>
     <string name="download_picture_fail">download picture fail</string>
     <string name="picker_image_error">picker image error</string>
+    <string name="unknown_msg_tips">unknown msg type</string>
 </resources>

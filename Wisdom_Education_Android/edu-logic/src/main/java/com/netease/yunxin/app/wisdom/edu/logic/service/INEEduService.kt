@@ -7,8 +7,8 @@ package com.netease.yunxin.app.wisdom.edu.logic.service
 
 /**
  * 业务的基类，用于业务功能的事件监听
- *
- * @param T 业务功能的监听器接口类
  */
-abstract class INEEduService() {
+abstract class INEEduService {
+
+    open fun dispose() {}
 }

@@ -5,6 +5,7 @@
 
 package com.netease.yunxin.app.wisdom.edu.ui.clazz.adapter
 
+import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,10 +14,15 @@ import com.netease.nimlib.sdk.msg.constant.MsgDirectionEnum
 import com.netease.nimlib.sdk.msg.constant.MsgStatusEnum
 import com.netease.nimlib.sdk.msg.constant.MsgTypeEnum
 import com.netease.yunxin.app.wisdom.base.util.TimeUtil
+import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduRoleType
 import com.netease.yunxin.app.wisdom.edu.ui.R
 import com.netease.yunxin.app.wisdom.edu.ui.base.BaseClassActivity
 import com.netease.yunxin.app.wisdom.edu.ui.clazz.viewholder.MsgThumbViewHolder
 import com.netease.yunxin.app.wisdom.edu.ui.databinding.*
+import com.netease.yunxin.app.wisdom.rvadapter.BaseAdapter
+import com.netease.yunxin.app.wisdom.rvadapter.BaseDelegate
+import com.netease.yunxin.app.wisdom.rvadapter.BaseViewHolder
+import com.netease.yunxin.app.wisdom.rvadapter.OnItemClickListener
 
 /**
  * Created by hzsunyj on 2021/6/4.
@@ -33,12 +39,13 @@ class ChatAdapter(
         const val rightText: Int = 2
         const val leftImage: Int = 3
         const val rightImage: Int = 4
+        const val unknown: Int = 100
     }
 
     init {
         setDelegate(object : BaseDelegate<ChatRoomMessage>() {
             override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): BaseViewHolder<*>? {
-                var viewHolder = when (viewType) {
+                val viewHolder = when (viewType) {
                     tips -> TipsViewHolder(ItemMsgTipsBinding.inflate(LayoutInflater.from(activity), parent, false))
                     leftText -> LeftTextViewHolder(
                         ItemTextMsgLeftBinding.inflate(
@@ -68,9 +75,11 @@ class ChatAdapter(
                             false
                         )
                     )
-                    else -> null
+                    else -> UnknownTipsViewHolder(ItemUnknownMsgTipsBinding.inflate(LayoutInflater.from(activity),
+                        parent,
+                        false))
                 }
-                viewHolder?.let { this@ChatAdapter.bindViewClickListener(it, viewType) }
+                viewHolder.let { this@ChatAdapter.bindViewClickListener(it, viewType) }
                 return viewHolder
             }
 
@@ -78,7 +87,8 @@ class ChatAdapter(
                 return when (data.msgType) {
                     MsgTypeEnum.tip -> tips
                     MsgTypeEnum.image -> if (data.direct == MsgDirectionEnum.In) leftImage else rightImage
-                    else -> if (data.direct == MsgDirectionEnum.In) leftText else rightText
+                    MsgTypeEnum.text -> if (data.direct == MsgDirectionEnum.In) leftText else rightText
+                    else -> unknown
                 }
             }
 
@@ -99,6 +109,15 @@ class ChatAdapter(
         }
     }
 
+    inner class UnknownTipsViewHolder(val binding: ItemUnknownMsgTipsBinding) :
+        BaseViewHolder<ChatRoomMessage>(binding.root) {
+        override fun findViews() {
+        }
+
+        override fun onBindViewHolder(item: ChatRoomMessage) {
+        }
+    }
+
 
     inner class LeftTextViewHolder(val binding: ItemTextMsgLeftBinding) :
         BaseViewHolder<ChatRoomMessage>(binding.root) {
@@ -107,7 +126,7 @@ class ChatAdapter(
 
         override fun onBindViewHolder(item: ChatRoomMessage) {
             binding.tvName.text = getSenderName(item, activity)
-            binding.tvContent.text = item.content
+            binding.tvContent.text = item.content ?: ""
         }
     }
 
@@ -119,15 +138,19 @@ class ChatAdapter(
         override fun onBindViewHolder(item: ChatRoomMessage) {
             binding.tvName.text = getSenderName(item, activity)
             binding.tvContent.text = item.content
-            if (item.status == MsgStatusEnum.fail) {
-                binding.ivMessageItemAlert.visibility = View.VISIBLE
-                binding.progressBarMessageItem.visibility = View.GONE
-            } else if (item.status == MsgStatusEnum.sending){
-                binding.ivMessageItemAlert.visibility = View.GONE
-                binding.progressBarMessageItem.visibility = View.VISIBLE
-            } else {
-                binding.ivMessageItemAlert.visibility = View.GONE
-                binding.progressBarMessageItem.visibility = View.GONE
+            when (item.status) {
+                MsgStatusEnum.fail -> {
+                    binding.ivMessageItemAlert.visibility = View.VISIBLE
+                    binding.progressBarMessageItem.visibility = View.GONE
+                }
+                MsgStatusEnum.sending -> {
+                    binding.ivMessageItemAlert.visibility = View.GONE
+                    binding.progressBarMessageItem.visibility = View.VISIBLE
+                }
+                else -> {
+                    binding.ivMessageItemAlert.visibility = View.GONE
+                    binding.progressBarMessageItem.visibility = View.GONE
+                }
             }
         }
     }
@@ -161,6 +184,21 @@ class ChatAdapter(
             )
             binding.tvName.text = getSenderName(item, activity)
             loadThumb()
+        }
+    }
+
+    fun getSenderName(message: ChatRoomMessage, activity: BaseClassActivity): String {
+        return if (message.direct == MsgDirectionEnum.In) {
+            if (TextUtils.isEmpty(message.fromNick)) message.chatRoomMessageExtension.senderNick else message.fromNick
+        } else {
+            activity.run {
+                val suffix =
+                    if (eduManager.getEntryMember().role == NEEduRoleType.HOST.value)
+                        getString(R.string.teacher_label)
+                    else
+                        getString(R.string.student_label)
+                "${entryMember.userName}$suffix"
+            }
         }
     }
 }

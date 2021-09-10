@@ -15,12 +15,16 @@ object BitmapDecoder {
     private fun pickReqBoundWithRatio(bound: IntArray, reqBounds: Array<IntArray>, ratio: Float): IntArray {
         val hRatio: Float = if (bound[1] == 0) 0F else bound[0].toFloat() / bound[1].toFloat()
         val vRatio: Float = if (bound[0] == 0) 0F else bound[1].toFloat() / bound[0].toFloat()
-        return if (hRatio >= ratio) {
-            reqBounds[0]
-        } else if (vRatio >= ratio) {
-            reqBounds[1]
-        } else {
-            reqBounds[2]
+        return when {
+            hRatio >= ratio -> {
+                reqBounds[0]
+            }
+            vRatio >= ratio -> {
+                reqBounds[1]
+            }
+            else -> {
+                reqBounds[2]
+            }
         }
     }
 
@@ -52,12 +56,12 @@ object BitmapDecoder {
             // adjust sample size
             sampleSize = SampleSizeUtil.adjustSampleSizeWithTexture(sampleSize, width, height)
         }
-        var RETRY_LIMIT = 5
-        var bitmap: Bitmap? = BitmapDecoder.decodeSampled(pathName, sampleSize)
-        while (bitmap == null && RETRY_LIMIT > 0) {
+        var retryLimit = 5
+        var bitmap: Bitmap? = decodeSampled(pathName, sampleSize)
+        while (bitmap == null && retryLimit > 0) {
             sampleSize++
-            RETRY_LIMIT--
-            bitmap = BitmapDecoder.decodeSampled(pathName, sampleSize)
+            retryLimit--
+            bitmap = decodeSampled(pathName, sampleSize)
         }
         return bitmap
     }

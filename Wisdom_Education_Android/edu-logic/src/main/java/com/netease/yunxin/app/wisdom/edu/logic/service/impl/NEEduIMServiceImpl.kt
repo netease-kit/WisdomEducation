@@ -13,8 +13,8 @@ import com.netease.nimlib.sdk.chatroom.model.EnterChatRoomData
 import com.netease.nimlib.sdk.chatroom.model.EnterChatRoomResultData
 import com.netease.nimlib.sdk.msg.model.AttachmentProgress
 import com.netease.yunxin.app.wisdom.base.network.NEResult
-import com.netease.yunxin.app.wisdom.edu.logic.NEEduErrorCode
 import com.netease.yunxin.app.wisdom.edu.logic.impl.NEEduManagerImpl
+import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduHttpCode
 import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduRoomStates
 import com.netease.yunxin.app.wisdom.edu.logic.net.service.RoomServiceRepository
 import com.netease.yunxin.app.wisdom.edu.logic.net.service.request.CommonReq
@@ -45,7 +45,7 @@ internal class NEEduIMServiceImpl : NEEduIMService() {
                 override fun onResult(code: Int, result: Void?, exception: Throwable?) {
                     if (code == ResponseCode.RES_SUCCESS.toInt()) {
                         updateMessages(listOf(chatMessage))
-                        sendLD.postValue(NEResult(NEEduErrorCode.SUCCESS.code))
+                        sendLD.postValue(NEResult(NEEduHttpCode.SUCCESS.code))
                     } else {
                         sendLD.postValue(NEResult(code))
                     }
@@ -121,7 +121,7 @@ internal class NEEduIMServiceImpl : NEEduIMService() {
                             attachmentProgressObserver,
                             true
                         )
-                        enterLD.postValue(NEResult(NEEduErrorCode.SUCCESS.code, result))
+                        enterLD.postValue(NEResult(NEEduHttpCode.SUCCESS.code, result))
                     } else {
                         enterLD.postValue(NEResult(code, result))
                     }

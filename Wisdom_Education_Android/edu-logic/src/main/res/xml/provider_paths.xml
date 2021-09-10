@@ -3,6 +3,6 @@
   ~ Copyright (c) 2021 NetEase, Inc.  All rights reserved.
   ~ Use of this source code is governed by a MIT license that can be found in the LICENSE file.
   -->
-<paths xmlns:android="http://schemas.android.com/apk/res/android">
+<paths>
     <external-path name="external_files" path="."/>
 </paths>

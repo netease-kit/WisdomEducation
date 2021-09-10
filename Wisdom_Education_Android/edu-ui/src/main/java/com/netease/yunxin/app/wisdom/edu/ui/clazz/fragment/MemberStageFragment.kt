@@ -11,10 +11,10 @@ import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduMember
 import com.netease.yunxin.app.wisdom.edu.ui.R
 import com.netease.yunxin.app.wisdom.edu.ui.base.BaseClassActivity
 import com.netease.yunxin.app.wisdom.edu.ui.base.BaseFragment
-import com.netease.yunxin.app.wisdom.edu.ui.clazz.adapter.BaseAdapter
 import com.netease.yunxin.app.wisdom.edu.ui.clazz.adapter.MemberControlListAdapter
 import com.netease.yunxin.app.wisdom.edu.ui.databinding.FragmentMemberItemBinding
-import com.netease.yunxin.app.wisdom.edu.ui.viewbinding.viewBinding
+import com.netease.yunxin.app.wisdom.rvadapter.BaseAdapter
+import com.netease.yunxin.app.wisdom.viewbinding.viewBinding
 
 class MemberStageFragment : BaseFragment(R.layout.fragment_member_item),
     BaseAdapter.OnItemChildClickListener<NEEduMember> {
@@ -30,9 +30,12 @@ class MemberStageFragment : BaseFragment(R.layout.fragment_member_item),
             it1.onHandsUpStateChange()
                 .observe(this, { adapter.updateDataAndNotify(it1.getOnStageMemberList().filter { !it.isHost() }) })
         }
-        eduManager.getRtcService().onStreamChange().observe(this, { t -> adapter.refreshDataAndNotify(t.first) })
-        eduManager.getBoardService().onPermissionGranted().observe(this, { t -> adapter.refreshDataAndNotify(t) })
-        eduManager.getShareScreenService().onPermissionGranted().observe(this, { t -> adapter.refreshDataAndNotify(t) })
+        eduManager.getRtcService().onStreamChange().observe(this, { t -> adapter
+            .refreshDataAndNotify<Void>(t.first) })
+        eduManager.getBoardService().onPermissionGranted().observe(this, { t -> adapter
+            .refreshDataAndNotify<Void>(t) })
+        eduManager.getShareScreenService().onPermissionGranted().observe(this, { t -> adapter
+            .refreshDataAndNotify<Void>(t) })
     }
 
     override fun initViews() {

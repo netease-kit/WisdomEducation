@@ -14,7 +14,7 @@ import com.netease.yunxin.app.wisdom.edu.ui.R
 import com.netease.yunxin.app.wisdom.edu.ui.base.BaseFragment
 import com.netease.yunxin.app.wisdom.edu.ui.clazz.adapter.MemberTitleListAdapter
 import com.netease.yunxin.app.wisdom.edu.ui.databinding.FragmentMemberItemBinding
-import com.netease.yunxin.app.wisdom.edu.ui.viewbinding.viewBinding
+import com.netease.yunxin.app.wisdom.viewbinding.viewBinding
 
 class MemberStudentsFragment : BaseFragment(R.layout.fragment_member_item) {
     private var patternStr: String = ""

@@ -5,18 +5,18 @@
 
 package com.netease.yunxin.app.wisdom.edu.ui.clazz
 
-import com.netease.yunxin.app.wisdom.base.util.CommonUtil.setOnClickThrottleFirst
 import android.content.Context
 import android.content.Intent
 import android.view.View
 import android.widget.TextView
+import com.netease.yunxin.app.wisdom.base.util.CommonUtil.setOnClickThrottleFirst
 import com.netease.yunxin.app.wisdom.base.util.ToastUtil
 import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduMember
-import com.netease.yunxin.app.wisdom.edu.logic.options.NEEduRoleType
+import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduRoleType
 import com.netease.yunxin.app.wisdom.edu.ui.R
 import com.netease.yunxin.app.wisdom.edu.ui.clazz.dialog.ConfirmDialog
 
-class BigClazzStudentActivity : BigClassBaseActivity(R.layout.activity_clazz) {
+class BigClazzStudentActivity : BigClassBaseActivity() {
 
     companion object {
         fun start(context: Context) {

@@ -24,7 +24,7 @@ import com.netease.yunxin.kit.alog.ALog
  */
 object RtcManager : NERtcCallbackEx, NERtcStatsObserver {
 
-    private const val TAG = "RtcManager";
+    private const val TAG = "RtcManager"
 
     private var rtcEngine: NERtcEx? = null
 
@@ -47,8 +47,8 @@ object RtcManager : NERtcCallbackEx, NERtcStatsObserver {
         rtcEngine?.let {
             val parameters = NERtcParameters()
             parameters.set(NERtcParameters.KEY_AUTO_SUBSCRIBE_AUDIO, false)
-            parameters.set(NERtcParameters.KEY_SERVER_RECORD_AUDIO, true)
-            parameters.set(NERtcParameters.KEY_SERVER_RECORD_VIDEO, true)
+//            parameters.set(NERtcParameters.KEY_SERVER_RECORD_AUDIO, false)
+//            parameters.set(NERtcParameters.KEY_SERVER_RECORD_VIDEO, false)
             parameters.set(NERtcParameters.KEY_SERVER_RECORD_MODE, NERtcConstants.ServerRecordMode.MIX_AND_SINGLE)
             it.setParameters(parameters)
             try {
@@ -65,7 +65,7 @@ object RtcManager : NERtcCallbackEx, NERtcStatsObserver {
                 it.enableAudioVolumeIndication(true, 2000)
                 it.setAudioProfile(NERtcConstants.AudioProfile.STANDARD_EXTEND, NERtcConstants.AudioScenario.SPEECH)
             } catch (e: Exception) {
-                ALog.e(TAG, "init engine exception ${e?.message}")
+                ALog.e(TAG, "init engine exception ${e.message}")
                 rtcEngine = null
             }
         }
@@ -110,6 +110,7 @@ object RtcManager : NERtcCallbackEx, NERtcStatsObserver {
     }
 
     override fun onLeaveChannel(p0: Int) {
+        ALog.i(TAG, "onLeaveChannel $p0")
     }
 
     override fun onUserJoined(p0: Long) {

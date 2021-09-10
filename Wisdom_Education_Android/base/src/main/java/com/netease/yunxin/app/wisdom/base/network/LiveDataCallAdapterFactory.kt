@@ -21,13 +21,13 @@ class LiveDataCallAdapterFactory : CallAdapter.Factory() {
             return null
         }
         val observableType = getParameterUpperBound(0, returnType as ParameterizedType)
-        val rawType = getRawType(observableType);
+        val rawType = getRawType(observableType)
         if (rawType != NEResult::class.java) {
             throw IllegalArgumentException("type must be Result")
         }
         if (observableType !is ParameterizedType) {
             throw IllegalArgumentException("resource must be ParameterizedType")
         }
-        return LiveDataCallAdapter<Any>(observableType);
+        return LiveDataCallAdapter<Any>(observableType)
     }
 }

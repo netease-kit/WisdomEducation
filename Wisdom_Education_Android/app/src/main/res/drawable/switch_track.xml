@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+  ~  Copyright (c) 2021 NetEase, Inc.  All rights reserved.
+  ~  Use of this source code is governed by a MIT license that can be found in the LICENSE file
+  -->
+
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_checked="true">
+        <shape>
+            <solid android:color="@color/color_007aff" />
+            <corners android:radius="@dimen/common_dp_15" />
+            <size android:height="@dimen/common_dp_31" />
+        </shape>
+    </item>
+    <item >
+        <shape>
+            <solid android:color="@color/color_28787880" />
+            <corners android:radius="@dimen/common_dp_15" />
+            <size android:height="@dimen/common_dp_31" />
+        </shape>
+    </item>
+</selector>

@@ -5,11 +5,13 @@
 
 package com.netease.yunxin.app.wisdom.edu.ui.clazz.fragment
 
+import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduWbAuth
 import com.netease.yunxin.app.wisdom.edu.ui.R
 import com.netease.yunxin.app.wisdom.edu.ui.base.BaseFragment
 import com.netease.yunxin.app.wisdom.edu.ui.databinding.FragmentWhiteboardBinding
-import com.netease.yunxin.app.wisdom.edu.ui.viewbinding.viewBinding
+import com.netease.yunxin.app.wisdom.viewbinding.viewBinding
 import com.netease.yunxin.app.wisdom.whiteboard.config.WhiteboardConfig
+import com.netease.yunxin.app.wisdom.whiteboard.model.NEWbAuth
 
 /**
  */
@@ -20,8 +22,24 @@ class WhiteboardFragment : BaseFragment(R.layout.fragment_whiteboard) {
 
     override fun parseArguments() {
         super.parseArguments()
-        config = WhiteboardConfig(eduManager.eduLoginRes.imKey, eduManager.eduLoginRes.userUuid, eduManager
-            .eduLoginRes.imToken, eduManager.eduEntryRes.room.whiteBoardCName(), "", eduManager.eduEntryRes.isHost())
+        eduManager.apply {
+            config = WhiteboardConfig(
+                eduLoginRes.imKey,
+                getEntryMember().rtcUid,
+                buildWbAuth(getWbAuth()),
+                eduLoginRes.userUuid,
+                eduLoginRes.imToken,
+                eduEntryRes.room.whiteBoardCName()!!,
+                "",
+                eduEntryRes.isHost()
+            )
+        }
+    }
+
+    private fun buildWbAuth(auth: NEEduWbAuth?): NEWbAuth? {
+        return auth?.let {
+            NEWbAuth(auth.checksum, auth.curTime, auth.nonce)
+        }
     }
 
     override fun initViews() {

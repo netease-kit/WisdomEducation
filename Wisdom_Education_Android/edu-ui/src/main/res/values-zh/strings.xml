@@ -90,7 +90,7 @@
     <string name="go_off_stage">请他下台</string>
     <string name="class_finish">课程结束 (%s)</string>
     <string name="course_over">课程已结束</string>
-    <string name="view_course_playback">查看课程回放</string>
+    <string name="view_course_playback">查看回放</string>
     <string name="back">返回</string>
     <string name="copy_success">复制成功</string>
     <string name="all_members">全部成员(%d)</string>
@@ -146,4 +146,5 @@
     <string name="select_from_your_phone_photo_album">从手机相册选择</string>
     <string name="download_picture_fail">图片下载失败</string>
     <string name="picker_image_error">获取图片出错</string>
+    <string name="unknown_msg_tips">未知消息类型</string>
 </resources>

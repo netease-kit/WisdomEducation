@@ -1,0 +1,2 @@
+-keep class com.netease.neliveplayer.**{*;}
+-keep class com.netease.gslb.** {*;}

@@ -23,7 +23,7 @@ class PassthroughDataFactory {
     companion object {
         private const val PARAM = "[a-zA-Z][a-zA-Z0-9_-]*"
         private const val PATH_SEGMENT_ALWAYS_ENCODE_SET = " \"<>^`{}|\\?#"
-        private val PARAM_URL_REGEX = Pattern.compile("\\{(${Companion.PARAM})\\}")
+        private val PARAM_URL_REGEX = Pattern.compile("\\{(${PARAM})\\}")
         private val PATH_TRAVERSAL = Pattern.compile("(.*/)?(\\.|%2e|%2E){1,2}(/.*)?")
         private val HEX_DIGITS = charArrayOf(
             '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
@@ -113,7 +113,7 @@ class PassthroughDataFactory {
         val limit = input.length
         while (i < limit) {
             codePoint = input.codePointAt(i)
-            if (codePoint < 0x20 || codePoint >= 0x7f || Companion.PATH_SEGMENT_ALWAYS_ENCODE_SET.indexOf(codePoint.toChar()) != -1 || !alreadyEncoded && (codePoint == '/'.toInt() || codePoint == '%'.toInt())) {
+            if (codePoint < 0x20 || codePoint >= 0x7f || PATH_SEGMENT_ALWAYS_ENCODE_SET.indexOf(codePoint.toChar()) != -1 || !alreadyEncoded && (codePoint == '/'.code || codePoint == '%'.code)) {
                 // Slow path: the character at i requires encoding!
                 val out = Buffer()
                 out.writeUtf8(input, 0, i)
@@ -133,10 +133,10 @@ class PassthroughDataFactory {
         var i = pos
         while (i < limit) {
             codePoint = input.codePointAt(i)
-            if (alreadyEncoded && (codePoint == '\t'.toInt() || codePoint == '\n'.toInt() || codePoint == '\r'.toInt())) {
+            if (alreadyEncoded && (codePoint == '\t'.code || codePoint == '\n'.code || codePoint == '\r'.code)) {
                 // Skip this character.
-            } else if (codePoint < 0x20 || codePoint >= 0x7f || Companion.PATH_SEGMENT_ALWAYS_ENCODE_SET.indexOf(
-                    codePoint.toChar()) != -1 || !alreadyEncoded && (codePoint == '/'.toInt() || codePoint == '%'.toInt())
+            } else if (codePoint < 0x20 || codePoint >= 0x7f || PATH_SEGMENT_ALWAYS_ENCODE_SET.indexOf(
+                    codePoint.toChar()) != -1 || !alreadyEncoded && (codePoint == '/'.code || codePoint == '%'.code)
             ) {
                 // Percent encode this character.
                 if (utf8Buffer == null) {
@@ -145,9 +145,9 @@ class PassthroughDataFactory {
                 utf8Buffer.writeUtf8CodePoint(codePoint)
                 while (!utf8Buffer.exhausted()) {
                     val b: Int = utf8Buffer.readByte() and 0xff
-                    out.writeByte('%'.toInt())
-                    out.writeByte(HEX_DIGITS[b shr 4 and 0xf].toInt())
-                    out.writeByte(HEX_DIGITS[b and 0xf].toInt())
+                    out.writeByte('%'.code)
+                    out.writeByte(HEX_DIGITS[b shr 4 and 0xf].code)
+                    out.writeByte(HEX_DIGITS[b and 0xf].code)
                 }
             } else {
                 // This character doesn't need encoding. Just copy it over.

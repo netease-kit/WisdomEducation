@@ -18,23 +18,30 @@ import com.netease.yunxin.app.wisdom.base.util.PreferenceUtil
 import com.netease.yunxin.app.wisdom.base.util.ToastUtil
 import com.netease.yunxin.app.wisdom.base.util.observeOnce
 import com.netease.yunxin.app.wisdom.edu.logic.NEEduErrorCode
+import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduConfig
+import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduHttpCode
+import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduResource
 import com.netease.yunxin.app.wisdom.edu.logic.options.NEEduClassOptions
-import com.netease.yunxin.app.wisdom.edu.logic.options.NEEduRoleType
-import com.netease.yunxin.app.wisdom.edu.logic.options.NEEduSceneType
+import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduRoleType
+import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduSceneType
 import com.netease.yunxin.app.wisdom.edu.ui.NEEduUiKit
-import com.netease.yunxin.app.wisdom.edu.ui.viewbinding.viewBinding
 import com.netease.yunxin.app.wisdom.education.BuildConfig
 import com.netease.yunxin.app.wisdom.education.R
 import com.netease.yunxin.app.wisdom.education.databinding.MainFragmentBinding
 import com.netease.yunxin.app.wisdom.education.ui.MainActivity
+import com.netease.yunxin.app.wisdom.education.ui.dialog.LoadingDialog
+import com.netease.yunxin.app.wisdom.record.NERecordPlayUiKit
+import com.netease.yunxin.app.wisdom.record.NERecordPlayer
+import com.netease.yunxin.app.wisdom.record.net.service.RecordPlayRepository
+import com.netease.yunxin.app.wisdom.record.ui.NERecordActivity
+import com.netease.yunxin.app.wisdom.viewbinding.viewBinding
 import com.netease.yunxin.kit.alog.ALog
-import com.superlht.htloading.view.HTLoading
 
 class MainFragment : Fragment(R.layout.main_fragment) {
     private val binding: MainFragmentBinding by viewBinding()
     private var starting = false
     private var sceneType: NEEduSceneType? = null
-    private var htLoading: HTLoading? = null
+    private var loading: LoadingDialog? = null
 
     private lateinit var classOptions: NEEduClassOptions
 
@@ -44,6 +51,7 @@ class MainFragment : Fragment(R.layout.main_fragment) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        restoreSavedInstance(savedInstanceState)
         binding.etSceneType.setOnClickListener(onClickListener)
         binding.tvOne2one.setOnClickListener(onClickListener)
         binding.tvSmallClass.setOnClickListener(onClickListener)
@@ -59,10 +67,19 @@ class MainFragment : Fragment(R.layout.main_fragment) {
             binding.tips.text = "${context?.getString(R.string.app_tips)}(test)"
             binding.etUser.visibility = View.VISIBLE
             binding.etToken.visibility = View.VISIBLE
-            // 以下代码用于演示IM复用
-            binding.tvSetting.visibility = View.VISIBLE
-            binding.tvSetting.setOnClickListener(onClickListener)
+
         }
+        binding.tvSetting.visibility = View.VISIBLE
+        binding.tvSetting.setOnClickListener(onClickListener)
+    }
+
+    private fun restoreSavedInstance(savedInstanceState: Bundle?) {
+        sceneType = savedInstanceState?.getSerializable("sceneType") as NEEduSceneType?
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putSerializable("sceneType", sceneType)
     }
 
     private fun checkInputLegal(): Boolean {
@@ -84,12 +101,13 @@ class MainFragment : Fragment(R.layout.main_fragment) {
     private val initObserver = { t: NEResult<NEEduUiKit> ->
         if (!t.success()) {
             starting = false
-            htLoading?.dismiss()
+            loading?.dismiss()
+            loading = null
             ALog.i("init failed, code ${t.code}")
-            if (t.code == NEEduErrorCode.IM_LOGIN_ERROR.code && PreferenceUtil.reuseIM) {
+            if (t.code == NEEduHttpCode.IM_LOGIN_ERROR.code && PreferenceUtil.reuseIM) {
                 ToastUtil.showLong(R.string.should_login_im)
             } else {
-                var tip = context?.let { NEEduErrorCode.tipsWithErrorCode(it, t.code) }
+                val tip = context?.let { NEEduErrorCode.tipsWithErrorCode(it, t.code) }
                 if (!TextUtils.isEmpty(tip)) {
                     ToastUtil.showLong(tip!!)
                 } else {
@@ -115,8 +133,7 @@ class MainFragment : Fragment(R.layout.main_fragment) {
             return
         }
         starting = true
-        htLoading = HTLoading(requireActivity())
-        htLoading?.show()
+        loading = LoadingDialog.show(requireActivity())
         val uuid: String = binding.etUser.text.toString().trim()
         val token: String = binding.etToken.text.toString().trim()
         val classId: String = binding.etRoomId.text.toString()
@@ -126,19 +143,28 @@ class MainFragment : Fragment(R.layout.main_fragment) {
         if (sceneType!! == NEEduSceneType.BIG && getRoleType() == NEEduRoleType.BROADCASTER) {
             roleType = NEEduRoleType.AUDIENCE
         }
-        classOptions = NEEduClassOptions(classId, className, nickname, sceneType!!, roleType)
+        classOptions = NEEduClassOptions(
+            classId,
+            className,
+            nickname,
+            sceneType!!,
+            roleType,
+            NEEduConfig(NEEduResource(chatroom = PreferenceUtil.enableChatRoom))
+        )
         NEEduUiKit.init(uuid, token).observeOnce(viewLifecycleOwner, initObserver)
     }
 
     private fun enterClassroom(eduUiKit: NEEduUiKit, neEduClassOptions: NEEduClassOptions) {
+
         eduUiKit.enterClass(requireActivity(), neEduClassOptions).observe(viewLifecycleOwner, { t ->
+            loading?.dismiss()
+            loading = null
             starting = false
-            htLoading?.dismiss()
             when {
                 t.success() -> {
                     clearInput()
                 }
-                t.code == NEEduErrorCode.ROOM_ROLE_EXCEED.code -> {
+                t.code == NEEduHttpCode.ROOM_ROLE_EXCEED.code -> {
                     ToastUtil.showShort(
                         if (neEduClassOptions.roleType == NEEduRoleType.HOST) getString(
                             R.string
@@ -149,7 +175,7 @@ class MainFragment : Fragment(R.layout.main_fragment) {
                         )
                     )
                 }
-                t.code == NEEduErrorCode.ROOM_MEMBER_EXIST.code -> {
+                t.code == NEEduHttpCode.ROOM_MEMBER_EXIST.code -> {
                     ToastUtil.showShort(R.string.room_member_exist)
                 }
                 else -> {
@@ -168,8 +194,60 @@ class MainFragment : Fragment(R.layout.main_fragment) {
         binding.radioGroupRole.clearCheck()
     }
 
+    /**
+     * 录制回放
+     *
+     */
+    private fun recordPlay() {
+        if (!NetworkUtil.isNetAvailable(requireActivity())) {
+            ToastUtil.showShort(getString(R.string.network_is_not_available))
+            return
+        }
+        starting = true
+        loading = LoadingDialog.show(requireActivity())
+        RecordPlayRepository.appKey = BuildConfig.APP_KEY
+        RecordPlayRepository.baseUrl = BuildConfig.API_BASE_URL
+        PreferenceUtil.recordPlay.apply {
+            NERecordPlayUiKit.fetchRecord(roomUuid = first, rtcCid = second)
+                .observeOnce(viewLifecycleOwner, initRecordObserver)
+        }
+    }
+
+    private val initRecordObserver = { t: NEResult<NERecordPlayer> ->
+        starting = false
+        loading?.dismiss()
+        loading = null
+        when {
+            t.success() -> {
+                enterRecordPlay()
+            }
+            t.code == NEEduHttpCode.NO_CONTENT.code -> {
+                ALog.i("init record failed, result $t")
+                ToastUtil.showLong(getString(R.string.course_playback_file_is_being_transcoded))
+            }
+            else -> {
+                ALog.i("init record failed, result $t")
+                val tip = context?.let { NEEduErrorCode.tipsWithErrorCode(it, t.code) }
+                if (!TextUtils.isEmpty(tip)) {
+                    ToastUtil.showLong(tip!!)
+                } else {
+                    ToastUtil.showLong(getString(R.string.open_recordplay_fail_try_again))
+                }
+            }
+        }
+    }
+
+    private fun enterRecordPlay() {
+        NERecordActivity.start(requireActivity())
+    }
+
     private var onClickListener = View.OnClickListener { v ->
         when (v) {
+            binding.btnRecordPlay -> {
+                activity?.let {
+                    recordPlay()
+                }
+            }
             binding.btnJoin -> {
                 activity?.let {
                     joinClass()
@@ -227,5 +305,15 @@ class MainFragment : Fragment(R.layout.main_fragment) {
 
     private fun getRoleType(): NEEduRoleType {
         return if (binding.rbTeacher.isChecked) NEEduRoleType.HOST else NEEduRoleType.BROADCASTER
+    }
+
+    override fun onResume() {
+        super.onResume()
+        PreferenceUtil.recordPlay.let {
+            if (!TextUtils.isEmpty(it.first) && !TextUtils.isEmpty(it.second)) {
+                binding.btnRecordPlay.visibility = View.VISIBLE
+                binding.btnRecordPlay.setOnClickListener(onClickListener)
+            }
+        }
     }
 }

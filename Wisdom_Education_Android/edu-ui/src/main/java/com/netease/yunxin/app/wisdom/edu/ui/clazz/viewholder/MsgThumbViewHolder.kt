@@ -22,8 +22,8 @@ import com.netease.nimlib.sdk.msg.constant.MsgTypeEnum
 import com.netease.yunxin.app.wisdom.base.util.BitmapDecoder
 import com.netease.yunxin.app.wisdom.base.util.ImageUtil
 import com.netease.yunxin.app.wisdom.edu.ui.R
-import com.netease.yunxin.app.wisdom.edu.ui.clazz.adapter.BaseViewHolder
 import com.netease.yunxin.app.wisdom.edu.ui.clazz.widget.MsgThumbImageView
+import com.netease.yunxin.app.wisdom.rvadapter.BaseViewHolder
 import java.io.File
 
 abstract class MsgThumbViewHolder(bd: ViewBinding) : BaseViewHolder<ChatRoomMessage>(bd.root) {

@@ -64,18 +64,18 @@ open class ConfirmDialog : AlertDialog {
     }
 
     private fun setViewsListener() {
-        okView?.setOnClickListener(View.OnClickListener {
+        okView?.setOnClickListener {
             if (callback != null) {
                 callback!!.result(true)
             }
             dismiss()
-        })
-        cancelView?.setOnClickListener(View.OnClickListener {
+        }
+        cancelView?.setOnClickListener {
             if (callback != null) {
                 callback!!.result(false)
             }
             dismiss()
-        })
+        }
     }
 
     /**

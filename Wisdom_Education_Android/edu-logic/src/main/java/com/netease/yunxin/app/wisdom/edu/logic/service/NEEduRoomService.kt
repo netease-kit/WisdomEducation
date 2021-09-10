@@ -10,7 +10,6 @@ import androidx.lifecycle.MediatorLiveData
 import com.netease.lava.nertc.sdk.stats.NERtcNetworkQualityInfo
 import com.netease.yunxin.app.wisdom.base.network.NEResult
 import com.netease.yunxin.app.wisdom.edu.logic.model.*
-import com.netease.yunxin.app.wisdom.edu.logic.net.service.response.NEEduEntryRes
 import com.netease.yunxin.app.wisdom.edu.logic.net.service.response.NEEduRoomConfigRes
 import com.netease.yunxin.app.wisdom.edu.logic.options.NEEduClassOptions
 
@@ -24,7 +23,6 @@ abstract class NEEduRoomService : INEEduService() {
      * 配置房间，房间不存在则新建，存在则返回房间信息，加入房间之前，房间必须存在
      *
      * @param options 配置课堂房间的参数信息
-     * @param callbackNE 结果回调
      */
     internal abstract fun config(options: NEEduClassOptions): LiveData<NEResult<NEEduRoomConfigRes>>
 
@@ -40,7 +38,6 @@ abstract class NEEduRoomService : INEEduService() {
      * 加入房间
      *
      * @param options 加入房间必要的参数信息
-     * @param callbackNE 结果回调
      */
     internal abstract fun entryClass(options: NEEduClassOptions): LiveData<NEResult<NEEduEntryRes>>
 
@@ -48,7 +45,6 @@ abstract class NEEduRoomService : INEEduService() {
 
     /**
      * 当前课堂详情变化通知
-     * @param callbackNE 回调，数据类型为 [Room]
      */
     abstract fun onCurrentRoomInfo(): LiveData<NEEduRoom>
 
@@ -60,14 +56,12 @@ abstract class NEEduRoomService : INEEduService() {
 
     /**
      * 老师开始课堂
-     * @param callbackNE 方法执行回调
      *
      */
     abstract fun startClass(roomUuid: String): LiveData<NEResult<Void>>
 
     /**
      * 老师结束课堂
-     * @param callbackNE 方法执行回调
      *
      */
     abstract fun finishClass(roomUuid: String): LiveData<NEResult<Void>>

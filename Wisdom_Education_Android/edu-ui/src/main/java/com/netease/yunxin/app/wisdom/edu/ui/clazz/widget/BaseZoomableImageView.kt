@@ -38,7 +38,7 @@ abstract class BaseZoomableImageView : View {
 
     // This is the final matrix which is computed as the concatentation
     // of the base matrix and the supplementary matrix.
-    private val mDisplayMatrix: Matrix? = Matrix()
+    private val mDisplayMatrix: Matrix = Matrix()
 
     // A replacement ImageView matrix
     private val mMatrix = Matrix()
@@ -141,7 +141,7 @@ abstract class BaseZoomableImageView : View {
     }
 
     // Identical to the setImageMatrix method in ImageView
-    fun setImageMatrix(m: Matrix?) {
+    private fun setImageMatrix(m: Matrix?) {
         var m = m
         if (m != null && m.isIdentity) {
             m = null
@@ -174,12 +174,12 @@ abstract class BaseZoomableImageView : View {
             return
         }
         val oldBitmap = mBitmap
-        if (bitmap != null) {
+        mBitmap = if (bitmap != null) {
             setBaseMatrix(bitmap, mBaseMatrix)
-            mBitmap = bitmap
+            bitmap
         } else {
             mBaseMatrix.reset()
-            mBitmap = bitmap
+            bitmap
         }
         if (oldBitmap != null && oldBitmap != mBitmap && !oldBitmap.isRecycled) {
             oldBitmap.recycle()
@@ -208,12 +208,12 @@ abstract class BaseZoomableImageView : View {
             return
         }
         val oldBitmap = mBitmap
-        if (bitmap != null) {
+        mBitmap = if (bitmap != null) {
             setBaseMatrix(bitmap, mBaseMatrix, selection)
-            mBitmap = bitmap
+            bitmap
         } else {
             mBaseMatrix.reset()
-            mBitmap = bitmap
+            bitmap
         }
         if (oldBitmap != null && !oldBitmap.isRecycled) {
             oldBitmap.recycle()
@@ -242,22 +242,30 @@ abstract class BaseZoomableImageView : View {
         var deltaY = 0f
         if (vertical) {
             val viewHeight = getHeight()
-            if (height < viewHeight) {
-                deltaY = (viewHeight - height) / 2 - topLeft[1]
-            } else if (topLeft[1] > 0) {
-                deltaY = -topLeft[1]
-            } else if (botRight[1] < viewHeight) {
-                deltaY = getHeight() - botRight[1]
+            when {
+                height < viewHeight -> {
+                    deltaY = (viewHeight - height) / 2 - topLeft[1]
+                }
+                topLeft[1] > 0 -> {
+                    deltaY = -topLeft[1]
+                }
+                botRight[1] < viewHeight -> {
+                    deltaY = getHeight() - botRight[1]
+                }
             }
         }
         if (horizontal) {
             val viewWidth = getWidth()
-            if (width < viewWidth) {
-                deltaX = (viewWidth - width) / 2 - topLeft[0]
-            } else if (topLeft[0] > 0) {
-                deltaX = -topLeft[0]
-            } else if (botRight[0] < viewWidth) {
-                deltaX = viewWidth - botRight[0]
+            when {
+                width < viewWidth -> {
+                    deltaX = (viewWidth - width) / 2 - topLeft[0]
+                }
+                topLeft[0] > 0 -> {
+                    deltaX = -topLeft[0]
+                }
+                botRight[0] < viewWidth -> {
+                    deltaX = viewWidth - botRight[0]
+                }
             }
         }
         postTranslate(deltaX, deltaY)
@@ -293,8 +301,8 @@ abstract class BaseZoomableImageView : View {
         val viewWidth = width.toFloat()
         val viewHeight = height.toFloat()
         matrix.reset()
-        val widthScale = Math.min(viewWidth / bitmap.width.toFloat(), 1.0f)
-        val heightScale = Math.min(viewHeight / bitmap.height.toFloat(), 1.0f)
+        val widthScale = (viewWidth / bitmap.width.toFloat()).coerceAtMost(1.0f)
+        val heightScale = (viewHeight / bitmap.height.toFloat()).coerceAtMost(1.0f)
         val scale: Float = if (widthScale > heightScale) {
             heightScale
         } else {
@@ -342,8 +350,8 @@ abstract class BaseZoomableImageView : View {
     // Combine the base matrix and the supp matrix to make the final matrix.
     // Combine the base matrix and the supp matrix to make the final matrix.
     protected open fun getImageViewMatrix(): Matrix? {
-        mDisplayMatrix!!.set(mBaseMatrix)
-        mDisplayMatrix!!.postConcat(mSuppMatrix)
+        mDisplayMatrix.set(mBaseMatrix)
+        mDisplayMatrix.postConcat(mSuppMatrix)
         return mDisplayMatrix
     }
 
@@ -355,7 +363,7 @@ abstract class BaseZoomableImageView : View {
         if (mBitmap == null) return 1f
         val fw = mBitmap!!.width.toFloat() / mThisWidth.toFloat()
         val fh = mBitmap!!.height.toFloat() / mThisHeight.toFloat()
-        var max = Math.max(fw, fh) * 16
+        var max = fw.coerceAtLeast(fh) * 16
 
 
         //设置放大的下限
@@ -370,7 +378,7 @@ abstract class BaseZoomableImageView : View {
         if (mBitmap == null) return 1f
         val fw = mThisWidth.toFloat() / mBitmap!!.width.toFloat()
         val fh = mThisHeight.toFloat() / mBitmap!!.height.toFloat()
-        return Math.max(Math.min(fw, fh), 1f)
+        return fw.coerceAtMost(fh).coerceAtLeast(1f)
     }
 
     // Unchanged from ImageViewTouchBase
@@ -383,7 +391,7 @@ abstract class BaseZoomableImageView : View {
         val deltaScale = scale / oldScale
         mSuppMatrix.postScale(deltaScale, deltaScale, centerX, centerY)
         setImageMatrix(getImageViewMatrix())
-        center(true, true, false)
+        center(vertical = true, horizontal = true, animate = false)
     }
 
     // Unchanged from ImageViewTouchBase
@@ -396,7 +404,7 @@ abstract class BaseZoomableImageView : View {
         post(object : Runnable {
             override fun run() {
                 val now = System.currentTimeMillis()
-                val currentMs = Math.min(durationMs, (now - startTime).toFloat())
+                val currentMs = durationMs.coerceAtMost((now - startTime).toFloat())
                 val target = oldScale + incrementPerMs * currentMs
                 zoomTo(target, centerX, centerY)
                 if (currentMs < durationMs) {
@@ -483,7 +491,7 @@ abstract class BaseZoomableImageView : View {
             mSuppMatrix.postScale(1f / rate, 1f / rate, width / 2f, height / 2f)
         }
         setImageMatrix(getImageViewMatrix())
-        center(true, true, false)
+        center(vertical = true, horizontal = true, animate = false)
     }
 
     // Unchanged from ImageViewTouchBase
@@ -499,11 +507,11 @@ abstract class BaseZoomableImageView : View {
             var old_y = 0f
             override fun run() {
                 val now = System.currentTimeMillis()
-                val currentMs = Math.min(durationMs, (now - startTime).toFloat())
+                val currentMs = durationMs.coerceAtMost((now - startTime).toFloat())
                 val x = easeOut(currentMs, 0f, distanceX, durationMs)
                 val y = easeOut(currentMs, 0f, distanceY, durationMs)
                 postTranslate(x - old_x, y - old_y)
-                center(true, true, false)
+                center(vertical = true, horizontal = true, animate = false)
                 old_x = x
                 old_y = y
                 if (currentMs < durationMs) {
@@ -565,12 +573,12 @@ abstract class BaseZoomableImageView : View {
     protected fun isScrollOver(distanceX: Float): Boolean {
         try {
             if (mDisplayMatrix != null) {
-                val m_x = getValue(mDisplayMatrix, Matrix.MTRANS_X) //图片的左边离屏宽度
-                val width = width - m_x
+                val mX = getValue(mDisplayMatrix, Matrix.MTRANS_X) //图片的左边离屏宽度
+                val width = width - mX
                 //width 代表 屏幕宽度+左边离屏宽度
                 //mBitmap.getWidth() * getValue(mDisplayMatrix, Matrix.MSCALE_X) 代表 当前图片显示宽度
                 //width == mBitmap.getWidth() * getValue(mDisplayMatrix, Matrix.MSCALE_X) 意味着图片右边离屏宽度 == 0，已经滑到最右边
-                if (m_x == 0f && distanceX <= 0 //到达图片的最左边继续往左边滑
+                if (mX == 0f && distanceX <= 0 //到达图片的最左边继续往左边滑
                     || (width == mBitmap!!.width //到达图片的最右边继续往右边滑
                             * getValue(mDisplayMatrix, Matrix.MSCALE_X) && distanceX >= 0)
                 ) {

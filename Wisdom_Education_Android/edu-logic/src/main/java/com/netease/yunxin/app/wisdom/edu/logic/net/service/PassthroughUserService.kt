@@ -7,9 +7,9 @@ package com.netease.yunxin.app.wisdom.edu.logic.net.service
 
 import androidx.lifecycle.LiveData
 import com.netease.yunxin.app.wisdom.base.network.NEResult
+import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduEntryRes
 import com.netease.yunxin.app.wisdom.edu.logic.net.service.request.JoinClassroomReq
 import com.netease.yunxin.app.wisdom.edu.logic.net.service.request.NEEduUpdateMemberPropertyReq
-import com.netease.yunxin.app.wisdom.edu.logic.net.service.response.NEEduEntryRes
 import java.lang.reflect.Method
 
 /**
@@ -49,9 +49,5 @@ object PassthroughUserService : UserService, BaseService {
         } else {
             return userService.updateInfo(appKey, roomId, userUuid)
         }
-    }
-
-    override fun recordPlayback(appKey: String, roomId: String, userUuid: String): LiveData<NEResult<String>> {
-        return userService.recordPlayback(appKey, roomId, userUuid)
     }
 }

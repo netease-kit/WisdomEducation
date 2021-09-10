@@ -17,10 +17,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.netease.yunxin.app.wisdom.edu.ui.R
-import com.netease.yunxin.app.wisdom.edu.ui.clazz.adapter.BaseAdapter
-import com.netease.yunxin.app.wisdom.edu.ui.clazz.adapter.BaseDelegate
-import com.netease.yunxin.app.wisdom.edu.ui.clazz.adapter.BaseViewHolder
-import com.netease.yunxin.app.wisdom.edu.ui.clazz.adapter.OnItemClickListener
+import com.netease.yunxin.app.wisdom.rvadapter.BaseAdapter
+import com.netease.yunxin.app.wisdom.rvadapter.BaseDelegate
+import com.netease.yunxin.app.wisdom.rvadapter.BaseViewHolder
+import com.netease.yunxin.app.wisdom.rvadapter.OnItemClickListener
 
 /**
  *
@@ -36,13 +36,12 @@ open class ActionSheetDialog : BottomSheetDialog {
         }
     }
 
-    constructor(context: Context) : super(context, R.style.ActionSheetDialogStyle) {}
-    constructor(context: Context, theme: Int) : super(context, theme) {}
+    constructor(context: Context) : super(context, R.style.ActionSheetDialogStyle)
+    constructor(context: Context, theme: Int) : super(context, theme)
     constructor(
         context: Context, cancelable: Boolean,
         cancelListener: DialogInterface.OnCancelListener?,
-    ) : super(context, cancelable, cancelListener) {
-    }
+    ) : super(context, cancelable, cancelListener)
 
     private var actions: MutableList<ActionItem> = mutableListOf()
     private var recyclerView: RecyclerView? = null
@@ -143,7 +142,7 @@ open class ActionSheetDialog : BottomSheetDialog {
     private fun addCancelAction() {
         for (item in actions) {
             if (item.action == ActionItem.CANCEL_ACTION) {
-                actions!!.remove(item)
+                actions.remove(item)
                 break
             }
         }

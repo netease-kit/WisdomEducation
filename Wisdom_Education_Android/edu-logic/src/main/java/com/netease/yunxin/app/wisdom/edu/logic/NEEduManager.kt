@@ -17,11 +17,12 @@ import com.netease.yunxin.app.wisdom.base.util.observeForeverOnce
 import com.netease.yunxin.app.wisdom.edu.logic.extras.NEEduClientType
 import com.netease.yunxin.app.wisdom.edu.logic.extras.NEEduExtras
 import com.netease.yunxin.app.wisdom.edu.logic.impl.NEEduManagerImpl
+import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduEntryMember
+import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduEntryRes
 import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduRoomConfig
+import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduWbAuth
 import com.netease.yunxin.app.wisdom.edu.logic.net.service.BaseRepository
 import com.netease.yunxin.app.wisdom.edu.logic.net.service.BaseService
-import com.netease.yunxin.app.wisdom.edu.logic.net.service.response.NEEduEntryMember
-import com.netease.yunxin.app.wisdom.edu.logic.net.service.response.NEEduEntryRes
 import com.netease.yunxin.app.wisdom.edu.logic.net.service.response.NEEduLoginRes
 import com.netease.yunxin.app.wisdom.edu.logic.options.NEEduClassOptions
 import com.netease.yunxin.app.wisdom.edu.logic.options.NEEduOptions
@@ -42,7 +43,7 @@ interface NEEduManager {
         lateinit var instance: NEEduManager
 
         // sdk inner version code
-        private const val VERSION_CODE = 20
+        private const val VERSION_CODE = 40
 
 
         /**
@@ -77,19 +78,18 @@ interface NEEduManager {
          */
         fun init(uuid: String, token: String): LiveData<NEResult<NEEduManager>> {
             val managerLD: MediatorLiveData<NEResult<NEEduManager>> = MediatorLiveData<NEResult<NEEduManager>>()
-            NEEduManagerImpl.init(uuid, token).also {
-                it.observeForeverOnce { t ->
-                    if (t.success()) {
-                        instance = NEEduManagerImpl
-                        managerLD.postValue(NEResult(t.code, NEEduManagerImpl))
-                    } else {
-                        NEEduManagerImpl.destroy()
-                        managerLD.postValue(NEResult(t.code))
-                    }
+            NEEduManagerImpl.init(uuid, token).observeForeverOnce { t ->
+                if (t.success()) {
+                    instance = NEEduManagerImpl
+                    managerLD.postValue(NEResult(t.code, NEEduManagerImpl))
+                } else {
+                    NEEduManagerImpl.destroy()
+                    managerLD.postValue(NEResult(t.code))
                 }
             }
             return managerLD
         }
+
     }
 
     var eduLoginRes: NEEduLoginRes
@@ -139,4 +139,11 @@ interface NEEduManager {
      * 同步快照
      */
     fun syncSnapshot()
+
+    /**
+     * 白板auth
+     *
+     * @return 白板auth
+     */
+    fun getWbAuth(): NEEduWbAuth?
 }

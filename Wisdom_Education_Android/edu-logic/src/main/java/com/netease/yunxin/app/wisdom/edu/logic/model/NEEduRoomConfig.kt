@@ -5,11 +5,8 @@
 
 package com.netease.yunxin.app.wisdom.edu.logic.model
 
-import com.netease.yunxin.app.wisdom.edu.logic.options.NEEduSceneType
+import java.util.*
 
-/**
- * Created by hzsunyj on 2021/5/31.
- */
 data class NEEduRoomConfig(
     val permissions: NEEduPermissions?,
     val roleConfigs: NEEduRoleConfigs?,
@@ -95,12 +92,12 @@ data class NEEduPermissionRoleList(
     val roles: List<String>,
 ) {
     fun hasAllPermission(role: String): Boolean {
-        return roles.contains(role.toLowerCase())
+        return roles.contains(role.lowercase(Locale.getDefault()))
     }
 
-    fun hasSelfPermission(role: String): Boolean {
+    private fun hasSelfPermission(role: String): Boolean {
         var selfRole = "${role}.self"
-        return roles.contains(selfRole.toLowerCase())
+        return roles.contains(selfRole.lowercase(Locale.getDefault()))
     }
 
     fun hasPermission(role: String): Boolean {

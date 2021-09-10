@@ -5,21 +5,21 @@
 
 package com.netease.yunxin.app.wisdom.edu.ui.clazz.fragment
 
-import com.netease.yunxin.app.wisdom.base.util.CommonUtil.setOnClickThrottleFirst
 import android.view.View
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.netease.yunxin.app.wisdom.base.util.CommonUtil.setOnClickThrottleFirst
 import com.netease.yunxin.app.wisdom.base.util.ToastUtil
 import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduMember
 import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduStateValue
 import com.netease.yunxin.app.wisdom.edu.ui.R
 import com.netease.yunxin.app.wisdom.edu.ui.base.BaseClassActivity
 import com.netease.yunxin.app.wisdom.edu.ui.base.BaseFragment
-import com.netease.yunxin.app.wisdom.edu.ui.clazz.adapter.BaseAdapter
 import com.netease.yunxin.app.wisdom.edu.ui.clazz.adapter.MemberControlListAdapter
 import com.netease.yunxin.app.wisdom.edu.ui.clazz.viewmodel.ChatRoomViewModel
 import com.netease.yunxin.app.wisdom.edu.ui.databinding.FragmentSmallclazzMembersBinding
-import com.netease.yunxin.app.wisdom.edu.ui.viewbinding.viewBinding
+import com.netease.yunxin.app.wisdom.rvadapter.BaseAdapter
+import com.netease.yunxin.app.wisdom.viewbinding.viewBinding
 import com.netease.yunxin.kit.alog.ALog
 
 class SmallClazzMembersFragment : BaseFragment(R.layout.fragment_smallclazz_members),
@@ -37,9 +37,18 @@ class SmallClazzMembersFragment : BaseFragment(R.layout.fragment_smallclazz_memb
             adapter.updateDataAndNotify(t.filter { !it.isHost() })
             updateAllMembersText()
         })
-        eduManager.getRtcService().onStreamChange().observe(this, { t -> adapter.refreshDataAndNotify(t.first) })
-        eduManager.getBoardService().onPermissionGranted().observe(this, { t -> adapter.refreshDataAndNotify(t) })
-        eduManager.getShareScreenService().onPermissionGranted().observe(this, { t -> adapter.refreshDataAndNotify(t) })
+        eduManager.getRtcService().onStreamChange().observe(this, { t ->
+            adapter
+                .refreshDataAndNotify<Void>(t.first)
+        })
+        eduManager.getBoardService().onPermissionGranted().observe(this, { t ->
+            adapter
+                .refreshDataAndNotify<Void>(t)
+        })
+        eduManager.getShareScreenService().onPermissionGranted().observe(this, { t ->
+            adapter
+                .refreshDataAndNotify<Void>(t)
+        })
         viewModel.onMuteAllChat().observe(this, {
             if (eduManager.getEntryMember().isHost()) {
                 binding.muteChatAll.isSelected = it

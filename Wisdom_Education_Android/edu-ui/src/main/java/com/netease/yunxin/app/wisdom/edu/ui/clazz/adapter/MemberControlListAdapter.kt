@@ -12,6 +12,10 @@ import android.view.ViewGroup
 import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduMember
 import com.netease.yunxin.app.wisdom.edu.ui.R
 import com.netease.yunxin.app.wisdom.edu.ui.databinding.ItemMemberControlListBinding
+import com.netease.yunxin.app.wisdom.rvadapter.BaseAdapter
+import com.netease.yunxin.app.wisdom.rvadapter.BaseDelegate
+import com.netease.yunxin.app.wisdom.rvadapter.BaseViewHolder
+import com.netease.yunxin.app.wisdom.rvadapter.OnItemClickListener
 import java.util.*
 
 class MemberControlListAdapter(

@@ -5,9 +5,15 @@
 
 include ':edu-ui'
 include ':edu-logic'
+include ':recordplay-logic'
+include ':recordplay-ui'
+include ':viewbinding'
+include ':rvadapter'
 include ':whiteboard'
 include ':im'
 include ':rtc'
 include ':app'
 include ':base'
 rootProject.name = "WisdomEducation"
+include ':edu-model'
+include ':recordplay-model'

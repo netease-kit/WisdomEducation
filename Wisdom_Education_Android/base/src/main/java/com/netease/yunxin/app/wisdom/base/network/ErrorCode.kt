@@ -11,7 +11,7 @@ package com.netease.yunxin.app.wisdom.base.network
 class ErrorCode {
 
     companion object {
-        const val unknown = -1;
+        const val unknown = -1
         const val ok = 0
     }
 }

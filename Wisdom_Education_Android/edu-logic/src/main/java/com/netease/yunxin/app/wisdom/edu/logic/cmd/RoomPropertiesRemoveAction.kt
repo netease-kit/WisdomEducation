@@ -6,7 +6,6 @@
 package com.netease.yunxin.app.wisdom.edu.logic.cmd
 
 import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduMember
-import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduRoomProperties
 
 /**
  * Created by hzsunyj on 2021/5/17.

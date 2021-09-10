@@ -6,7 +6,6 @@
 package com.netease.yunxin.app.wisdom.edu.logic.cmd
 
 import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduMember
-import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduMemberProperties
 
 class RoomMemberPropertiesRemoveAction(
     appKey: String,

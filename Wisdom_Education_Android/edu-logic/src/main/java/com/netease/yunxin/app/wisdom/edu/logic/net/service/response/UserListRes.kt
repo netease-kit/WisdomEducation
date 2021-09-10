@@ -19,5 +19,4 @@ open class UserRes(
     var muteChat: Int,
     var updateTime: Long?,
     var state: Int?,
-) {
-}
+)

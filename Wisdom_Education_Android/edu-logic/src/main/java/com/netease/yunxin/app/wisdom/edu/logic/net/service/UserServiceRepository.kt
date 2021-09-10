@@ -7,9 +7,9 @@ package com.netease.yunxin.app.wisdom.edu.logic.net.service
 
 import androidx.lifecycle.LiveData
 import com.netease.yunxin.app.wisdom.base.network.NEResult
+import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduEntryRes
 import com.netease.yunxin.app.wisdom.edu.logic.net.service.request.JoinClassroomReq
 import com.netease.yunxin.app.wisdom.edu.logic.net.service.request.NEEduUpdateMemberPropertyReq
-import com.netease.yunxin.app.wisdom.edu.logic.net.service.response.NEEduEntryRes
 
 
 object UserServiceRepository : BaseRepository() {
@@ -37,13 +37,6 @@ object UserServiceRepository : BaseRepository() {
         userUuid: String,
     ): LiveData<NEResult<String>> {
         return interceptor(userService.updateInfo(appKey, roomId, userUuid))
-    }
-
-    fun recordPlayback(
-        roomId: String,
-        userUuid: String,
-    ): LiveData<NEResult<String>> {
-        return interceptor(userService.recordPlayback(appKey, roomId, userUuid))
     }
 
 }

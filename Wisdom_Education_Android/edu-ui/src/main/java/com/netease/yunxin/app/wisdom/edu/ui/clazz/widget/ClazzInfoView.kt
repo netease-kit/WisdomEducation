@@ -6,8 +6,6 @@
 package com.netease.yunxin.app.wisdom.edu.ui.clazz.widget
 
 import android.annotation.SuppressLint
-import android.content.ClipData
-import android.content.ClipboardManager
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater

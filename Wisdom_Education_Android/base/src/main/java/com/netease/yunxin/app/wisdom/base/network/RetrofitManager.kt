@@ -8,7 +8,6 @@ package com.netease.yunxin.app.wisdom.base.network
 import com.netease.yunxin.kit.alog.ALog
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
-import okhttp3.internal.platform.Platform
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -82,7 +81,7 @@ class RetrofitManager private constructor() {
                 .addCallAdapterFactory(LiveDataCallAdapterFactory())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
-            retrofitCache[baseUrl] = retrofit;
+            retrofitCache[baseUrl] = retrofit
         }
         return retrofit!!.create(zClass)
     }

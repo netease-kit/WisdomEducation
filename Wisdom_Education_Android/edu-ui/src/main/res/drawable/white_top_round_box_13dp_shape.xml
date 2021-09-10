@@ -6,8 +6,8 @@
 
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
        android:shape="rectangle">
-    <solid android:color="@color/white"></solid>
+    <solid android:color="@color/white" />
     <corners
         android:topLeftRadius="@dimen/common_dp_13"
-        android:topRightRadius="@dimen/common_dp_13"></corners>
+        android:topRightRadius="@dimen/common_dp_13" />
 </shape>

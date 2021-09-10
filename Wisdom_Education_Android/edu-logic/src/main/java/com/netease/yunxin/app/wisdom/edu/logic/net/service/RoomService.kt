@@ -21,12 +21,11 @@ internal interface RoomService {
     /**
      * 房间配置
      *
-     * @param appId
      * @param roomUuid
      * @param roomConfigOptionsReq
      * @return
      */
-    @PUT("/scene/apps/{appKey}/v1/rooms/{roomUuid}")
+    @PUT("scene/apps/{appKey}/v1/rooms/{roomUuid}")
     fun config(
         @Path("appKey") appKey: String,
         @Path("roomUuid") roomUuid: String,
@@ -36,11 +35,10 @@ internal interface RoomService {
     /**
      * 获取房间配置
      *
-     * @param appId
      * @param roomUuid
      * @return
      */
-    @GET("/scene/apps/{appKey}/v1/rooms/{roomUuid}/config")
+    @GET("scene/apps/{appKey}/v1/rooms/{roomUuid}/config")
     fun getConfig(
         @Path("appKey") appKey: String,
         @Path("roomUuid") roomUuid: String,
@@ -49,7 +47,7 @@ internal interface RoomService {
     /**
      * 查询房间快照
      */
-    @GET("/scene/apps/{appKey}/v1/rooms/{roomUuid}/snapshot")
+    @GET("scene/apps/{appKey}/v1/rooms/{roomUuid}/snapshot")
     fun fetchSnapshot(
         @Path("appKey") appKey: String,
         @Path("roomUuid") roomUuid: String,
@@ -58,7 +56,7 @@ internal interface RoomService {
     /**
      * 收件箱拉取列表
      */
-    @GET("/scene/apps/{appKey}/v1/rooms/{roomId}/sequence/nextId={nextId}")
+    @GET("scene/apps/{appKey}/v1/rooms/{roomId}/sequence/nextId={nextId}")
     fun fetchNextSequences(
         @Path("appKey") appKey: String,
         @Path("roomId") roomId: String,
@@ -68,7 +66,7 @@ internal interface RoomService {
     /**
      * 发送自定义的点对点消息
      */
-    @POST("/scene/apps/{appKey}/v1/rooms/{roomUuid}/users/{toUserUuid}/messages/peer")
+    @POST("scene/apps/{appKey}/v1/rooms/{roomUuid}/users/{toUserUuid}/messages/peer")
     fun sendP2PMessage(
         @Path("appKey") appKey: String,
         @Path("roomUuid") roomUuid: String,
@@ -79,7 +77,7 @@ internal interface RoomService {
     /**
      * 房间状态
      */
-    @PUT("/scene/apps/{appKey}/v1/rooms/{roomId}/states/{key}")
+    @PUT("scene/apps/{appKey}/v1/rooms/{roomId}/states/{key}")
     fun updateRoomStates(
         @Path("appKey") appKey: String,
         @Path("roomId") roomId: String,
@@ -90,7 +88,7 @@ internal interface RoomService {
     /**
      * 删除房间状态
      */
-    @DELETE("/scene/apps/{appKey}/v1/rooms/{roomId}/states/{key}")
+    @DELETE("scene/apps/{appKey}/v1/rooms/{roomId}/states/{key}")
     fun deleteRoomStates(
         @Path("appKey") appKey: String,
         @Path("roomId") roomId: String,
@@ -100,7 +98,7 @@ internal interface RoomService {
     /**
      * 房间属性
      */
-    @PUT("/scene/apps/{appKey}/v1/rooms/{roomId}/properties/{key}")
+    @PUT("scene/apps/{appKey}/v1/rooms/{roomId}/properties/{key}")
     fun updateRoomProperties(
         @Path("appKey") appKey: String,
         @Path("roomId") roomId: String,
@@ -111,7 +109,7 @@ internal interface RoomService {
     /**
      * 删除房间属性
      */
-    @DELETE("/scene/apps/{appKey}/v1/rooms/{roomId}/properties/{key}")
+    @DELETE("scene/apps/{appKey}/v1/rooms/{roomId}/properties/{key}")
     fun deleteRoomProperties(
         @Path("appKey") appKey: String,
         @Path("roomId") roomId: String,

@@ -11,4 +11,12 @@
     <string name="student_over_limit">学生数量超过限制</string>
     <string name="app_tips">* 本产品仅用于演示产品功能，课堂最长30分钟，不可商用</string>
     <string name="clazz_name">%s的课堂</string>
+    <string name="open_recordplay_fail_try_again">服务器内部异常</string>
+    <string name="course_playback_file_is_being_transcoded">课程结束后，需进行文件转码，预计20分钟后可观看回放</string>
+    <string name="setting">设置</string>
+    <string name="open_chat_room">开启聊天室</string>
+    <string name="im_reuse">IM复用</string>
+    <string name="open_chatroom">关闭聊天室后，界面不展示聊天室</string>
+    <string name="im_resue_desc">开启IM复用后，将采用宿主应用的IM通道</string>
+    <string name="im_login">IM登录</string>
 </resources>

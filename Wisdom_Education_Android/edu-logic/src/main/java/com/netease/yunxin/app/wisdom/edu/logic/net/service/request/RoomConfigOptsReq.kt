@@ -5,10 +5,12 @@
 
 package com.netease.yunxin.app.wisdom.edu.logic.net.service.request
 
+import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduConfig
 import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduRoomConfig
 
 data class RoomConfigOptsReq(
     val configId: Int? = null,
     val roomConfig: NEEduRoomConfig? = null,
     val roomName: String,
+    val config: NEEduConfig
 )

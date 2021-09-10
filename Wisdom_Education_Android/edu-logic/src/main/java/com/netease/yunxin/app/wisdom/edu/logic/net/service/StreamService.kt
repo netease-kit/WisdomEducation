@@ -18,7 +18,7 @@ internal interface StreamService{
     /**
      * 更新流状态
      */
-    @PUT("/scene/apps/{appKey}/v1/rooms/{roomUuid}/members/{userUuid}/streams/{streamType}")
+    @PUT("scene/apps/{appKey}/v1/rooms/{roomUuid}/members/{userUuid}/streams/{streamType}")
     fun updateStreamInfo(
         @Path("appKey") appKey: String,
         @Path("roomUuid") roomUuid: String,
@@ -30,7 +30,7 @@ internal interface StreamService{
     /**
      * 删除流
      */
-    @DELETE("/scene/apps/{appKey}/v1/rooms/{roomUuid}/members/{userUuid}/streams/{streamType}")
+    @DELETE("scene/apps/{appKey}/v1/rooms/{roomUuid}/members/{userUuid}/streams/{streamType}")
     fun deleteStream(
         @Path("appKey") appKey: String,
         @Path("roomUuid") roomUuid: String,
@@ -41,7 +41,7 @@ internal interface StreamService{
     /**
      * 删除流
      */
-    @POST("/scene/apps/{appKey}/v1/rooms/{roomUuid}/batch")
+    @POST("scene/apps/{appKey}/v1/rooms/{roomUuid}/batch")
     fun batchStreams(
         @Path("appKey") appKey: String,
         @Path("roomUuid") roomUuid: String,

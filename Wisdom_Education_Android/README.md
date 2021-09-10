@@ -110,9 +110,15 @@
 │   └── service             业务服务
 ├── edu-ui                   UIKit组件
 │   ├── clazz               各种房间Activity
+├── edu-model                教育业务model模块
 ├── im                       IM服务组件
 ├── rtc                      音视频通话服务组件
 ├── whiteboard               白板组件
+├── recordplay-logic         录制回放逻辑模块
+├── recordplay-model         录制回放model模块
+├── recordplay-ui            录制回放UI模块
+├── rvadapter                adapter工具模块
+├── viewbinding              viewbinding工具模块
 └── config.properties        定义项目需要的各种配置信息
 ```
 
@@ -130,9 +136,9 @@
 
 ### 1 集成到项目
 
-1. 新建 Android 工程。  
-   a. 运行 Android Sudio，在顶部菜单依次选择 “File -> New -> New Project...” 新建工程。  
-   b. 选择 'Phone and Tablet' -> 'Empty Activity' ，并单击Next。  
+1. 新建 Android 工程。
+   a. 运行 Android Sudio，在顶部菜单依次选择 “File -> New -> New Project...” 新建工程。
+   b. 选择 'Phone and Tablet' -> 'Empty Activity' ，并单击Next。
    c. 配置工程相关信息。
 
 注意： Minimum API Level 为 API 21。
@@ -140,7 +146,7 @@
    d. 单击 'Finish'，完成工程创建。
 
 2. 添加依赖模块。  
-   a. 复制示例项目中的Modules和config.gradle、config.properties等相关配置文件至当前目录。  
+   a. 复制示例项目中的Modules和config.gradle、config.properties等相关配置文件至当前目录。
    b. settings.gradle引入Modules。
 
 ```

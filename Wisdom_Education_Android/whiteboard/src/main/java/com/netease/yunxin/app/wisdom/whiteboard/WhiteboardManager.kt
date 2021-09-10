@@ -18,9 +18,9 @@ import com.netease.yunxin.app.wisdom.whiteboard.view.WhiteboardView
  */
 object WhiteboardManager : WhiteboardApi() {
 
-    private const val DEFAULT_URL = "https://yiyong-xedu-v2-static.netease.im/whiteboard/stable/webview.html"
+    private const val DEFAULT_URL = "https://yiyong-xedu-v2-static.netease.im/whiteboard-webview/g2/webview.html"
 
-    private lateinit var webView: WhiteboardView
+    private var webView: WhiteboardView? = null
 
     private lateinit var jsBridge: JsBridge
 
@@ -55,6 +55,22 @@ object WhiteboardManager : WhiteboardApi() {
         return config.appKey
     }
 
+    override fun getUid(): Long {
+        return config.rtcUid
+    }
+
+    override fun getNonce(): String? {
+        return config.wbAuth?.nonce
+    }
+
+    override fun getCurTime(): Long? {
+        return config.wbAuth?.curTime?.toLong()
+    }
+
+    override fun getChecksum(): String? {
+        return config.wbAuth?.checksum
+    }
+
     override fun setEnableDraw(enable: Boolean) {
         jsBridge.enableDraw(enable)
     }
@@ -68,15 +84,14 @@ object WhiteboardManager : WhiteboardApi() {
     }
 
     override fun getWhiteboardView(): WhiteboardView {
-        return webView
+        return webView!!
     }
 
     /**
      * 与宿主同生共死
      */
     override fun finish() {
-        if (webView != null) {
-            //webView.destroy()
-        }
+        webView?.destroy()
+        webView = null
     }
 }

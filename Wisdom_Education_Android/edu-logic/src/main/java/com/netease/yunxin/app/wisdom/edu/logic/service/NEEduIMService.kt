@@ -21,7 +21,6 @@ abstract class NEEduIMService : INEEduService() {
      * 发送消息
      *
      * @param message 消息内容
-     * @param callbackNE 结果回调
      *
      */
     abstract fun sendMessage(message: ChatRoomMessage): LiveData<NEResult<Void>>

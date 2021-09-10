@@ -8,13 +8,13 @@ package com.netease.yunxin.app.wisdom.whiteboard.bridge
 import android.os.Handler
 import android.os.Looper
 import android.os.Message
-import android.util.Log
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import com.google.gson.Gson
 import com.netease.yunxin.app.wisdom.whiteboard.api.WhiteboardApi
 import com.netease.yunxin.app.wisdom.whiteboard.model.JsMessage
 import com.netease.yunxin.app.wisdom.whiteboard.model.JsMessageAction
+import com.netease.yunxin.kit.alog.ALog
 import org.json.JSONException
 import org.json.JSONObject
 
@@ -43,19 +43,19 @@ class JsBridge(private val whiteboardApi: WhiteboardApi) : Handler(Looper.getMai
     override fun handleMessage(msg: Message) {
         super.handleMessage(msg)
         var content: String = msg.obj as String
-        Log.i(TAG, String.format("called by js, content=%s", content))
+        ALog.i(TAG, String.format("called by js, content=%s", content))
         try {
             var jsMessage: JsMessage? = gson.fromJson(content, JsMessage::class.java)
             jsMessage?.let {
                 when (jsMessage.action) {
                     JsMessageAction.webPageLoaded -> login()
-                    JsMessageAction.webLoginIMSucceed -> onLogin()
-                    JsMessageAction.webLoginIMFailed -> imFail()
+                    JsMessageAction.webJoinWBSucceed -> onLogin()
                     JsMessageAction.webJoinWBFailed -> wbFail()
                     JsMessageAction.webCreateWBFailed -> createFail()
                     JsMessageAction.webLeaveWB -> leave()
                     JsMessageAction.webError -> webError()
                     JsMessageAction.webJsError -> jsError()
+                    JsMessageAction.webGetAuth -> jsSendAuth()
                 }
             }
 
@@ -81,10 +81,6 @@ class JsBridge(private val whiteboardApi: WhiteboardApi) : Handler(Looper.getMai
 
     }
 
-    private fun imFail() {
-
-    }
-
     private fun wbFail() {
 
     }
@@ -99,11 +95,8 @@ class JsBridge(private val whiteboardApi: WhiteboardApi) : Handler(Looper.getMai
         val jsParam = JSONObject()
         val param = JSONObject()
         val toolbar = JSONObject()
-        jsParam.put("action", "jsLoginIMAndJoinWB")
-        param.put("toolbar", toolbar)
-        param.put("account", whiteboardApi.getUserInfo().account)
-        param.put("token", whiteboardApi.getUserInfo().token)
-        param.put("ownerAccount", whiteboardApi.getOwnerAccount())
+        jsParam.put("action", "jsJoinWB")
+        param.put("uid", whiteboardApi.getUid())
         param.put("channelName", whiteboardApi.getChannelName())
         param.put("record", true)
         param.put("debug", false)
@@ -159,6 +152,18 @@ class JsBridge(private val whiteboardApi: WhiteboardApi) : Handler(Looper.getMai
     private fun evaluateJavascript(js: String) {
         val whiteboardView: WebView = whiteboardApi.getWhiteboardView()
         whiteboardView.evaluateJavascript(js, null)
+    }
+
+    private fun jsSendAuth() {
+        val jsParam = JSONObject()
+        val param = JSONObject()
+        jsParam.put("action", "jsSendAuth")
+        param.put("code", 200)
+        whiteboardApi.getNonce()?.apply { param.put("nonce", this) }
+        whiteboardApi.getCurTime()?.apply { param.put("curTime", this) }
+        whiteboardApi.getChecksum()?.apply { param.put("checksum", this) }
+        jsParam.put("param", param)
+        runJs(jsParam.toString())
     }
 
 }

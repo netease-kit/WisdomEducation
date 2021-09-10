@@ -12,20 +12,15 @@ import com.netease.lava.nertc.sdk.stats.NERtcNetworkQualityInfo
 import com.netease.yunxin.app.wisdom.base.network.NEResult
 import com.netease.yunxin.app.wisdom.edu.logic.impl.NEEduManagerImpl
 import com.netease.yunxin.app.wisdom.edu.logic.model.*
-import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduRoomStates.Companion.STATE_MUTEAUDIO
-import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduRoomStates.Companion.STATE_MUTECHAT
-import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduRoomStates.Companion.STATE_PAUSE
 import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduRoomStates.Companion.STATE_STEP
 import com.netease.yunxin.app.wisdom.edu.logic.net.service.RoomServiceRepository
 import com.netease.yunxin.app.wisdom.edu.logic.net.service.UserServiceRepository
 import com.netease.yunxin.app.wisdom.edu.logic.net.service.request.CommonReq
 import com.netease.yunxin.app.wisdom.edu.logic.net.service.request.JoinClassroomReq
 import com.netease.yunxin.app.wisdom.edu.logic.net.service.request.RoomConfigOptsReq
-import com.netease.yunxin.app.wisdom.edu.logic.net.service.response.NEEduEntryRes
+import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduEntryRes
 import com.netease.yunxin.app.wisdom.edu.logic.net.service.response.NEEduRoomConfigRes
 import com.netease.yunxin.app.wisdom.edu.logic.options.NEEduClassOptions
-import com.netease.yunxin.app.wisdom.edu.logic.options.NEEduRoleType
-import com.netease.yunxin.app.wisdom.edu.logic.options.NEEduSceneType
 import com.netease.yunxin.app.wisdom.edu.logic.service.NEEduRoomService
 
 /**
@@ -42,7 +37,8 @@ internal class NEEduRoomServiceImpl : NEEduRoomService() {
     override fun config(options: NEEduClassOptions): LiveData<NEResult<NEEduRoomConfigRes>> {
         val roomConfigOptsReq = RoomConfigOptsReq(
             configId = options.sceneType.configId(),
-            roomName = options.className
+            roomName = options.className,
+            config = options.config
         )
         return RoomServiceRepository.config(options.classId(), roomConfigOptsReq)
     }
