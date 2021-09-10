@@ -29,7 +29,7 @@ if (appKey == null) {
 
 def baseUrl = configProperties.getProperty(env == "online" ? "BASE_URL_ONLINE" : "BASE_URL")
 if (baseUrl == null) {
-    baseUrl = 'https://yiyong-xedu-v2.netease.im'
+    baseUrl = 'https://yiyong-xedu-v2.netease.im/'
 }
 
 def authorization = configProperties.getProperty(env == "online" ? "AUTHORIZATION_ONLINE" :
