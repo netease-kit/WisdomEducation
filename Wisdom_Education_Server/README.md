@@ -249,4 +249,37 @@
 - Body: None
 #### Response:
 - Body: None
-    
+## Error Code
+|错误码|错误消息|描述｜
+|----|----|----|
+|304|Not Modified||
+|400|Bad Request|参数非法|
+|401|Unauthorized|鉴权失败|
+|403|Forbidden|房间操作权限禁止|
+|404|Not Found||
+|405|Method Not Allowed|method不支持|
+|409|Target Already Exists|创建房间时，房间号已经存在|
+|415|Unsupported Media Type|不支持的MediaType，比如非Json的body|
+|500|Internal Server Error|内部异常，一般是内部服务出现问题|
+|503|Service Busy||
+|1001|Room Not Prepared|房间内操作时，房间configId不存在，或者configId对应的config不存在，或有格式或内容有误；课堂开始 如step=1时，rtc房间未创建，因为此时录制没发开始|
+|1002|Room Role Exceed|加入房间时，角色数量超限|
+|1003|Room Role Undefined|加入房间时，指定角色未定义|
+|1004|Room Not Found|任何和房间强关联的操作，指定的roomUuid查不到对应的活的房间|
+|1005|Bad Room Config|创建房间时，config不存在或无法使用|
+|1006|Room Property Exists|房间属性exclusive时put改属性，该属性已经存在|
+|1007|Room Member Property Exists|成员属性exclusive时put改属性，该属性已经存在|
+|1008|Room Sit Conflict|超大房间设置的座位号已经存在|
+|1009|Room Sits Full|超大房间设置座位时，座位已满|
+|1010|Room Sit User Conflict|超大房间设置座位时，目标用户已经在座位上|
+|1011|Room Sit Not Exist|超大房间设置座位时，座位号不存在|
+|1012|Member Property or Stream Out of Currency Limit|put:member.stream|property时，该属性的并发超限，并发超限，如屏幕共享同时只能一人|
+|1014|Room Sits Bad|坐席配置不正确|
+|1015|Destination Member Server Error|被操作的成员不存在|
+|1016|Member Exist|房间成员已存在|
+|1017|Bad Room Config: Conflict|创建房间时房间已经存在且config冲突|
+|700|Nim Create User Error|创建IM账户失败|
+|701|Nim User NOT exist|指定IM账户不存在|
+|702|Nim Bad Im Service|IM服务异常|
+|703|Nim User exist|IM账户已存在|
+|704|Nim User Bad Token|IM账户 Token错误|
