@@ -20,6 +20,18 @@
 
 >若调用端是java语言，则可直接使用[示例代码](CheckSumBuilder.java)计算checksum, 注意参数顺序
 
+# 基本概念
+| 名称| 	类型| 	描述|
+|----|----|----|
+| userUuid	| String	| 用户唯一ID，即用户账号，加入房间时的用户身份|
+| userToken	| String	| 用户令牌，账号对应的密码，加入房间等需要USER_TOKEN鉴权的接口使用|
+| imKey	| String	| IM 应用标识符: 一般等同于AppKey，此应用绑定的im app key，一般情况下开发者无需关心此参数|
+| imToken	| String	| IM 应用中用户token。此应用绑定的im token，一般情况下开发者无需关心此参数|
+| rtcKey	| String	| RTC 应用标识符: 一般等同于AppKey，此应用绑定的rtc app key，一般情况下开发者无需关心此参数|
+|roomName|String|房间名称|
+|roomUuid|String|房间唯一标识符，用于标识应用下的一个唯一房间，创建房间时若指定的roomUuid存在，则返回报错|
+| configId	| Integer	| 房间的配置模版id，1对1：5；小班课：6；大班课：7；直播大班课：20|
+
 # 接口列表
 ```
 以下接口Url中的AppKey和Host见接口调用概述
