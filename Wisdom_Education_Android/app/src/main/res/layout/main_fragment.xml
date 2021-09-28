@@ -189,12 +189,24 @@
                     android:id="@+id/tv_large_class"
                     android:layout_width="@dimen/common_dp_303"
                     android:layout_height="@dimen/common_dp_36"
+                    android:background="@drawable/bg_class_type"
+                    android:gravity="center_vertical"
+                    android:paddingStart="@dimen/common_dp_20"
+                    android:paddingEnd="@dimen/common_dp_20"
+                    android:text="@string/interactive_big_class"
+                    android:textColor="@color/gray_333333"
+                    android:textSize="@dimen/ts_16_dp" />
+
+                <TextView
+                    android:id="@+id/tv_cdn_big_class"
+                    android:layout_width="@dimen/common_dp_303"
+                    android:layout_height="@dimen/common_dp_36"
                     android:layout_marginBottom="@dimen/common_dp_10"
                     android:background="@drawable/bg_class_type"
                     android:gravity="center_vertical"
                     android:paddingStart="@dimen/common_dp_20"
                     android:paddingEnd="@dimen/common_dp_20"
-                    android:text="@string/big_class"
+                    android:text="@string/live_big_class"
                     android:textColor="@color/gray_333333"
                     android:textSize="@dimen/ts_16_dp" />
 
@@ -225,6 +237,7 @@
                 android:id="@+id/tv_teacher"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/common_dp_30"
+                android:layout_marginEnd="@dimen/common_dp_24"
                 android:gravity="center_vertical"
                 android:text="@string/teacher"
                 android:textColor="@color/gray_333333"
@@ -234,7 +247,6 @@
                 android:id="@+id/rb_student"
                 android:layout_width="@dimen/common_dp_22"
                 android:layout_height="@dimen/common_dp_30"
-                android:layout_marginStart="@dimen/common_dp_24"
                 android:button="@drawable/cb_role_type"
                 android:checked="false"
                 android:gravity="center_vertical" />

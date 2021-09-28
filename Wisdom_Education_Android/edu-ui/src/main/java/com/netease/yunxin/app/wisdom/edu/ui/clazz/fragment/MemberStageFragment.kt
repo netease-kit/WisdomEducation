@@ -9,7 +9,7 @@ import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduMember
 import com.netease.yunxin.app.wisdom.edu.ui.R
-import com.netease.yunxin.app.wisdom.edu.ui.base.BaseClassActivity
+import com.netease.yunxin.app.wisdom.edu.ui.clazz.BaseNormalClassActivity
 import com.netease.yunxin.app.wisdom.edu.ui.base.BaseFragment
 import com.netease.yunxin.app.wisdom.edu.ui.clazz.adapter.MemberControlListAdapter
 import com.netease.yunxin.app.wisdom.edu.ui.databinding.FragmentMemberItemBinding
@@ -47,7 +47,7 @@ class MemberStageFragment : BaseFragment(R.layout.fragment_member_item),
     }
 
     override fun onItemChildClick(adapter: BaseAdapter<NEEduMember>?, v: View?, position: Int) {
-        activity?.let { it as BaseClassActivity }?.apply {
+        activity?.let { it as BaseNormalClassActivity }?.apply {
             adapter?.let { it1 ->
                 val member = it1.getItem(position)
                 val isLocalUser = eduManager.getEntryMember() == member

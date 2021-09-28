@@ -16,7 +16,7 @@ import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduRoleType
 import com.netease.yunxin.app.wisdom.edu.ui.R
 import com.netease.yunxin.app.wisdom.edu.ui.clazz.dialog.ConfirmDialog
 
-class BigClazzStudentActivity : BigClassBaseActivity() {
+class BigClazzStudentActivity : BaseBigClassActivity() {
 
     companion object {
         fun start(context: Context) {

@@ -32,6 +32,7 @@ interface NEEduUiKit {
          *
          * @param uuid 用户鉴权userUuid。匿名登录时请设置为空字符串""
          * @param token 用户鉴权userToken。匿名登录时请设置为空字符串""
+         * @param isLiveClass 是否是直播大班课
          * @return 接口回调
          */
         fun init(uuid: String, token: String): LiveData<NEResult<NEEduUiKit>> {

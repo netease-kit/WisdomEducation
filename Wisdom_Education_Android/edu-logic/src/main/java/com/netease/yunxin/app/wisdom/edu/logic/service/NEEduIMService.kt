@@ -11,6 +11,7 @@ import com.netease.nimlib.sdk.chatroom.model.EnterChatRoomData
 import com.netease.nimlib.sdk.chatroom.model.EnterChatRoomResultData
 import com.netease.nimlib.sdk.msg.model.AttachmentProgress
 import com.netease.yunxin.app.wisdom.base.network.NEResult
+import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduCMDBody
 
 /**
  * 提供可供 App 调用的聊天消息，透传相关方法
@@ -29,6 +30,11 @@ abstract class NEEduIMService : INEEduService() {
      * 收到聊天消息
      */
     abstract fun onReceiveMessage(): LiveData<List<ChatRoomMessage>>
+
+    /**
+     * 收到自定义CMD消息
+     */
+    abstract fun onReceiveCustomCMDMessage(): LiveData<NEEduCMDBody>
 
     /**
      * 图片消息状态变化通知

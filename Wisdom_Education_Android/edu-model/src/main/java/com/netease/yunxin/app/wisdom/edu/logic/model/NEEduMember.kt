@@ -11,8 +11,8 @@ import android.text.TextUtils
  * Created by hzsunyj on 2021/5/17.
  */
 open class NEEduMember(
-    val role: String,
-    val userName: String,
+    var role: String,
+    var userName: String,
     val userUuid: String,
     val rtcUid: Long,
     val time: Long,

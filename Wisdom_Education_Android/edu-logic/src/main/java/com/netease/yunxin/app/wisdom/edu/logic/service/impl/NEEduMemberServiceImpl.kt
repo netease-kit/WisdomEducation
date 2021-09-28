@@ -47,7 +47,7 @@ internal class NEEduMemberServiceImpl : NEEduMemberService() {
      * @param list 更新成员
      * @param increment 是否增量更新
      */
-    override fun updateMemberJoin(list: MutableList<NEEduMember>, increment: Boolean) {
+    override fun updateMemberJoin(list: List<NEEduMember>, increment: Boolean) {
         synchronized(joinList) {
             if (increment) {
                 for (element in list) {
@@ -71,7 +71,7 @@ internal class NEEduMemberServiceImpl : NEEduMemberService() {
         return joinLD
     }
 
-    override fun updateMemberLeave(list: MutableList<NEEduMember>) {
+    override fun updateMemberLeave(list: List<NEEduMember>) {
         synchronized(joinList) {
             joinList.removeAll(list).also {
                 leaveLD.postValue(list)

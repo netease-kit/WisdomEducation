@@ -29,7 +29,7 @@ import com.netease.yunxin.app.wisdom.rvadapter.OnItemClickListener
  */
 class ChatAdapter(
     val activity: BaseClassActivity,
-    dataList: MutableList<ChatRoomMessage>,
+    dataList: List<ChatRoomMessage>,
     listener: OnItemClickListener<ChatRoomMessage>? = null,
 ) : BaseAdapter<ChatRoomMessage>(dataList, listener) {
 

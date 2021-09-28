@@ -26,7 +26,7 @@ import com.netease.yunxin.app.wisdom.base.util.BitmapDecoder
 import com.netease.yunxin.app.wisdom.base.util.ImageUtil
 import com.netease.yunxin.app.wisdom.base.util.ToastUtil
 import com.netease.yunxin.app.wisdom.edu.ui.R
-import com.netease.yunxin.app.wisdom.edu.ui.base.BaseClassActivity
+import com.netease.yunxin.app.wisdom.edu.ui.base.BaseChatView
 import com.netease.yunxin.app.wisdom.edu.ui.base.BaseFragment
 import com.netease.yunxin.app.wisdom.edu.ui.clazz.viewmodel.ChatRoomViewModel
 import com.netease.yunxin.app.wisdom.edu.ui.clazz.widget.MultiTouchZoomableImageView
@@ -234,7 +234,7 @@ class ZoomImageFragment : BaseFragment(R.layout.fragment_zoom_image) {
     }
 
     private fun hideFragment() {
-        (activity as BaseClassActivity).hideZoomImageFragment()
+        (activity as BaseChatView).hideZoomImageFragment()
     }
 
     override fun onDestroy() {

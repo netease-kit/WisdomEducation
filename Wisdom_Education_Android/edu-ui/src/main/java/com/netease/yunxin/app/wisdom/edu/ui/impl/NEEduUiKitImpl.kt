@@ -67,6 +67,9 @@ internal class NEEduUiKitImpl : NEEduUiKit {
                         NEEduSceneType.BIG -> {
                             BigClazzStudentActivity.start(context)
                         }
+                        NEEduSceneType.LIVE_SIMPLE -> {
+                            LiveClassActivity.start(context)
+                        }
                     }
                 }
             }

@@ -61,7 +61,7 @@
             app:layout_constraintTop_toBottomOf="@id/title" />
 
         <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/toggleChatroom"
+            android:id="@+id/toggle_chatroom"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/common_dp_31"
             android:layout_marginEnd="@dimen/common_dp_20"
@@ -127,6 +127,49 @@
             android:textSize="@dimen/ts_14_dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_im_reuse"
+            android:singleLine="true" />
+
+        <TextView
+            android:id="@+id/tv_low_latency_live"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/common_dp_56"
+            android:layout_marginTop="@dimen/common_dp_45"
+            android:background="@color/white"
+            android:gravity="start|center_vertical"
+            android:paddingStart="@dimen/common_dp_20"
+            android:text="@string/low_latency_live"
+            android:textColor="@color/color_222222"
+            android:textSize="@dimen/ts_17_dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_im_reuse" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/toggle_low_latency_live"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/common_dp_31"
+            android:layout_marginEnd="@dimen/common_dp_20"
+            android:gravity="center"
+            android:thumb="@drawable/switch_thumb"
+            app:layout_constraintBottom_toBottomOf="@id/tv_low_latency_live"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tv_low_latency_live"
+            app:switchMinWidth="@dimen/common_dp_51"
+            app:track="@drawable/switch_track" />
+
+        <TextView
+            android:id="@+id/tv_low_latency_live_desc"
+            android:paddingStart="@dimen/common_dp_20"
+            android:paddingEnd="@dimen/common_dp_20"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/common_dp_5"
+            android:ellipsize="marquee"
+            android:text="@string/low_latency_live_desc"
+            android:textColor="@color/color_999999"
+            android:textSize="@dimen/ts_14_dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_low_latency_live"
             android:singleLine="true" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

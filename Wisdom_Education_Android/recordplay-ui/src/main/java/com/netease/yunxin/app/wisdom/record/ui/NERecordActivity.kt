@@ -33,9 +33,9 @@ import com.netease.yunxin.app.wisdom.record.model.NERecordPlayState
 import com.netease.yunxin.app.wisdom.record.ui.adapter.MemberJoinDiffCallback
 import com.netease.yunxin.app.wisdom.record.ui.adapter.MemberVideoListAdapter
 import com.netease.yunxin.app.wisdom.record.ui.databinding.ActivityRecordplayBinding
-import com.netease.yunxin.app.wisdom.record.video.sdk.PlayerManager
-import com.netease.yunxin.app.wisdom.record.video.sdk.model.SDKInfo
-import com.netease.yunxin.app.wisdom.record.video.sdk.model.SDKOptions
+import com.netease.yunxin.app.wisdom.player.sdk.PlayerManager
+import com.netease.yunxin.app.wisdom.player.sdk.model.SDKInfo
+import com.netease.yunxin.app.wisdom.player.sdk.model.SDKOptions
 import com.netease.yunxin.app.wisdom.record.video.widget.NEEduVideoViewPool
 import com.netease.yunxin.app.wisdom.record.whiteboard.config.NERecordWhiteboardConfig
 import com.netease.yunxin.app.wisdom.record.whiteboard.view.NERecordWhiteboardView

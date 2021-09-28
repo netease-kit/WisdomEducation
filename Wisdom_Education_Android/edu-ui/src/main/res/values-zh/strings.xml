@@ -41,9 +41,10 @@
     <string name="hint_room_type">请选择课堂类型</string>
     <string name="alert">提示</string>
     <string name="hide_chat_room">收起</string>
-    <string name="one2one_class">一对一</string>
-    <string name="small_class">小班课</string>
-    <string name="big_class">大班课</string>
+    <string name="one2one_class">一对一教学</string>
+    <string name="small_class">多人小班课</string>
+    <string name="interactive_big_class">互动大班课</string>
+    <string name="live_big_class">直播大班课</string>
     <string name="request_permission_reason">即将申请的权限是程序必须依赖的权限</string>
     <string name="settings_to_manually_enable_permissions">您需要去应用程序设置当中手动开启权限</string>
     <string name="i_have_understood">我已明白</string>

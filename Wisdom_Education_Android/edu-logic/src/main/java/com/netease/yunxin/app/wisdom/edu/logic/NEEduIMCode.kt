@@ -35,7 +35,16 @@ enum class NEEduIMCode(val code: Int, val msg: String) {
     /**
      * 用户名或密码错误
      */
-    PWD_ERROR(IMErrorCode.PWD_ERROR.code, "");
+    PWD_ERROR(IMErrorCode.PWD_ERROR.code, ""),
 
+    /**
+     * 被其他端踢出
+     */
+    KICK_OUT_BY_CONFLICT_LOGIN(IMErrorCode.KICK_OUT_BY_CONFLICT_LOGIN.code, ""),
+
+    /**
+     * 被管理员踢出
+     */
+    KICK_OUT_BY_MANAGER(IMErrorCode.KICK_OUT_BY_MANAGER.code, "");
 
 }

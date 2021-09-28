@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) 2021 NetEase, Inc.  All rights reserved.
+  ~ Use of this source code is governed by a MIT license that can be found in the LICENSE file.
+  -->
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/one_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/color_1a2028"
+    android:clickable="true"
+    android:focusable="true">
+
+    <ImageView
+        android:id="@+id/iv_member_hide"
+        android:layout_width="@dimen/common_dp_31"
+        android:layout_height="@dimen/common_dp_48"
+        android:layout_marginStart="@dimen/common_dp_40"
+        android:gravity="center"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_title_hide"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/title_member"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/common_dp_48"
+        android:gravity="center_vertical"
+        android:textColor="@color/white"
+        android:textSize="@dimen/ts_18_dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="课堂成员(4)" />
+
+    <View
+        android:id="@+id/line_horizontal_top"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/common_dp_1"
+        android:layout_marginTop="@dimen/common_dp_48"
+        android:background="@color/color_343D49"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/et_members_search"
+        android:layout_width="@dimen/common_dp_391"
+        android:layout_height="@dimen/common_dp_32"
+        android:layout_marginTop="@dimen/common_dp_61"
+        android:layout_marginBottom="@dimen/common_dp_12"
+        android:background="@drawable/bg_search_edit"
+        android:ellipsize="end"
+        android:gravity="center_vertical"
+        android:hint="@string/please_enter_a_keyword_search"
+        android:imeOptions="flagNoExtractUi"
+        android:maxLines="1"
+        android:paddingStart="@dimen/common_dp_12"
+        android:paddingEnd="@dimen/common_dp_24"
+        android:textColor="@color/color_4a5665"
+        android:textColorHint="@color/color_4a5665"
+        android:textSize="@dimen/ts_14_dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toStartOf="@id/bt_members_search"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        tools:visibility="visible" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_clear_text"
+        android:layout_width="@dimen/common_dp_12"
+        android:layout_height="@dimen/common_dp_12"
+        android:layout_marginEnd="@dimen/common_dp_12"
+        android:src="@drawable/ic_clear_text"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/et_members_search"
+        app:layout_constraintEnd_toEndOf="@id/et_members_search"
+        app:layout_constraintTop_toTopOf="@id/et_members_search"
+        tools:visibility="visible" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/bt_members_search"
+        android:layout_width="@dimen/common_dp_60"
+        android:layout_height="@dimen/common_dp_32"
+        android:layout_marginStart="@dimen/common_dp_16"
+        android:layout_marginTop="@dimen/common_dp_12"
+        android:layout_marginBottom="@dimen/common_dp_12"
+        android:background="@drawable/ic_bottom_btn_on"
+        android:gravity="center"
+        android:text="@string/search"
+        android:textColor="@color/white"
+        android:textSize="@dimen/ts_14_dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/et_members_search"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/et_members_search"
+        app:layout_constraintTop_toTopOf="@id/et_members_search"
+        tools:visibility="visible" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rcv_member_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/common_dp_105"
+        android:background="@color/color_1a2028"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

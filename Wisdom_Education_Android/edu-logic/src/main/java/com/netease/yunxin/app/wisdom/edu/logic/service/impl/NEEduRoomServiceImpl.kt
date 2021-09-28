@@ -40,7 +40,7 @@ internal class NEEduRoomServiceImpl : NEEduRoomService() {
             roomName = options.className,
             config = options.config
         )
-        return RoomServiceRepository.config(options.classId(), roomConfigOptsReq)
+        return RoomServiceRepository.config(options.classId, roomConfigOptsReq)
     }
 
     override fun getConfig(roomUuid: String): LiveData<NEResult<NEEduRoomConfig>> {
@@ -53,7 +53,7 @@ internal class NEEduRoomServiceImpl : NEEduRoomService() {
             role = options.roleType.value,
             streams = options.sceneType.streams(options.roleType)
         )
-        return UserServiceRepository.joinClassroom(options.classId(), joinClassroomReq).map {
+        return UserServiceRepository.joinClassroom(options.classId, joinClassroomReq).map {
             if (it.success()) {
                 eduRoom = it.data!!.room
             }

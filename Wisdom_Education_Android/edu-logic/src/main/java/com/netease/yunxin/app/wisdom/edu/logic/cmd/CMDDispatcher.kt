@@ -20,17 +20,25 @@ internal class CMDDispatcher(private val neEduManager: NEEduManagerImpl) {
     private val tag: String = "CMDDispatcher"
 
     private val observer: Observer<String> = Observer<String> {
-        it?.let { t ->
-            dispatch(t)
-        }
+        it?.let { dispatch(it) }
     }
 
-    fun start(){
-        NEEduManagerImpl.imManager.passthroughLD.observeForever(observer)
+    private val observerCMDBody: Observer<NEEduCMDBody> = Observer<NEEduCMDBody> {
+        it?.let { dispatch(it) }
+    }
+
+    fun start() {
+        if (neEduManager.isLiveClass()) {
+            NEEduManagerImpl.getIMService().onReceiveCustomCMDMessage().observeForever(observerCMDBody)
+        } else
+            NEEduManagerImpl.imManager.passthroughLD.observeForever(observer)
     }
 
     fun destroy() {
-        NEEduManagerImpl.imManager.passthroughLD.removeObserver(observer)
+        if (neEduManager.isLiveClass()) {
+            NEEduManagerImpl.getIMService().onReceiveCustomCMDMessage().removeObserver(observerCMDBody)
+        } else
+            NEEduManagerImpl.imManager.passthroughLD.removeObserver(observer)
     }
 
     private fun dispatch(text: String) {
@@ -43,6 +51,18 @@ internal class CMDDispatcher(private val neEduManager: NEEduManagerImpl) {
                 }
             }
 
+        }
+    }
+
+    private fun dispatch(cmdBody: NEEduCMDBody) {
+        ALog.i(tag, cmdBody.toString())
+        cmdBody?.takeIf { cmdBody.cmd == CMDId.ROOM_STATES_CHANGE || cmdBody.cmd == CMDId.ROOM_STATES_DELETE
+                || cmdBody.cmd == CMDId.USER_JOIN || cmdBody.cmd == CMDId.USER_LEAVE }?.let {
+            NEEduManagerImpl.neEduSync?.handle(cmdBody).let {
+                if (it == true) {
+                    dispatchCMD(cmdBody)
+                }
+            }
         }
     }
 

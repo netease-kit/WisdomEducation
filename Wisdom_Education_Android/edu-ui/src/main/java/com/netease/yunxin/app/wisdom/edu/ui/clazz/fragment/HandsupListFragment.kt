@@ -11,7 +11,7 @@ import com.netease.yunxin.app.wisdom.base.util.CommonUtil.setOnClickThrottleFirs
 import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduMember
 import com.netease.yunxin.app.wisdom.edu.ui.R
 import com.netease.yunxin.app.wisdom.edu.ui.base.BaseFragment
-import com.netease.yunxin.app.wisdom.edu.ui.clazz.BigClassBaseActivity
+import com.netease.yunxin.app.wisdom.edu.ui.clazz.BaseBigClassActivity
 import com.netease.yunxin.app.wisdom.edu.ui.clazz.adapter.HandsUpListAdapter
 import com.netease.yunxin.app.wisdom.edu.ui.databinding.FragmentHandsUpListBinding
 import com.netease.yunxin.app.wisdom.rvadapter.BaseAdapter
@@ -50,7 +50,7 @@ class HandsUpListFragment : BaseFragment(R.layout.fragment_hands_up_list),
         when (v!!.id) {
             R.id.btn_accept -> activity?.let {
                 adapter?.let { it1 ->
-                    (activity as BigClassBaseActivity).apply {
+                    (activity as BaseBigClassActivity).apply {
                         acceptStuRemoteHandsUp(it1.getItem(position).userUuid)
                         toastOperateSuccess()
                     }
@@ -62,7 +62,7 @@ class HandsUpListFragment : BaseFragment(R.layout.fragment_hands_up_list),
             }
             R.id.btn_reject -> activity?.let {
                 adapter?.let { it1 ->
-                    (activity as BigClassBaseActivity).apply {
+                    (activity as BaseBigClassActivity).apply {
                         rejectStuRemoteHandsUp(it1.getItem(position).userUuid)
                         toastOperateSuccess()
                     }
@@ -75,7 +75,7 @@ class HandsUpListFragment : BaseFragment(R.layout.fragment_hands_up_list),
     }
 
     private fun hideFragment() {
-        (activity as BigClassBaseActivity).hideFragmentWithHandsUp()
+        (activity as BaseBigClassActivity).hideFragmentWithHandsUp()
     }
 
     private fun getHandsUpList(): MutableList<NEEduMember> {

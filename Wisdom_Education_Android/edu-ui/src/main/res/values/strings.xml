@@ -45,9 +45,10 @@
     <string name="i_know">I know</string>
     <string name="hint_room_type">Room type</string>
     <string name="hide_chat_room">hide</string>
-    <string name="one2one_class">One to One Classroom</string>
-    <string name="small_class">Small Classroom</string>
-    <string name="big_class">Lecture Hall</string>
+    <string name="one2one_class">One-to-one teaching</string>
+    <string name="small_class">Multiple Small Classroom</string>
+    <string name="interactive_big_class">Interactive Big Classroom</string>
+    <string name="live_big_class">Live Big Classroom</string>
     <string name="request_permission_reason">The permissions to be applied for are the permissions that the program must rely on.</string>
     <string name="settings_to_manually_enable_permissions">You need to go to the application settings to manually enable permissions</string>
     <string name="i_have_understood">I have understood</string>

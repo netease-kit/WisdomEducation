@@ -43,10 +43,9 @@ android {
 }
 
 dependencies {
-    implementation deps.neliveplayer
-    implementation deps.gslb
     implementation project(':base')
     api project(':recordplay-model')
+    api project(':player')
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation deps.core_ktx

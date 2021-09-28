@@ -31,6 +31,7 @@
     <string name="room_sits_bad">坐席配置不正确</string>
     <string name="room_destination_member_not_exist">成员不存在</string>
     <string name="room_member_exist">用户已在房间中</string>
+    <string name="room_config_conflict">创建房间时房间已经存在且房间类型冲突</string>
     <string name="nim_user_create_error">创建IM账户失败</string>
     <string name="nim_user_not_exist">IM账户不存在</string>
     <string name="nim_service_error">IM服务异常</string>
@@ -38,4 +39,5 @@
     <string name="engine_error_connect_fail">由于网络问题已经离开课堂</string>
     <string name="engine_error_server_kicked">正在其他设备登录</string>
     <string name="engine_error_room_closed">房间已关闭</string>
+    <string name="account_relogged_in_elsewhere">该账号在其他地方重复登录</string>
 </resources>

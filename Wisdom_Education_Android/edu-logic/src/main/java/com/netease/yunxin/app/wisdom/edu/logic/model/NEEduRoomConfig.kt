@@ -35,6 +35,10 @@ data class NEEduRoomConfig(
     fun isSmall(): Boolean {
         return sceneType == NEEduSceneType.SMALL.value
     }
+
+    fun isLiveSimple(): Boolean {
+        return sceneType == NEEduSceneType.LIVE_SIMPLE.value
+    }
 }
 
 data class NEEduPermissions(

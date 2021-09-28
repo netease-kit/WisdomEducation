@@ -47,6 +47,7 @@ dependencies {
     api project(':edu-logic')
     api project(':whiteboard')
     api project(':im')
+    api project(':player')
     implementation project(':viewbinding')
     implementation project(':rvadapter')
 

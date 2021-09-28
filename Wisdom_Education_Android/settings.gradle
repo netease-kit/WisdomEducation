@@ -17,3 +17,4 @@ include ':base'
 rootProject.name = "WisdomEducation"
 include ':edu-model'
 include ':recordplay-model'
+include ':player'

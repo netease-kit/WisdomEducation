@@ -32,7 +32,7 @@ internal class NEEduBoardServiceImpl : NEEduBoardService() {
     override fun grantPermission(userId: String, grant: Boolean): LiveData<NEResult<Void>> {
         val req = NEEduUpdateMemberPropertyReq(drawable = if (grant) NEEduStateValue.OPEN else NEEduStateValue.CLOSE)
         return UserServiceRepository.updateProperty(
-            NEEduManagerImpl.eduEntryRes.room.roomUuid,
+            NEEduManagerImpl.getRoom().roomUuid,
             userId,
             NEEduMemberPropertiesType.WHITEBOARD.type,
             req

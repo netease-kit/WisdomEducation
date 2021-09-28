@@ -12,6 +12,7 @@ import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.netease.yunxin.app.wisdom.edu.ui.R
 import com.netease.yunxin.app.wisdom.edu.ui.databinding.ItemBottomViewBinding
+import com.netease.yunxin.kit.alog.ALog
 
 class ItemBottomView(context: Context, attrs: AttributeSet?, defStyleAttr: Int = 0) :
     ConstraintLayout(context, attrs, defStyleAttr) {
@@ -70,6 +71,7 @@ class ItemBottomView(context: Context, attrs: AttributeSet?, defStyleAttr: Int =
 
     fun setSmallUnread(num: Int) {
         binding.tvSmallUnread.apply {
+            ALog.i("setSmallUnread $num")
             visibility = if (num > 0) View.VISIBLE else View.GONE
         }
     }

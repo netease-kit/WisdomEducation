@@ -15,7 +15,7 @@ import java.util.*
 /**
  */
 open class BaseAdapter<T> @JvmOverloads constructor(
-    dataSourceList: MutableList<T>,
+    dataSourceList: List<T>,
     listener: OnItemClickListener<T>? = null,
 ) :
     RecyclerView.Adapter<BaseViewHolder<*>>() {

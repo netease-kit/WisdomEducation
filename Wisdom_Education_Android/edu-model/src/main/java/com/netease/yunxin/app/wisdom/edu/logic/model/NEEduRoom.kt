@@ -31,6 +31,13 @@ class NEEduRoom(
         return mutableMapOf()
     }
 
+    private fun live(): MutableMap<String, Any> {
+        properties?.get("live")?.apply {
+            @Suppress("UNCHECKED_CAST")
+            return this as MutableMap<String, Any>
+        }
+        return mutableMapOf()
+    }
 
     fun chatRoomId(): String? {
         chatRoom()["chatRoomId"]?.apply {
@@ -42,6 +49,14 @@ class NEEduRoom(
 
     fun whiteBoardCName(): String? {
         return whiteBoard()["channelName"]?.toString()
+    }
+
+    fun pullRtmpUrl(): String? {
+        return live()["pullRtmpUrl"]?.toString()
+    }
+
+    fun pullRtsUrl(): String? {
+        return live()["pullRtsUrl"]?.toString()
     }
 }
 

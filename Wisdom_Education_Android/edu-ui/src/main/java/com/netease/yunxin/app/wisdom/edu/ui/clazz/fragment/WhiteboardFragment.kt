@@ -29,9 +29,9 @@ class WhiteboardFragment : BaseFragment(R.layout.fragment_whiteboard) {
                 buildWbAuth(getWbAuth()),
                 eduLoginRes.userUuid,
                 eduLoginRes.imToken,
-                eduEntryRes.room.whiteBoardCName()!!,
+                getRoom().whiteBoardCName()!!,
                 "",
-                eduEntryRes.isHost()
+                isHost()
             )
         }
     }
@@ -44,6 +44,6 @@ class WhiteboardFragment : BaseFragment(R.layout.fragment_whiteboard) {
 
     override fun initViews() {
         eduManager.getBoardService().initBoard(binding.whiteboardView, config)
-        eduManager.getBoardService().setEnableDraw(eduManager.eduEntryRes.isHost() || eduManager.roomConfig.is1V1())
+        eduManager.getBoardService().setEnableDraw(eduManager.isHost() || eduManager.roomConfig.is1V1())
     }
 }

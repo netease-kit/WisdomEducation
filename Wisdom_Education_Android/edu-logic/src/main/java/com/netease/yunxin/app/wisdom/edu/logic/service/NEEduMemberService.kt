@@ -24,7 +24,7 @@ abstract class NEEduMemberService : INEEduService() {
      * 变更成员加入
      * @param increment true 表示增量，false表示全量
      */
-    internal abstract fun updateMemberJoin(list: MutableList<NEEduMember>, increment: Boolean)
+    abstract fun updateMemberJoin(list: List<NEEduMember>, increment: Boolean)
 
     /**
      * 人员在线/离线状态发生变化
@@ -34,7 +34,7 @@ abstract class NEEduMemberService : INEEduService() {
     /**
      * 变更成员离开
      */
-    internal abstract fun updateMemberLeave(list: MutableList<NEEduMember>)
+    abstract fun updateMemberLeave(list: List<NEEduMember>)
 
     /**
      * 人员在线/离线状态发生变化

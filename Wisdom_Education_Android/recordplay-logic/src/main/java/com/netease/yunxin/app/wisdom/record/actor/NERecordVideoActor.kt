@@ -15,12 +15,12 @@ import com.netease.yunxin.app.wisdom.base.util.ToastUtil
 import com.netease.yunxin.app.wisdom.record.NERecordPlayer
 import com.netease.yunxin.app.wisdom.record.base.INERecordVideoActor
 import com.netease.yunxin.app.wisdom.record.listener.NERecordClockListener
-import com.netease.yunxin.app.wisdom.record.video.sdk.PlayerManager
-import com.netease.yunxin.app.wisdom.record.video.sdk.VodPlayer
-import com.netease.yunxin.app.wisdom.record.video.sdk.VodPlayerObserver
-import com.netease.yunxin.app.wisdom.record.video.sdk.constant.CauseCode
-import com.netease.yunxin.app.wisdom.record.video.sdk.model.*
-import com.netease.yunxin.app.wisdom.record.video.sdk.view.AdvanceTextureView
+import com.netease.yunxin.app.wisdom.player.sdk.PlayerManager
+import com.netease.yunxin.app.wisdom.player.sdk.VodPlayer
+import com.netease.yunxin.app.wisdom.player.sdk.VodPlayerObserver
+import com.netease.yunxin.app.wisdom.player.sdk.constant.CauseCode
+import com.netease.yunxin.app.wisdom.player.sdk.model.*
+import com.netease.yunxin.app.wisdom.player.sdk.view.AdvanceTextureView
 import com.netease.yunxin.kit.alog.ALog
 
 /**

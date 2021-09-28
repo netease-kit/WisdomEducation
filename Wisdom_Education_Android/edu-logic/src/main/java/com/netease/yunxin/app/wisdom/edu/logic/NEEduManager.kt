@@ -17,10 +17,7 @@ import com.netease.yunxin.app.wisdom.base.util.observeForeverOnce
 import com.netease.yunxin.app.wisdom.edu.logic.extras.NEEduClientType
 import com.netease.yunxin.app.wisdom.edu.logic.extras.NEEduExtras
 import com.netease.yunxin.app.wisdom.edu.logic.impl.NEEduManagerImpl
-import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduEntryMember
-import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduEntryRes
-import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduRoomConfig
-import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduWbAuth
+import com.netease.yunxin.app.wisdom.edu.logic.model.*
 import com.netease.yunxin.app.wisdom.edu.logic.net.service.BaseRepository
 import com.netease.yunxin.app.wisdom.edu.logic.net.service.BaseService
 import com.netease.yunxin.app.wisdom.edu.logic.net.service.response.NEEduLoginRes
@@ -42,8 +39,10 @@ interface NEEduManager {
 
         lateinit var instance: NEEduManager
 
+        lateinit var classOptions: NEEduClassOptions
+
         // sdk inner version code
-        private const val VERSION_CODE = 40
+        private const val VERSION_CODE = 50
 
 
         /**
@@ -93,8 +92,6 @@ interface NEEduManager {
     }
 
     var eduLoginRes: NEEduLoginRes
-
-    var eduEntryRes: NEEduEntryRes
 
     var roomConfig: NEEduRoomConfig
 
@@ -146,4 +143,13 @@ interface NEEduManager {
      * @return 白板auth
      */
     fun getWbAuth(): NEEduWbAuth?
+
+    fun getRoom(): NEEduRoom
+
+    fun isHost(): Boolean
+
+    fun isLiveClass(): Boolean {
+        return classOptions.sceneType == NEEduSceneType.LIVE_SIMPLE
+    }
+
 }

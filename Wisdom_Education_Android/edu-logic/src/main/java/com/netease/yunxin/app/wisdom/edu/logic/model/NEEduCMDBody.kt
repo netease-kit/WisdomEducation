@@ -8,7 +8,7 @@ package com.netease.yunxin.app.wisdom.edu.logic.model
 /**
  * Created by hzsunyj on 2021/5/17.
  */
-class NEEduCMDBody(
+data class NEEduCMDBody(
     val cmd: Int,
     val sequence: Long?,
     val type: String,

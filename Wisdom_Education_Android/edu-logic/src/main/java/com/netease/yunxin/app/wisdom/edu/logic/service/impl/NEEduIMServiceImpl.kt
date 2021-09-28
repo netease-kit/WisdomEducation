@@ -9,17 +9,21 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import com.netease.nimlib.sdk.*
 import com.netease.nimlib.sdk.chatroom.model.ChatRoomMessage
+import com.netease.nimlib.sdk.chatroom.model.ChatRoomNotificationAttachment
 import com.netease.nimlib.sdk.chatroom.model.EnterChatRoomData
 import com.netease.nimlib.sdk.chatroom.model.EnterChatRoomResultData
+import com.netease.nimlib.sdk.msg.constant.MsgTypeEnum
+import com.netease.nimlib.sdk.msg.constant.NotificationType
 import com.netease.nimlib.sdk.msg.model.AttachmentProgress
 import com.netease.yunxin.app.wisdom.base.network.NEResult
+import com.netease.yunxin.app.wisdom.edu.logic.cmd.CMDActionFactory
 import com.netease.yunxin.app.wisdom.edu.logic.impl.NEEduManagerImpl
-import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduHttpCode
-import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduRoomStates
+import com.netease.yunxin.app.wisdom.edu.logic.model.*
 import com.netease.yunxin.app.wisdom.edu.logic.net.service.RoomServiceRepository
 import com.netease.yunxin.app.wisdom.edu.logic.net.service.request.CommonReq
 import com.netease.yunxin.app.wisdom.edu.logic.service.NEEduIMService
 import com.netease.yunxin.app.wisdom.im.IMManager
+import com.netease.yunxin.kit.alog.ALog
 
 /**
  * Created by hzsunyj on 2021/6/9.
@@ -29,6 +33,7 @@ internal class NEEduIMServiceImpl : NEEduIMService() {
     private val receiveMessageLD: MediatorLiveData<List<ChatRoomMessage>> = MediatorLiveData()
     private val messageStatusChangeLD: MediatorLiveData<ChatRoomMessage> = MediatorLiveData()
     private val attachmentProgressChangeLD: MediatorLiveData<AttachmentProgress> = MediatorLiveData()
+    private val receiveCustomCMDMessage: MediatorLiveData<NEEduCMDBody> = MediatorLiveData()
 
 
     // remember last value , otherwise when network reconnect will notify more
@@ -71,6 +76,59 @@ internal class NEEduIMServiceImpl : NEEduIMService() {
 
     private fun updateMessages(messages: List<ChatRoomMessage>) {
         receiveMessageLD.value = messages
+        if (NEEduManagerImpl.isLiveClass()) {
+            messages.filter { t -> t.sessionId == NEEduManagerImpl.getRoom().chatRoomId() }.forEach {
+                if (it.msgType == MsgTypeEnum.custom) {
+                    // 处理IM自定义CMD
+                    val cmdBody = CMDActionFactory.parseIMCMDMessage(it.attachStr)?.data
+                    cmdBody?.apply {
+                        receiveCustomCMDMessage.value = this
+                    }
+                } else if (it.msgType == MsgTypeEnum.notification) {
+                    // 成员进出
+                    val attachment = (it.attachment) as ChatRoomNotificationAttachment
+                    if (attachment.type == NotificationType.ChatRoomMemberIn) {
+                        getBroadcasterList(attachment).apply {
+                            NEEduManagerImpl.getMemberService().updateMemberJoin(this, true)
+                        }
+                    } else if (attachment.type == NotificationType.ChatRoomMemberExit) {
+                        getBroadcasterList(attachment).apply { NEEduManagerImpl.getMemberService().updateMemberLeave(this) }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun getBroadcasterList(attachment: ChatRoomNotificationAttachment): List<NEEduMember> {
+        val joinList: MutableList<NEEduMember> = mutableListOf()
+        val accounts: List<String> = attachment.targets
+        val targets: List<String> = attachment.targetNicks
+        if (attachment.targetNicks != null) {
+            for (i in targets.indices) {
+                joinList.add(
+                    NEEduMember(
+                        NEEduRoleType.BROADCASTER.value,
+                        targets[i],
+                        accounts[i],
+                        0L,
+                        0L,
+                        NEEduStreams(null, null),
+                        null
+                    )
+                )
+            }
+        }
+        return joinList.filter {
+            NEEduManagerImpl.getMemberService().getMemberList()
+                .firstOrNull { it1 -> it1.isHost() }?.userUuid?.let { it1 ->
+                it1 != it.userUuid
+            } ?: true
+        }
+    }
+
+
+    override fun onReceiveCustomCMDMessage(): LiveData<NEEduCMDBody> {
+        return receiveCustomCMDMessage
     }
 
     override fun onMessageStatusChange(): LiveData<ChatRoomMessage> {
@@ -113,6 +171,7 @@ internal class NEEduIMServiceImpl : NEEduIMService() {
         imManager.chatRoomService.enterChatRoomEx(data, 1).setCallback(
             object : RequestCallbackWrapper<EnterChatRoomResultData>() {
                 override fun onResult(code: Int, result: EnterChatRoomResultData?, exception: Throwable?) {
+                    ALog.w("enterChatRoom: roomId ${data.roomId}, code $code")
                     if (code == ResponseCode.RES_SUCCESS.toInt()) {
                         imManager.chatRoomServiceObserver
                             .observeReceiveMessage(incomingChatRoomMsg, true)

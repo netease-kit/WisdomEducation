@@ -12,7 +12,7 @@ import android.widget.TextView
 import com.netease.yunxin.app.wisdom.base.util.CommonUtil.setOnClickThrottleFirst
 import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduMember
 
-class BigClazzTeacherActivity : BigClassBaseActivity() {
+class BigClazzTeacherActivity : BaseBigClassActivity() {
 
     companion object {
         fun start(context: Context) {

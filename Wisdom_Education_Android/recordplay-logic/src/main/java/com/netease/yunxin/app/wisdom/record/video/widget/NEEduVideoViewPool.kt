@@ -9,8 +9,8 @@ import android.view.Gravity
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.LinearLayout
+import com.netease.yunxin.app.wisdom.player.sdk.view.AdvanceTextureView
 import com.netease.yunxin.app.wisdom.record.NERecordPlayer
-import com.netease.yunxin.app.wisdom.record.video.sdk.view.AdvanceTextureView
 
 class NEEduVideoViewPool {
     companion object {
