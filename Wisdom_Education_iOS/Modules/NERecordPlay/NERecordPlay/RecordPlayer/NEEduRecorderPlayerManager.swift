@@ -80,14 +80,14 @@ public class NEEduRecorderPlayerManager: NSObject, NEEduRecordPlayerProtocol, NE
     /// - Parameter data: 元数据
     func handleData(data:RecordData) {
         for item in data.recordItemList {
-            if item.type == .mp4 {
+            if item.type == .gz {
+                wbUrlList.append(item.url)
+            }else {
                 if item.subStream {
                     subStreamList.append(item)
                 }else {
                     item.isTeacher() ? recordList.insert(item, at: 0) : recordList.append(item)
                 }
-            }else {
-                wbUrlList.append(item.url)
             }
         }
         print("recordList:\(recordList)\n subStreamList:\(subStreamList)\n wbUrlList:\(wbUrlList)")

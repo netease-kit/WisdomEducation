@@ -1,17 +1,17 @@
 //
-//  ENavigationViewController.m
+//  NENavigationViewController.m
 //  NEEducation
 //
 //  Created by Netease on 2021/1/18.
 //
 
-#import "NEEduNavigationViewController.h"
+#import "NENavigationViewController.h"
 
-@interface NEEduNavigationViewController ()
+@interface NENavigationViewController ()
 
 @end
 
-@implementation NEEduNavigationViewController
+@implementation NENavigationViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];

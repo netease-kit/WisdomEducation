@@ -261,7 +261,7 @@ static NSString *rightImageCell = @"rightImageCellID";
 }
 
 - (void)backButton:(UIButton *)button {
-    [self dismissViewControllerAnimated:YES completion:nil];
+    [self.navigationController dismissViewControllerAnimated:YES completion:nil];
 }
 - (UITableView *)tableView {
     if (!_tableView) {

@@ -301,15 +301,10 @@ extension NERecordViewController:NEEduRecordPlayerDelegate {
         guard let view = videoView else {
             return
         }
-        view.translatesAutoresizingMaskIntoConstraints = false
+        view.frame = CGRect(x: 0, y: 0, width: screenShareView.bounds.size.width, height: screenShareView.bounds.size.height)
+        view.backgroundColor = .red
         screenShareView.isHidden = false
         screenShareView.addSubview(view)
-        NSLayoutConstraint.activate([
-            view.leadingAnchor.constraint(equalTo: screenShareView.leadingAnchor),
-            view.topAnchor.constraint(equalTo: screenShareView.topAnchor),
-            view.trailingAnchor.constraint(equalTo: screenShareView.trailingAnchor),
-            view.bottomAnchor.constraint(equalTo: screenShareView.bottomAnchor),
-        ])
     }
     
     public func onSubStreamStop(player: NEEduRecordPlayerProtocol, videoView: UIView?) {

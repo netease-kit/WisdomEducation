@@ -57,6 +57,10 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param completion 结果
 - (void)joinRtcAndGetProfileCompletion:(void(^)(NSError *error,NEEduRoomProfile *profile))completion;
 
+/// 获取房间快照
+/// @param completion 返回快照信息
+- (void)getProfileCompletion:(void(^)(NSError *error,NEEduRoomProfile *profile))completion;
+
 /// 加入聊天室
 /// @param success 成功回调
 /// @param failed 失败回调

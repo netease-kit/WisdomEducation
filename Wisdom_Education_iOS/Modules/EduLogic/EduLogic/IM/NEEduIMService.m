@@ -8,6 +8,7 @@
 //
 
 #import "NEEduIMService.h"
+#import "NEEduIMCustomDecoder.h"
 @interface NEEduIMService ()<NIMPassThroughManagerDelegate,NIMChatroomManagerDelegate,NIMChatManagerDelegate>
 @property (nonatomic, strong ,readwrite) NIMChatroom *chatRoom;
 @property (nonatomic, strong ,readwrite) NSMutableArray *chatMessages;
@@ -17,12 +18,16 @@
 - (void)setupAppkey:(NSString *)appKey {
     NIMSDKOption *option = [NIMSDKOption optionWithAppKey:appKey];
     [[NIMSDK sharedSDK] registerWithOption:option];
+    [self registerCustomDecoder:[NEEduIMCustomDecoder new]];
 }
 
 - (void)addIMDelegate {
     [[NIMSDK sharedSDK].passThroughManager addDelegate:self];
     [[NIMSDK sharedSDK].chatroomManager addDelegate:self];
     [[NIMSDK sharedSDK].chatManager addDelegate:self];
+}
+- (void)registerCustomDecoder:(id<NIMCustomAttachmentCoding>)decoder {
+    [NIMCustomObject registerCustomDecoder:decoder];
 }
 - (BOOL)isLogined {
     return [NIMSDK sharedSDK].loginManager.isLogined;
@@ -81,6 +86,16 @@
             chatRoom.onlineNumber = chatroom.onlineUserCount;
             completion(error,chatRoom);
         }
+    }];
+}
+
+- (void)getChatroomMembers:(NSString *)roomId result:(void(^)(NSError *error,NSArray<NIMChatroomMember *> * _Nullable members))result {
+    NIMChatroomMemberRequest *request = [[NIMChatroomMemberRequest alloc] init];
+    request.roomId = roomId;
+    request.limit = 2000;
+    request.type = NIMChatroomFetchMemberTypeTemp;
+    [[NIMSDK sharedSDK].chatroomManager fetchChatroomMembers:request completion:^(NSError * _Nullable error, NSArray<NIMChatroomMember *> * _Nullable members) {
+        result(error,members);
     }];
 }
 

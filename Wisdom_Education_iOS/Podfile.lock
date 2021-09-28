@@ -14,20 +14,21 @@ PODS:
   - AFNetworking/Serialization (4.0.1)
   - AFNetworking/UIKit (4.0.1):
     - AFNetworking/NSURLSession
-  - Alamofire (5.4.3)
+  - Alamofire (5.4.4)
   - Bugly (2.5.90)
   - EduLogic (0.0.1):
     - AFNetworking (~> 4.0.1)
     - NERtcSDK (= 4.2.1)
-    - NIMSDK_LITE (= 8.3.3)
+    - NIMSDK_LITE (= 8.7.1)
     - YYModel (= 1.0.4)
   - EduUI (0.0.1):
     - EduLogic (~> 0.0.1)
+    - NELivePlayer (~> 2.9.0)
     - NEScreenShareHost (~> 0.1.0)
     - NEWhiteBoard (~> 0.0.1)
     - SDWebImage (~> 5.11.1)
   - NEDyldYuv (0.0.1)
-  - NELivePlayer (2.9.0)
+  - NELivePlayer (2.9.1)
   - NERecordPlay (0.0.1):
     - Alamofire (~> 5.4.3)
     - NELivePlayer (~> 2.9.0)
@@ -40,7 +41,7 @@ PODS:
   - NEScreenShareHost (0.1.0)
   - NEWhiteBoard (0.0.1):
     - YYModel (= 1.0.4)
-  - NIMSDK_LITE (8.3.3)
+  - NIMSDK_LITE (8.7.1)
   - SDWebImage (5.11.1):
     - SDWebImage/Core (= 5.11.1)
   - SDWebImage/Core (5.11.1)
@@ -83,19 +84,19 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   AFNetworking: 7864c38297c79aaca1500c33288e429c3451fdce
-  Alamofire: e447a2774a40c996748296fa2c55112fdbbc42f9
+  Alamofire: f3b09a368f1582ab751b3fff5460276e0d2cf5c9
   Bugly: 88bc32c0acc6fef7b74d610f0319ee7560d6b9fe
-  EduLogic: 26ed099a5ebeae3e39671efb5476efd1be03cbd5
-  EduUI: b90e3347e5833769d87e67059821d1b6bf680f13
+  EduLogic: 3ece25b5cb0b664dda1b8e1b61ae41db472bb95b
+  EduUI: c4ded8499e5b531c7bc48bc7d552f4adff6b050f
   NEDyldYuv: 6b47adff16186768bf2f8b165697fdee8e94d7ac
-  NELivePlayer: ea413988c847004efb675aac16e8cb0dbed4607c
+  NELivePlayer: 4c2396beea2595f36bcca63d9e5d226ff241394a
   NERecordPlay: 637478c7265888aa6a55d7ea32294f378bed355c
   NERecordPlayUI: f1f951f373e5770f10c21483eadea35a19cca806
   NERtcSDK: 14c7a371b04bb264ed629a89425305be3eb23df9
   NEScreenShareBroadcaster: 6048110e58028d38c01b4fa70c478b530dbe1635
   NEScreenShareHost: be9b9fe5d0d264111e0e44956ad7c90b451951c0
   NEWhiteBoard: fd5013962c9c7c3e9ee4d690b4c9be27ecc58eec
-  NIMSDK_LITE: f196e9ea550528a7da2104c63ef09d825e26a16a
+  NIMSDK_LITE: b7f32bacdb5d0fafa3f7927c75325e3c6f2ba288
   SDWebImage: a7f831e1a65eb5e285e3fb046a23fcfbf08e696d
   YYModel: 2a7fdd96aaa4b86a824e26d0c517de8928c04b30
 

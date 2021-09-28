@@ -50,6 +50,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)setupAppkey:(NSString *)appKey;
 
+/// 注册自定义消息解析类
+/// @param decoder decoder 解析类
+- (void)registerCustomDecoder:(id<NIMCustomAttachmentCoding>)decoder;
+
 - (void)addIMDelegate;
 
 - (void)login:(NSString *)userID token:(NSString *)token completion:(void(^)(NSError * _Nullable error))completion;
@@ -64,7 +68,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)sendChatroomImageMessage:(UIImage *)image error:(NSError * __nullable *)error;
 - (void)resendMessage:(NIMMessage *)message error:(NSError * __nullable *)error;
 - (void)fetchChatroomInfo:(void(^)(NSError *error,NEEduChatRoomInfo *chatRoom))completion;
-
+- (void)getChatroomMembers:(NSString *)roomId result:(void(^)(NSError *error,NSArray<NIMChatroomMember *> * _Nullable members))result;
 /// 离开聊天室
 - (void)leaveChatRoom;
 /// 登出IM

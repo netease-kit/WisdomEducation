@@ -9,7 +9,8 @@
 #import <UIKit/UIKit.h>
 
 NS_ASSUME_NONNULL_BEGIN
-static const NSString *showChatroomKey = @"showChatroomKey";
+static NSString *showChatroomKey = @"showChatroomKey";
+static NSString *useFastLiveKey = @"useFastLiveKey";
 
 @interface NESettingTableViewController : UITableViewController
 

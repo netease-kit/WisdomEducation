@@ -20,4 +20,4 @@ FOUNDATION_EXPORT const unsigned char EduUIVersionString[];
 #import <EduUI/NEEduOneMemberVC.h>
 #import <EduUI/NEEduSmallClassVC.h>
 #import <EduUI/NEEduBigClassStudentVC.h>
-
+#import <EduUI/NEEduLiveRoomVC.h>

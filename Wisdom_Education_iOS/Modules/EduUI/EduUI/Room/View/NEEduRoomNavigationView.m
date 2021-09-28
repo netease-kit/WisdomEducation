@@ -84,6 +84,7 @@
     }
     self.lessonStateLabel.text = self.lessonState;
     self.lessonNameLabel.text = room.roomName;
+    
 }
 
 - (void)initTimerCount:(NSInteger)timeCount {
@@ -158,7 +159,7 @@
 }
 - (UIImageView *)netStateView {
     if (!_netStateView) {
-        _netStateView = [[UIImageView alloc] initWithImage:[UIImage ne_imageNamed:@"net_0"]];
+        _netStateView = [[UIImageView alloc] initWithImage:[UIImage ne_imageNamed:@"net_3"]];
         _netStateView.translatesAutoresizingMaskIntoConstraints = NO;
         _netStateView.contentMode = UIViewContentModeCenter;
     }

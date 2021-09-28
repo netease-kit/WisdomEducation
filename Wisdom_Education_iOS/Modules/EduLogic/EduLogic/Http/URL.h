@@ -16,6 +16,9 @@
 //创建房间: /scene/apps/{appKey}/v1/rooms/{roomUuid}
 #define HTTP_CREATE_ROOM @"%@/scene/apps/%@/%@/rooms/%@"
 
+//获取房间配置信息: /scene/apps/{appKey}/v1/rooms/{roomUuid}/config
+#define HTTP_GET_ROOM @"%@/scene/apps/%@/%@/rooms/%@/config"
+
 //加入房间: scene/apps/{appKey}/v1/rooms/{roomUuid}/entry
 #define HTTP_ENTER_ROOM @"%@/scene/apps/%@/%@/rooms/%@/entry"
 

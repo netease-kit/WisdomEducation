@@ -57,7 +57,7 @@ public struct RecordItem: Codable {
 }
 
 public enum FormatType:String, Codable {
-    case mp4,gz
+    case mp4,gz,aac
 }
 
 public struct SnapshotDto: Codable {

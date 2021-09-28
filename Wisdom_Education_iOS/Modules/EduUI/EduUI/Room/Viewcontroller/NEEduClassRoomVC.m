@@ -79,10 +79,8 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
         [strongSelf updateUIWithMembers:profile.snapshot.members];
         //load whiteboard view
         [strongSelf addWhiteboardView];
-        [strongSelf updateMenueItemWithProfile:profile];
         //load chatroom function
         [strongSelf addChatroom];
-        [[NSUserDefaults standardUserDefaults] setObject:self.room.roomUuid forKey:kLastRoomUuid];
     }];
 }
 
@@ -128,7 +126,6 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
 - (void)viewWillAppear:(BOOL)animated {
     [[UIDevice currentDevice] setValue:[NSNumber numberWithInteger:UIInterfaceOrientationLandscapeRight] forKey:@"orientation"];
 }
-
 - (void)setupSubviews {
     self.view.backgroundColor = [UIColor colorWithRed:26/255.0 green:32/255.0 blue:40/255.0 alpha:1.0];
     [self.view addSubview:self.maskView];
@@ -653,6 +650,8 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
 
 - (void)onLessonStateChange:(NEEduLessonStep *)step roomUuid:(NSString *)roomUuid {
     //0/1/2 (初始化/已开始/已结束)
+    [[NSUserDefaults standardUserDefaults] setObject:roomUuid forKey:kLastRoomUuid];
+    
     [self.maskView.navView updateRoomState:self.room serverTime:step.time];
     if (step.value == NEEduLessonStateClassOver) {
         [self classOver];
@@ -805,6 +804,7 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
 - (void)infoButtonClick:(UIButton *)button {
     self.infoView.hidden = !self.infoView.hidden;
 }
+
 #pragma mark - NEEduIMChatDelegate
 - (void)didRecieveChatMessages:(NSArray<NIMMessage *> *)messages {
     //接收成功
@@ -932,6 +932,12 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
         self.netReachable = YES;
         __weak typeof(self)weakSelf = self;
         [[NEEduManager shared].roomService getRoomProfile:self.room.roomUuid completion:^(NSError * _Nonnull error, NEEduRoomProfile * _Nonnull profile) {
+            if(error){
+                if(error.code== NEEduErrorTypeRoomNotFound){
+                    [self classOver];
+                }
+                return;
+            }
             weakSelf.room = profile.snapshot.room;
             /**
              1.房间状态刷新
@@ -1252,8 +1258,7 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
 - (NEEduLessonInfoView *)infoView {
     if (!_infoView) {
         _infoView = [[NEEduLessonInfoView alloc] init];
-        NSString *lessonID = [self.room.roomUuid substringToIndex:self.room.roomUuid.length - 1];
-        self.infoView.lessonItem.titleLabel.text = lessonID;
+        self.infoView.lessonItem.titleLabel.text = self.room.roomUuid;
         self.infoView.lessonName.text = self.room.roomName;
         NEEduHttpUser *user = self.members.firstObject;
         self.infoView.teacherName.text = user.userName;

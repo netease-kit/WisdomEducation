@@ -122,7 +122,7 @@
         _badgeLabel = [[UILabel alloc] init];
         _badgeLabel.layer.cornerRadius = 7;
         _badgeLabel.clipsToBounds = YES;
-        _badgeLabel.font = [UIFont systemFontOfSize:10];
+        _badgeLabel.font = [UIFont systemFontOfSize:8];
         _badgeLabel.textColor = [UIColor whiteColor];
         _badgeLabel.backgroundColor = [UIColor redColor];
         _badgeLabel.translatesAutoresizingMaskIntoConstraints = NO;
