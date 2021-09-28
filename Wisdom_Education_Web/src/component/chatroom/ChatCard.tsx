@@ -130,9 +130,10 @@ const ChatCard: React.FC<IProps> = ({ content, onResend }) => {
 
   const renderNoSupport = () => {
     return (
-      <div className='chatCardText' style={textBgColor}>
-        不支持该消息
-      </div>
+      // <div className='chatCardText' style={textBgColor}>
+      //   不支持该消息
+      // </div>
+      <></>
     );
   };
 

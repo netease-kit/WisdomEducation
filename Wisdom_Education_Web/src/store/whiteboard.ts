@@ -24,10 +24,23 @@ export class WhiteBoardStore {
   @observable
   wbInstance: any = null;
 
+  @observable
+  _wbSetFinish = false;
+
   constructor(appStore: AppStore) {
     makeObservable(this);
     this.appStore = appStore;
     this.whiteboard = new NeWhiteBoard();
+  }
+
+  @computed
+  get wbSetFinish(): boolean {
+    return this._wbSetFinish;
+  }
+
+  @action
+  public setWbSetFinish(val: boolean): void {
+    this._wbSetFinish = val;
   }
 
   /**
@@ -112,6 +125,30 @@ export class WhiteBoardStore {
   }
 
   /**
+   * @description: 获取白板流
+   * @param {*}
+   * @return {*}
+   */
+  @action
+  public async getCanvasTrack(): Promise<any> {
+    return await this.whiteboard.getCanvasTrack();
+  }
+
+
+  /**
+   * @description: 更新白板流参数
+   * @param {*}
+   * @return {*}
+   */
+  @action
+  public updateCanvasStream(opt: {
+    width?: number,
+    keepDPI?: boolean
+  }): void {
+    this.whiteboard.updateCanvasStream(opt);
+  }
+
+  /**
    * @description: 白板销毁
    * @param {*}
    * @return {*}
@@ -123,6 +160,7 @@ export class WhiteBoardStore {
     this.toolCollection = null;
     this.drawPlugin = null;
     this.wbInstance = null;
+    this.setWbSetFinish(false)
     logger.log('白板销毁');
   }
 }

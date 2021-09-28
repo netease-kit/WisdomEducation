@@ -3,8 +3,8 @@
  * Use of this source code is governed by a MIT license that can be found in the LICENSE file
  */
 
-import WhiteBoard from './sdk/WhiteBoardSDK_v3.4.1.js';
-import ToolCollection from './sdk/ToolCollection_v3.4.1.js';
+import WhiteBoard from './sdk/WhiteBoardSDK_v3.5.1.js';
+import ToolCollection from './sdk/ToolCollection_v3.5.1.js';
 import { EnhancedEventEmitter } from '../event';
 import logger from '../logger';
 
@@ -36,6 +36,7 @@ export class NeWhiteBoard extends EnhancedEventEmitter {
   private _drawPlugin: any = null;
   private _container?: HTMLDivElement;
   private _toolCollection: any = null;
+  private hasTransDoc = false;
   static initWhiteboard: (options: WhiteBoardInitOptions) => Promise<void>;
 
   constructor() {
@@ -125,6 +126,73 @@ export class NeWhiteBoard extends EnhancedEventEmitter {
       }
     })
     this._toolCollection.show();
+    this._drawPlugin.on('event:appState:change', (name, value) => {
+      if (name === 'board') {
+        if (!this.hasTransDoc && this._drawPlugin.hasTransDoc()) {
+          this.hasTransDoc = true
+          this.toolCollection?.addOrSetContainer({
+            position: 'bottomRight',
+            items: [
+              {
+                tool: 'prevPage',
+                hint: '上一页'
+              },
+              {
+                tool: 'prevAnim',
+                hint: '上一步'
+              },
+              {
+                tool: 'pageInfo'
+              },
+              {
+                tool: 'nextAnim',
+                hint: '下一步'
+              },
+              {
+                tool: 'nextPage',
+                hint: '下一页'
+              },
+              {
+                tool: 'preview',
+                hint: '预览',
+                previewSliderPosition: 'right'
+              }
+            ]
+          })
+        } else if (this.hasTransDoc && !this._drawPlugin.hasTransDoc()) {
+          this.hasTransDoc = false
+          this.toolCollection?.addOrSetContainer({
+            position: 'bottomRight',
+            items: [
+              {
+                tool: 'firstPage',
+                hint: '第一页'
+              },
+              {
+                tool: 'prevPage',
+                hint: '上一页'
+              },
+              {
+                tool: 'pageInfo'
+              },
+              {
+                tool: 'nextPage',
+                hint: '下一页'
+              },
+              {
+                tool: 'lastPage',
+                hint: '最后一页'
+              },
+              {
+                tool: 'preview',
+                hint: '预览',
+                previewSliderPosition: 'right'
+              }
+            ]
+          })
+        }
+      }
+    })
   }
 
   /**
@@ -172,6 +240,35 @@ export class NeWhiteBoard extends EnhancedEventEmitter {
     await this._drawPlugin.setContainer(dom);
     logger.debug('设置白板dom成功')
     return;
+  }
+
+  /**
+   * @description: 获取白板流
+   * @param {*}
+   * @return {*}
+   */
+  public async getCanvasTrack(): Promise<void> {
+    if (this.drawPlugin) {
+      const stream = this.drawPlugin.getStream()
+      const tracks = stream.getVideoTracks()
+      logger.log('白板辅流获取', tracks);
+      return tracks[0]
+    }
+  }
+
+  /**
+   * @description: 更新白板流
+   * @param {opt}
+   * @return {*}
+   */
+  public async updateCanvasStream(opt: {
+    width?: number,
+    keepDPI?: boolean
+  }): Promise<void> {
+    if (this.drawPlugin) {
+      logger.log('更新白板辅流', opt);
+      this.drawPlugin.getStream(opt)
+    }
   }
 
   /**

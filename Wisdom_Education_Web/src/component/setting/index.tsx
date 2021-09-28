@@ -18,11 +18,11 @@ const JoinSetting: React.FC = observer(() => {
     chatroom: true,
   })
   const handleFormChange = (changeValue, allValue) => {
-    localStorage.setItem('join-room-setting', JSON.stringify(allValue))
+    localStorage.setItem('room-setting', JSON.stringify(allValue))
     console.log(allValue);
   }
   useEffect(() => {
-    const stroageInfo = localStorage.getItem('join-room-setting')
+    const stroageInfo = localStorage.getItem('room-setting')
     const result = stroageInfo? JSON.parse(stroageInfo) : defaultSettingConfig;
     form.setFieldsValue(result)
   }, [])
@@ -35,6 +35,9 @@ const JoinSetting: React.FC = observer(() => {
         onValuesChange={handleFormChange}
       >
         <Form.Item valuePropName="checked" name="chatroom" label="开启聊天室">
+          <Checkbox />
+        </Form.Item>
+        <Form.Item valuePropName="checked" name="nertsLive" label="使用低延时直播">
           <Checkbox />
         </Form.Item>
       </Form>

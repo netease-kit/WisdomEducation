@@ -34,6 +34,8 @@ export class AppStore {
       })
     });
 
+    (window as any).allStore = this
+
     this.roomStore = new RoomStore(this);
     this.whiteBoardStore = new WhiteBoardStore(this);
     this.uiStore = new UIStore(this);

@@ -24,6 +24,7 @@ const WhiteBoard:React.FC = observer(() => {
       whiteBoardStore.setToolCollection(wbRef.current)
       roomStore.setLocalWbDrawEnable(enbaleDraw);
       whiteBoardStore.setEnableDraw(enbaleDraw);
+      whiteBoardStore.setWbSetFinish(true);
       // if (snapRoomInfo?.properties?.whiteboard?.channelName) {
       //   if (!whiteBoardStore.wbInstance) {
       //     whiteBoardStore.initWhiteBoard({

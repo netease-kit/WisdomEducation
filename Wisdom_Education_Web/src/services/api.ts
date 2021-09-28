@@ -62,23 +62,25 @@ export interface SnapShotResponse {
         }
       }
     },
-    members: Array<{
-      userName: string;
-      userUuid: string;
-      role: string;
-      rtcUid: number,
-      streams: {
-        audio: {
-          value: number;
-        },
-        video: {
-          value: number;
-        }
-      },
-    }>
+    members: SnapShotResponseMembers
   },
   timestamp?: number;
 }
+
+export type SnapShotResponseMembers = Array<{
+  userName: string;
+  userUuid: string;
+  role: string;
+  rtcUid: number,
+  streams: {
+    audio: {
+      value: number;
+    },
+    video: {
+      value: number;
+    }
+  },
+}>
 
 export interface ChangeMemberStreamOptions{
   roomUuid: string|number;
@@ -174,7 +176,6 @@ export async function createRoom(roomUuid: string|number, roomName: string, room
     config: {
       resource: {
         ...resource,
-        live: false,
         rtc: true,
         whiteboard: true,
       },

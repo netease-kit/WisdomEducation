@@ -8,7 +8,7 @@ import { Button, Modal, Select, Image } from "antd";
 import DeviceData, { IProps as DeviceProps } from "@/component/device-data";
 import "./index.less";
 import logger from "@/lib/logger";
-import { useRoomStore, useUIStore } from "@/hooks/store";
+import { useRoomStore, useUIStore, useWhiteBoardStore } from "@/hooks/store";
 import {
   HandsUpTypes,
   RoleTypes,
@@ -30,6 +30,7 @@ const DeviceList: React.FC = observer(() => {
 
   const roomStore = useRoomStore();
   const uiStore = useUIStore();
+  const whiteBoardStore = useWhiteBoardStore();
   const {
     joined,
     localData,
@@ -70,7 +71,12 @@ const DeviceList: React.FC = observer(() => {
     }
     switch (localData?.hasScreen) {
       case true:
-        roomStore.stopScreen();
+        if (roomStore.isLiveTeaJoin) {
+          const res = await whiteBoardStore.getCanvasTrack()
+          await roomStore.switchScreenWithCanvas('changeToCanvas', res);
+        } else {
+          await roomStore.stopScreen();
+        }
         break;
       case false:
         if (hasOtherScreen) {
@@ -78,7 +84,11 @@ const DeviceList: React.FC = observer(() => {
           return;
         }
         if (!isElectron) {
-          roomStore.startScreen();
+          if (roomStore.isLiveTeaJoin) {
+            await roomStore.switchScreenWithCanvas('changeToScreen')
+          } else {
+            await roomStore.startScreen();
+          }
         } else {
           const res = await roomStore.getShareList();
           setShareList(res);
@@ -261,9 +271,10 @@ const DeviceList: React.FC = observer(() => {
 
   return (
     <div className="deviceList-wrapper">
-      {(RoomTypes.bigClass !== Number(sceneType) ||
+      {(![RoomTypes.bigClass, RoomTypes.bigClasLive].includes(Number(sceneType)) ||
         localData?.avHandsUp === HandsUpTypes.teacherAgree ||
-        localData?.role === RoleTypes.host) && (
+        localData?.role === RoleTypes.host ||
+        (localData?.role === RoleTypes.host && RoomTypes.bigClasLive === Number(sceneType))) && (
         <>
           <div className="list-wrapper">
             <div className="list-content">
