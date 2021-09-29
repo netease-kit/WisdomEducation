@@ -182,8 +182,6 @@ public enum CmdId {
         "time": 1619095819608
       }
     },
-    "appKey": "app_id_test",
-    "roomUuid": "12314111",
     "operatorMember": {
       "role": "host",
       "userName": "HELLO",
@@ -208,8 +206,6 @@ public enum CmdId {
   "version": 1,
   "data": {
     "key": "step",
-    "appKey": "app_id_test",
-    "roomUuid": "12314111",
     "operatorMember": {
       "role": "host",
       "userName": "HELLO",
@@ -241,8 +237,6 @@ public enum CmdId {
         "time": 1619095819608
       }
     },
-    "appKey": "app_id_test",
-    "roomUuid": "12314111",
     "operatorMember": {
       "role": "host",
       "userName": "HELLO",
@@ -269,8 +263,6 @@ public enum CmdId {
   "version": 1,
   "data": {
     "key": "whiteboard",
-    "appKey": "app_id_test",
-    "roomUuid": "12314111",
     "operatorMember": {
       "role": "host",
       "userName": "HELLO",
@@ -308,8 +300,6 @@ public enum CmdId {
       "userUuid": "abcbbb1111",
       "rtcUid": 5
     },
-    "appKey": "app_id_test",
-    "roomUuid": "abcdefg",
     "operatorMember": {
       "role": "host",
       "userName": "HELLO",
@@ -343,8 +333,6 @@ public enum CmdId {
       "userUuid": "abcbbb1111",
       "rtcUid": 5
     },
-    "appKey": "app_id_test",
-    "roomUuid": "abcdefg",
     "operatorMember": {
       "role": "host",
       "userName": "HELLO",
@@ -391,8 +379,6 @@ public enum CmdId {
         "rtcUid": 3
       }
     ],
-    "appKey": "app_id_test",
-    "roomUuid": "12314111",
     "operatorMember": {
       "time": 1619095814241,
       "properties": {},
@@ -450,8 +436,6 @@ public enum CmdId {
         "rtcUid": 3
       }
     ],
-    "appKey": "app_id_test",
-    "roomUuid": "12314111",
     "operatorMember": {
       "time": 1619095814241,
       "properties": {},
@@ -500,9 +484,7 @@ public enum CmdId {
       "userName": "HELLO",
       "userUuid": "abc",
       "rtcUid": 3
-    },
-    "appKey": "app_id_test",
-    "roomUuid": "12314111"
+    }
   }
 }
 
@@ -530,8 +512,6 @@ public enum CmdId {
       "userUuid": "abc",
       "rtcUid": 3
     },
-    "appKey": "app_id_test",
-    "roomUuid": "12314111",
     "operatorMember": {
       "role": "host",
       "userName": "HELLO",
@@ -558,8 +538,6 @@ public enum CmdId {
       },
       "type": 1
     },
-    "appKey": "app_id_test",
-    "roomUuid": "22222",
     "operatorMember": {
       "role": "broadcaster",
       "userName": "HELLO",
