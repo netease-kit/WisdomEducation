@@ -34,6 +34,7 @@ import com.netease.yunxin.app.wisdom.base.util.FileUtils
 import com.netease.yunxin.app.wisdom.base.util.ToastUtil
 import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduRoleType
 import com.netease.yunxin.app.wisdom.edu.ui.R
+import com.netease.yunxin.app.wisdom.edu.ui.base.BaseChatView
 import com.netease.yunxin.app.wisdom.edu.ui.base.BaseClassActivity
 import com.netease.yunxin.app.wisdom.edu.ui.base.BaseFragment
 import com.netease.yunxin.app.wisdom.edu.ui.clazz.adapter.ChatAdapter
@@ -96,10 +97,12 @@ class ChatRoomFragment : BaseFragment(R.layout.fragment_chatroom),
 
     private val receiveMessageObserver =
         androidx.lifecycle.Observer<List<ChatRoomMessage>> { t ->
-            t.also {
-                viewModel.addUnread(t.size)
-            }.forEach { t ->
-                addMessage(t)
+            t.filter {
+                it.msgType == MsgTypeEnum.tip || it.msgType == MsgTypeEnum.image || it.msgType == MsgTypeEnum.text
+            }.also {
+                viewModel.addUnread(it.size)
+            }.forEach {
+                addMessage(it)
             }
         }
 
@@ -153,15 +156,18 @@ class ChatRoomFragment : BaseFragment(R.layout.fragment_chatroom),
 
     override fun initViews() {
         val layoutManager = LinearLayoutManager(context)
-        adapter = ChatAdapter(activity as BaseClassActivity, list, object : ItemClickListerAdapter<ChatRoomMessage>() {
-            override fun onLongClick(v: View?, pos: Int, data: ChatRoomMessage): Boolean {
-                if (data.msgType == MsgTypeEnum.text) {
-                    showLongClickDialog(data.content)
-                    return true
+        adapter = ChatAdapter(
+            activity as BaseClassActivity,
+            list.filter { it.msgType == MsgTypeEnum.tip || it.msgType == MsgTypeEnum.image || it.msgType == MsgTypeEnum.text },
+            object : ItemClickListerAdapter<ChatRoomMessage>() {
+                override fun onLongClick(v: View?, pos: Int, data: ChatRoomMessage): Boolean {
+                    if (data.msgType == MsgTypeEnum.text) {
+                        showLongClickDialog(data.content)
+                        return true
+                    }
+                    return false
                 }
-                return false
-            }
-        })
+            })
         adapter.setOnItemChildClickListener(this)
         binding.apply {
             rcvMsg.layoutManager = layoutManager
@@ -222,7 +228,7 @@ class ChatRoomFragment : BaseFragment(R.layout.fragment_chatroom),
                     adapter.appendDataAndNotify(chatRoomMessage)
                 }
                 it.scrollToPosition(adapter.itemCount - 1)
-                val activity = activity as BaseClassActivity?
+                val activity = activity as BaseChatView?
                 activity!!.updateUnReadCount()
                 lastTime = currTime
             }
@@ -236,13 +242,11 @@ class ChatRoomFragment : BaseFragment(R.layout.fragment_chatroom),
             }
             val text = binding.editSendMsg.text.toString()
             if (text.trim { it <= ' ' }.isNotEmpty()) {
-                if (context is BaseClassActivity) {
-                    binding.editSendMsg.setText("")
-                    roomInfo?.let {
-                        val chatMessage = ChatRoomMessageBuilder.createChatRoomTextMessage(it.roomId, text)
-                        addMessage(chatMessage)
-                        viewModel.sendMessage(chatMessage)
-                    }
+                binding.editSendMsg.setText("")
+                roomInfo?.let {
+                    val chatMessage = ChatRoomMessageBuilder.createChatRoomTextMessage(it.roomId, text)
+                    addMessage(chatMessage)
+                    viewModel.sendMessage(chatMessage)
                 }
             }
         } else if (v == binding.ivChatPic) {
@@ -383,8 +387,8 @@ class ChatRoomFragment : BaseFragment(R.layout.fragment_chatroom),
             R.id.iv_message_item_thumb_thumbnail, R.id.message_item_thumb_progress_cover -> activity?.let {
                 adapter?.getItem(position)?.let { it1 ->
                     if (it1.msgType == MsgTypeEnum.image) {
-                        if (context is BaseClassActivity) {
-                            (context as BaseClassActivity).showZoomImageFragment(it1)
+                        if (context is BaseChatView) {
+                            (context as BaseChatView).showZoomImageFragment(it1)
                         }
                     }
                 }

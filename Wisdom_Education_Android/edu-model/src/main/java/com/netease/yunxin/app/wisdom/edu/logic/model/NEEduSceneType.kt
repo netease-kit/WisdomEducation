@@ -11,13 +11,15 @@ package com.netease.yunxin.app.wisdom.edu.logic.model
 enum class NEEduSceneType(var value: String) {
     ONE_TO_ONE("EDU.1V1"),
     SMALL("EDU.SMALL"),
-    BIG("EDU.BIG");
+    BIG("EDU.BIG"),
+    LIVE_SIMPLE("EDU.LIVE_SIMPLE");
 
     fun configId(): Int {
         return when (this) {
             ONE_TO_ONE -> 5
             SMALL -> 6
             BIG -> 7
+            LIVE_SIMPLE -> 20
         }
     }
 
@@ -30,6 +32,7 @@ enum class NEEduSceneType(var value: String) {
                 audio = NEEduStreamAudio(),
                 video = NEEduStreamVideo())
             BIG -> if (roleType == NEEduRoleType.AUDIENCE) null else NEEduStreams(audio = NEEduStreamAudio(), video = NEEduStreamVideo())
+            else -> null
         }
     }
 }

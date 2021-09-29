@@ -147,4 +147,10 @@ enum class NEEduHttpCode(val code: Int, val msg: String) {
      * 用户已在房间中
      */
     ROOM_MEMBER_EXIST(1016, "Member Exist"),
+
+    /**
+     * 创建房间时房间已经存在且config冲突
+     *
+     */
+    ROOM_CONFIG_CONFLICT(1017, "Bad Room Config: Conflict"),
 }

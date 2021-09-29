@@ -11,7 +11,6 @@ import android.view.View
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduMember
-import com.netease.yunxin.app.wisdom.edu.ui.base.BaseClassActivity
 import com.netease.yunxin.app.wisdom.edu.ui.base.BaseFragment
 import com.netease.yunxin.app.wisdom.edu.ui.clazz.fragment.ChatRoomFragment
 import com.netease.yunxin.app.wisdom.edu.ui.clazz.fragment.SmallClazzMembersFragment
@@ -19,7 +18,7 @@ import com.netease.yunxin.app.wisdom.edu.ui.clazz.widget.ClazzInfoView
 import com.netease.yunxin.app.wisdom.edu.ui.clazz.widget.ItemBottomView
 import com.netease.yunxin.app.wisdom.edu.ui.clazz.widget.TitleView
 
-class SmallClazzTeacherActivity : BaseClassActivity() {
+class SmallClazzTeacherActivity : BaseNormalClassActivity() {
 
     private val smallClazzMembersFragment = SmallClazzMembersFragment()
 

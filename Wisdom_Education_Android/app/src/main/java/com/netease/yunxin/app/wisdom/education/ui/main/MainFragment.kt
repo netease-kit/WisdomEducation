@@ -56,6 +56,7 @@ class MainFragment : Fragment(R.layout.main_fragment) {
         binding.tvOne2one.setOnClickListener(onClickListener)
         binding.tvSmallClass.setOnClickListener(onClickListener)
         binding.tvLargeClass.setOnClickListener(onClickListener)
+        binding.tvCdnBigClass.setOnClickListener(onClickListener)
         binding.btnJoin.setOnClickListener(onClickListener)
         binding.radioGroupRole.clearCheck()
 
@@ -143,20 +144,22 @@ class MainFragment : Fragment(R.layout.main_fragment) {
         if (sceneType!! == NEEduSceneType.BIG && getRoleType() == NEEduRoleType.BROADCASTER) {
             roleType = NEEduRoleType.AUDIENCE
         }
+        val isLiveClass = sceneType == NEEduSceneType.LIVE_SIMPLE
         classOptions = NEEduClassOptions(
             classId,
             className,
             nickname,
             sceneType!!,
             roleType,
-            NEEduConfig(NEEduResource(chatroom = PreferenceUtil.enableChatRoom))
+            if (isLiveClass) NEEduConfig(NEEduResource(chatroom = PreferenceUtil.enableChatRoom, live = true, rtc = false))
+            else NEEduConfig(NEEduResource(chatroom = PreferenceUtil.enableChatRoom))
         )
         NEEduUiKit.init(uuid, token).observeOnce(viewLifecycleOwner, initObserver)
     }
 
     private fun enterClassroom(eduUiKit: NEEduUiKit, neEduClassOptions: NEEduClassOptions) {
 
-        eduUiKit.enterClass(requireActivity(), neEduClassOptions).observe(viewLifecycleOwner, { t ->
+        eduUiKit.enterClass(requireActivity(), neEduClassOptions).observeOnce(viewLifecycleOwner, { t ->
             loading?.dismiss()
             loading = null
             starting = false
@@ -179,7 +182,12 @@ class MainFragment : Fragment(R.layout.main_fragment) {
                     ToastUtil.showShort(R.string.room_member_exist)
                 }
                 else -> {
-                    ToastUtil.showShort(getString(R.string.join_class_fail_try_again))
+                    val tip = context?.let { NEEduErrorCode.tipsWithErrorCode(it, t.code) }
+                    if (!TextUtils.isEmpty(tip)) {
+                        ToastUtil.showLong(tip!!)
+                    } else {
+                        ToastUtil.showLong(getString(R.string.join_class_fail_try_again))// show error whit error code
+                    }
                 }
             }
         })
@@ -192,6 +200,7 @@ class MainFragment : Fragment(R.layout.main_fragment) {
         binding.etNickName.text?.clear()
         binding.etSceneType.text?.clear()
         binding.radioGroupRole.clearCheck()
+        switchLiveClass(false)
     }
 
     /**
@@ -257,16 +266,25 @@ class MainFragment : Fragment(R.layout.main_fragment) {
                 sceneType = NEEduSceneType.ONE_TO_ONE
                 binding.etSceneType.setText(R.string.one2one_class)
                 hideCardRoomType()
+                switchLiveClass(false)
             }
             binding.tvSmallClass -> {
                 sceneType = NEEduSceneType.SMALL
                 binding.etSceneType.setText(R.string.small_class)
                 hideCardRoomType()
+                switchLiveClass(false)
             }
             binding.tvLargeClass -> {
                 sceneType = NEEduSceneType.BIG
-                binding.etSceneType.setText(R.string.big_class)
+                binding.etSceneType.setText(R.string.interactive_big_class)
                 hideCardRoomType()
+                switchLiveClass(false)
+            }
+            binding.tvCdnBigClass -> {
+                sceneType = NEEduSceneType.LIVE_SIMPLE
+                binding.etSceneType.setText(R.string.live_big_class)
+                hideCardRoomType()
+                switchLiveClass(true)
             }
             binding.etSceneType -> {
                 binding.cardRoomType.let {
@@ -278,6 +296,18 @@ class MainFragment : Fragment(R.layout.main_fragment) {
             }
         }
     }.throttleFirst()
+
+    private fun switchLiveClass(isCdnClassSelected: Boolean) {
+        if(isCdnClassSelected) {
+            binding.rbTeacher.visibility = View.GONE
+            binding.tvTeacher.visibility = View.GONE
+            binding.rbStudent.isChecked = true
+        } else {
+            binding.rbTeacher.visibility = View.VISIBLE
+            binding.tvTeacher.visibility = View.VISIBLE
+        }
+        switchJoinBtn()
+    }
 
     private val onTextChangedListener: TextWatcher = object : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}

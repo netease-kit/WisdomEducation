@@ -17,20 +17,10 @@ import com.netease.yunxin.app.wisdom.edu.logic.model.*
  * @property roleType 角色类型：host：教育场景中映射为老师，broadcaster: 教育场景中映射为学生
  */
 class NEEduClassOptions(
-    private var classId: String,
+    var classId: String,
     var className: String,
     var nickName: String,
     var sceneType: NEEduSceneType,
     var roleType: NEEduRoleType,
     val config: NEEduConfig
-) {
-
-    /**
-     * 系统课程号：classId + sceneType值
-     *
-     * @return 系统课程号
-     */
-    fun classId(): String {
-        return "$classId${sceneType.configId()}"
-    }
-}
+)

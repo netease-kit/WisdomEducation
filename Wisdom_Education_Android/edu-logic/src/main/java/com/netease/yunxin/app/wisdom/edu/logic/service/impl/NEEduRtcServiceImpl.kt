@@ -47,14 +47,14 @@ internal class NEEduRtcServiceImpl : NEEduRtcService() {
     override fun localUserVideoEnable(videoEnabled: Boolean): LiveData<NEResult<Void>> {
         return if (videoEnabled) {
             StreamServiceRepository.updateStreamInfo(
-                NEEduManagerImpl.eduEntryRes.room.roomUuid, NEEduManagerImpl.getEntryMember().userUuid,
+                NEEduManagerImpl.getRoom().roomUuid, NEEduManagerImpl.getEntryMember().userUuid,
                 NEEduStreamType.VIDEO.type, CommonReq(value = NEEduStateValue.OPEN)
             ).map {
                 NEResult(it.code)
             }
         } else {
             StreamServiceRepository.deleteStream(
-                NEEduManagerImpl.eduEntryRes.room.roomUuid,
+                NEEduManagerImpl.getRoom().roomUuid,
                 NEEduManagerImpl.getEntryMember().userUuid, NEEduStreamType.VIDEO.type
             ).map {
                 NEResult(it.code)
@@ -65,14 +65,14 @@ internal class NEEduRtcServiceImpl : NEEduRtcService() {
     override fun localUserAudioEnable(audioEnabled: Boolean): LiveData<NEResult<Void>> {
         return if (audioEnabled) {
             StreamServiceRepository.updateStreamInfo(
-                NEEduManagerImpl.eduEntryRes.room.roomUuid, NEEduManagerImpl.getEntryMember().userUuid,
+                NEEduManagerImpl.getRoom().roomUuid, NEEduManagerImpl.getEntryMember().userUuid,
                 NEEduStreamType.AUDIO.type, CommonReq(value = NEEduStateValue.OPEN)
             ).map {
                 NEResult(it.code)
             }
         } else {
             StreamServiceRepository.deleteStream(
-                NEEduManagerImpl.eduEntryRes.room.roomUuid,
+                NEEduManagerImpl.getRoom().roomUuid,
                 NEEduManagerImpl.getEntryMember().userUuid, NEEduStreamType.AUDIO.type
             ).map {
                 NEResult(it.code)
@@ -113,7 +113,7 @@ internal class NEEduRtcServiceImpl : NEEduRtcService() {
             )
         bodyParam.add(gson.toJsonTree(audioParam))
         val body = BatchReq(bodyParam)
-        return StreamServiceRepository.batchStreams(NEEduManagerImpl.eduEntryRes.room.roomUuid, body).map {
+        return StreamServiceRepository.batchStreams(NEEduManagerImpl.getRoom().roomUuid, body).map {
             if (!it.success() || it.data == null || it.data!!.list.size != 2) {
                 Pair(first = NEResult(it.code), second = NEResult(it.code))
             } else {
@@ -141,7 +141,7 @@ internal class NEEduRtcServiceImpl : NEEduRtcService() {
                 value = NEEduStateValue.OPEN
             )
         return UserServiceRepository.updateProperty(
-            NEEduManagerImpl.eduEntryRes.room.roomUuid,
+            NEEduManagerImpl.getRoom().roomUuid,
             userId,
             NEEduMemberPropertiesType.STREAMAV.type,
             req
@@ -155,7 +155,7 @@ internal class NEEduRtcServiceImpl : NEEduRtcService() {
                 value = NEEduStateValue.OPEN
             )
         return UserServiceRepository.updateProperty(
-            NEEduManagerImpl.eduEntryRes.room.roomUuid,
+            NEEduManagerImpl.getRoom().roomUuid,
             userId,
             NEEduMemberPropertiesType.STREAMAV.type,
             req

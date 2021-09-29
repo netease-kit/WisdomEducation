@@ -76,7 +76,7 @@ internal class NEEduHandsUpServiceImpl : NEEduHandsUpService() {
     override fun handsUpStateChange(state: Int, userUuid: String): LiveData<NEResult<Void>> {
         val req = NEEduUpdateMemberPropertyReq(value = state)
         return UserServiceRepository.updateProperty(
-            NEEduManagerImpl.eduEntryRes.room.roomUuid,
+            NEEduManagerImpl.getRoom().roomUuid,
             userUuid,
             NEEduMemberPropertiesType.AVHANDSUP.type,
             req

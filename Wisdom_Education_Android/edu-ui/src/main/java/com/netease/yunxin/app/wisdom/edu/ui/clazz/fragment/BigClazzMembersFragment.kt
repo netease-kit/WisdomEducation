@@ -15,7 +15,7 @@ import com.netease.yunxin.app.wisdom.base.util.CommonUtil.setOnClickThrottleFirs
 import com.netease.yunxin.app.wisdom.base.util.ToastUtil
 import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduStateValue
 import com.netease.yunxin.app.wisdom.edu.ui.R
-import com.netease.yunxin.app.wisdom.edu.ui.base.BaseClassActivity
+import com.netease.yunxin.app.wisdom.edu.ui.clazz.BaseNormalClassActivity
 import com.netease.yunxin.app.wisdom.edu.ui.base.BaseFragment
 import com.netease.yunxin.app.wisdom.edu.ui.clazz.viewmodel.ChatRoomViewModel
 import com.netease.yunxin.app.wisdom.edu.ui.databinding.FragmentBigclazzMembersBinding
@@ -73,13 +73,13 @@ class BigClazzMembersFragment : BaseFragment(R.layout.fragment_bigclazz_members)
                 tab.text = titles[position]
             }.attach()
             ivMemberHide.setOnClickListener {
-                (activity as BaseClassActivity).hideFragmentWithMembers()
+                (activity as BaseNormalClassActivity).hideFragmentWithMembers()
             }
             if (eduManager.getEntryMember().isHost()) {
                 muteAudioAll.visibility = View.VISIBLE
                 muteAudioAll.setOnClickThrottleFirst {
                     eduManager.getRtcService()
-                        .muteAllAudio(roomUuid = eduManager.eduEntryRes.room.roomUuid, NEEduStateValue.OPEN)
+                        .muteAllAudio(roomUuid = eduManager.getRoom().roomUuid, NEEduStateValue.OPEN)
                         .observe(this@BigClazzMembersFragment, {
                             if (it.success()) {
                                 ALog.i(tag, "muteAudioAll success")
@@ -95,7 +95,7 @@ class BigClazzMembersFragment : BaseFragment(R.layout.fragment_bigclazz_members)
                 ivHintMuteAudioAll.visibility = View.VISIBLE
                 muteChatAll.setOnClickThrottleFirst {
                     eduManager.getIMService().muteAllChat(
-                        roomUuid = eduManager.eduEntryRes.room.roomUuid,
+                        roomUuid = eduManager.getRoom().roomUuid,
                         if (!muteChatAll.isSelected) NEEduStateValue.OPEN else NEEduStateValue.CLOSE
                     ).observe(this@BigClazzMembersFragment, {
                         if (it.success()) {

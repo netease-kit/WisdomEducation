@@ -6,6 +6,7 @@
 package com.netease.yunxin.app.wisdom.edu.logic.impl
 
 import android.util.ArrayMap
+import androidx.lifecycle.MediatorLiveData
 import com.netease.yunxin.app.wisdom.base.util.observeForeverOnce
 import com.netease.yunxin.app.wisdom.edu.logic.model.*
 import com.netease.yunxin.kit.alog.ALog
@@ -16,7 +17,7 @@ import com.netease.yunxin.kit.alog.ALog
 internal class NEEduSync(val neEduManager: NEEduManagerImpl) {
 
 
-    var lastSequenceId: Long = -1
+    private var lastSequenceId: Long = -1
 
     var syncing: Boolean = false
 
@@ -26,6 +27,8 @@ internal class NEEduSync(val neEduManager: NEEduManagerImpl) {
     /**一个同步流程中的cmd数据集合*/
     private val sequenceData: ArrayMap<Long, NEEduCMDBody> = ArrayMap()
 
+    val errorLD: MediatorLiveData<Int> = MediatorLiveData()
+
     /**
      *cache cmd data
      */
@@ -34,7 +37,7 @@ internal class NEEduSync(val neEduManager: NEEduManagerImpl) {
             val iterable = cmdBodyList.iterator()
             while (iterable.hasNext()) {
                 val next = iterable.next()
-                if (next.type == NEEduNotifyType.R.value && next.roomUuid == NEEduManagerImpl.eduEntryRes.room.roomUuid) {
+                if (next.type == NEEduNotifyType.R.value && next.roomUuid == NEEduManagerImpl.getRoom().roomUuid) {
                     next.sequence?.let {
                         if (next.sequence > lastSequenceId) {
                             sequenceList.add(next.sequence)
@@ -89,7 +92,7 @@ internal class NEEduSync(val neEduManager: NEEduManagerImpl) {
      * lastSequenceId==-1， 说明还没有拉取snapshot，下行就已经到了， 先缓存
      */
     fun handle(cmdBody: NEEduCMDBody): Boolean {
-        if (cmdBody.roomUuid != NEEduManagerImpl.eduEntryRes.room.roomUuid) {
+        if (cmdBody.roomUuid != NEEduManagerImpl.getRoom().roomUuid) {
             return false
         }
         if (cmdBody.type == NEEduNotifyType.R.value) {
@@ -129,12 +132,12 @@ internal class NEEduSync(val neEduManager: NEEduManagerImpl) {
                     cacheCmdData(it.list)
                 }
             } else {// fail 2 snapshot
-                snapshot(NEEduManagerImpl.eduEntryRes.room.roomUuid)
+                snapshot(NEEduManagerImpl.getRoom().roomUuid) {}
             }
         }
     }
 
-    fun snapshot(roomUuid: String) {
+    fun snapshot(roomUuid: String, successCallback: ((snapshot: NEEduSnapshot) -> Unit)) {
         if (syncing) {
             return
         }
@@ -144,6 +147,9 @@ internal class NEEduSync(val neEduManager: NEEduManagerImpl) {
         snapshot.observeForeverOnce { t ->
             syncing = false
             if (!t.success()) {
+                if(t.code == NEEduHttpCode.ROOM_NOT_EXIST.code) {
+                    errorLD.postValue(t.code)
+                }
                 return@observeForeverOnce
             }
             t.data?.let {
@@ -152,26 +158,33 @@ internal class NEEduSync(val neEduManager: NEEduManagerImpl) {
                 } else {
                     lastSequenceId = it.sequence
                     if (it.snapshot.members.size > 0) {
-                        neEduManager.getRtcService().updateSnapshotMember(it.snapshot.members)
-                        val lastJoinList: MutableList<NEEduMember> = mutableListOf()
-                        lastJoinList.addAll(neEduManager.getMemberService().getMemberList())
-                        neEduManager.getRtcService().updateMemberJoin(it.snapshot.members, false)
-                        neEduManager.getMemberService().updateMemberJoin(it.snapshot.members, false)
-                        it.snapshot.members.firstOrNull { t -> NEEduManagerImpl.isSelf(t.userUuid) }
-                            ?.also { member ->
-                                member.properties?.let { it ->
-                                    val propertiesDiff =
-                                        it.diff(lastJoinList.firstOrNull { it1 -> it1 == member }?.properties)
-                                    neEduManager.getMemberService().updateMemberPropertiesChange(member, member
-                                        .properties!!)
-                                    if(lastJoinList.isNotEmpty() || !neEduManager.roomConfig.is1V1()) {
-                                        neEduManager.getBoardService().updatePermission(member, propertiesDiff)
-                                        neEduManager.getShareScreenService().updatePermission(member, propertiesDiff)
+                        if (neEduManager.isLiveClass()) {
+                            neEduManager.getMemberService().updateMemberJoin(it.snapshot.members, true)
+                        } else {
+                            neEduManager.getRtcService().updateSnapshotMember(it.snapshot.members)
+                            val lastJoinList: MutableList<NEEduMember> = mutableListOf()
+                            lastJoinList.addAll(neEduManager.getMemberService().getMemberList())
+                            neEduManager.getRtcService().updateMemberJoin(it.snapshot.members, false)
+                            neEduManager.getMemberService().updateMemberJoin(it.snapshot.members, false)
+                            it.snapshot.members.firstOrNull { t -> NEEduManagerImpl.isSelf(t.userUuid) }
+                                ?.also { member ->
+                                    member.properties?.let { it ->
+                                        val propertiesDiff =
+                                            it.diff(lastJoinList.firstOrNull { it1 -> it1 == member }?.properties)
+                                        neEduManager.getMemberService().updateMemberPropertiesChange(
+                                            member, member
+                                                .properties!!
+                                        )
+                                        if (lastJoinList.isNotEmpty() || !neEduManager.roomConfig.is1V1()) {
+                                            neEduManager.getBoardService().updatePermission(member, propertiesDiff)
+                                            neEduManager.getShareScreenService()
+                                                .updatePermission(member, propertiesDiff)
+                                        }
                                     }
                                 }
-                            }
-                        neEduManager.getHandsUpService().updateMemberJoin(it.snapshot.members, false)
-                        neEduManager.getShareScreenService().updateMemberJoin(it.snapshot.members, false)
+                            neEduManager.getHandsUpService().updateMemberJoin(it.snapshot.members, false)
+                            neEduManager.getShareScreenService().updateMemberJoin(it.snapshot.members, false)
+                        }
                     }
                     it.snapshot.room.states?.let { t ->
                         neEduManager.getRoomService().updateRoomStatesChange(t, false)
@@ -180,6 +193,7 @@ internal class NEEduSync(val neEduManager: NEEduManagerImpl) {
                                 .updateMuteAllChat(t.muteChat?.value == NEEduStateValue.OPEN)
                         }
                     }
+                    successCallback(it.snapshot)
                 }
             }
             handleCmdData()

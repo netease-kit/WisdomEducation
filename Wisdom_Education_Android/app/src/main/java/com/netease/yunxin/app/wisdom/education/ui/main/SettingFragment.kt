@@ -32,6 +32,12 @@ class SettingFragment : Fragment(R.layout.setting_fragment) {
         }
         binding.tvBack.setOnClickListener(onClickListener)
         binding.ivImReuse.setOnClickListener(onClickListener)
+        binding.toggleLowLatencyLive.apply {
+            isChecked = PreferenceUtil.lowLatencyLive
+            setOnCheckedChangeListener { _, isChecked ->
+                PreferenceUtil.lowLatencyLive = isChecked
+            }
+        }
     }
 
     private var onClickListener = View.OnClickListener { v ->

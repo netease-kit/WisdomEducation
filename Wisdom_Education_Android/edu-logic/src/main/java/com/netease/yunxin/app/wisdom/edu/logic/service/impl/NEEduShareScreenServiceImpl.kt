@@ -39,7 +39,7 @@ internal class NEEduShareScreenServiceImpl : NEEduShareScreenService() {
     override fun grantPermission(userId: String, grant: Boolean): LiveData<NEResult<Void>> {
         val req = NEEduUpdateMemberPropertyReq(value = if (grant) NEEduStateValue.OPEN else NEEduStateValue.CLOSE)
         return UserServiceRepository.updateProperty(
-            NEEduManagerImpl.eduEntryRes.room.roomUuid,
+            NEEduManagerImpl.getRoom().roomUuid,
             userId,
             NEEduMemberPropertiesType.SCREENSHARE.type,
             req

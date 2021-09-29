@@ -29,7 +29,20 @@ class NEEduEntryMember(
     streams: NEEduStreams,
     properties: NEEduMemberProperties?,
     val wbAuth: NEEduWbAuth?
-) : NEEduMember(role, userName, userUuid, rtcUid, time, streams, properties)
+) : NEEduMember(role, userName, userUuid, rtcUid, time, streams, properties) {
+    constructor (rtcKey: String, role: String, userName: String, userUuid: String) : this(
+        rtcKey,
+        "",
+        role,
+        userName,
+        userUuid,
+        0L,
+        0L,
+        NEEduStreams(null, null),
+        null,
+        null
+    )
+}
 
 
 data class NEEduWbAuth(

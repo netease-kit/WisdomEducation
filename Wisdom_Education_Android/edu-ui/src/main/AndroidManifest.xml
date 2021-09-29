@@ -49,6 +49,13 @@
             android:launchMode="singleTop"
             android:screenOrientation="sensorLandscape"
             android:theme="@style/Theme.EduApp.Landscape" />
+
+        <activity
+            android:name=".clazz.LiveClassActivity"
+            android:configChanges="keyboardHidden|screenSize|orientation"
+            android:launchMode="singleTop"
+            android:screenOrientation="sensorLandscape"
+            android:theme="@style/Theme.EduApp.Landscape" />
     </application>
 
 </manifest>

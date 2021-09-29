@@ -16,7 +16,9 @@
     <string name="setting">Setting</string>
     <string name="open_chat_room">Open chat room</string>
     <string name="im_reuse">IM reuse</string>
+    <string name="low_latency_live">Low latency live</string>
     <string name="open_chatroom">After the chat room is closed, the interface does not display the chat room</string>
     <string name="im_resue_desc">After IM multiplexing is enabled, the HOST application uses the IM channel</string>
+    <string name="low_latency_live_desc">CDN delay 2-5s, low delay 1-2s</string>
     <string name="im_login">IM login</string>
 </resources>

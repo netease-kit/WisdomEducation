@@ -14,6 +14,8 @@ import com.netease.nimlib.sdk.auth.AuthServiceObserver
 import com.netease.nimlib.sdk.auth.LoginInfo
 import com.netease.nimlib.sdk.chatroom.ChatRoomService
 import com.netease.nimlib.sdk.chatroom.ChatRoomServiceObserver
+import com.netease.nimlib.sdk.chatroom.model.ChatRoomKickOutEvent
+import com.netease.nimlib.sdk.chatroom.model.ChatRoomStatusChangeData
 import com.netease.nimlib.sdk.passthrough.PassthroughService
 import com.netease.nimlib.sdk.passthrough.PassthroughServiceObserve
 import com.netease.nimlib.sdk.passthrough.model.PassthroughNotifyData
@@ -77,6 +79,16 @@ object IMManager {
         }
     }
 
+    private val chatRoomKickOutEvent = Observer<ChatRoomKickOutEvent>
+    { t ->
+        ALog.i(TAG, "online status change $t")
+        when (t.reason) {
+            ChatRoomKickOutEvent.ChatRoomKickOutReason.KICK_OUT_BY_CONFLICT_LOGIN, ChatRoomKickOutEvent.ChatRoomKickOutReason.KICK_OUT_BY_MANAGER -> {
+                errorLD.postValue(IMErrorCode.mapChatError(t.reason.value))
+            }
+        }
+    }
+
     fun config(context: Context, appKey: String, reuse: Boolean) {
         this.reuseIM = reuse
         if (!this.reuseIM) {
@@ -135,6 +147,7 @@ object IMManager {
 
     private fun observer() {
         authServiceObserver.observeOnlineStatus(onlineObserver, true)
+        chatRoomServiceObserver.observeKickOutEvent(chatRoomKickOutEvent, true)
         passthroughServiceObserve.observePassthroughNotify(passthrougthObserver, true)
     }
 
@@ -148,6 +161,9 @@ object IMManager {
     fun logout() {
         if (this::authServiceObserver.isInitialized) {
             authServiceObserver.observeOnlineStatus(onlineObserver, false)
+        }
+        if (this::chatRoomServiceObserver.isInitialized) {
+            chatRoomServiceObserver.observeKickOutEvent(chatRoomKickOutEvent, false)
         }
         if (this::passthroughServiceObserve.isInitialized) {
             passthroughServiceObserve.observePassthroughNotify(passthrougthObserver, false)

@@ -13,7 +13,7 @@ import com.netease.yunxin.app.wisdom.base.util.ToastUtil
 import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduMember
 import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduStateValue
 import com.netease.yunxin.app.wisdom.edu.ui.R
-import com.netease.yunxin.app.wisdom.edu.ui.base.BaseClassActivity
+import com.netease.yunxin.app.wisdom.edu.ui.clazz.BaseNormalClassActivity
 import com.netease.yunxin.app.wisdom.edu.ui.base.BaseFragment
 import com.netease.yunxin.app.wisdom.edu.ui.clazz.adapter.MemberControlListAdapter
 import com.netease.yunxin.app.wisdom.edu.ui.clazz.viewmodel.ChatRoomViewModel
@@ -69,13 +69,13 @@ class SmallClazzMembersFragment : BaseFragment(R.layout.fragment_smallclazz_memb
             rcvMemberList.layoutManager = layoutManager
             rcvMemberList.adapter = adapter
             ivMemberHide.setOnClickListener {
-                (activity as BaseClassActivity).hideFragmentWithMembers()
+                (activity as BaseNormalClassActivity).hideFragmentWithMembers()
             }
             if (eduManager.getEntryMember().isHost()) {
                 muteAudioAll.visibility = View.VISIBLE
                 muteAudioAll.setOnClickThrottleFirst {
                     eduManager.getRtcService()
-                        .muteAllAudio(roomUuid = eduManager.eduEntryRes.room.roomUuid, NEEduStateValue.OPEN)
+                        .muteAllAudio(roomUuid = eduManager.getRoom().roomUuid, NEEduStateValue.OPEN)
                         .observe(this@SmallClazzMembersFragment, {
                             if (it.success()) {
                                 ALog.i(tag, "muteAudioAll success")
@@ -92,7 +92,7 @@ class SmallClazzMembersFragment : BaseFragment(R.layout.fragment_smallclazz_memb
                 ivHintMuteAudioAll.visibility = View.VISIBLE
                 muteChatAll.setOnClickThrottleFirst {
                     eduManager.getIMService().muteAllChat(
-                        roomUuid = eduManager.eduEntryRes.room.roomUuid,
+                        roomUuid = eduManager.getRoom().roomUuid,
                         if (!muteChatAll.isSelected) NEEduStateValue.OPEN else NEEduStateValue.CLOSE
                     ).observe(this@SmallClazzMembersFragment, {
                         if (it.success()) {
@@ -112,7 +112,7 @@ class SmallClazzMembersFragment : BaseFragment(R.layout.fragment_smallclazz_memb
     }
 
     override fun onItemChildClick(adapter: BaseAdapter<NEEduMember>?, v: View?, position: Int) {
-        activity?.let { it as BaseClassActivity }?.apply {
+        activity?.let { it as BaseNormalClassActivity }?.apply {
             adapter?.let { it1 ->
                 val member = it1.getItem(position)
                 val self = eduManager.isSelf(member.userUuid)

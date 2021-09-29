@@ -8,6 +8,7 @@ package com.netease.yunxin.app.wisdom.edu.logic.cmd
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduCMDBody
+import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduIMCMDMessage
 import com.netease.yunxin.kit.alog.ALog
 
 /**
@@ -37,6 +38,15 @@ object CMDActionFactory {
     fun parse(text: String): NEEduCMDBody? {
         return try {
             gson.fromJson(text, object : TypeToken<NEEduCMDBody>() {}.type)
+        } catch (e: Throwable) {
+            ALog.i(tag, "get cmd action fail $text")
+            null
+        }
+    }
+
+    fun parseIMCMDMessage(text: String): NEEduIMCMDMessage? {
+        return try {
+            gson.fromJson(text, object : TypeToken<NEEduIMCMDMessage>() {}.type)
         } catch (e: Throwable) {
             ALog.i(tag, "get cmd action fail $text")
             null
