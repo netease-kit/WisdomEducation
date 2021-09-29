@@ -1,5 +1,5 @@
 //
-//  ENavigationViewController.h
+//  NENavigationViewController.h
 //  NEEducation
 //
 //  Created by Netease on 2021/1/18.

@@ -88,7 +88,6 @@
             [HttpManager addHeaderFromDictionary:@{@"user":objModel.userUuid,@"token":objModel.userToken}];
         }
         [self.rtcService setupAppkey:objModel.rtcKey];
-        
         [self.imService setupAppkey:objModel.imKey];
         [self.imService addIMDelegate];
         self.imService.delegate = self.messageService;

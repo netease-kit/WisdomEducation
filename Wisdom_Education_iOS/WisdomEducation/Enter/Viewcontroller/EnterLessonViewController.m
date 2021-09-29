@@ -22,7 +22,6 @@
 #import "NEEduChatViewController.h"
 #import "IMLoginVC.h"
 #import "NESettingTableViewController.h"
-
 @import NERecordPlayUI;
 @import NERecordPlay;
 
@@ -57,8 +56,8 @@ static NSString *kLastUserToken = @"lastUserToken";
 
 @property (nonatomic, strong) NSArray <NSString *>*lessonTypes;
 
-@property (nonatomic, assign)   BOOL isLessonIdValide;
-@property (nonatomic, assign)   BOOL isNicknameValide;
+@property (nonatomic, assign) BOOL isLessonIdValide;
+@property (nonatomic, assign) BOOL isNicknameValide;
 @property (nonatomic, strong) UIActivity *activity;
 @property (nonatomic, strong) UITableView *tableview;
 @property (nonatomic, strong) NEEduChatViewController *chatVC;
@@ -70,12 +69,16 @@ static NSString *kLastUserToken = @"lastUserToken";
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.lessonTypes = @[@"一对一",@"小班课",@"大班课"];
+    self.lessonTypes = @[@"一对一教学",@"多人小班课",@"互动大班课",@"直播大班课"];
     [self.tableview registerClass:[UITableViewCell class] forCellReuseIdentifier:@"cellID"];
     [self setupSubviews];
     [self preSetting];
 }
-
+- (void)viewWillAppear:(BOOL)animated {
+    [self.navigationController setNavigationBarHidden:YES];
+    NSString *lastRoomUuid = [[NSUserDefaults standardUserDefaults] objectForKey:kLastRoomUuid];
+    self.recordBtn.hidden = lastRoomUuid.length > 0 ? NO : YES;
+}
 - (void)setupSubviews {
     self.view.backgroundColor = [UIColor whiteColor];
     [self.view addSubview:self.icon];
@@ -101,6 +104,23 @@ static NSString *kLastUserToken = @"lastUserToken";
     NSLayoutConstraint *subTitleHeight = [NSLayoutConstraint constraintWithItem:self.subTileLabel attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:40];
     [self.view addConstraints:@[subTitleTop,subTitleLeading,subTitleTrailing]];
     [self.subTileLabel addConstraint:subTitleHeight];
+    [self.view addSubview:self.settingButton];
+    if (@available(iOS 11.0, *)) {
+        [NSLayoutConstraint activateConstraints:@[
+            [self.settingButton.rightAnchor constraintEqualToAnchor:self.view.rightAnchor constant:-30],
+            [self.settingButton.topAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.topAnchor constant:30],
+            [self.settingButton.heightAnchor constraintEqualToConstant:40],
+            [self.settingButton.widthAnchor constraintEqualToConstant:60]
+        ]];
+    } else {
+        [NSLayoutConstraint activateConstraints:@[
+            [self.settingButton.rightAnchor constraintEqualToAnchor:self.view.rightAnchor constant:-30],
+            [self.settingButton.topAnchor constraintEqualToAnchor:self.view.topAnchor constant:30],
+            [self.settingButton.heightAnchor constraintEqualToConstant:40],
+            [self.settingButton.widthAnchor constraintEqualToConstant:60]
+        ]];
+    }
+    
 #ifdef DEBUG
     EduInputView *userIDView = [[EduInputView alloc] initWithPlaceholder:@"请输入ID"];
     userIDView.textField.keyboardType = UIKeyboardTypeDefault;
@@ -129,22 +149,6 @@ static NSString *kLastUserToken = @"lastUserToken";
         [self.lessonIdView.rightAnchor constraintEqualToAnchor:self.view.rightAnchor constant:-30],
         [self.lessonIdView.heightAnchor constraintEqualToConstant:44]
     ]];
-    [self.view addSubview:self.settingButton];
-    if (@available(iOS 11.0, *)) {
-        [NSLayoutConstraint activateConstraints:@[
-            [self.settingButton.rightAnchor constraintEqualToAnchor:self.view.rightAnchor constant:-30],
-            [self.settingButton.topAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.topAnchor constant:30],
-            [self.settingButton.heightAnchor constraintEqualToConstant:40],
-            [self.settingButton.widthAnchor constraintEqualToConstant:60]
-        ]];
-    } else {
-        [NSLayoutConstraint activateConstraints:@[
-            [self.settingButton.rightAnchor constraintEqualToAnchor:self.view.rightAnchor constant:-30],
-            [self.settingButton.topAnchor constraintEqualToAnchor:self.view.topAnchor constant:30],
-            [self.settingButton.heightAnchor constraintEqualToConstant:40],
-            [self.settingButton.widthAnchor constraintEqualToConstant:60]
-        ]];
-    }
 #else
     [self.view addSubview:self.lessonIdView];
     [NSLayoutConstraint activateConstraints:@[
@@ -153,6 +157,7 @@ static NSString *kLastUserToken = @"lastUserToken";
         [self.lessonIdView.rightAnchor constraintEqualToAnchor:self.view.rightAnchor constant:-30],
         [self.lessonIdView.heightAnchor constraintEqualToConstant:44]
     ]];
+    
 #endif
     [self.view addSubview:self.nicknameView];
     NSLayoutConstraint *nicknameLeading = [NSLayoutConstraint constraintWithItem:self.nicknameView attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:self.lessonIdView attribute:NSLayoutAttributeLeading multiplier:1.0 constant:0];
@@ -212,11 +217,6 @@ static NSString *kLastUserToken = @"lastUserToken";
     [self.view addConstraints:@[infoTop,infoLeading,infoTrailing,infoHeight]];
 }
 
-- (void)viewWillAppear:(BOOL)animated {
-    [self.navigationController setNavigationBarHidden:YES];
-    NSString *lastRoomUuid = [[NSUserDefaults standardUserDefaults] objectForKey:kLastRoomUuid];
-    self.recordBtn.hidden = lastRoomUuid.length > 0 ? NO : YES;
-}
 - (void)preSetting {
     [[NSUserDefaults standardUserDefaults] setObject:@(YES) forKey:showChatroomKey];
 }
@@ -409,8 +409,12 @@ static NSString *kLastUserToken = @"lastUserToken";
 }
 - (void)createRoom {
     NEEduRoom *room = [[NEEduRoom alloc] init];
+    room.nickName = self.nicknameView.text;
     room.roomName = [NSString stringWithFormat:@"%@的课堂",self.nicknameView.text];
     room.sceneType = self.lessonType;
+    BOOL showChatroom = [[[NSUserDefaults standardUserDefaults] objectForKey:showChatroomKey] boolValue];
+    NERoomConfig *config = [[NERoomConfig alloc] init];
+    config.resource.chatroom = showChatroom;
     switch (room.sceneType) {
         case NEEduSceneType1V1:
         {
@@ -427,26 +431,46 @@ static NSString *kLastUserToken = @"lastUserToken";
             room.configId = 7;
         }
             break;
+        case NEEduSceneTypeLive:
+        {
+            room.configId = 20;
+            config.resource.live = YES;
+        }
+            break;
         default:
             break;
     }
-    room.roomUuid = [NSString stringWithFormat:@"%@%d",self.lessonIdView.text,room.configId];
-    BOOL showChatroom = [[[NSUserDefaults standardUserDefaults] objectForKey:showChatroomKey] boolValue];
-    room.config = [[NERoomConfig alloc] init];
-    room.config.resource.chatroom = showChatroom;
-    
-    __weak typeof(self)weakSelf = self;
-    [[NEEduManager shared].roomService createRoom:room completion:^(NEEduCreateRoomRequest *result,NSError * _Nonnull error) {
-        __strong typeof(self)strongSelf = weakSelf;
-        if (error) {
+    room.roomUuid = self.lessonIdView.text;
+    room.config = config;
+    if (self.lessonType == NEEduSceneTypeLive) {
+        // 直播大班课流程
+        __weak typeof(self)weakSelf = self;
+        [[NEEduManager shared].roomService getRoom:room completion:^(NEEduCreateRoomRequest * _Nonnull result, NSError * _Nonnull error) {
+            __strong typeof(self)strongSelf = weakSelf;
+            strongSelf.view.userInteractionEnabled = YES;
+            [strongSelf.view hideToastActivity];
+            if (error) {
+                [strongSelf.view makeToast:error.localizedDescription];
+            }else {
+                [strongSelf pushLiveVCWithRoomUuid:room.roomUuid];
+            }
+        }];
+    }else {
+        // 1v1、小班课、大班课流程
+        __weak typeof(self)weakSelf = self;
+        [[NEEduManager shared].roomService createRoom:room completion:^(NEEduCreateRoomRequest *result,NSError * _Nonnull error) {
+            __strong typeof(self)strongSelf = weakSelf;
             [strongSelf.view hideToastActivity];
             strongSelf.view.userInteractionEnabled = YES;
-            [strongSelf.view makeToast:error.localizedDescription];
-        }else {
-            [strongSelf enterRoom:result];
-        }
-    }];
+            if (error) {
+                [strongSelf.view makeToast:error.localizedDescription];
+            }else {
+                [strongSelf enterRoom:result];
+            }
+        }];
+    }
 }
+
 - (void)enterRoom:(NEEduCreateRoomRequest *)resRoom {
     NEEduEnterRoomParam *param = [[NEEduEnterRoomParam alloc] init];
     param.roomUuid = resRoom.roomUuid;
@@ -479,12 +503,21 @@ static NSString *kLastUserToken = @"lastUserToken";
                 [[NSUserDefaults standardUserDefaults] setObject:response.room.rtcCid forKey:kLastRtcCid];
             }
             [strongSelf pushViewController];
-            
         }
     }];
 }
+
+- (void)pushLiveVCWithRoomUuid:(NSString *)roomUuid {
+    NEEduLiveRoomVC *roomVC = [[NEEduLiveRoomVC alloc] init];
+    roomVC.roomUuid = roomUuid;
+    roomVC.userName = self.nicknameView.text;
+    roomVC.useFastLive = [[[NSUserDefaults standardUserDefaults] objectForKey:useFastLiveKey] boolValue];
+    roomVC.modalPresentationStyle = UIModalPresentationFullScreen;
+    [self presentViewController:roomVC animated:YES completion:nil];
+}
+
 - (void)pushViewController {
-    NEEduClassRoomVC *roomVC;
+    UIViewController *roomVC;
     if (self.lessonType == NEEduSceneType1V1) {
         //1v1
         if (self.role == NEEduRoleTypeTeacher) {
@@ -511,6 +544,7 @@ static NSString *kLastUserToken = @"lastUserToken";
     }
     roomVC.modalPresentationStyle = UIModalPresentationFullScreen;
     [self presentViewController:roomVC animated:YES completion:nil];
+    
 }
 
 #pragma mark - UITableViewDataSource
@@ -527,8 +561,10 @@ static NSString *kLastUserToken = @"lastUserToken";
     self.lessonType = indexPath.row;
     self.selectionView.title = self.lessonTypes[indexPath.row];
     [tableView removeFromSuperview];
+    self.teacherRoleButton.hidden = [self.selectionView.title isEqualToString:@"直播大班课"];
     [self checkJoinButton];
 }
+
 #pragma mark - EduSelectViewDelegate
 - (void)selectionView:(EduSelectView *)selectionView didSelected:(BOOL)selected {
     [self.view endEditing:YES];
@@ -538,7 +574,7 @@ static NSString *kLastUserToken = @"lastUserToken";
             NSLayoutConstraint *left = [NSLayoutConstraint constraintWithItem:self.tableview attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self.selectionView attribute:NSLayoutAttributeLeft multiplier:1.0 constant:0];
             NSLayoutConstraint *right = [NSLayoutConstraint constraintWithItem:self.tableview attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self.selectionView attribute:NSLayoutAttributeRight multiplier:1.0 constant:0];
             NSLayoutConstraint *top = [NSLayoutConstraint constraintWithItem:self.tableview attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.selectionView attribute:NSLayoutAttributeBottom multiplier:1.0 constant:0];
-            NSLayoutConstraint *height = [NSLayoutConstraint constraintWithItem:self.tableview attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:132];
+            NSLayoutConstraint *height = [NSLayoutConstraint constraintWithItem:self.tableview attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:44 * self.lessonTypes.count];
             [self.view addConstraints:@[left,right,top]];
             [self.tableview addConstraint:height];
         }else {
@@ -700,7 +736,7 @@ static NSString *kLastUserToken = @"lastUserToken";
         [_joinLessonBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
         [_joinLessonBtn setBackgroundColor:[UIColor colorWithRed:144/255.0 green:166/255.0 blue:243/255.0 alpha:1.0]];
         [_joinLessonBtn addTarget:self action:@selector(enterLessonEvent:) forControlEvents:UIControlEventTouchUpInside];
-        _joinLessonBtn.enabled = NO;
+//        _joinLessonBtn.enabled = NO;
     }
     return _joinLessonBtn;
 }

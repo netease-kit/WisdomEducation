@@ -82,9 +82,22 @@ static void(^_errorBlock)(NSInteger);
 
 + (void)createRoom:(NSString *)roomUuid param:(NSDictionary *)param classType:(Class)classType success:(void (^ _Nullable) (id objModel))successBlock failure:(void (^ _Nullable) (NSError * _Nullable error, NSInteger statusCode))failureBlock {
     NSString *urlStr = [NSString stringWithFormat:HTTP_CREATE_ROOM, config.baseURL, config.appKey, config.version,roomUuid];
-    
     [HttpManager put:urlStr token:nil params:param headers:nil success:^(id responseObj) {
         id model = [classType yy_modelWithDictionary:responseObj];
+        if(successBlock){
+            successBlock(model);
+        }
+    } failure:^(NSError *error, NSInteger statusCode) {
+        if(failureBlock) {
+            failureBlock(error, statusCode);
+        }
+    }];
+}
+
++ (void)getRoom:(NSString *)roomUuid param:(NSDictionary *)param classType:(Class)classType success:(void (^ _Nullable) (id objModel))successBlock failure:(void (^ _Nullable) (NSError * _Nullable error, NSInteger statusCode))failureBlock {
+    NSString *urlStr = [NSString stringWithFormat:HTTP_GET_ROOM, config.baseURL, config.appKey, config.version,roomUuid];
+    [HttpManager get:urlStr token:nil params:param headers:nil success:^(id data, NSInteger ts) {
+        id model = [classType yy_modelWithDictionary:data];
         if(successBlock){
             successBlock(model);
         }
@@ -424,7 +437,9 @@ static void(^_errorBlock)(NSInteger);
         case NEEduErrorTypeNimUserExist:
             message = @"IM账户已存在";
             break;
-            
+        case NEEduErrorTypeRoomConfigConflict:
+            message = @"创建房间时房间已经存在且房间类型冲突";
+            break;
         default:
             break;
     }

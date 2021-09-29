@@ -31,10 +31,8 @@
     [self.contentView addSubview:self.nameLabel];
     NSLayoutConstraint *top = [NSLayoutConstraint constraintWithItem:self.nameLabel attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeTop multiplier:1.0 constant:0];
     NSLayoutConstraint *left = [NSLayoutConstraint constraintWithItem:self.nameLabel attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeLeft multiplier:1.0 constant:0];
-//    NSLayoutConstraint *width = [NSLayoutConstraint constraintWithItem:self.nameLabel attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:88];
     NSLayoutConstraint *bottom = [NSLayoutConstraint constraintWithItem:self.nameLabel attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeBottom multiplier:1.0 constant:0];
     [self addConstraints:@[top,left,bottom]];
-//    [self.nameLabel addConstraint:width];
     
     [self.contentView addSubview:self.whiteBoardButton];
     NSLayoutConstraint *wbTop = [NSLayoutConstraint constraintWithItem:self.whiteBoardButton attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeTop multiplier:1.0 constant:17];
@@ -98,7 +96,6 @@
         [self.delegate didSeletedVideo:button.selected member:self.member];
     }
 }
-
 - (void)moreButtonClick:(UIButton *)button {
     if (self.delegate && [self.delegate respondsToSelector:@selector(cell:didSeletedMore:member:)]) {
         [self.delegate cell:self didSeletedMore:button.selected member:self.member];
@@ -147,7 +144,6 @@
         _whiteBoardButton = [UIButton buttonWithType:UIButtonTypeCustom];
         _whiteBoardButton.translatesAutoresizingMaskIntoConstraints = NO;
         [_whiteBoardButton setImage:[UIImage ne_imageNamed:@"member_whiteboard"] forState:UIControlStateNormal];
-//        [_whiteBoardButton setTitle:@"白板授权状态" forState:UIControlStateNormal];
         _whiteBoardButton.backgroundColor = [UIColor colorWithRed:35/255.0 green:44/255.0 blue:55/255.0 alpha:1.0];
         _whiteBoardButton.layer.cornerRadius = 2;
         _whiteBoardButton.clipsToBounds = YES;
@@ -160,7 +156,6 @@
         _screenShareButton = [UIButton buttonWithType:UIButtonTypeCustom];
         _screenShareButton.translatesAutoresizingMaskIntoConstraints = NO;
         [_screenShareButton setImage:[UIImage ne_imageNamed:@"member_screen_share"] forState:UIControlStateNormal];
-//        [_screenShareButton setTitle:@"屏幕共享状态" forState:UIControlStateNormal];
         _screenShareButton.backgroundColor = [UIColor colorWithRed:35/255.0 green:44/255.0 blue:55/255.0 alpha:1.0];
         _screenShareButton.layer.cornerRadius = 2;
         _screenShareButton.clipsToBounds = YES;

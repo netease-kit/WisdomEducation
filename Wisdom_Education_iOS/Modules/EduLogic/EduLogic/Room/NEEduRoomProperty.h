@@ -11,12 +11,16 @@
 #import "NEEduChatRoom.h"
 #import "NEEduHandsupProperty.h"
 #import "NEEduWhiteboardInfo.h"
+#import "NEEduLiveInfo.h"
+
 NS_ASSUME_NONNULL_BEGIN
 
 @interface NEEduRoomProperty : NSObject
 @property (nonatomic, strong) NEEduChatRoom *chatRoom;
 @property (nonatomic, strong) NEEduHandsupProperty *avHandsUp;
 @property (nonatomic, strong) NEEduWhiteboardInfo *whiteboard;
+@property (nonatomic, strong) NEEduLiveInfo *live;
+
 @end
 
 NS_ASSUME_NONNULL_END

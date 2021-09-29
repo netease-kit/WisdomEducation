@@ -42,6 +42,7 @@ typedef NS_ENUM(NSInteger, NEEduErrorType) {
     NEEduErrorTypeInvalidSeatConfig = 1014,
     NEEduErrorTypeUserNotFound = 1015,
     NEEduErrorTypeUserIsAlreadyInRoom = 1016,
+    NEEduErrorTypeRoomConfigConflict = 1017,
     NEEduErrorTypeCreateIMUserFailed = 700,
     NEEduErrorTypeIMUserNotExist = 701,
     NEEduErrorTypeBadImService = 702,

@@ -256,7 +256,7 @@ static NSString *memberCellID = @"memberCellID";
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     NEEduMemberCell *cell = [tableView dequeueReusableCellWithIdentifier:memberCellID forIndexPath:indexPath];
     NEEduMember *member = self.currentArray[indexPath.row];
-    member.isInAllList = [self.currentButton isEqual:self.onlineButton]?NO:YES;
+    member.isInAllList = [self.currentButton isEqual:self.onlineButton] ? NO : YES;
     cell.member = member;
     cell.delegate = self;
     return cell;

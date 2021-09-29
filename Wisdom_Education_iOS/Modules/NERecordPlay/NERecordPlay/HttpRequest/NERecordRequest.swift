@@ -8,14 +8,7 @@
 import Foundation
 import Alamofire
 
-//enum RequestError: Error {
-//    case networkError(Int)
-//    case logicError(Int)
-//    case decodeError
-//}
-
 @objc public class NERecordRequest: NSObject {
-//    public static let request = NERecordRequest()
     var appKey : String = "5fa5726d7fde462d8198bf35476c4047"
     var authorization : String = "OTI1MGVhOWVjNTdhNDk5ZjhjZjJhMWZjODZkYTg5Nzg6Mzk0YjU2NTBlMDUxNGRlNWJjNWE5NzA2ZDk0NTYyMDk="
     var userUuid : String?

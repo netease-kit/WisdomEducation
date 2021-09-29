@@ -16,12 +16,15 @@ typedef NS_ENUM(NSInteger, NEEduSceneType) {
     NEEduSceneType1V1 = 0,
     NEEduSceneTypeSmall = 1,
     NEEduSceneTypeBig = 2,
+    NEEduSceneTypeLive = 3,
 };
 
 @interface NEEduRoom : NSObject
 
 /// 班级名称
 @property (nonatomic, strong) NSString *roomName;
+/// 课堂昵称
+@property (nonatomic, strong) NSString *nickName;
 /// 班级Id
 @property (nonatomic, strong) NSString *roomUuid;
 /// 班级类型

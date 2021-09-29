@@ -10,6 +10,8 @@
 #import "IMLoginVC.h"
 
 @interface NESettingTableViewController ()
+@property (weak, nonatomic) IBOutlet UISwitch *useChatroom;
+@property (weak, nonatomic) IBOutlet UISwitch *useFastLive;
 
 @end
 
@@ -17,16 +19,27 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    [self.navigationController setNavigationBarHidden:NO];
+    
     self.title = @"设置";
     self.tableView.tableFooterView = [UIView new];
+    BOOL useChatroom = [[[NSUserDefaults standardUserDefaults] objectForKey:showChatroomKey] boolValue];
+    BOOL useFastLive = [[[NSUserDefaults standardUserDefaults] objectForKey:useFastLiveKey] boolValue];
+    [self.useChatroom setOn:useChatroom];
+    [self.useFastLive setOn:useFastLive];
 }
+- (void)viewWillAppear:(BOOL)animated {
+    [self.navigationController setNavigationBarHidden:NO];
+}
+
 #pragma mark - Event
 
 - (IBAction)switchEvent:(UISwitch *)sender {
     [[NSUserDefaults standardUserDefaults] setObject:@(sender.isOn) forKey:showChatroomKey];
 }
 
+- (IBAction)userFastLive:(UISwitch *)sender {
+    [[NSUserDefaults standardUserDefaults] setObject:@(sender.isOn) forKey:useFastLiveKey];
+}
 #pragma mark - Table view data source
 
 //- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
@@ -38,8 +51,10 @@
 //}
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    IMLoginVC *vc = [[IMLoginVC alloc] init];
-    [self.navigationController pushViewController:vc animated:YES];
+    if (indexPath.row == 1) {
+        IMLoginVC *vc = [[IMLoginVC alloc] init];
+        [self.navigationController pushViewController:vc animated:YES];
+    }
 }
 
 
