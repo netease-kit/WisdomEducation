@@ -26,7 +26,7 @@
 | appKey    | String    | 应用唯一标识|
 | roomUuid    | String    | 房间唯一标识|
 | type    | String    | R：房间事件，RM：房间自定义消息|
-| cmd    | Integer    | [命令号](命令号)|
+| cmd    | Integer    | [命令号](#命令号)|
 | version    | Integer    |目前1|
 | data.operatorMember.role    | String    |操作者角色 可选|
 | data.operatorMember.userUuid    | String    |操作者账号 可选|
