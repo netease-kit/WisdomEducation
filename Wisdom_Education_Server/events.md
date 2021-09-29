@@ -67,8 +67,6 @@
         "rtcUid": 2137
       }
     ],
-    "appKey": "ed73b42de1b66244337a4cd54a9534cc",
-    "roomUuid": "163551",
     "operatorMember": {
       "role": "host",
       "userName": "tea",
