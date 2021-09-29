@@ -81,89 +81,23 @@
 ```
 
 ## 命令号
+|事件cmdId|含义|触发场景|
+|----|----|----|
+|1|课堂状态变更通知|课堂全体静音;开始上课|
+|2|课堂状态删除通知|取消全体静音|
+|10|设置房间属性通知|暂无|
+|11|删除房间属性通知|暂无|
+|20|成员属性修改通知|成员举手, 手放下, 举手同意等.|
+|21|成员属性删除通知|删除举手属性.|
+|30|成员加入通知|成员加入|
+|31|成员离开通知|成员离开|
+|40|成员流变更通知|成员打开音频流, 视频流, 共享屏幕.|
+|41|成员流删除通知|成员删除流.|
+|50|房间创建通知, 仅存在应用通知抄送|房间创建|
+|51|房间删除通知|房间关闭后, 主动关闭或全部成员退出|
+|99|自定义消息通知|对成员发送自定义消息后|
 
-```java
-public enum CmdId {
-
-    /**
-     * 房间状态集变更通知
-     */
-    RoomStatesChange(1),
-
-    /**
-     * 房间状态集属性删除通知
-     */
-    RoomStatesDelete(2),
-
-    /**
-     * 房间属性集属性变更通知
-     */
-    RoomPropertiesChange(10),
-
-    /**
-     * 房间属性集属性删除通知
-     */
-    RoomPropertiesDelete(11),
-
-
-    /**
-     * 房间成员属性集变更通知
-     */
-    RoomMemberPropertiesChange(20),
-    /**
-     * 房间成员属性集删除通知
-     */
-    RoomMemberPropertiesDelete(21),
-
-    /**
-     * 用户进入通知
-     */
-    RoomMemberJoin(30),
-    /**
-     * 用户离开通知
-     */
-    RoomMemberLeave(31),
-
-
-    /**
-     * 成员流状态变更通知
-     */
-    StreamChange(40),
-    /**
-     * 成员流状态删除通知
-     */
-    StreamRemove(41),
-
-
-    /**
-     * 房间生成
-     */
-    RoomConfig(50),
-    /**
-     * 房间释放
-     */
-    RoomDelete(51),
-
-    /**
-     * 媒体房间创建
-     */
-    RoomCreate(60),
-
-    /**
-     * 媒体房间关闭
-     */
-    RoomClose(61),
-
-    Message(99),
-
-    ;
-
-    private final Integer cmd;
-
-}
-```
-
-### 房间状态变更: RoomStatesChange(1):
+### 房间状态变更: CmdId=1:
 | 名称|    类型|    描述|
 |----|----|----|
 | data.states.xxx | JsonObject| 被修改的属性|
@@ -192,7 +126,7 @@ public enum CmdId {
 }
 ```
 
-### 房间状态删除: RoomStatesDelete(2):
+### 房间状态删除: cmdId=2:
 | 名称|    类型|    描述|
 |----|----|----|
 | data.key | String| 被删除的属性key|
@@ -217,7 +151,7 @@ public enum CmdId {
 
 ```
 
-### 房间属性变更: RoomPropertiesChange(10):
+### 房间属性变更: cmdId=10:
 
 | 名称|    类型|    描述|
 |----|----|----|
@@ -248,7 +182,7 @@ public enum CmdId {
 
 ```
 
-### 房间属性删除: RoomPropertiesDelete(11):
+### 房间属性删除: cmdId=11:
 
 | 名称|    类型|    描述|
 |----|----|----|
@@ -273,7 +207,7 @@ public enum CmdId {
 }
 ```
 
-### 房间成员属性变更: RoomMemberPropertiesChange(20):
+### 房间成员属性变更: cmdId=20:
 
 | 名称|    类型|    描述|
 |----|----|----|
@@ -311,7 +245,7 @@ public enum CmdId {
 
 ```
 
-### 房间成员属性删除: RoomMemberPropertiesDelete(21):
+### 房间成员属性删除: cmdId=21:
 
 | 名称|    类型|    描述|
 |----|----|----|
@@ -344,7 +278,7 @@ public enum CmdId {
 
 ```
 
-### 用户加入: RoomMemberJoin(30):
+### 用户加入: cmdId=30:
 
 | 名称|    类型|    描述|
 |----|----|----|
@@ -402,7 +336,7 @@ public enum CmdId {
 
 ```
 
-### 用户离开: UserLeave(31):
+### 用户离开: cmdId=31:
 
 | 名称|    类型|    描述|
 |----|----|----|
@@ -459,7 +393,7 @@ public enum CmdId {
 
 ```
 
-### 房间成员流变更: StreamChange(40):
+### 房间成员流变更: cmdId=40:
 
 | 名称|    类型|    描述|
 |----|----|----|
@@ -490,7 +424,7 @@ public enum CmdId {
 
 ```
 
-### 房间成员流移除: StreamRemove(41):
+### 房间成员流移除: cmdId=41:
 
 | 名称|    类型|    描述|
 |----|----|----|
@@ -522,7 +456,7 @@ public enum CmdId {
 }
 ```
 
-### 消息: Message(99):
+### 消息: cmdId=99:
 
 ```json
 {
