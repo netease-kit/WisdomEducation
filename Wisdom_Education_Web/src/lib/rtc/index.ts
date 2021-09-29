@@ -3,7 +3,7 @@
 * Use of this source code is governed by a MIT license that can be found in the LICENSE file
 */
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-import * as WebRTC2 from './sdk/NIM_Web_WebRTC2_v4.2.1.js';
+import * as WebRTC2 from './sdk/NIM_Web_NERTC_v4.5.500.js';
 
 import { EnhancedEventEmitter } from '../event';
 import logger from '../logger';
@@ -11,7 +11,7 @@ import { ShareListItem } from '@/config'
 
 
 // 测试要求加版本信息提示
-logger.log('当前g2版本：4.2.1');
+logger.log('当前g2版本：4.5.500');
 export class NeWebrtc extends EnhancedEventEmitter {
   private readonly _appkey: string|undefined;
   private _client: any;
@@ -50,6 +50,10 @@ export class NeWebrtc extends EnhancedEventEmitter {
 
   get client(): any {
     return this._client;
+  }
+
+  get localStream(): any {
+    return this._localStream;
   }
 
   private initEvents(): void{
@@ -360,6 +364,42 @@ export class NeWebrtc extends EnhancedEventEmitter {
     }
   }
 
+  /**
+   * @description: 白板流切换
+   * @param {string} type
+   * @param {any} stream
+   * @return {*}
+   */
+  async switchScreenWithCanvas(type: string, track?: any): Promise<void> {
+    if (!this._localStream) {
+      throw new Error("this._localStream is not defined");
+    }
+    logger.log('白板辅流设置', type, track);
+    switch (type) {
+      case 'open':
+        await this._localStream.open({
+          type: 'screen',
+          screenVideoSource: track
+        })
+        break;
+      case 'changeToCanvas':
+        await this._localStream.switchScreenStream({
+          screenVideoSource: track
+        })
+        break;
+      case 'close':
+        await this._localStream.close({
+          type: 'screen',
+        })
+        break;
+      case 'changeToScreen':
+        await this._localStream.switchScreenStream({ screenAudio: false })
+        break;
+      default:
+        break;
+    }
+  }
+
   async setVideoProfile(resolution: number, frameRate: number): Promise<void> {
     try {
       await this.close('video');
@@ -515,7 +555,7 @@ export class NeWebrtc extends EnhancedEventEmitter {
       return
     } catch(e: any) {
       logger.log('selectSpeakers() failed:', e)
-      // throw new Error(e);
+      throw new Error(e);
     }
   }
 

@@ -7,6 +7,7 @@ export enum RoomTypes {
   oneToOne = 5,
   smallClass = 6,
   bigClass = 7,
+  bigClasLive = 20,
 }
 
 export enum RoleTypes {
@@ -90,4 +91,12 @@ export enum SceneTypes {
   ONE_TO_ONE = "EDU.1V1",
   SMALL = "EDU.SMALL",
   BIG = "EDU.BIG",
+  BiGLIVE = "EDU.LIVE_SIMPLE"
+}
+
+export const RoomWithSceneTypes  = {
+  [RoomTypes.oneToOne]: SceneTypes.ONE_TO_ONE,
+  [RoomTypes.smallClass]: SceneTypes.SMALL,
+  [RoomTypes.bigClass]: SceneTypes.BIG,
+  [RoomTypes.bigClasLive]: SceneTypes.BiGLIVE,
 }

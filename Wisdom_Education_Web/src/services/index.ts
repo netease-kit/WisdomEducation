@@ -13,12 +13,13 @@ import { Authorization } from "@/config";
 import { AppStore } from "@/store";
 import { defaultStore } from "@/index";
 import { isElectron } from "@/config";
+import sessionStorage from "@/utils/sessionStorage";
 
 export const baseUrl = process.env.REACT_APP_SDK_DOMAIN;
 
-const deviceId = localStorage.getItem("edu-deviceId") || uuid();
+const deviceId = sessionStorage.getItem("edu-deviceId") || uuid();
 
-localStorage.setItem("edu-deviceId", deviceId);
+sessionStorage.setItem("edu-deviceId", deviceId);
 
 const defaultHeaders = {
   "Content-Type": "application/json",
@@ -72,6 +73,9 @@ req.interceptors.response.use(
           break;
         case 1016:
           message.error("用户已在房间中");
+          break;
+        case 1017:
+          message.error("创建房间时房间已经存在且房间类型冲突");
           break;
         default:
           break;

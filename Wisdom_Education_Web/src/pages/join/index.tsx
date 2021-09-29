@@ -2,7 +2,7 @@
  * @Copyright (c) 2021 NetEase, Inc.  All rights reserved.
  * Use of this source code is governed by a MIT license that can be found in the LICENSE file
  */
-import React, { FC, useState, useEffect, useMemo } from "react";
+import React, { FC, useState, useEffect, useMemo, Fragment } from "react";
 import { useHistory } from "react-router-dom";
 import { Input, Select, Button, Radio, Form, Modal } from "antd";
 import logger from "@/lib/logger";
@@ -19,20 +19,25 @@ import JoinSetting from '@/component/setting';
 
 const courseOptions = [
   {
-    label: "一对一",
+    label: "一对一教学",
     value: RoomTypes.oneToOne,
     path: "/classroom/one-to-one",
   },
   {
-    label: "小班课",
+    label: "多人小班课",
     value: RoomTypes.smallClass,
     path: "/classroom/small-class",
   },
   {
-    label: "大班课",
+    label: "互动大班课",
     value: RoomTypes.bigClass,
     path: "/classroom/big-class",
   },
+  {
+    label: "直播大班课",
+    value: RoomTypes.bigClasLive,
+    path: '/classroom/big-class-live',
+  }
 ];
 const roleOptions = [
   {
@@ -55,6 +60,7 @@ const Join: FC = observer(() => {
   const [roomNum, setRoomNum] = useState<undefined | string>(undefined);
   const recordUrl = useMemo(() => localStorage.getItem('record-url'), []);
   const [showSetting, setShowSetting] = useState(false);
+  const [sceneType, setSceneType] = useState<RoomTypes>()
 
   const handleFormChange = (changedValues, allValues) => {
     const formValue = Object.keys(allValues).some(
@@ -74,16 +80,25 @@ const Join: FC = observer(() => {
       }
     }
     setDisabled(formValue || verifyNum);
+    setSceneType(allValues['sceneType'])
   };
 
   const onFinish = (values) => {
     logger.log("values", values);
-    const roomUuid = isNaN(+values.roomUuid)
-      ? values.roomUuid.slice(0, -1)
-      : values.roomUuid;
+
+    /**
+     * http://jira.netease.com/browse/YYTX-3445
+     * roomUuid应该为纯数字
+     */
+    const roomUuid = (values.roomUuid || '').match(/\d+/g).join('')
+    if (roomUuid.length === 0) {
+      return
+    }
+
     const param = {
       ...values,
-      roomUuid: `${roomUuid}${values.sceneType}`,
+      roomUuid,
+      // roomUuid: `${roomUuid}${values.sceneType}`,
       roomName: `${values.userName}的课堂`,
       role:
         values.sceneType === RoomTypes.bigClass &&
@@ -100,6 +115,13 @@ const Join: FC = observer(() => {
         return true;
       }
     });
+    if (param.sceneType === RoomTypes.bigClasLive) {
+      if (param.role === RoleTypes.host) {
+        path += '-tea'
+      } else {
+        path += '-stu'
+      }
+    }
     history.push({
       pathname: path,
     });
@@ -111,6 +133,11 @@ const Join: FC = observer(() => {
   };
 
   useEffect(() => {
+    /**
+     * 进入join页面后，先清空之前的房间状态
+     * http://jira.netease.com/browse/YYTX-3439
+     */
+    roomStore.leave()
     GlobalStorage.clear();
     roomStore.setClassDuration(0);
   }, []);
@@ -216,7 +243,13 @@ const Join: FC = observer(() => {
                 />
               </Form.Item>
               <Form.Item name="role">
-                <Radio.Group className="joinForm-radio" options={roleOptions} />
+                <Radio.Group className="joinForm-radio">
+                  {roleOptions.map((item) => (
+                    RoomTypes.bigClasLive === sceneType && item.value === RoleTypes.host && isElectron ?
+                      <Fragment key={item.value}></Fragment> :
+                      <Radio key={item.value} value={item.value}>{item.label}</Radio>
+                  ))}
+                </Radio.Group>
               </Form.Item>
               <Form.Item>
                 <Button

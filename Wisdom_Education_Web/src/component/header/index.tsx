@@ -65,7 +65,7 @@ const Header: React.FC<HeaderShowProps> = observer((props) => {
     <div className="head-infoCard">
       <div className="info-num">
         <span className="title">课堂号</span>
-        {roomUuid?.length > 0 && <span className="desc">{roomUuid.substr(0, roomUuid.length - 1)}</span>}
+        {roomUuid?.length > 0 && <span className="desc">{roomUuid}</span>}
         <img src={copyImg} alt="" className="copyImg" onClick={handleCopyClick}/>
       </div>
       <div className="info-name">
@@ -78,8 +78,8 @@ const Header: React.FC<HeaderShowProps> = observer((props) => {
       </div>
     </div>
 
-  const downlinkNetworkQuality = (networkQuality.find(item => item.uid === memberFullList[0]?.rtcUid) as NetStatusItem)?.downlinkNetworkQuality;
-  const uplinkNetworkQuality = (networkQuality.find(item => item.uid === memberFullList[0]?.rtcUid) as NetStatusItem)?.uplinkNetworkQuality;
+  const downlinkNetworkQuality = (networkQuality.find(item => item.uid === memberFullList[0]?.rtcUid) as NetStatusItem)?.downlinkNetworkQuality || 3;
+  const uplinkNetworkQuality = (networkQuality.find(item => item.uid === memberFullList[0]?.rtcUid) as NetStatusItem)?.uplinkNetworkQuality || 3;
   const maxNetworkQuality = Math.max(uplinkNetworkQuality, downlinkNetworkQuality)
 
   return (

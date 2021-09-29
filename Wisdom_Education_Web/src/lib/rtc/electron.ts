@@ -112,6 +112,7 @@ export class NeElertc extends EnhancedEventEmitter {
   private remoteStatsOpen: RemoteStatsOpen = {};
   private _screen: any;
   private _windowsList: ShareListItem[] = [];
+  private _localStream = null;
 
   constructor(appKey: string) {
     super();
@@ -159,6 +160,10 @@ export class NeElertc extends EnhancedEventEmitter {
 
   get windowsList(): ShareListItem[] {
     return this._windowsList;
+  }
+
+  get localStream(): any {
+    return this._localStream;
   }
 
   public initEvent(): void {
@@ -353,6 +358,10 @@ export class NeElertc extends EnhancedEventEmitter {
   }
 
   public async initLocalStream(): Promise<void> {
+    //TODO
+  }
+
+  public switchScreenWithCanvas(): void {
     //TODO
   }
 

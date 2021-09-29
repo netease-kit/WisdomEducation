@@ -5,54 +5,67 @@
 
 import { Md5 } from 'ts-md5';
 import { createHashHistory } from 'history';
+import sessionStorage from './sessionStorage';
 
 
 export const history = createHashHistory();
 
 export const uuid = (): string => {
-  const key = 'wyyx__education__uuid';
-  let res = localStorage.getItem(key);
-  if (!res) {
-    res = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-      const r = (Math.random() * 16) | 0;
-      const v = c === 'x' ? r : (r & 0x3) | 0x8;
-      return v.toString(16);
-    });
-    localStorage.setItem(key, res);
-  }
-  return res;
+  const res = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+    const r = (Math.random() * 16) | 0;
+    const v = c === 'x' ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+  return res
 };
 
 export const encode = (s: string): Int32Array | string => {
   return Md5.hashStr(s + '@163');
 };
+
+/**
+ * 数据均保存到sessionStorage.wisState, 防止调用clear时，将其他地方sessionStorage的数据也删除
+ */
 export class CustomStorage {
 
   private storage: Storage;
 
 
   constructor() {
-    this.storage = window.sessionStorage;
+    this.storage = sessionStorage;
   }
 
   read(key: string): any {
-    try {
-      const json = JSON.parse(this.storage.getItem(key) as string);
-      return json
-    } catch(_) {
-      return this.storage.getItem(key);
-    }
+    const appStateObj = this._getAppState()
+    return appStateObj[key] || null
   }
 
   save(key: string, val: any): void {
-    this.storage.setItem(key, JSON.stringify(val));
+    const appStateObj = this._getAppState()
+    appStateObj[key] = val
+
+    this.storage.setItem('wisState', JSON.stringify(appStateObj));
   }
 
   remove(key: string): void {
-    this.storage.removeItem(key);
+    const appStateObj = this._getAppState()
+    delete appStateObj[key]
+    this.storage.setItem('wisState', JSON.stringify(appStateObj))
   }
+
   clear(): void {
-    this.storage.clear();
+    this.storage.setItem('wisState', JSON.stringify({}))
+  }
+
+  _getAppState(): any {
+    const appStateStr = this.storage.getItem('wisState') || ''
+    let appStateObj = {}
+    try {
+      appStateObj = JSON.parse(appStateStr)
+    } catch(err) {
+      appStateObj = {}
+    }
+    return appStateObj
   }
 }
 

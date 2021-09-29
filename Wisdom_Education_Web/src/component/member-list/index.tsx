@@ -2,7 +2,7 @@
  * @Copyright (c) 2021 NetEase, Inc.  All rights reserved.
  * Use of this source code is governed by a MIT license that can be found in the LICENSE file
  */
-import React, { useState, useCallback, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useCallback, useEffect, useMemo, useRef, Fragment } from 'react';
 import { observer } from 'mobx-react';
 import { Button, Tooltip, Modal, Checkbox, Tabs, Input, message } from 'antd';
 import './index.less';
@@ -10,7 +10,7 @@ import logger from '@/lib/logger';
 import { HandsUpTypes, RoleTypes, RoomTypes, UserComponentData } from '@/config';
 import { useRoomStore, useUIStore } from '@/hooks/store';
 import { Message } from '../chatroom/chatroomHelper';
-import ChatRoom from '@/component/chatroom'
+import ChatRoom from '@/component/chatroom';
 
 const MemberList = observer(() => {
   const [handSpeakVisible, setHandSpeakVisible] = useState(false);
@@ -32,7 +32,7 @@ const MemberList = observer(() => {
 
   const roomStore = useRoomStore();
   const uiStore = useUIStore();
-  const { roomInfo, studentData, nim, localUserInfo, snapRoomInfo } = roomStore
+  const { roomInfo, studentData, nim, localUserInfo, snapRoomInfo, bigLivememberFullList } = roomStore
   const userInfo = roomStore?.localData || {};
 
   const isBySelf = useCallback((userUuid) => userUuid === roomStore?.localData?.userUuid, [roomStore?.localData])
@@ -207,17 +207,17 @@ const MemberList = observer(() => {
 
   const handleSearchMember = useCallback(
     () => {
+      const arr = Number(localUserInfo?.sceneType) === RoomTypes.bigClasLive ? bigLivememberFullList : studentData;
       if (!searchValue) {
-        setAllMember(studentData)
-        logger.log('搜索信息', searchValue, studentData)
-
+        setAllMember(arr)
+        logger.log('搜索信息', searchValue, arr, Number(localUserInfo?.sceneType))
       } else {
-        const newArray = studentData.filter((item) => item?.userName.includes(searchValue));
+        const newArray = arr.filter((item) => item?.userName.includes(searchValue));
         setAllMember(newArray)
       }
-      logger.log('搜索信息', searchValue, studentData)
+      logger.log('搜索信息', searchValue, arr, Number(localUserInfo?.sceneType))
     },
-    [searchValue, studentData],
+    [searchValue, studentData, localUserInfo, bigLivememberFullList],
   )
 
   const handleMsg = useCallback(() => {
@@ -247,7 +247,7 @@ const MemberList = observer(() => {
     const newArray = studentData.filter((item) => item?.avHandsUp === HandsUpTypes.teacherAgree);
     setOnlineMember(newArray);
     handleSearchMember();
-  }, [studentData]);
+  }, [studentData, bigLivememberFullList]);
 
   useEffect(() => {
     // 临时的一个方案，不然modal内的聊天室无法先获取消息
@@ -262,6 +262,12 @@ const MemberList = observer(() => {
     }
   }, [nim?.nim && snapRoomInfo?.properties?.chatRoom?.chatRoomId]);
 
+  useEffect(() => {
+    if (RoomTypes.bigClasLive === Number(roomInfo.sceneType)) {
+      setInputVisible(true)
+    }
+  }, [roomInfo])
+
   const memberContent = () => {
     return (
       <>
@@ -273,7 +279,7 @@ const MemberList = observer(() => {
         }
         <ul>
           {
-            RoomTypes.bigClass !== Number(roomInfo.sceneType) &&
+            ![RoomTypes.bigClass, RoomTypes.bigClasLive].includes(Number(roomInfo.sceneType)) &&
             studentData.map((item) => (
               <li key={item.rtcUid}>
                 <span>{item.userName}</span>
@@ -310,8 +316,8 @@ const MemberList = observer(() => {
           {
             (RoomTypes.bigClass === Number(roomInfo.sceneType) && !inputVisible) &&
             onlineMember.map((item) => (
-              <>
-                <li key={item.rtcUid}>
+              <Fragment key={item.rtcUid}>
+                <li>
                   <span>{item.userName}</span>
                   <div className="buttons">
                     {item.wbDrawEnable && <img src={require('@/assets/imgs/whiteBoard.png').default} alt="whiteBoard" />}
@@ -340,11 +346,11 @@ const MemberList = observer(() => {
                     }
                   </div>
                 </li>
-              </>
+              </Fragment>
             ))
           }
           {
-            (RoomTypes.bigClass === Number(roomInfo.sceneType) && inputVisible) &&
+            ([RoomTypes.bigClass, RoomTypes.bigClasLive].includes(Number(roomInfo.sceneType)) && inputVisible) &&
             allMember.map((item) => (
               // <li key={item.rtcUid}>
               //   <span>{item.userName}</span>
@@ -375,11 +381,11 @@ const MemberList = observer(() => {
               //     }
               //   </div>
               // </li>
-              <>
-                <li className="all-member" key={item.rtcUid}>
+              <Fragment key={item.userUuid}>
+                <li className="all-member">
                   <span>{item.userName}</span>
                 </li>
-              </>
+              </Fragment>
             ))
           }
         </ul>
@@ -389,9 +395,9 @@ const MemberList = observer(() => {
 
   const memberTabs = () => (
     <Tabs defaultActiveKey="online" onChange={handleTabsChange}>
-      <Tabs.TabPane tab={`连线成员 (${onlineMemberLength})`} key="online">
+      {[RoomTypes.bigClass].includes(Number(roomInfo.sceneType)) && <Tabs.TabPane tab={`连线成员 (${onlineMemberLength})`} key="online">
         {/* {memberTabs} */}
-      </Tabs.TabPane>
+      </Tabs.TabPane>}
       <Tabs.TabPane tab={`全部成员 (${studentData?.length})`} key="all">
         {/* {memberTabs} */}
       </Tabs.TabPane>
@@ -471,7 +477,7 @@ const MemberList = observer(() => {
         </div>
       </div>}
       <Modal
-        title={Number(roomInfo.sceneType) === RoomTypes.bigClass ? memberTabs() : `课堂成员 (${studentData?.length})`}
+        title={Number(roomInfo.sceneType) === RoomTypes.bigClass ? memberTabs() : `课堂成员 (${studentData?.length || bigLivememberFullList?.length})`}
         wrapClassName="memberModal"
         visible={handleMemberVisible}
         onCancel={handleMemberCancel}
@@ -479,7 +485,7 @@ const MemberList = observer(() => {
         footer={
           userInfo.role === RoleTypes.host && <div className="footers">
             {/* <Button type="primary" onClick={handleMuteAll}>全体静音</Button> */}
-            <Button
+            {userInfo.role === RoleTypes.host && RoomTypes.bigClasLive !== Number(roomStore?.roomInfo?.sceneType) && <><Button
               type="text"
               className={`member-mute-all ${muteAllBtnHover ? 'active-mute' : ''}`}
               icon={muteAllBtnHover ?
@@ -492,7 +498,7 @@ const MemberList = observer(() => {
             >全体静音</Button>
             <Tooltip title={content} overlayClassName="mute-tooltip" placement="topLeft">
               <img src={require('@/assets/imgs/info5.png').default} alt="info" className="infoImg" />
-            </Tooltip>
+            </Tooltip></>}
             <Checkbox onChange={onBanChange}>聊天室全体禁言</Checkbox>
           </div>
         }
@@ -558,9 +564,13 @@ const MemberList = observer(() => {
             chatroomId={snapRoomInfo?.properties?.chatRoom?.chatRoomId.toString()}
             token={localUserInfo?.imToken}
             canSendMsg={userInfo.role === RoleTypes.host ? true : !(snapRoomInfo?.states?.muteChat?.value === 1)}
-            receiveMessage={() => {
-              console.log('messageCount', messageCount);
-              setMessageCount(messageCount + 1)
+            receiveMessage={(msgs) => {
+              console.log('messageCount', messageCount, msgs);
+              for (const item of msgs) {
+                if (['text', 'image', 'file'].includes(item.type)) {
+                  setMessageCount(messageCount + 1)
+                }
+              }
             }}
           />
         }

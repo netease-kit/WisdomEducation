@@ -50,7 +50,7 @@ const RoomControl: React.FC = observer(({ children }) => {
         const userInfo = GlobalStorage.read('user');
         switch (Number(err?.message)) {
           case 1002:
-            if (userInfo.role === RoleTypes.host) {
+            if (userInfo && userInfo.role === RoleTypes.host) {
               uiStore.showToast('老师数量超过限制');
             } else {
               uiStore.showToast('学生数量超过限制');
@@ -62,7 +62,7 @@ const RoomControl: React.FC = observer(({ children }) => {
           case 401:
             break;
           default:
-            uiStore.showToast('加入房间失败');
+            uiStore.showToast(err?.message && '加入房间失败');
             break;
         }
         setTimeout(() => {

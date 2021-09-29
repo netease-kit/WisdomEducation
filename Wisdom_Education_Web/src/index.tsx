@@ -12,6 +12,8 @@ import Join from '@/pages/join';
 import OneToOne from '@/pages/classRoom/one-to-one';
 import SmallClass from './pages/classRoom/small-class';
 import BigClass from '@/pages/classRoom/big-class';
+import BigClassLiveTea from '@/pages/classRoom/big-class-live-tea';
+import BigClassLiveStu from '@/pages/classRoom/big-class-live-stu';
 import EndCourse from '@/pages/endCourse';
 import Record from '@/pages/record';
 import DeviceCheck from '@/pages/deviceCheck';
@@ -53,6 +55,16 @@ ReactDOM.render(
         <Route exact path="/classroom/big-class">
           <RoomPage>
             <BigClass />
+          </RoomPage>
+        </Route>
+        <Route exact path="/classroom/big-class-live-tea">
+          <RoomPage>
+            <BigClassLiveTea />
+          </RoomPage>
+        </Route>
+        <Route exact path="/classroom/big-class-live-stu">
+          <RoomPage>
+            <BigClassLiveStu />
           </RoomPage>
         </Route>
         <Route exact path="/record">

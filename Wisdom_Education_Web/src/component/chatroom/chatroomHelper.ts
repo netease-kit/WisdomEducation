@@ -62,6 +62,23 @@ export type MessageType =
   | 'tip'
   | 'notification';
 
+export type AttachType =
+  'memberEnter' |
+  'memberExit'  |
+  'addManager'  |
+  'removeManager' |
+  'addCommon' |
+  'removeCommon' |
+  'blackMember' |
+  'unblackMember' |
+  'gagMember' |
+  'kickMember' |
+  'updateChatroom' |
+  'updateMemberInfo' |
+  'addTempMute' |
+  'removeTempMute' |
+  'muteRoom' |
+  'unmuteRoom';
 export interface Message {
   chatroomId: string;
   idClient: string;
@@ -77,7 +94,16 @@ export interface Message {
   geo: any;
   tip: any;
   content: string;
-  attach: string;
+  attach: {
+    from: string;
+    fromNick: string;
+    gaged: boolean
+    tempMuteDuration: number;
+    tempMuted: number;
+    to: string[];
+    toNick: string[];
+    type: AttachType;
+  };
   custom: string;
   resend: boolean;
   time: number;
@@ -123,25 +149,38 @@ class ChatroomHelper extends EventEmit {
             this.isConnect = true;
             this.account = account;
           },
-          ondisconnect: () => {
-            console.log('聊天室链接断开');
-            this.resetState();
+          ondisconnect: (err) => {
+            console.log('聊天室断开链接，错误原因', err)
+            if (err && err.code === 'kicked') {
+              if (err.reason === 'samePlatformKick' || err.reason === 'managerKick') {
+                this.emit('chat-onkicked', err.reason)
+              }
+            } else {
+              this.resetState();
+            }
           },
           onerror: (err: any) => {
             console.log('聊天室发生错误: ', err);
             this.resetState();
           },
           onmsgs: (msgs: Message[]) => {
-            console.log('聊天室收到消息');
+            console.log('聊天室收到消息', msgs);
             this.parseMsgs(msgs);
+            this.emit('chat-onmsgs', msgs);
           },
         });
         this.onMessage = onMessage;
+        // @ts-ignore
+        window.chatRoom = this.chatroom
       },
     });
   }
 
-  public static getInstance(opt: InitOptions): ChatroomHelper {
+  get chatRoom(): any {
+    return this.chatroom;
+  }
+
+  static getInstance(opt: InitOptions): ChatroomHelper {
     if (!this.instance) {
       this.instance = new ChatroomHelper(opt);
     }
@@ -207,7 +246,8 @@ class ChatroomHelper extends EventEmit {
   }
 
   private parseMsgs(msgs: Message[]) {
-    const res: Message[] = msgs.map((item) => ({
+    const arr = msgs.filter((item) => ['text', 'image', 'file'].includes(item.type))
+    const res: Message[] = arr.map((item) => ({
       ...item,
       isMe: item.from === this.account,
     }));

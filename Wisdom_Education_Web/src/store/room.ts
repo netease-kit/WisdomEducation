@@ -24,6 +24,7 @@ import {
   deleteMemberProperties,
   deleteMemberStream,
   anonymousLogin,
+  SnapShotResponseMembers,
 } from "@/services/api";
 import { AppStore } from "./index";
 import { NeWebrtc } from "@/lib/rtc";
@@ -40,6 +41,7 @@ import {
   HandsUpTypes,
   isElectron,
   ShareListItem,
+  RoomWithSceneTypes
 } from "@/config";
 
 interface JoinOptions {
@@ -79,8 +81,16 @@ export interface SnapRoomInfo {
     whiteboard: {
       channelName: number | string;
     };
+    live?: {
+      cid?: string;
+      pullHlsUrl?: string;
+      pullHttpUrl?: string;
+      pullRtmpUrl?: string;
+      pullRtsUrl?: string;
+      pushUrl?:string;
+    };
   };
-  states?: {
+  states: {
     step?: {
       value?: number;
     };
@@ -135,6 +145,9 @@ export class RoomStore extends EnhancedEventEmitter {
   memberFullList: Array<any> = [];
 
   @observable
+  _bigLivememberFullList: Array<any> = [];
+
+  @observable
   _joined = false;
 
   @observable
@@ -154,6 +167,12 @@ export class RoomStore extends EnhancedEventEmitter {
 
   @observable
   roomState = "课堂未开始";
+
+  @observable
+  isLiveStuJoin = false;
+
+  @observable
+  isLiveTeaJoin = false;
 
   @observable
   _snapRoomInfo: SnapRoomInfo = {
@@ -184,6 +203,9 @@ export class RoomStore extends EnhancedEventEmitter {
 
   @observable
   beforeOnlineType = true;
+
+  @observable
+  _chatRoom: any;
 
   @observable
   networkQuality: Array<any> = [];
@@ -248,6 +270,11 @@ export class RoomStore extends EnhancedEventEmitter {
   @computed
   get tempStreams(): TempStream {
     return this._tempStreams;
+  }
+
+  @computed
+  get bigLivememberFullList(): Array<any> {
+    return this._bigLivememberFullList;
   }
 
   @computed
@@ -456,24 +483,37 @@ export class RoomStore extends EnhancedEventEmitter {
     logger.log("会议信息", this.appStore.roomInfo);
     const { roomUuid, roomName, sceneType } = this.appStore.roomInfo;
     const { userUuid, userName, role, imKey, imToken } = this.localUserInfo;
+    this.isLiveStuJoin = Number(sceneType) === RoomTypes.bigClasLive && role !== RoleTypes.host
+    this.isLiveTeaJoin = Number(sceneType) === RoomTypes.bigClasLive && role === RoleTypes.host
     try {
-      const joinSettingInfo = localStorage.getItem('join-room-setting');
-      const resource = joinSettingInfo ? JSON.parse(joinSettingInfo) : {};
-      await createRoom(roomUuid, `${userName}的课堂`, Number(sceneType), resource).catch(
-        (data) => {
-          if (data?.code !== 409) {
-            logger.error("创建异常", data);
-            throw Error(data?.msg || "创建异常");
+      const joinSettingInfo = JSON.parse(localStorage.getItem('room-setting') || '{}');
+      const { chatroom } = joinSettingInfo;
+      const resource = { chatroom, live: Number(sceneType) === RoomTypes.bigClasLive };
+      if (!this.isLiveStuJoin) {
+        await createRoom(roomUuid, `${userName}的课堂`, Number(sceneType), resource).catch(
+          (data) => {
+            if (data?.code !== 409) {
+              logger.error("创建异常", data);
+              throw Error(data?.msg || "创建异常");
+            }
           }
-        }
-      );
-      await getRoomInfo(roomUuid);
-      this._entryData = await entryRoom({
-        userName,
-        role,
-        roomUuid,
-        sceneType: Number(sceneType),
-      });
+        );
+      }
+      const roomConfig = await getRoomInfo(roomUuid);
+      if (roomConfig.sceneType !== RoomWithSceneTypes[sceneType]) {
+        runInAction(() => {
+          this._joined = false;
+        });
+        throw Error('房间不匹配');
+      }
+      if (!this.isLiveStuJoin) {
+        this._entryData = await entryRoom({
+          userName,
+          role,
+          roomUuid,
+          sceneType: Number(sceneType),
+        });
+      }
     } catch (error: any) {
       console.error("创建或加入会议异常", error);
       runInAction(() => {
@@ -481,20 +521,10 @@ export class RoomStore extends EnhancedEventEmitter {
       });
       throw Error(error?.code);
     }
-    const { member = {}, room = {} } = this._entryData;
-    const { rtcKey, rtcToken, rtcUid, wbAuth } = member;
-    const { checksum, curTime, nonce } = wbAuth;
     // 每次加入房间重新实例化webRtc 否则在第二次登录进来，会导致共享有问题
     // if (!this._webRtcInstance) {
 
     // }
-    this._webRtcInstance = isElectron
-      ? new NeElertc(rtcKey)
-      : new NeWebrtc(rtcKey);
-    // @ts-ignore
-    window._webRtcInstance = this._webRtcInstance;
-    logger.log("isElectron", isElectron);
-    logger.log("rtc初始化", this._webRtcInstance, this.client);
 
     if (!this.nim?.nim) {
       await this._nimInstance.loginImServer({
@@ -505,148 +535,168 @@ export class RoomStore extends EnhancedEventEmitter {
       logger.log("im初始化", this._nimInstance);
     }
 
-    this._nimInstance.on("controlNotify", (_data: any) =>
-      this.nimNotify(_data)
-    );
-    this._nimInstance.on("im-connect", () => {
-      if (this.joined) {
-        this.getMemberList().then(() => {
-          const result: any = this.memberList.filter(
-            (item) => item.userUuid === this.localData.userUuid
-          );
-          this.updateMemberStream(this.localData.userUuid, result?.streams);
-          this.propertiesUpdataByChange(
-            result?.properties,
-            this.localData.userUuid
-          );
-        });
-      }
-    });
+    if (!this.isLiveStuJoin) {
+      const { member = {}, room = {} } = this._entryData;
+      const { rtcKey, rtcToken, rtcUid, wbAuth } = member;
+      const { checksum, curTime, nonce } = wbAuth;
+      this._webRtcInstance = isElectron
+        ? new NeElertc(rtcKey)
+        : new NeWebrtc(rtcKey);
+      // @ts-ignore
+      window._webRtcInstance = this._webRtcInstance;
+      logger.log("isElectron", isElectron);
+      logger.log("rtc初始化", this._webRtcInstance, this.client);
 
-    // IM登录
-    // 增加监听
-    this._webRtcInstance.on("client-banned", (_data: any) => {
-      logger.log(`${_data.uid} 被踢出房间`);
-    });
-    this._webRtcInstance.on("error", (error: any) => {
-      logger.log("webrtc异常", error);
-    });
-    this._webRtcInstance.on("active-speaker", (_data: any) => {
+      this._nimInstance.on("controlNotify", (_data: any) =>
+        this.nimNotify(_data)
+      );
+      this._nimInstance.on("im-connect", () => {
+        if (this.joined) {
+          this.getMemberList().then(() => {
+            const result: any = this.memberList.filter(
+              (item) => item.userUuid === this.localData?.userUuid
+            );
+            this.updateMemberStream(this.localData?.userUuid, result?.streams);
+            this.propertiesUpdataByChange(
+              result?.properties,
+              this.localData?.userUuid
+            );
+          });
+        }
+      });
+
+      // IM登录
+      // 增加监听
+      this._webRtcInstance.on("client-banned", (_data: any) => {
+        logger.log(`${_data.uid} 被踢出房间`);
+      });
+      this._webRtcInstance.on("error", (error: any) => {
+        logger.log("webrtc异常", error);
+      });
+      this._webRtcInstance.on("active-speaker", (_data: any) => {
       // logger.log('正在说话', _data);
-    });
-    this._webRtcInstance.on("stream-removed", (_data: any) => {
-      this.updateStream(_data.uid, _data.mediaType, _data.stream);
-    });
-    this._webRtcInstance.on("network-quality", (_data: NetStatusItem[]) => {
+      });
+      this._webRtcInstance.on("stream-removed", (_data: any) => {
+        this.updateStream(_data.uid, _data.mediaType, _data.stream);
+      });
+      this._webRtcInstance.on("network-quality", (_data: NetStatusItem[]) => {
       // logger.log('网络状态', _data);
-      runInAction(() => {
-        this.networkQuality = _data;
+        runInAction(() => {
+          this.networkQuality = _data;
+        });
       });
-    });
-    this._webRtcInstance.on("connection-state-change", (_data: any) => {
-      logger.log("网络状态变更", _data);
-      if (isElectron) {
-        if ([1, 2, 3].includes(_data.reason)) {
-          this.channelClosed = true;
+      this._webRtcInstance.on("connection-state-change", (_data: any) => {
+        logger.log("网络状态变更", _data);
+        if (isElectron) {
+          if ([1, 2, 3].includes(_data.reason)) {
+            this.channelClosed = true;
+          }
+        } else {
+          if (_data.curState === "DISCONNECTED" && this.joined) {
+            this.channelClosed = true;
+          }
         }
-      } else {
-        if (_data.curState === "DISCONNECTED" && this.joined) {
-          this.channelClosed = true;
-        }
-      }
-      runInAction(() => {
-        this.connectionStateChange = _data;
+        runInAction(() => {
+          this.connectionStateChange = _data;
+        });
       });
-    });
-    this._webRtcInstance.on("peer-online", (_data: any) => {
-      logger.log("成员加入", _data);
-      runInAction(() => {
+      this._webRtcInstance.on("peer-online", (_data: any) => {
+        logger.log("成员加入", _data);
+        runInAction(() => {
+          this.updateMemberList(_data.uid, "add");
+          this.getMemberList().then(() => {
+            this.syncMember();
+          });
+        });
+      });
+      this._webRtcInstance.on("peer-leave", (_data: any) => {
+        logger.log("成员离开", _data);
+        runInAction(() => {
+          this.updateMemberList(_data.uid, "remove");
+          this.getMemberList().then(() => {
+            this.syncMember();
+          });
+        });
+      });
+      this._webRtcInstance.on("stopScreenSharing", async (_data: any) => {
+        logger.log("检测到停止屏幕共享");
+        if (isElectron) {
+          this.stopScreen();
+        } else if (!isElectron) {
+          if (this.isLiveTeaJoin) {
+            await this.stopScreen(false);
+            this.appStore.whiteBoardStore.getCanvasTrack().then((res) => {
+              this.switchScreenWithCanvas('open', res);
+            });
+          } else {
+            this.stopScreen();
+          }
+        }
+      });
+      this._webRtcInstance.on("stream-subscribed", (_data: any) => {
+        logger.log("订阅别人的流成功的通知", _data);
+        this.updateStream(_data.uid, _data.mediaType, null);
+        runInAction(() => {
+          this.updateStream(_data.uid, _data.mediaType, _data.stream);
+        });
+      });
+      this._webRtcInstance.on("stream-removed", (_data: any) => {
+        logger.log("收到别人停止发布的消息", _data);
+      // this.updateStream(_data.uid, _data.mediaType, null);
+      });
+      this._webRtcInstance.on("channelClosed", (_data: any) => {
+        logger.log("RTC房间被关闭", _data);
+        runInAction(() => {
+          this.channelClosed = true;
+        });
+      // this.updateStream(_data.uid, _data.mediaType, null);
+      });
+
+      this._webRtcInstance.on("onDisconnect", (_data: number) => {
+        runInAction(() => {
+          if (_data !== 0) {
+            this.channelClosed = true;
+          }
+        });
+      // this.updateStream(_data.uid, _data.mediaType, null);
+      });
+      this._webRtcInstance.on("play-local-stream", (_data: any) => {
+        logger.log("本地视频获取", _data);
+        this.updateStream(_data.uid, _data.mediaType, null);
         this.updateMemberList(_data.uid, "add");
-        this.getMemberList().then(() => {
-          this.syncMember();
+        runInAction(() => {
+          this.updateStream(_data.uid, _data.mediaType, _data.stream);
         });
       });
-    });
-    this._webRtcInstance.on("peer-leave", (_data: any) => {
-      logger.log("成员离开", _data);
-      runInAction(() => {
-        this.updateMemberList(_data.uid, "remove");
-        this.getMemberList().then(() => {
-          this.syncMember();
-        });
-      });
-    });
-    this._webRtcInstance.on("stopScreenSharing", (_data: any) => {
-      logger.log("检测到停止屏幕共享");
-      if (isElectron && _data === rtcUid) {
-        this.stopScreen();
-      } else if (!isElectron) {
-        this.stopScreen();
-      }
-    });
-    this._webRtcInstance.on("stream-subscribed", (_data: any) => {
-      logger.log("订阅别人的流成功的通知", _data);
-      this.updateStream(_data.uid, _data.mediaType, null);
-      runInAction(() => {
-        this.updateStream(_data.uid, _data.mediaType, _data.stream);
-      });
-    });
-    this._webRtcInstance.on("stream-removed", (_data: any) => {
-      logger.log("收到别人停止发布的消息", _data);
-      // this.updateStream(_data.uid, _data.mediaType, null);
-    });
-    this._webRtcInstance.on("channelClosed", (_data: any) => {
-      logger.log("RTC房间被关闭", _data);
-      runInAction(() => {
-        this.channelClosed = true;
-      });
-      // this.updateStream(_data.uid, _data.mediaType, null);
-    });
 
-    this._webRtcInstance.on("onDisconnect", (_data: number) => {
-      runInAction(() => {
-        if (_data !== 0) {
-          this.channelClosed = true;
-        }
-      });
-      // this.updateStream(_data.uid, _data.mediaType, null);
-    });
-    this._webRtcInstance.on("play-local-stream", (_data: any) => {
-      logger.log("本地视频获取", _data);
-      this.updateStream(_data.uid, _data.mediaType, null);
-      this.updateMemberList(_data.uid, "add");
-      runInAction(() => {
-        this.updateStream(_data.uid, _data.mediaType, _data.stream);
-      });
-    });
-
-    const mediaStatus =
+      const mediaStatus =
       RoomTypes.bigClass !== Number(this.appStore.roomInfo.sceneType) ||
       RoleTypes.host === this.localUserInfo.role;
-    // RTC加入
-    this._webRtcInstance.join({
-      channelName: roomUuid,
-      uid: rtcUid,
-      token: rtcToken,
-      audio: mediaStatus,
-      video: mediaStatus,
-      needPublish: mediaStatus,
-    });
-    const enbaleDraw = role === RoleTypes.host || Number(sceneType) === RoomTypes.oneToOne;
-    if (!this.appStore.whiteBoardStore.wbInstance) {
-      await this.appStore.whiteBoardStore.initWhiteBoard({
-        appKey: imKey,
+      // RTC加入
+      await this._webRtcInstance.join({
+        channelName: roomUuid,
         uid: rtcUid,
-        container: document.createElement('div'),
-        nickname: userName,
-        checksum,
-        nonce,
-        curTime: Number(curTime),
+        token: rtcToken,
+        audio: mediaStatus,
+        video: mediaStatus,
+        needPublish: mediaStatus,
       });
-      await this.appStore.whiteBoardStore.joinRoom({
-        channel: (room.properties?.whiteboard?.channelName as number),
-      })
+      // const enbaleDraw = role === RoleTypes.host || Number(sceneType) === RoomTypes.oneToOne;
+      if (!this.appStore.whiteBoardStore.wbInstance) {
+        await this.appStore.whiteBoardStore.initWhiteBoard({
+          appKey: imKey,
+          uid: rtcUid,
+          container: document.createElement('div'),
+          nickname: userName,
+          checksum,
+          nonce,
+          curTime: Number(curTime),
+        });
+        await this.appStore.whiteBoardStore.joinRoom({
+          channel: (room.properties?.whiteboard?.channelName as number),
+        })
       // await this.appStore.whiteBoardStore.setEnableDraw(enbaleDraw);
+      }
     }
     await this.getMemberList();
     runInAction(() => {
@@ -664,6 +714,20 @@ export class RoomStore extends EnhancedEventEmitter {
   @action
   public setLocalWbDrawEnable(value: boolean): void {
     this._localWbDrawEnable = value;
+  }
+
+  /**
+   * @description: 设置白板辅流
+   * @param {string} type
+   * @param {any} stream
+   * @return {*}
+   */
+  @action
+  public async switchScreenWithCanvas(type: string, stream?: any): Promise<void> {
+    await this._webRtcInstance?.switchScreenWithCanvas(type, stream);
+    ['changeToScreen'].includes(type) ?
+      (await this.changeSubVideoStream(this.localUserInfo.userUuid, 1)) :
+      (await this.changeSubVideoStream(this.localUserInfo.userUuid, 0));
   }
 
   @action
@@ -737,7 +801,7 @@ export class RoomStore extends EnhancedEventEmitter {
   }
 
   @action
-  private async nimNotify(_data) {
+  public async nimNotify(_data, needGetSnapShot = true): Promise<void> {
     logger.log("服务器通知消息", _data);
     logger.log("当前房间数据", this.roomInfo);
     const { cmd, data, timestamp, type } = _data.body;
@@ -745,24 +809,24 @@ export class RoomStore extends EnhancedEventEmitter {
     if (roomUuid === this.roomInfo.roomUuid && type === "R") {
       switch (cmd) {
         case NIMNotifyTypes.RoomStatesChange: {
-          await this.getMemberList();
+          needGetSnapShot && await this.getMemberList();
           this.stateUpdateByChange(states, timestamp, roomUuid);
           break;
         }
         case NIMNotifyTypes.RoomStatesDelete: {
-          await this.getMemberList();
+          needGetSnapShot && await this.getMemberList();
           break;
         }
         case NIMNotifyTypes.RoomPropertiesChange: {
-          await this.getMemberList();
+          needGetSnapShot && await this.getMemberList();
           break;
         }
         case NIMNotifyTypes.RoomPropertiesDelete: {
-          await this.getMemberList();
+          needGetSnapShot && await this.getMemberList();
           break;
         }
         case NIMNotifyTypes.RoomMemberPropertiesChange: {
-          await this.getMemberList();
+          needGetSnapShot && await this.getMemberList();
           const {
             properties,
             member: { userUuid },
@@ -771,7 +835,7 @@ export class RoomStore extends EnhancedEventEmitter {
           break;
         }
         case NIMNotifyTypes.RoomMemberPropertiesDelete: {
-          await this.getMemberList();
+          needGetSnapShot && await this.getMemberList();
           break;
         }
         case NIMNotifyTypes.RoomMemberJoin: {
@@ -794,19 +858,19 @@ export class RoomStore extends EnhancedEventEmitter {
         }
         case NIMNotifyTypes.StreamChange: {
           logger.log("成员流变更");
-          await this.getMemberList();
+          needGetSnapShot && await this.getMemberList();
           const { streams, member } = data;
           this.updateMemberStream(member.userUuid, streams);
           break;
         }
         case NIMNotifyTypes.StreamRemove: {
-          // await this.getMemberList();
+          // needGetSnapShot && await this.getMemberList();
           const { streamType, member } = data;
           this.deleteMemberStream(member.userUuid, streamType);
           break;
         }
         case NIMNotifyTypes.CustomMessage: {
-          await this.getMemberList();
+          needGetSnapShot && await this.getMemberList();
           break;
         }
         default:
@@ -939,7 +1003,7 @@ export class RoomStore extends EnhancedEventEmitter {
     userUuid: string,
     streams: Streams
   ): Promise<void> {
-    const isBySelf = userUuid === this.localData.userUuid;
+    const isBySelf = userUuid === this.localData?.userUuid;
     this.memberFullList.some((item) => {
       if (item.userUuid === userUuid) {
         item.streams = Object.assign({}, item.streams, streams);
@@ -962,7 +1026,7 @@ export class RoomStore extends EnhancedEventEmitter {
                 }
                 break;
               case "subVideo":
-                if (this.localData.userUuid === item.userUuid) {
+                if (this.localData?.userUuid === item.userUuid) {
                   logger.log("触发了subvideo", item.value);
                   if (item.value === 1) {
                     this.startScreen(false);
@@ -993,15 +1057,15 @@ export class RoomStore extends EnhancedEventEmitter {
     userUuid: string,
     streamType: string
   ): Promise<void> {
-    const isBySelf = userUuid === this.localData.userUuid;
+    const isBySelf = userUuid === this.localData?.userUuid;
     this.memberFullList.some((item) => {
       if (item.userUuid === userUuid) {
         switch (streamType) {
           case "subVideo":
             delete item.streams?.subVideo;
-            console.log("this.localData.userUuid", this.localData.userUuid);
+            console.log("this.localData.userUuid", this.localData?.userUuid);
             console.log("titem.userUuid", item.userUuid);
-            if (this.localData.userUuid === item.userUuid) {
+            if (this.localData?.userUuid === item.userUuid) {
               logger.log("触发了subvideo", item.value);
               this.tempStreams[item.rtcUid]?.screenStream &&
                 this.stopScreen(false);
@@ -1050,16 +1114,19 @@ export class RoomStore extends EnhancedEventEmitter {
       this.channelClosed = false;
       this._joinFinish = false;
     });
-    this._webRtcInstance?.leave();
-    this._webRtcInstance?.destroy();
-    this._webRtcInstance = null;
+    if (!this.isLiveStuJoin) {
+      this._webRtcInstance?.leave();
+      this._webRtcInstance?.destroy();
+      this._webRtcInstance = null;
+      this.appStore.whiteBoardStore.destroy();
+
+    }
     // this.classDuration = 0;
     this.setFinishBtnShow(false);
-    this.appStore.whiteBoardStore.destroy();
     this.appStore.resetRoomInfo();
     this.setRoomState("");
-    this.reset();
     GlobalStorage.clear();
+    await this.reset();
     await this._nimInstance.logoutImServer();
   }
 
@@ -1145,14 +1212,14 @@ export class RoomStore extends EnhancedEventEmitter {
     // 不知道什么原因，会关闭屏幕共享会出现对端听不到的情况，暂时先使用当前成员信息做一次处理
   }
 
-  private async resetAudio() {
-    await this.closeAudio(this.localData.userUuid, false);
-    if (this.localData.hasAudio) {
-      await this.openAudio(this.localData.userUuid, false);
-    } else {
-      await this.closeAudio(this.localData.userUuid, false);
-    }
-  }
+  // private async resetAudio() {
+  //   await this.closeAudio(this.localData.userUuid, false);
+  //   if (this.localData.hasAudio) {
+  //     await this.openAudio(this.localData.userUuid, false);
+  //   } else {
+  //     await this.closeAudio(this.localData.userUuid, false);
+  //   }
+  // }
 
   /**
    * @description: 改变subvideo
@@ -1523,7 +1590,7 @@ export class RoomStore extends EnhancedEventEmitter {
     getSnapShot(this.roomInfo.roomUuid).then(
       ({ snapshot: { members = [], room = {} }, timestamp = 0 }) => {
         runInAction(() => {
-          this._snapRoomInfo = Object.assign({}, room);
+          this._snapRoomInfo = Object.assign({}, this._snapRoomInfo, room);
           this.memberFullList = [...members];
           (window as any).memberFullList = this.memberFullList;
           const { states, roomUuid } = room;
@@ -1532,6 +1599,16 @@ export class RoomStore extends EnhancedEventEmitter {
         });
       }
     );
+  }
+
+  /**
+   * @description: 设置成员信息
+   * @param {SnapShotResponseMembers} data
+   * @return {*}
+   */
+  @action
+  public setBigLiveMemberFullList(data: SnapShotResponseMembers): void {
+    this._bigLivememberFullList = [...data];
   }
 
   /**
@@ -1562,16 +1639,17 @@ export class RoomStore extends EnhancedEventEmitter {
               fromNotify &&
                 this.appStore.uiStore.showToast("老师执行了全体静音");
             }
+            if (!this._snapRoomInfo.states?.muteAudio) {
+              this._snapRoomInfo.states.muteAudio = this._snapRoomInfo.states.muteAudio || {}
+            }
+            this._snapRoomInfo.states.muteAudio.value = item.value;
             break;
           case "step":
             if (item.value === 1 && time) {
               this.setClassDuration(time - item.time);
-              localStorage.setItem('record-url', `/record?roomUuid=${this.entryData.room.roomUuid}&rtcCid=${this.entryData.room.rtcCid}`)
+              localStorage.setItem('record-url', `/record?roomUuid=${this.snapRoomInfo.roomUuid}&rtcCid=${this.snapRoomInfo.rtcCid}`)
             } else if (item.value === 2) {
-              const { roomUuid } = this.snapRoomInfo;
-              const {
-                room: { rtcCid },
-              } = this._entryData;
+              const { roomUuid, rtcCid } = this.snapRoomInfo;
               if (operatorRoomUuid === roomUuid) {
                 this.leave();
                 this.setRoomState("课程结束");
@@ -1580,6 +1658,10 @@ export class RoomStore extends EnhancedEventEmitter {
                 );
               }
             }
+            if (!this._snapRoomInfo.states?.step) {
+              this._snapRoomInfo.states.step = this._snapRoomInfo.states.step || {}
+            }
+            this._snapRoomInfo.states.step.value = item.value;
             break;
           case "muteChat":
             if (this.localData?.role !== RoleTypes.host) {
@@ -1588,6 +1670,10 @@ export class RoomStore extends EnhancedEventEmitter {
               } else {
                 fromNotify && this.appStore.uiStore.showToast("聊天室已取消禁言");
               }
+              if (!this._snapRoomInfo.states?.muteChat) {
+                this._snapRoomInfo.states.muteChat = this._snapRoomInfo.states.muteChat || {}
+              }
+              this._snapRoomInfo.states.muteChat.value = item.value;
             }
             break;
           default:
@@ -1623,7 +1709,7 @@ export class RoomStore extends EnhancedEventEmitter {
    */
   @action
   public async reset(): Promise<void> {
-    // TODO
+    await this.removeEvent();
     runInAction(() => {
       this.memberList = [];
       this.memberFullList = [];
@@ -1633,10 +1719,19 @@ export class RoomStore extends EnhancedEventEmitter {
           step: {},
           pause: {},
         },
+        properties: {
+          whiteboard: {
+            channelName: 0,
+          },
+          live: {
+            cid: '',
+          },
+        },
       };
       this.localUserInfo = {};
+      this.isLiveTeaJoin = false;
+      this.isLiveStuJoin = false;
     });
-    await this.removeEvent();
   }
 
   /**
@@ -1645,8 +1740,10 @@ export class RoomStore extends EnhancedEventEmitter {
    * @return {*}
    */
   private async removeEvent(): Promise<void> {
-    this._webRtcInstance?.removeAllListeners();
-    this._nimInstance.removeAllListeners();
+    if (!this.isLiveStuJoin) {
+      this._webRtcInstance?.removeAllListeners();
+      this._nimInstance.removeAllListeners();
+    }
     window.removeEventListener("online", this.updateOnlineStatus.bind(this));
     window.removeEventListener("offline", this.updateOnlineStatus.bind(this));
   }
@@ -1731,5 +1828,25 @@ export class RoomStore extends EnhancedEventEmitter {
         break;
     }
     logger.log("stream更新", this._tempStreams);
+  }
+
+  /**
+   * @description: 外部获取聊天室实例，暂时兼容
+   * @param {any} data
+   * @return {*}
+   */
+  @action
+  public setChatRoomInstance(data: any): void {
+    this._chatRoom = data;
+  }
+
+  /**
+   * @description: 清除聊天室实例
+   * @param {*}
+   * @return {*}
+   */
+  @action
+  public removeChatRoomInstance(): void {
+    this._chatRoom = null;
   }
 }

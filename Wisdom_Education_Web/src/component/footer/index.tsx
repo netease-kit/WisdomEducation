@@ -299,7 +299,7 @@ const Footer: React.FC = observer(() => {
           </p>
           <p className="desc">
             {
-              !isHost ? '离开教室后将暂停教学，学生需等待您再次进入课堂方可继续上课' :
+              !isHost ? '离开教室后将暂停学习，需要等待您再次进入课堂后方可继续上课？' :
                 (roomStep === StepTypes.init && !isEleClose ? '开课后教学内容将同步至学生端，并正式开始课堂录制' : '结束课堂后老师和学生均会跳转课堂结束画面，支持查看课程回放')
             }
           </p>

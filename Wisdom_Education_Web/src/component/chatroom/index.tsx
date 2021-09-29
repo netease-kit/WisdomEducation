@@ -1,3 +1,4 @@
+/* eslint-disable no-case-declarations */
 /*
  * @Copyright (c) 2021 NetEase, Inc.  All rights reserved.
  * Use of this source code is governed by a MIT license that can be found in the LICENSE file
@@ -8,10 +9,14 @@ import ChatroomHelper, {
   Message,
   MessageType,
   Progress,
+  AttachType,
 } from './chatroomHelper';
 import { initialState, reducer } from './reducer';
 import { default as ChatroomUI } from './Chatroom';
-import { useUIStore } from '@/hooks/store';
+import { useUIStore, useRoomStore } from '@/hooks/store';
+import logger from '@/lib/logger';
+import { RoleTypes } from '@/config';
+import { useHistory } from 'react-router-dom';
 
 
 
@@ -39,6 +44,9 @@ const Chatroom: React.FC<IProps> = ({
   receiveMessage
 }) => {
   const uiStore = useUIStore();
+  const roomStore = useRoomStore();
+  const history = useHistory();
+  const { localUserInfo, localData } = roomStore;
 
   const [state, dispatch] = useReducer(reducer, initialState);
 
@@ -75,11 +83,103 @@ const Chatroom: React.FC<IProps> = ({
       // chatroomHelper.on('onMessage', (msgs: Message[]) => {
       //   dispatch({ type: 'addMessage', payload: msgs });
       // });
+      roomStore.setChatRoomInstance(chatroomHelper.chatRoom);
+      chatroomHelper.on('chat-onmsgs', (msgs: Message[]) => {
+        for (const item of msgs) {
+          switch (item.type) {
+            case "notification":
+              const type: AttachType = item.attach.type;
+              if (['memberEnter', 'memberExit'].includes(type)) {
+                chatroomHelper.chatRoom.getChatroomMembers({
+                  guest: true,
+                  limit: 200,
+                  done: (error, obj) => {
+                    if (error) {
+                      logger.error('获取聊天室成员失败', error);
+                      return;
+                    }
+                    const members = obj.members.map((item) => {
+                      if (!item.nick.includes('老师')) {
+                        if (localUserInfo.userUuid === item.account) {
+                          return {
+                            userName: item.nick,
+                            userUuid: item.account,
+                            role: RoleTypes.broadcaster,
+                          }
+                        } else {
+                          return {
+                            userName: item.nick,
+                            userUuid: item.account,
+                            role: RoleTypes.broadcaster,
+                          }
+                        }
+                      }
+                    });
+                    // members.unshift({
+                    //   userName: localUserInfo.userName,
+                    //   userUuid: localUserInfo.userUuid,
+                    //   role: localUserInfo.role,
+                    //   rtcUid: localUserInfo.userUuid,
+                    //   streams: {
+                    //     audio: {
+                    //       value: localData?.hasAudio ? 1 : 0,
+                    //     },
+                    //     video: {
+                    //       value: localData?.hasAudio ? 1 : 0,
+                    //     }
+                    //   }
+                    // })
+                    roomStore.setBigLiveMemberFullList(members);
+                    logger.debug('聊天室成员', obj.members, members)
+                  }
+                })
+              }
+              break;
+            case "custom":
+              try {
+                const res: {
+                  [key: string]: any
+                } = {};
+                // 保持格式统一
+                const data = JSON.parse(item.content);
+                res.body = data.data;
+                roomStore.nimNotify(res, false)
+              } catch (err) {
+                logger.error('解析自定义消息失败', err)
+              }
+              break;
+            default:
+              break;
+          }
+        }
+      });
+
+      chatroomHelper.on('chat-onkicked', async (reason) => {
+        let msg = reason || '该账号被踢出房间'
+        if (reason === 'samePlatformKick') {
+          msg = '该账号在其他地方重复登录'
+
+          const userInfo = roomStore?.localUserInfo || {};
+          if (userInfo.role === RoleTypes.host) {
+            await roomStore.endClassRoom();
+          }
+        } else if (reason === 'managerKick') {
+          msg = '被管理员踢出房间'
+        }
+
+        //被踢出，需要回到首页
+        roomStore.leave()
+        history.push('/');
+        uiStore.showToast(msg);
+        uiStore.setLoading(false);
+      })
       return () => {
+        chatroomHelper.removeAllListeners();
         chatroomHelper.destroy();
+        roomStore.removeChatRoomInstance();
       };
     }
-  }, [chatroomHelper]);
+  }, [history, chatroomHelper, roomStore]);
 
   const setProgress = (type: MessageType, progress?: Progress) => {
     if (type === 'image') {
