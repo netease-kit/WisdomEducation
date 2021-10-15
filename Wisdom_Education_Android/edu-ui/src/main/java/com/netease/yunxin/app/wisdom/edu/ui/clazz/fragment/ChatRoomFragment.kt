@@ -56,6 +56,7 @@ class ChatRoomFragment : BaseFragment(R.layout.fragment_chatroom),
     private val list: MutableList<ChatRoomMessage> = mutableListOf()
     private var lastTime = 0L
     private var firstTips = true
+    private var messageCacheLimit = 5000
 
     private lateinit var takePictureLaunch: ActivityResultLauncher<Uri>
     private lateinit var choosePictureLaunch: ActivityResultLauncher<Uri>
@@ -88,7 +89,7 @@ class ChatRoomFragment : BaseFragment(R.layout.fragment_chatroom),
         if (file == null) return
         roomInfo?.let {
             val chatMessage =
-                ChatRoomMessageBuilder.createChatRoomImageMessage(it.roomId, file, file?.name)
+                ChatRoomMessageBuilder.createChatRoomImageMessage(it.roomId, file, file.name)
             addMessage(chatMessage)
             viewModel.sendMessage(chatMessage)
         }
@@ -217,6 +218,8 @@ class ChatRoomFragment : BaseFragment(R.layout.fragment_chatroom),
                     it1.isTheSame(it2)
                 })
             } else {
+                // Set a maximum cache of 5000 messages
+                if(adapter.itemCount >= messageCacheLimit) adapter.removeItem(0)
                 val currTime = chatRoomMessage.time
                 if (currTime - lastTime > showTimeInterval) {
                     val tipsMessage: ChatRoomMessage = ChatRoomMessageBuilder.createTipMessage(roomInfo!!.roomId)

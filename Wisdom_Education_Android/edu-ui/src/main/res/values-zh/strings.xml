@@ -148,4 +148,7 @@
     <string name="download_picture_fail">图片下载失败</string>
     <string name="picker_image_error">获取图片出错</string>
     <string name="unknown_msg_tips">未知消息类型</string>
+    <string name="loading">正在加载中...</string>
+    <string name="load_failed">加载失败，请点我重试</string>
+    <string name="load_end">没有更多成员</string>
 </resources>

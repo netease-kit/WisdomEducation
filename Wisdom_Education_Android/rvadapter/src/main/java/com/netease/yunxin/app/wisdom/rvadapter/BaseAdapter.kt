@@ -22,7 +22,7 @@ open class BaseAdapter<T> @JvmOverloads constructor(
     /**
      * data source
      */
-    private var dataList: MutableList<T> = mutableListOf()
+    var dataList: MutableList<T> = mutableListOf()
 
     /**
      * onClick onLongClick callback

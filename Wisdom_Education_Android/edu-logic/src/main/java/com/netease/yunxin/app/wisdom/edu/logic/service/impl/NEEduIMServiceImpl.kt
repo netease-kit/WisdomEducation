@@ -43,13 +43,13 @@ internal class NEEduIMServiceImpl : NEEduIMService() {
 
     var imManager: IMManager = NEEduManagerImpl.imManager
 
-    override fun sendMessage(chatMessage: ChatRoomMessage): LiveData<NEResult<Void>> {
+    override fun sendMessage(message: ChatRoomMessage): LiveData<NEResult<Void>> {
         val sendLD: MediatorLiveData<NEResult<Void>> = MediatorLiveData()
-        imManager.chatRoomService.sendMessage(chatMessage, false)
+        imManager.chatRoomService.sendMessage(message, false)
             .setCallback(object : RequestCallbackWrapper<Void>() {
                 override fun onResult(code: Int, result: Void?, exception: Throwable?) {
                     if (code == ResponseCode.RES_SUCCESS.toInt()) {
-                        updateMessages(listOf(chatMessage))
+                        updateMessages(listOf(message))
                         sendLD.postValue(NEResult(NEEduHttpCode.SUCCESS.code))
                     } else {
                         sendLD.postValue(NEResult(code))
@@ -103,6 +103,7 @@ internal class NEEduIMServiceImpl : NEEduIMService() {
         val joinList: MutableList<NEEduMember> = mutableListOf()
         val accounts: List<String> = attachment.targets
         val targets: List<String> = attachment.targetNicks
+        val time = System.currentTimeMillis()
         if (attachment.targetNicks != null) {
             for (i in targets.indices) {
                 joinList.add(
@@ -111,7 +112,7 @@ internal class NEEduIMServiceImpl : NEEduIMService() {
                         targets[i],
                         accounts[i],
                         0L,
-                        0L,
+                        time,
                         NEEduStreams(null, null),
                         null
                     )

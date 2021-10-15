@@ -115,6 +115,11 @@ abstract class BaseNormalClassActivity(layoutId: Int = R.layout.activity_normal_
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)// keep screen on
+        if (NEEduUiKit.instance?.neEduManager == null) {
+            NEEduUiKit.destroy()
+            finish()
+            return
+        }
         initEduManager()
         initViews()
         registerObserver()
@@ -122,9 +127,6 @@ abstract class BaseNormalClassActivity(layoutId: Int = R.layout.activity_normal_
     }
 
     private fun initEduManager() {
-        if (NEEduUiKit.instance?.neEduManager == null) {
-            finish()
-        }
         eduManager = NEEduUiKit.instance!!.neEduManager!!
         eduRoom = eduManager.getRoom()
         entryMember = eduManager.getEntryMember()

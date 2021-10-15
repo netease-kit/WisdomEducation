@@ -6,7 +6,6 @@
 package com.netease.yunxin.app.wisdom.record.event
 
 import com.netease.yunxin.app.wisdom.record.NERecordPlayer
-import com.netease.yunxin.app.wisdom.record.actor.NERecordVideoActor
 import com.netease.yunxin.app.wisdom.record.model.NEEduRecordData
 import com.netease.yunxin.app.wisdom.record.model.NERecordEvent
 import com.netease.yunxin.app.wisdom.record.model.NERecordEventType
@@ -30,7 +29,6 @@ class NERecordMemberHandler(
 
     companion object {
         private var recordData: NEEduRecordData = NERecordPlayer.instance.recordOptions.recordData
-        private val hostRoomUid = (NERecordPlayer.instance.getHostActor() as NERecordVideoActor).recordItem.roomUid
 
         fun memberJoin(event: NERecordEvent): Boolean {
             return event.type == NERecordEventType.MEMBER_JOIN
@@ -45,7 +43,7 @@ class NERecordMemberHandler(
          *
          */
         fun filterMemberJoinOrLeaveEvent(event: NERecordEvent): Boolean {
-            return (recordData.is1V1() || recordData.isSmall() || event.roomUid == hostRoomUid.toString())
+            return (recordData.is1V1() || recordData.isSmall() || NERecordPlayer.instance.getHostActors().any { it.recordItem.roomUuid == event.roomUid })
                     && (memberJoin(event) || memberLeave(event))
         }
     }

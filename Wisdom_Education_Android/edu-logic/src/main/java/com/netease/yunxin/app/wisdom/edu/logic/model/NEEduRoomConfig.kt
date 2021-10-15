@@ -36,7 +36,7 @@ data class NEEduRoomConfig(
         return sceneType == NEEduSceneType.SMALL.value
     }
 
-    fun isLiveSimple(): Boolean {
+    fun isLiveClass(): Boolean {
         return sceneType == NEEduSceneType.LIVE_SIMPLE.value
     }
 }

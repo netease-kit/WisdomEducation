@@ -9,18 +9,16 @@ import android.content.Context
 import androidx.core.math.MathUtils
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
-import com.netease.yunxin.app.wisdom.record.model.NERecordItem
-import com.netease.yunxin.app.wisdom.record.model.NERecordPlayState
-import com.netease.yunxin.app.wisdom.base.util.ToastUtil
-import com.netease.yunxin.app.wisdom.record.NERecordPlayer
-import com.netease.yunxin.app.wisdom.record.base.INERecordVideoActor
-import com.netease.yunxin.app.wisdom.record.listener.NERecordClockListener
 import com.netease.yunxin.app.wisdom.player.sdk.PlayerManager
 import com.netease.yunxin.app.wisdom.player.sdk.VodPlayer
 import com.netease.yunxin.app.wisdom.player.sdk.VodPlayerObserver
 import com.netease.yunxin.app.wisdom.player.sdk.constant.CauseCode
 import com.netease.yunxin.app.wisdom.player.sdk.model.*
 import com.netease.yunxin.app.wisdom.player.sdk.view.AdvanceTextureView
+import com.netease.yunxin.app.wisdom.record.NERecordPlayer
+import com.netease.yunxin.app.wisdom.record.base.INERecordVideoActor
+import com.netease.yunxin.app.wisdom.record.model.NERecordItem
+import com.netease.yunxin.app.wisdom.record.model.NERecordPlayState
 import com.netease.yunxin.kit.alog.ALog
 
 /**
@@ -53,8 +51,6 @@ class NERecordVideoActor : INERecordVideoActor {
     private val playStateLD: MediatorLiveData<Int> = MediatorLiveData()
 
     var seekOnFirstRender = false
-
-    private var clockListener: NERecordClockListener? = null
 
     companion object {
 
@@ -178,7 +174,7 @@ class NERecordVideoActor : INERecordVideoActor {
             percent: Float,
             cachedPosition: Long
         ) {
-            clockListener?.onClockProgressChanged(currentPosition, duration)
+
         }
 
         override fun onSeekCompleted() {
@@ -186,7 +182,6 @@ class NERecordVideoActor : INERecordVideoActor {
         }
 
         override fun onCompletion() {
-            clockListener?.onClockStop()
         }
 
         override fun onAudioVideoUnsync() {
@@ -261,16 +256,7 @@ class NERecordVideoActor : INERecordVideoActor {
         textureView = null
     }
 
-    fun showToast(text: String) {
-        ToastUtil.showShort(text)
-    }
-
     override fun toString(): String {
         return "NERecordVideoActor(tag='$tag', recordItem=$recordItem, state=$state)"
-    }
-
-    override fun setClockListener(clockListener: NERecordClockListener) {
-        super.setClockListener(clockListener)
-        this.clockListener = clockListener
     }
 }

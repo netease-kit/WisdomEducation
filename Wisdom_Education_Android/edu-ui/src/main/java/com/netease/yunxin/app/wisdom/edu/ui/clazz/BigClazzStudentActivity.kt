@@ -164,7 +164,8 @@ class BigClazzStudentActivity : BaseBigClassActivity() {
             if (hasSubVideo()) {
                 stopLocalShareScreen()
             }
-
+            eduManager.getRtcService().updateRtcAudio(this)
+            eduManager.getRtcService().enableLocalVideo(this)
             eduManager.getBoardService().setEnableDraw(false)
         }
 
