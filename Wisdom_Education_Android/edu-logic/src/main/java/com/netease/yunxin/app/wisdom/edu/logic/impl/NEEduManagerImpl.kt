@@ -254,7 +254,7 @@ internal object NEEduManagerImpl : NEEduManager {
         NEEduForegroundService.cancel(context = NEEduManager.context)
         rtcManager.release()
         NEEduRtcVideoViewPool.clear()
-        boardService.dispose()
+        if(this::boardService.isInitialized) boardService.dispose()
         cmdDispatcher?.destroy()
         ALog.i(TAG, "destroy")
         ALog.flush(true)
