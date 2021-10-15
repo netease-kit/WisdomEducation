@@ -23,6 +23,7 @@ static NSString *kLastRtcCid = @"lastRtcCid";
 @property (nonatomic, strong) NEEduLiveMembersVC *membersVC;
 @property (nonatomic, strong) NSMutableArray<NIMChatroomMember *> *members;
 @property (nonatomic, strong) NEEduLessonInfoView *infoView;
+@property (nonatomic, assign) BOOL muteChat;
 
 @end
 
@@ -44,6 +45,7 @@ static NSString *kLastRtcCid = @"lastRtcCid";
         [[NSUserDefaults standardUserDefaults] setObject:profile.snapshot.room.rtcCid forKey:kLastRtcCid];
         __strong typeof(self)strongSelf = weakSelf;
         strongSelf.profile = profile;
+        strongSelf.muteChat = profile.snapshot.room.states.muteChat.value;
         if (profile.snapshot.room.states.step.value == NEEduLessonStateClassIn) {
             strongSelf.lessonStateView.hidden = YES;
             NSString *urlString = self.useFastLive ? profile.snapshot.room.properties.live.pullRtsUrl : profile.snapshot.room.properties.live.pullRtmpUrl;
@@ -229,7 +231,7 @@ static NSString *kLastRtcCid = @"lastRtcCid";
 - (void)showChatViewWithitem:(NEEduMenuItem *)item {
     self.chatVC = [[NEEduChatViewController alloc] init];
     self.chatVC.messages = self.messages;
-    self.chatVC.muteChat = [NEEduManager shared].profile.snapshot.room.states.muteChat.value;
+    self.chatVC.muteChat = self.muteChat;
     NEEduNavigationViewController *chatNav = [[NEEduNavigationViewController alloc] initWithRootViewController:self.chatVC];
     chatNav.modalPresentationStyle = UIModalPresentationFullScreen;
     [self presentViewController:chatNav animated:YES completion:nil];
@@ -318,7 +320,7 @@ static NSString *kLastRtcCid = @"lastRtcCid";
             message.thumbImage = image;
             message.contentSize = [image ne_showSizeWithMaxWidth:176 maxHeight:190];
             [self addTimeMessage:message];
-            [self.messages addObject:message];
+            [self addMessage:message];
             if (self.chatVC.presentingViewController) {
                 [self.chatVC reloadTableViewToBottom:YES];
             }else {
@@ -330,7 +332,7 @@ static NSString *kLastRtcCid = @"lastRtcCid";
         message.type = NEEduChatMessageTypeText;
         message.contentSize = [imMessage.text sizeWithWidth:(self.view.bounds.size.width - 112) font:[UIFont systemFontOfSize:14]];
         [self addTimeMessage:message];
-        [self.messages addObject:message];
+        [self addMessage:message];
         if (self.chatVC.presentingViewController) {
             [self.chatVC reloadTableViewToBottom:YES];
         }else {
@@ -359,11 +361,13 @@ static NSString *kLastRtcCid = @"lastRtcCid";
         if (muteChat) {
             NSNumber *value = muteChat[@"value"];
             if ([value isEqualToNumber:@(1)]) {
+                self.muteChat = YES;
                 //muteChat
                 if (self.chatVC) {
                     [self.chatVC updateMuteChat:YES];
                 }
             }else {
+                self.muteChat = NO;
                 [self.chatVC updateMuteChat:NO];
             }
             return;
@@ -432,8 +436,7 @@ static NSString *kLastRtcCid = @"lastRtcCid";
     eduMessage.sendState = NEEduChatMessageSendStateNone;
     
     [self addTimeMessage:eduMessage];
-    
-    [self.messages addObject:eduMessage];
+    [self addMessage:eduMessage];
     NSLog(@"sendMessage count:%lu",(unsigned long)(self.messages.count));
     if (self.chatVC) {
         [self.chatVC reloadTableViewToBottom:YES];
@@ -465,9 +468,16 @@ static NSString *kLastRtcCid = @"lastRtcCid";
             timeMessage.myself = NO;
             timeMessage.contentSize = [timeMessage.content sizeWithWidth:(self.view.bounds.size.width - 112) font:[UIFont systemFontOfSize:14]];
             timeMessage.type = NEEduChatMessageTypeTime;
-            [self.messages addObject:timeMessage];
+            [self addMessage:timeMessage];
         }
     }
+}
+
+- (void)addMessage:(NEEduChatMessage *)message {
+    if (self.messages.count >= 5000) {
+        [self.messages removeObjectAtIndex:0];
+    }
+    [self.messages addObject:message];
 }
 
 #pragma mark - NEEduRoomViewMaskViewDelegate

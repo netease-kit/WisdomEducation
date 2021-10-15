@@ -34,7 +34,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// 添加请求头内容
 /// @param dictionary 添加内容
 + (void)addHeaderFromDictionary:(NSDictionary *)dictionary;
-
++ (NSError *)errorWithErrorCode:(NSInteger)code;
 /// 匿名登录，已设备ID作为唯一表示
 /// @param classType 返回参数类型
 /// @param successBlock 成功回调

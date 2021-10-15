@@ -438,7 +438,7 @@ static void(^_errorBlock)(NSInteger);
             message = @"IM账户已存在";
             break;
         case NEEduErrorTypeRoomConfigConflict:
-            message = @"创建房间时房间已经存在且房间类型冲突";
+            message = @"房间已经存在且房间类型不匹配";
             break;
         default:
             break;

@@ -68,7 +68,11 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)sendChatroomImageMessage:(UIImage *)image error:(NSError * __nullable *)error;
 - (void)resendMessage:(NIMMessage *)message error:(NSError * __nullable *)error;
 - (void)fetchChatroomInfo:(void(^)(NSError *error,NEEduChatRoomInfo *chatRoom))completion;
-- (void)getChatroomMembers:(NSString *)roomId result:(void(^)(NSError *error,NSArray<NIMChatroomMember *> * _Nullable members))result;
+
+/// 请求聊天成员 结果按照加入聊天室时间戳倒序返回
+/// @param member 查询在该用户之前加入的用户列表
+/// @param result 返回用户列表
+- (void)getMembersFromMember:(NIMChatroomMember *)member result:(void(^)(NSError *error,NSArray<NIMChatroomMember *> * _Nullable members))result;
 /// 离开聊天室
 - (void)leaveChatRoom;
 /// 登出IM

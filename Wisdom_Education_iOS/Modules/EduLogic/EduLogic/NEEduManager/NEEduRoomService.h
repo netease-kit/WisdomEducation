@@ -15,6 +15,7 @@
 #import "NEEduEnterRoomResponse.h"
 #import "NEEduEnterRoomParam.h"
 #import <AFNetworking/AFNetworkReachabilityManager.h>
+#import "NEEduRoomConfigResponse.h"
 NS_ASSUME_NONNULL_BEGIN
 
 @protocol NEEduRoomServiceDelegate <NSObject>
@@ -28,7 +29,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)createRoom:(NEEduRoom *)room completion:(void(^)(NEEduCreateRoomRequest *result,NSError *error))completion;
 - (void)enterRoom:(NEEduEnterRoomParam *)room completion:(void(^)(NSError *error,NEEduEnterRoomResponse* response))completion;
-- (void)getRoom:(NEEduRoom *)room completion:(void(^)(NEEduCreateRoomRequest *result,NSError *error))completion;
+- (void)getRoom:(NEEduRoom *)room completion:(void(^)(NEEduRoomConfigResponse *result,NSError *error))completion;
 - (void)getRoomProfile:(NSString *)roomUuid completion:(void(^)(NSError *error,NEEduRoomProfile *profile))completion;
 - (void)startLesson:(int)start completion:(void(^)(NSError *error,NEEduPropertyItem *item))completion;
 - (void)muteAll:(BOOL)mute completion:(void(^)(NSError *error,NEEduPropertyItem *item))completion;

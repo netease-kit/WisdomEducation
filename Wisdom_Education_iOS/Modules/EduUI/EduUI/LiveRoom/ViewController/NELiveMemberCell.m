@@ -20,12 +20,11 @@
     self.selectionStyle = UITableViewCellSelectionStyleNone;
     self.backgroundColor = [UIColor colorWithRed:26/255.0 green:32/255.0 blue:40/255.0 alpha:1.0];
     [self.contentView addSubview:self.nameLabel];
-    [NSLayoutConstraint activateConstraints:@[
-        [self.topAnchor constraintEqualToAnchor:self.contentView.topAnchor constant:1.0],
-        [self.leadingAnchor constraintEqualToAnchor:self.contentView.leadingAnchor constant:1.0],
-        [self.trailingAnchor constraintEqualToAnchor:self.contentView.trailingAnchor constant:1.0],
-        [self.bottomAnchor constraintEqualToAnchor:self.contentView.bottomAnchor constant:1.0]
-    ]];
+    NSLayoutConstraint *left = [NSLayoutConstraint constraintWithItem:self.nameLabel attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self.contentView attribute:NSLayoutAttributeLeft multiplier:1.0 constant:0];
+    NSLayoutConstraint *right = [NSLayoutConstraint constraintWithItem:self.nameLabel attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self.contentView attribute:NSLayoutAttributeRight multiplier:1.0 constant:0];
+    NSLayoutConstraint *top = [NSLayoutConstraint constraintWithItem:self.nameLabel attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.contentView attribute:NSLayoutAttributeTop multiplier:1.0 constant:0];
+    NSLayoutConstraint *bottom = [NSLayoutConstraint constraintWithItem:self.nameLabel attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self.contentView attribute:NSLayoutAttributeBottom multiplier:1.0 constant:0];
+    [self.contentView addConstraints:@[left,right,top,bottom]];
 }
 
 - (UILabel *)nameLabel {
