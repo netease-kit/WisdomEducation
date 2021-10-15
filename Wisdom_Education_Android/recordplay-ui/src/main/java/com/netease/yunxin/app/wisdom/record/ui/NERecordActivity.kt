@@ -110,7 +110,7 @@ class NERecordActivity : AppCompatActivity(R.layout.activity_recordplay), INERec
             }
             initVideoList.map { it1 ->
                 val videoActor = updateVideo(it1)
-                if (it1.isHost()) recordPlayer.setHostActor(videoActor)
+                if (it1.isHost()) recordPlayer.addHostActor(videoActor)
                 videoActor
             }.apply {
                 videoActorList.addAll(this)
@@ -135,7 +135,7 @@ class NERecordActivity : AppCompatActivity(R.layout.activity_recordplay), INERec
                 binding.clazzInfoView.let {
                     option.roomName?.let { it1 -> it.setRoomName(it1) }
                     option.teacherName?.let { it1 -> it.setTeacherName(it1) }
-                    option.roomUuid?.run { substring(0, length - 1) }?.let { it3 ->
+                    option.roomUuid?.let { it3 ->
                         it.setRoomId(it3)
                         it.setOnCopyText(it3)
                     }

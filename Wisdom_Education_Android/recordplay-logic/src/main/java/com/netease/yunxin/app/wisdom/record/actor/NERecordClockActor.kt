@@ -7,18 +7,19 @@ package com.netease.yunxin.app.wisdom.record.actor
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
-import com.netease.yunxin.app.wisdom.record.model.NERecordEvent
-import com.netease.yunxin.app.wisdom.record.model.NERecordPlayState
 import com.netease.yunxin.app.wisdom.record.base.INERecordActor
 import com.netease.yunxin.app.wisdom.record.event.NERecordEventDispatcher
 import com.netease.yunxin.app.wisdom.record.event.NERecordEventHandler
-import com.netease.yunxin.app.wisdom.record.event.NERecordMemberHandler
 import com.netease.yunxin.app.wisdom.record.listener.NERecordClockListener
 import com.netease.yunxin.app.wisdom.record.listener.NERecordEventListener
 import com.netease.yunxin.app.wisdom.record.listener.NERecordUIListener
+import com.netease.yunxin.app.wisdom.record.model.NERecordEvent
+import com.netease.yunxin.app.wisdom.record.model.NERecordPlayState
 import com.netease.yunxin.app.wisdom.record.options.NERecordOptions
 import com.netease.yunxin.kit.alog.ALog
 import java.util.*
+import java.util.concurrent.atomic.AtomicLong
+import kotlin.math.max
 
 /**
  * 处理事件类以及UI进度更新
@@ -53,48 +54,43 @@ class NERecordClockActor(recordOptions: NERecordOptions, private var uiListener:
 
     private var mDuration: Long = 0L
 
-    var hostActor: INERecordActor
-        get() {
-            return mHostActor
-        }
-        set(actor) {
-            this.mHostActor = actor
-            mHostActor.setClockListener(this)
-        }
 
-    private lateinit var mHostActor: INERecordActor
+    private val period = 1000L / 15
+    private val playedTime = AtomicLong()
+    private var previewTime: Long = 0
 
-    private val startTime: Long = recordOptions.recordData.record.startTime
+    private var timer: Timer? = null
+
+    private val record = recordOptions.recordData
+    private var startTime: Long = record.record.startTime
+    private var endTime: Long = max(record.record.stopTime, record.eventList.lastOrNull()?.timestamp?: 0)
     private val eventList: MutableList<NERecordEvent> = recordOptions.recordData.eventList
 
     fun prepare() {
-        // 过滤主持人最后的离开房间的事件
-        eventList.lastOrNull { it.roomUid == (hostActor as NERecordVideoActor).recordItem.roomUid.toString()
-                && (NERecordMemberHandler.memberJoin(it) || NERecordMemberHandler.memberLeave(it))
-        }?.apply {
-            if (NERecordMemberHandler.memberLeave(this)) {
-                eventList.remove(this)
-            }
-        }
+//        // 过滤主持人最后的离开房间的事件
+//        eventList.lastOrNull { it.roomUid == (hostActor as NERecordVideoActor).recordItem.roomUid.toString()
+//                && (NERecordMemberHandler.memberJoin(it) || NERecordMemberHandler.memberLeave(it))
+//        }?.apply {
+//            if (NERecordMemberHandler.memberLeave(this)) {
+//                eventList.remove(this)
+//            }
+//        }
         pendingEventList.addAll(eventList)
     }
 
     override fun getDuration(): Long {
-        return hostActor.getDuration().let {
-            if (it > 0) {
-                mDuration = it
-            }
-            mDuration
-        }
+        return endTime - startTime
     }
 
     override fun getCurrentPosition(): Long {
-        return hostActor.getCurrentPosition()
+        return playedTime.get()
     }
 
     override fun start() {
         updateState(NERecordPlayState.PLAYING)
         uiListener.onStart()
+
+        startTimer()
 
         if (eventDispatcher == null) {
             eventDispatcher = NERecordEventDispatcher()
@@ -102,8 +98,30 @@ class NERecordClockActor(recordOptions: NERecordOptions, private var uiListener:
         }
 
         eventDispatcher?.let {
-            executeNextEvent()
+            executeNextEvent()}
+    }
+
+    private fun startTimer() {
+        val task = object : TimerTask() {
+            override fun run() {
+                val nowTime = Date().time
+                playedTime.set(playedTime.get() + (nowTime - previewTime))
+                if (startTime + playedTime.get() > endTime) {
+                    onClockStop()
+                    return
+                }
+                onClockProgressChanged(playedTime.get(), getDuration())
+                previewTime = nowTime
+            }
         }
+        previewTime = Date().time
+        timer = Timer()
+        timer!!.schedule(task, period, period)
+    }
+
+    private fun stopTimer() {
+        timer?.cancel()
+        timer = null
     }
 
     private fun executeNextEvent() {
@@ -132,6 +150,10 @@ class NERecordClockActor(recordOptions: NERecordOptions, private var uiListener:
     }
 
     override fun seek(positionMs: Long) {
+        stopTimer()
+        playedTime.set(positionMs)
+        startTimer()
+        
         eventDispatcher?.let {
             // 0. 缓存之前的被执行队列
             val prevExecutedEventList: LinkedList<NERecordEvent> = LinkedList()
@@ -176,12 +198,17 @@ class NERecordClockActor(recordOptions: NERecordOptions, private var uiListener:
     }
 
     override fun pause() {
+        stopTimer()
+
         updateState(NERecordPlayState.PAUSED)
         uiListener.onPause()
         revertNextEvent()
     }
 
     override fun stop() {
+        stopTimer()
+        playedTime.set(endTime)
+
         clearDispatcher()
         nextEvent = null
 
@@ -248,7 +275,7 @@ class NERecordClockActor(recordOptions: NERecordOptions, private var uiListener:
     }
 
     override fun onClockStop() {
-        uiListener.onProgressChanged(hostActor.getDuration(), hostActor.getDuration())
+        uiListener.onProgressChanged(getDuration(), getDuration())
         stop()
     }
 

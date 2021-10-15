@@ -15,6 +15,7 @@ import com.netease.yunxin.app.wisdom.record.model.NERecordItem
 import com.netease.yunxin.app.wisdom.record.model.NERecordPlayState
 import com.netease.yunxin.app.wisdom.record.actor.NERecordClockActor
 import com.netease.yunxin.app.wisdom.record.actor.NERecordManager
+import com.netease.yunxin.app.wisdom.record.actor.NERecordVideoActor
 import com.netease.yunxin.app.wisdom.record.base.INERecordActor
 import com.netease.yunxin.app.wisdom.record.base.INERecordControlView
 import com.netease.yunxin.app.wisdom.record.event.NERecordEventHandler
@@ -28,6 +29,7 @@ class NERecordPlayer(var recordOptions: NERecordOptions) : NERecordUIListener, I
     private lateinit var clockActor: NERecordClockActor
     private lateinit var controlView: INERecordControlView
     private lateinit var recordManager: NERecordManager
+    private var hostActors: MutableList<NERecordVideoActor> = mutableListOf()
 
     companion object {
         lateinit var instance: NERecordPlayer
@@ -130,12 +132,12 @@ class NERecordPlayer(var recordOptions: NERecordOptions) : NERecordUIListener, I
         return recordManager.getActor(recordItem, subStream)
     }
 
-    fun setHostActor(actor: INERecordActor) {
-        recordManager.setHostActor(actor)
+    fun addHostActor(actor: NERecordVideoActor) {
+        hostActors.add(actor)
     }
 
-    fun getHostActor(): INERecordActor {
-        return recordManager.getHostActor()
+    fun getHostActors(): List<NERecordVideoActor> {
+        return hostActors
     }
 
     fun prepareEvent() {

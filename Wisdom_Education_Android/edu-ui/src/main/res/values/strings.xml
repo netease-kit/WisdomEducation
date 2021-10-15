@@ -155,4 +155,7 @@
     <string name="download_picture_fail">download picture fail</string>
     <string name="picker_image_error">picker image error</string>
     <string name="unknown_msg_tips">unknown msg type</string>
+    <string name="loading">loading</string>
+    <string name="load_failed">load failed</string>
+    <string name="load_end">load end</string>
 </resources>

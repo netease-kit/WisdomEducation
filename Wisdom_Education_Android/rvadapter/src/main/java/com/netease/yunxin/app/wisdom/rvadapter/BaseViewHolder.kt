@@ -42,6 +42,18 @@ abstract class BaseViewHolder<T>(view: View) : RecyclerView.ViewHolder(view) {
     }
 
     /**
+     * Set a view visibility to VISIBLE (true) or GONE (false).
+     *
+     * @param viewId  The view id.
+     * @param visible True for VISIBLE, false for GONE.
+     * @return The BaseViewHolder for chaining.
+     */
+    open fun setVisible(viewId: Int, visible: Boolean) {
+        val view: View = findViewById(viewId)
+        view.visibility = if (visible) View.VISIBLE else View.GONE
+    }
+
+    /**
      * on bind data
      *
      * @param data

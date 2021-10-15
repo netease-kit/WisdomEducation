@@ -42,7 +42,7 @@ interface NEEduManager {
         lateinit var classOptions: NEEduClassOptions
 
         // sdk inner version code
-        private const val VERSION_CODE = 50
+        private const val VERSION_CODE = 60
 
 
         /**

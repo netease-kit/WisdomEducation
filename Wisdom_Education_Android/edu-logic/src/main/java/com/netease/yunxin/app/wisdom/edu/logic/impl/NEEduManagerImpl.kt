@@ -174,19 +174,24 @@ internal object NEEduManagerImpl : NEEduManager {
                         t.data!!.apply {
                             roomConfig = this
                         }
-                        neEduSync?.snapshot(neEduClassOptions.classId) { t1 ->
-                            eduEntryRes = NEEduEntryRes(
-                                member = NEEduEntryMember(
-                                    eduLoginRes.rtcKey,
-                                    neEduClassOptions.roleType.value,
-                                    neEduClassOptions.nickName,
-                                    eduLoginRes.userUuid),
-                                room = t1.room
-                            )
-                            cmdDispatcher?.start()
-                            enterLD.postValue(NEResult(NEEduHttpCode.SUCCESS.code, null))
+                        if(roomConfig.isLiveClass()) {
+                            neEduSync?.snapshot(neEduClassOptions.classId) { t1 ->
+                                eduEntryRes = NEEduEntryRes(
+                                    member = NEEduEntryMember(
+                                        eduLoginRes.rtcKey,
+                                        neEduClassOptions.roleType.value,
+                                        neEduClassOptions.nickName,
+                                        eduLoginRes.userUuid),
+                                    room = t1.room
+                                )
+                                cmdDispatcher?.start()
+                                enterLD.postValue(NEResult(NEEduHttpCode.SUCCESS.code, null))
+                            }
+                            observerAuth()
+                        } else {
+                            destroy()
+                            enterLD.postValue(NEResult(NEEduHttpCode.ROOM_CONFIG_CONFLICT.code))
                         }
-                        observerAuth()
                     } else {
                         destroy()
                         enterLD.postValue(NEResult(t.code))

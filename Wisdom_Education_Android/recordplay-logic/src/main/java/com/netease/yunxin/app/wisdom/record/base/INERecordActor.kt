@@ -7,7 +7,6 @@ package com.netease.yunxin.app.wisdom.record.base
 
 import androidx.lifecycle.LiveData
 import com.netease.yunxin.app.wisdom.record.model.NERecordPlayState
-import com.netease.yunxin.app.wisdom.record.listener.NERecordClockListener
 
 /**
  * 时间轴演员抽象类
@@ -71,13 +70,6 @@ interface INERecordActor {
      * @param playState 播放状态[NERecordPlayState]
      */
     fun updateState(@NERecordPlayState playState: Int)
-
-    /**
-     * 用于设置主持人为进度的参照基准
-     *
-     * @param clockListener
-     */
-    fun setClockListener(clockListener: NERecordClockListener) {}
 
     /**
      * 销毁

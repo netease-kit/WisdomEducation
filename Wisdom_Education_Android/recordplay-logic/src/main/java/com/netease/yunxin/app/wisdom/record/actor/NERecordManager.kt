@@ -182,14 +182,6 @@ class NERecordManager(private var clockActor: NERecordClockActor) : NERecordDeco
         }
     }
 
-    fun setHostActor(actor: INERecordActor) {
-        clockActor.hostActor = actor
-    }
-
-    fun getHostActor(): INERecordActor {
-        return clockActor.hostActor
-    }
-
     fun prepareEvent() {
         clockActor.prepare()
     }

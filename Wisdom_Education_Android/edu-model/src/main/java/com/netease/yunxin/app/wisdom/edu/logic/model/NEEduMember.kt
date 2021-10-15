@@ -35,8 +35,11 @@ open class NEEduMember(
         private fun buildHoldMember(type: NEEduRoleType): NEEduMember {
             return NEEduMember(type.value, "", HOLDER_ID, 0L, 0, null, null)
         }
-    }
 
+        fun buildLoadMoreHoldMember(type: NEEduRoleType): NEEduMember {
+            return NEEduMember(type.value, "", HOLDER_ID, 0L, -1, null, null)
+        }
+    }
     override fun hashCode(): Int {
         val var10000 = userUuid
         var var1 = var10000.hashCode() * 31
