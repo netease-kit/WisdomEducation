@@ -445,7 +445,7 @@ static NSString *kLastUserToken = @"lastUserToken";
     if (self.lessonType == NEEduSceneTypeLive) {
         // 直播大班课流程
         __weak typeof(self)weakSelf = self;
-        [[NEEduManager shared].roomService getRoom:room completion:^(NEEduCreateRoomRequest * _Nonnull result, NSError * _Nonnull error) {
+        [[NEEduManager shared].roomService getRoom:room completion:^(NEEduRoomConfigResponse * _Nonnull result, NSError * _Nonnull error) {
             __strong typeof(self)strongSelf = weakSelf;
             strongSelf.view.userInteractionEnabled = YES;
             [strongSelf.view hideToastActivity];

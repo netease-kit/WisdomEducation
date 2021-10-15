@@ -10,7 +10,7 @@
 #import "AppDelegate.h"
 #import "EnterLessonViewController.h"
 #import "NENavigationViewController.h"
-#import <Bugly/Bugly.h>
+//#import <Bugly/Bugly.h>
 
 @interface AppDelegate ()
 
@@ -24,7 +24,7 @@
     NENavigationViewController *nav = [[NENavigationViewController alloc] initWithRootViewController:enterLessonVC];
     self.window.rootViewController = nav;
     [self.window makeKeyAndVisible];
-    [Bugly startWithAppId:@"d35c7e8098"];
+//    [Bugly startWithAppId:@"d35c7e8098"];
     return YES;
 }
 

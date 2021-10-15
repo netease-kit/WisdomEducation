@@ -12,6 +12,7 @@
 #import "NEEduEnterRoomRequest.h"
 #import "NEEduEnterRoomResponse.h"
 #import "NEEduManager.h"
+#import "NEEduRoomConfigResponse.h"
 
 @interface NEEduRoomService ()
 
@@ -45,11 +46,20 @@
         }
     }];
 }
-- (void)getRoom:(NEEduRoom *)room completion:(void(^)(NEEduCreateRoomRequest *result,NSError *error))completion {
-    [HttpManager getRoom:room.roomUuid param:nil classType:[NEEduCreateRoomRequest class] success:^(id  _Nonnull objModel) {
+- (void)getRoom:(NEEduRoom *)room completion:(void(^)(NEEduRoomConfigResponse *result,NSError *error))completion {
+    [HttpManager getRoom:room.roomUuid param:nil classType:[NEEduRoomConfigResponse class] success:^(id  _Nonnull objModel) {
         if (completion) {
-            [NEEduManager shared].localUser.userName = room.nickName;
-            completion(objModel,nil);
+            NEEduRoomConfigResponse *res = (NEEduRoomConfigResponse *)objModel;
+            if (room.sceneType == NEEduSceneTypeLive && !res.isLiveClass) {
+                NSError *error = [HttpManager errorWithErrorCode:1017];
+                if (completion) {
+                    completion(nil,error);
+                }
+            }else {
+                [NEEduManager shared].localUser.userName = room.nickName;
+                completion(objModel,nil);
+            }
+            
         }
     } failure:^(NSError * _Nullable error, NSInteger statusCode) {
         if (completion) {

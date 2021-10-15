@@ -302,7 +302,6 @@ extension NERecordViewController:NEEduRecordPlayerDelegate {
             return
         }
         view.frame = CGRect(x: 0, y: 0, width: screenShareView.bounds.size.width, height: screenShareView.bounds.size.height)
-        view.backgroundColor = .red
         screenShareView.isHidden = false
         screenShareView.addSubview(view)
     }

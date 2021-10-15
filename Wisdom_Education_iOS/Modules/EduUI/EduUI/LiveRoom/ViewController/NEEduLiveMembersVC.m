@@ -10,6 +10,7 @@
 #import "UIImage+NE.h"
 #import <EduLogic/EduLogic.h>
 #import "NEEduMembersHeadView.h"
+#import <MJRefresh/MJRefresh.h>
 
 static NSString *const cellID = @"NELiveMemberCellID";
 @interface NEEduLiveMembersVC ()<UITableViewDelegate,UITableViewDataSource,UITextFieldDelegate>
@@ -21,13 +22,24 @@ static NSString *const cellID = @"NELiveMemberCellID";
 @property (nonatomic, strong) NSLayoutConstraint *lightLineLeft;
 @property (nonatomic, strong) NSMutableArray <NIMChatroomMember *>*members;
 @property (nonatomic, strong) NEEduMembersHeadView *searchView;
-
 @property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, strong) NSArray<NIMChatroomMember *> *searchArray;
 @property (nonatomic, assign) bool isSearching;
+@property (nonatomic, assign) NSInteger number;
+
 @end
 
 @implementation NEEduLiveMembersVC
+
+
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    [self setupSubviews];
+    [self setRefresh];
+    [self getChatroomInfo];
+    [self getChatMemebersFromMember:nil];
+}
 
 - (void)addMember:(NIMChatroomMember *)member {
     // 过滤老师
@@ -39,11 +51,13 @@ static NSString *const cellID = @"NELiveMemberCellID";
             return;
         }
     }
-    [self.members addObject:member];
+    [self.members insertObject:member atIndex:0];
+    self.number ++;
     if (self.isSearching) {
         self.searchArray = [self searchMembsersWithName:self.searchView.textField.text];
     }
     [self.tableView reloadData];
+    [self.onlineButton setTitle:[NSString stringWithFormat:@"课堂成员(%ld)",self.number] forState:UIControlStateNormal];
 }
 
 - (void)removeMember:(NIMChatroomMember *)member {
@@ -55,27 +69,32 @@ static NSString *const cellID = @"NELiveMemberCellID";
         }
     }
     [self.members removeObject:target];
+    self.number --;
     if (self.isSearching) {
         self.searchArray = [self searchMembsersWithName:self.searchView.textField.text];
     }
     [self.tableView reloadData];
+    [self.onlineButton setTitle:[NSString stringWithFormat:@"课堂成员(%ld)",self.number] forState:UIControlStateNormal];
 }
-
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    [self setupSubviews];
-    [self getChatMemebers];
+- (void)getChatroomInfo {
+    [[NEEduManager shared].imService fetchChatroomInfo:^(NSError * _Nonnull error, NEEduChatRoomInfo * _Nonnull chatRoom) {
+        //减去老师
+        self.number = chatRoom.onlineNumber - 1;
+        NSString *title = [NSString stringWithFormat:@"课堂成员(%ld)",self.number];
+        [self.onlineButton setTitle:title forState:UIControlStateNormal];
+    }];
 }
-
-- (void)getChatMemebers {
+- (void)getChatMemebersFromMember:(NIMChatroomMember *)member {
     __weak typeof(self) weakSelf = self;
-    [[NEEduManager shared].imService getChatroomMembers:self.room.properties.chatRoom.chatRoomId result:^(NSError * _Nonnull error, NSArray<NIMChatroomMember *> * _Nullable members) {
+    [[NEEduManager shared].imService getMembersFromMember:member result:^(NSError * _Nonnull error, NSArray<NIMChatroomMember *> * _Nullable members) {
         __strong typeof(self) strongSelf = weakSelf;
-        NSLog(@"error:%@ members:%@",error,members);
+        [weakSelf.tableView.mj_footer endRefreshing];
         if (error) {
             return;
         }
-        strongSelf.members = [NSMutableArray array];
+        if (members.count <= 0) {
+            [weakSelf.tableView.mj_footer endRefreshingWithNoMoreData];
+        }
         for (NIMChatroomMember *member in members) {
             // 过滤老师
             if (member.type != NIMChatroomMemberTypeManager && member.type != NIMChatroomMemberTypeCreator) {
@@ -86,16 +105,28 @@ static NSString *const cellID = @"NELiveMemberCellID";
     }];
 }
 
+- (void)setRefresh {
+    __weak typeof(self) weakSelf = self;
+    self.tableView.mj_footer = [MJRefreshBackNormalFooter footerWithRefreshingBlock:^{
+        NSLog(@"footer begin refresh");
+        [weakSelf getChatMemebersFromMember:weakSelf.members.lastObject];
+    }];
+}
 - (void)setupSubviews {
     self.view.backgroundColor = [UIColor colorWithRed:26/255.0 green:32/255.0 blue:40/255.0 alpha:1.0];
     [self.view addSubview:self.backButton];
     NSLayoutConstraint *left = [NSLayoutConstraint constraintWithItem:self.backButton attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeLeading multiplier:1.0 constant:40];
-    NSLayoutConstraint *top = [NSLayoutConstraint constraintWithItem:self.backButton attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.view.safeAreaLayoutGuide attribute:NSLayoutAttributeTop multiplier:1.0 constant:0];
+    
     NSLayoutConstraint *width = [NSLayoutConstraint constraintWithItem:self.backButton attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:44];
     NSLayoutConstraint *height = [NSLayoutConstraint constraintWithItem:self.backButton attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:48];
+    NSLayoutConstraint *top;
+    if (@available(iOS 11.0, *)) {
+        top = [NSLayoutConstraint constraintWithItem:self.backButton attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.view.safeAreaLayoutGuide attribute:NSLayoutAttributeTop multiplier:1.0 constant:0];
+    }else {
+        top = [NSLayoutConstraint constraintWithItem:self.backButton attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeTop multiplier:1.0 constant:0];
+    }
     [self.view addConstraints:@[left,top]];
     [self.backButton addConstraints:@[width,height]];
-    
     [self.view addSubview:self.onlineButton];
     if (@available(iOS 11.0, *)) {
         [NSLayoutConstraint activateConstraints:@[
@@ -181,7 +212,7 @@ static NSString *const cellID = @"NELiveMemberCellID";
 - (UIButton *)onlineButton {
     if (!_onlineButton) {
         _onlineButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_onlineButton setTitle:@"课堂成员" forState:UIControlStateNormal];
+        [_onlineButton setTitle:@"课堂成员(0)" forState:UIControlStateNormal];
         _onlineButton.translatesAutoresizingMaskIntoConstraints = NO;
         [_onlineButton addTarget:self action:@selector(topButton:) forControlEvents:UIControlEventTouchUpInside];
         [_onlineButton setTitleColor:[UIColor colorWithRed:74/255.0 green:86/255.0 blue:101/255.0 alpha:1.0] forState:UIControlStateNormal];
@@ -212,6 +243,12 @@ static NSString *const cellID = @"NELiveMemberCellID";
     return _tableView;
 }
 
+- (NSMutableArray<NIMChatroomMember *> *)members {
+    if (!_members) {
+        _members = [NSMutableArray array];
+    }
+    return _members;
+}
 - (NEEduMembersHeadView *)searchView {
     if (!_searchView) {
         _searchView = [[NEEduMembersHeadView alloc] init];

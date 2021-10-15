@@ -15,7 +15,6 @@ PODS:
   - AFNetworking/UIKit (4.0.1):
     - AFNetworking/NSURLSession
   - Alamofire (5.4.4)
-  - Bugly (2.5.90)
   - EduLogic (0.0.1):
     - AFNetworking (~> 4.0.1)
     - NERtcSDK (= 4.2.1)
@@ -23,10 +22,12 @@ PODS:
     - YYModel (= 1.0.4)
   - EduUI (0.0.1):
     - EduLogic (~> 0.0.1)
+    - MJRefresh (~> 3.7.2)
     - NELivePlayer (~> 2.9.0)
     - NEScreenShareHost (~> 0.1.0)
     - NEWhiteBoard (~> 0.0.1)
     - SDWebImage (~> 5.11.1)
+  - MJRefresh (3.7.2)
   - NEDyldYuv (0.0.1)
   - NELivePlayer (2.9.1)
   - NERecordPlay (0.0.1):
@@ -48,7 +49,6 @@ PODS:
   - YYModel (1.0.4)
 
 DEPENDENCIES:
-  - Bugly
   - EduLogic (from `Modules/EduLogic/EduLogic.podspec`)
   - EduUI (from `Modules/EduUI/EduUI.podspec`)
   - NERecordPlay (from `Modules/NERecordPlay/NERecordPlay.podspec`)
@@ -60,7 +60,7 @@ SPEC REPOS:
   trunk:
     - AFNetworking
     - Alamofire
-    - Bugly
+    - MJRefresh
     - NEDyldYuv
     - NELivePlayer
     - NERtcSDK
@@ -85,9 +85,9 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   AFNetworking: 7864c38297c79aaca1500c33288e429c3451fdce
   Alamofire: f3b09a368f1582ab751b3fff5460276e0d2cf5c9
-  Bugly: 88bc32c0acc6fef7b74d610f0319ee7560d6b9fe
   EduLogic: 3ece25b5cb0b664dda1b8e1b61ae41db472bb95b
-  EduUI: c4ded8499e5b531c7bc48bc7d552f4adff6b050f
+  EduUI: 7d17696f945eaa88af8b1ebac57cfe665f716fab
+  MJRefresh: 30997d30b347c8e9508a4db11e3a690da0c9b85a
   NEDyldYuv: 6b47adff16186768bf2f8b165697fdee8e94d7ac
   NELivePlayer: 4c2396beea2595f36bcca63d9e5d226ff241394a
   NERecordPlay: 637478c7265888aa6a55d7ea32294f378bed355c
@@ -100,6 +100,6 @@ SPEC CHECKSUMS:
   SDWebImage: a7f831e1a65eb5e285e3fb046a23fcfbf08e696d
   YYModel: 2a7fdd96aaa4b86a824e26d0c517de8928c04b30
 
-PODFILE CHECKSUM: b88e4cf77bdb179eff2848c5fe7bc38f0a127c19
+PODFILE CHECKSUM: 738c2780c32df4402bd78e681d755ae1a74fb38b
 
 COCOAPODS: 1.10.1

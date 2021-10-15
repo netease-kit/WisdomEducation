@@ -89,10 +89,13 @@
     }];
 }
 
-- (void)getChatroomMembers:(NSString *)roomId result:(void(^)(NSError *error,NSArray<NIMChatroomMember *> * _Nullable members))result {
+- (void)getMembersFromMember:(NIMChatroomMember *)member result:(void(^)(NSError *error,NSArray<NIMChatroomMember *> * _Nullable members))result {
     NIMChatroomMemberRequest *request = [[NIMChatroomMemberRequest alloc] init];
-    request.roomId = roomId;
-    request.limit = 2000;
+    if (member) {
+        request.lastMember = member;
+    }
+    request.roomId = self.chatRoom.roomId;
+    request.limit = 50;
     request.type = NIMChatroomFetchMemberTypeTemp;
     [[NIMSDK sharedSDK].chatroomManager fetchChatroomMembers:request completion:^(NSError * _Nullable error, NSArray<NIMChatroomMember *> * _Nullable members) {
         result(error,members);

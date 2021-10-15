@@ -20,6 +20,7 @@ Pod::Spec.new do |spec|
   spec.dependency "NEScreenShareHost", '~> 0.1.0'
   spec.dependency "SDWebImage", '~> 5.11.1 '
   spec.dependency "NELivePlayer", "~> 2.9.0"
+  spec.dependency 'MJRefresh', '~> 3.7.2'
   
 
 
