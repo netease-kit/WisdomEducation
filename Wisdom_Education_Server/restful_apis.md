@@ -252,6 +252,17 @@
 - Body: None
 #### Response:
 - Body: None
+
+### 成员踢出
+
+#### Request:
+- Url: https://{Host}/apps/{appKey}/v1/rooms/{roomUuid}/members/{userUuid}
+- HttpMethod: DELETE
+- Auth: CHECKSUM
+- Body: None
+#### Response:
+- Body: None
+
 ## Error Code
 |错误码|错误消息|描述｜
 |----|----|----|
