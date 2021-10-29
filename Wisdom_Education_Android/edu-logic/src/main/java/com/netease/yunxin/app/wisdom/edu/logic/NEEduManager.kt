@@ -8,6 +8,7 @@ package com.netease.yunxin.app.wisdom.edu.logic
 import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.map
 import com.netease.nimlib.sdk.util.NIMUtil
 import com.netease.yunxin.app.wisdom.base.network.NEResult
 import com.netease.yunxin.app.wisdom.base.network.RetrofitManager
@@ -33,16 +34,18 @@ interface NEEduManager {
 
     companion object {
 
-        lateinit var context: Application
+        internal lateinit var context: Application
 
-        lateinit var eduOptions: NEEduOptions
+        internal lateinit var eduOptions: NEEduOptions
 
-        lateinit var instance: NEEduManager
+        internal lateinit var instance: NEEduManager
 
-        lateinit var classOptions: NEEduClassOptions
+        internal lateinit var classOptions: NEEduClassOptions
 
-        // sdk inner version code
-        private const val VERSION_CODE = 60
+        /**
+         * sdk inner version code
+         */
+        private const val VERSION_CODE = 70
 
 
         /**
@@ -91,12 +94,27 @@ interface NEEduManager {
 
     }
 
+    /**
+     * the information data returned by the login interface
+     */
     var eduLoginRes: NEEduLoginRes
 
+    /**
+     * room config
+     */
     var roomConfig: NEEduRoomConfig
 
+    /**
+     * LiveData which observes error events
+     */
     val errorLD: MediatorLiveData<Int>
 
+    /**
+     * Whether the member userUuid is mine
+     *
+     * @param userUuid member userUuid
+     * @return Whether the member userUuid is mine
+     */
     fun isSelf(userUuid: String): Boolean
 
     /**
@@ -104,6 +122,10 @@ interface NEEduManager {
      */
     fun getEntryMember(): NEEduEntryMember
 
+    /**
+     * destroy instance of NEEduManager
+     *
+     */
     fun destroy()
 
     /**课堂管理*/
@@ -138,16 +160,31 @@ interface NEEduManager {
     fun syncSnapshot()
 
     /**
-     * 白板auth
+     * Whiteboard auth
      *
-     * @return 白板auth
+     * @return Whiteboard auth
      */
     fun getWbAuth(): NEEduWbAuth?
 
+    /**
+     * Get current room
+     *
+     * @return current room
+     */
     fun getRoom(): NEEduRoom
 
+    /**
+     * Whether I am the host
+     *
+     * @return Whether I am the host
+     */
     fun isHost(): Boolean
 
+    /**
+     * Whether current room is live class
+     *
+     * @return Whether current room is live class
+     */
     fun isLiveClass(): Boolean {
         return classOptions.sceneType == NEEduSceneType.LIVE_SIMPLE
     }

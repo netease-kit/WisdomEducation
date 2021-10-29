@@ -11,7 +11,7 @@ import com.netease.yunxin.app.wisdom.record.model.NERecordEvent
 import com.netease.yunxin.app.wisdom.record.listener.NERecordEventListener
 
 /**
- * 事件调度器，用于执行事件
+ * Event scheduler, used to execute events
  *
  */
 class NERecordEventDispatcher {

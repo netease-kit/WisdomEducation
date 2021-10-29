@@ -72,5 +72,8 @@ abstract class NEEduMemberService : INEEduService() {
      */
     internal abstract fun updateMemberPropertiesChange(member: NEEduMember, properties: NEEduMemberProperties)
 
+    /**
+     * Observe member property changes
+     */
     abstract fun onMemberPropertiesChange(): LiveData<Pair<NEEduMember, NEEduMemberProperties>>
 }

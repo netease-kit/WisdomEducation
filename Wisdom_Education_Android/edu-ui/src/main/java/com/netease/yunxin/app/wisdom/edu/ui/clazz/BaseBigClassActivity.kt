@@ -221,7 +221,7 @@ abstract class BaseBigClassActivity : BaseNormalClassActivity() {
             .observe(this,
                 { t ->
                     if (!t.success()) {
-                        if (t.code == NEEduHttpCode.ROOM_PROPERTY_CONCURRENCY_OUT.code) {
+                        if (t.code == NEEduHttpCode.ROOM_MEMBER_CONCURRENCY_OUT.code) {
                             ToastUtil.showShort(getString(R.string.stage_student_over_limit))
                         } else {
                             ToastUtil.showShort(getString(R.string.operate_fail))

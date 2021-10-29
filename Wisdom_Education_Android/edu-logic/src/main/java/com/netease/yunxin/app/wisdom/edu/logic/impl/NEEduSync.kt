@@ -132,12 +132,12 @@ internal class NEEduSync(val neEduManager: NEEduManagerImpl) {
                     cacheCmdData(it.list)
                 }
             } else {// fail 2 snapshot
-                snapshot(NEEduManagerImpl.getRoom().roomUuid) {}
+                snapshot(NEEduManagerImpl.getRoom().roomUuid)
             }
         }
     }
 
-    fun snapshot(roomUuid: String, successCallback: ((snapshot: NEEduSnapshot) -> Unit)) {
+    fun snapshot(roomUuid: String) {
         if (syncing) {
             return
         }
@@ -147,56 +147,64 @@ internal class NEEduSync(val neEduManager: NEEduManagerImpl) {
         snapshot.observeForeverOnce { t ->
             syncing = false
             if (!t.success()) {
-                if(t.code == NEEduHttpCode.ROOM_NOT_EXIST.code) {
+                if (t.code == NEEduHttpCode.ROOM_NOT_EXIST.code) {
                     errorLD.postValue(t.code)
                 }
                 return@observeForeverOnce
             }
+            // network break, close class room, but client no sense, create the same classId room, when network
+            // reconnect, request snapshot, response new class snapshot, but client still old class snapshot
+            if (t.data != null && neEduManager.getRoom().rtcCid != t.data!!.snapshot.room.rtcCid) {
+                errorLD.postValue(NEEduHttpCode.ROOM_NOT_EXIST.code)
+                return@observeForeverOnce
+            }
             t.data?.let {
-                if (it.sequence <= lastSequenceId) {
-                    // do nothing, 说明消息已经到前面去了，等待下一次sync
-                } else {
-                    lastSequenceId = it.sequence
-                    if (it.snapshot.members.size > 0) {
-                        if (neEduManager.isLiveClass()) {
-                            neEduManager.getMemberService().updateMemberJoin(it.snapshot.members, true)
-                        } else {
-                            neEduManager.getRtcService().updateSnapshotMember(it.snapshot.members)
-                            val lastJoinList: MutableList<NEEduMember> = mutableListOf()
-                            lastJoinList.addAll(neEduManager.getMemberService().getMemberList())
-                            neEduManager.getRtcService().updateMemberJoin(it.snapshot.members, false)
-                            neEduManager.getMemberService().updateMemberJoin(it.snapshot.members, false)
-                            it.snapshot.members.firstOrNull { t -> NEEduManagerImpl.isSelf(t.userUuid) }
-                                ?.also { member ->
-                                    member.properties?.let { it ->
-                                        val propertiesDiff =
-                                            it.diff(lastJoinList.firstOrNull { it1 -> it1 == member }?.properties)
-                                        neEduManager.getMemberService().updateMemberPropertiesChange(
-                                            member, member
-                                                .properties!!
-                                        )
-                                        if (lastJoinList.isNotEmpty() || !neEduManager.roomConfig.is1V1()) {
-                                            neEduManager.getBoardService().updatePermission(member, propertiesDiff)
-                                            neEduManager.getShareScreenService()
-                                                .updatePermission(member, propertiesDiff)
-                                        }
-                                    }
-                                }
-                            neEduManager.getHandsUpService().updateMemberJoin(it.snapshot.members, false)
-                            neEduManager.getShareScreenService().updateMemberJoin(it.snapshot.members, false)
-                        }
-                    }
-                    it.snapshot.room.states?.let { t ->
-                        neEduManager.getRoomService().updateRoomStatesChange(t, false)
-                        t.muteChat?.let {
-                            neEduManager.getIMService()
-                                .updateMuteAllChat(t.muteChat?.value == NEEduStateValue.OPEN)
-                        }
-                    }
-                    successCallback(it.snapshot)
-                }
+                dispatchSnapshotEvent(it)
             }
             handleCmdData()
         }
     }
+
+    private fun dispatchSnapshotEvent(it: NEEduSnapshotRes) =
+        if (it.sequence <= lastSequenceId) {
+            // do nothing, 说明消息已经到前面去了，等待下一次sync
+        } else {
+            lastSequenceId = it.sequence
+            if (it.snapshot.members.size > 0) {
+                if (neEduManager.isLiveClass()) {
+                    neEduManager.getMemberService().updateMemberJoin(it.snapshot.members, true)
+                } else {
+                    neEduManager.getRtcService().updateSnapshotMember(it.snapshot.members)
+                    val lastJoinList: MutableList<NEEduMember> = mutableListOf()
+                    lastJoinList.addAll(neEduManager.getMemberService().getMemberList())
+                    neEduManager.getRtcService().updateMemberJoin(it.snapshot.members, false)
+                    neEduManager.getMemberService().updateMemberJoin(it.snapshot.members, false)
+                    it.snapshot.members.firstOrNull { t -> NEEduManagerImpl.isSelf(t.userUuid) }
+                        ?.also { member ->
+                            member.properties?.let { it ->
+                                val propertiesDiff =
+                                    it.diff(lastJoinList.firstOrNull { it1 -> it1 == member }?.properties)
+                                neEduManager.getMemberService().updateMemberPropertiesChange(
+                                    member, member
+                                        .properties!!
+                                )
+                                if (lastJoinList.isNotEmpty() || !neEduManager.roomConfig.is1V1()) {
+                                    neEduManager.getBoardService().updatePermission(member, propertiesDiff)
+                                    neEduManager.getShareScreenService()
+                                        .updatePermission(member, propertiesDiff)
+                                }
+                            }
+                        }
+                    neEduManager.getHandsUpService().updateMemberJoin(it.snapshot.members, false)
+                    neEduManager.getShareScreenService().updateMemberJoin(it.snapshot.members, false)
+                }
+            }
+            it.snapshot.room.states?.let { t ->
+                neEduManager.getRoomService().updateRoomStatesChange(t, false)
+                t.muteChat?.let {
+                    neEduManager.getIMService()
+                        .updateMuteAllChat(t.muteChat?.value == NEEduStateValue.OPEN)
+                }
+            }
+        }
 }

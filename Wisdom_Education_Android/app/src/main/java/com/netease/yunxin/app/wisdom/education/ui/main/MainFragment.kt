@@ -217,12 +217,12 @@ class MainFragment : Fragment(R.layout.main_fragment) {
         RecordPlayRepository.appKey = BuildConfig.APP_KEY
         RecordPlayRepository.baseUrl = BuildConfig.API_BASE_URL
         PreferenceUtil.recordPlay.apply {
-            NERecordPlayUiKit.fetchRecord(roomUuid = first, rtcCid = second)
-                .observeOnce(viewLifecycleOwner, initRecordObserver)
+            NERecordPlayUiKit.createPlayer(roomUuid = first, rtcCid = second)
+                .observeOnce(viewLifecycleOwner, recordObserver)
         }
     }
 
-    private val initRecordObserver = { t: NEResult<NERecordPlayer> ->
+    private val recordObserver = { t: NEResult<NERecordPlayer> ->
         starting = false
         loading?.dismiss()
         loading = null
@@ -231,11 +231,11 @@ class MainFragment : Fragment(R.layout.main_fragment) {
                 enterRecordPlay()
             }
             t.code == NEEduHttpCode.NO_CONTENT.code -> {
-                ALog.i("init record failed, result $t")
+                ALog.i("create record failed, result $t")
                 ToastUtil.showLong(getString(R.string.course_playback_file_is_being_transcoded))
             }
             else -> {
-                ALog.i("init record failed, result $t")
+                ALog.i("create record failed, result $t")
                 val tip = context?.let { NEEduErrorCode.tipsWithErrorCode(it, t.code) }
                 if (!TextUtils.isEmpty(tip)) {
                     ToastUtil.showLong(tip!!)

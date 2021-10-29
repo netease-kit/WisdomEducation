@@ -7,6 +7,14 @@ package com.netease.yunxin.app.wisdom.record.options
 
 import com.netease.yunxin.app.wisdom.record.model.NEEduRecordData
 
+/**
+ * playback options
+ *
+ * @property recordData record data
+ * @property roomName room name
+ * @property roomUuid room uuid
+ * @property teacherName teacher name
+ */
 class NERecordOptions(
     val recordData: NEEduRecordData,
     val roomName: String?,

@@ -5,7 +5,7 @@
 package com.netease.yunxin.app.wisdom.record.base
 
 /**
- * 回放播放器UI更新接口
+ * Playback player UI update interface
  *
  */
 interface INERecordControlView {

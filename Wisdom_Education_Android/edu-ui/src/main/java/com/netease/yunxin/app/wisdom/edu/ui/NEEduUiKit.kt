@@ -25,6 +25,9 @@ interface NEEduUiKit {
 
     companion object {
 
+        /**
+         *  instance of NEEduUiKit
+         */
         var instance: NEEduUiKit? = null
 
         /**
@@ -32,7 +35,6 @@ interface NEEduUiKit {
          *
          * @param uuid 用户鉴权userUuid。匿名登录时请设置为空字符串""
          * @param token 用户鉴权userToken。匿名登录时请设置为空字符串""
-         * @param isLiveClass 是否是直播大班课
          * @return 接口回调
          */
         fun init(uuid: String, token: String): LiveData<NEResult<NEEduUiKit>> {
@@ -51,6 +53,10 @@ interface NEEduUiKit {
             return liveData
         }
 
+        /**
+         * destroy NEEduUiKit instance
+         *
+         */
         fun destroy() {
             instance?.destroy()
             instance = null
@@ -67,11 +73,28 @@ interface NEEduUiKit {
         }
     }
 
+    /**
+     * the information data returned by the login interface
+     */
     var neEduLoginRes: NEEduLoginRes?
 
+    /**
+     * instance of NEEduManager, which provides services of room, member, rtc, im, board, hands up, screen share.
+     */
     var neEduManager: NEEduManager?
 
+    /**
+     * destroy instance of NEEduUiKit
+     *
+     */
     fun destroy()
 
+    /**
+     * enter class
+     *
+     * @param context
+     * @param neEduClassOptions
+     * @return
+     */
     fun enterClass(context: Context, neEduClassOptions: NEEduClassOptions): LiveData<NEResult<NEEduEntryRes>>
 }

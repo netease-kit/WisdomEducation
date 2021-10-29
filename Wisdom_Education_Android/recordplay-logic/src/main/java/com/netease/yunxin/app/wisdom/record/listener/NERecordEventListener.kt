@@ -8,7 +8,7 @@ package com.netease.yunxin.app.wisdom.record.listener
 import com.netease.yunxin.app.wisdom.record.model.NERecordEvent
 
 /**
- * dispatcher执行事件回调
+ * Dispatcher performs event callbacks
  *
  */
 interface NERecordEventListener {

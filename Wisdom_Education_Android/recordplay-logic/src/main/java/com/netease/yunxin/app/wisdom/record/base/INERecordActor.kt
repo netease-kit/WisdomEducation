@@ -9,7 +9,7 @@ import androidx.lifecycle.LiveData
 import com.netease.yunxin.app.wisdom.record.model.NERecordPlayState
 
 /**
- * 时间轴演员抽象类
+ * record actor abstract class
  *
  */
 interface INERecordActor {

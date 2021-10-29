@@ -10,18 +10,25 @@ import com.netease.yunxin.app.wisdom.base.network.NEResult
 import com.netease.yunxin.app.wisdom.record.impl.NERecordPlayUiKitImpl
 
 /**
- * Created by hzsunyj on 2021/8/27.
+ * record player UIKit
  */
 interface NERecordPlayUiKit {
 
     companion object {
 
-        fun fetchRecord(
+        /**
+         * create instance of record player
+         *
+         * @param roomUuid
+         * @param rtcCid
+         * @return
+         */
+        fun createPlayer(
             roomUuid: String,
             rtcCid: String,
         ): LiveData<NEResult<NERecordPlayer>> {
             val playUiKit = NERecordPlayUiKitImpl()
-            return playUiKit.fetchRecord(roomUuid, rtcCid)
+            return playUiKit.createPlayer(roomUuid, rtcCid)
         }
     }
 }
