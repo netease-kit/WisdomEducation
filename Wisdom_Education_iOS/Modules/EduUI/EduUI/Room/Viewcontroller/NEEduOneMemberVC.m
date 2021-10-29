@@ -24,8 +24,8 @@
     audoItem.type = NEEduMenuItemTypeAudio;
     [audoItem setSelctedImage:[UIImage ne_imageNamed:@"menu_audio_off"]];
     
-    NEEduMenuItem *videoItem = [[NEEduMenuItem alloc] initWithTitle:@"关闭摄像头" image:[UIImage ne_imageNamed:@"menu_video"]];
-    videoItem.selectTitle = @"打开摄像头";
+    NEEduMenuItem *videoItem = [[NEEduMenuItem alloc] initWithTitle:@"关闭视频" image:[UIImage ne_imageNamed:@"menu_video"]];
+    videoItem.selectTitle = @"开启视频";
     videoItem.type = NEEduMenuItemTypeVideo;
     [videoItem setSelctedImage:[UIImage ne_imageNamed:@"menu_video_off"]];
 
@@ -55,7 +55,7 @@
 - (__kindof UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     NEEduVideoCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:cellID forIndexPath:indexPath];
     NEEduHttpUser *user = self.members[indexPath.row];
-    cell.showWhiteboardIcon = YES;
+    cell.delegate = self;
     cell.member = user;
     return cell;
 }

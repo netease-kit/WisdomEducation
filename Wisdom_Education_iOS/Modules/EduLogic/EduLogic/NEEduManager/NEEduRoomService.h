@@ -8,7 +8,6 @@
 //
 
 #import <Foundation/Foundation.h>
-//#import "NEEduRoom.h"
 #import "NEEduCreateRoomRequest.h"
 #import "HttpManager.h"
 #import "NEEduRoomProfile.h"
@@ -16,6 +15,8 @@
 #import "NEEduEnterRoomParam.h"
 #import <AFNetworking/AFNetworkReachabilityManager.h>
 #import "NEEduRoomConfigResponse.h"
+#import "NEEduErrorType.h"
+
 NS_ASSUME_NONNULL_BEGIN
 
 @protocol NEEduRoomServiceDelegate <NSObject>

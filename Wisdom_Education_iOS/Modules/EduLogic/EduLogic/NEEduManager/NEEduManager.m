@@ -129,7 +129,7 @@
 - (void)enterClassroom:(NEEduEnterRoomParam *)roomOption completion:(void(^)(NSError *error,NEEduEnterRoomResponse * response))completion {
     self.roomParam = roomOption;
     __weak typeof(self)weakSelf = self;
-    // 2.http entry
+    // 1.http entry
     [self.roomService enterRoom:roomOption completion:^(NSError * _Nonnull error, NEEduEnterRoomResponse * _Nonnull response) {
         __strong typeof(self)strongSelf = weakSelf;
         if (error) {
@@ -141,8 +141,9 @@
                 completion(error,nil);
             }
         }else {
-            //1.Rtc join
+            //2.Rtc join
             strongSelf.localUser = response.member;
+            strongSelf.profile.snapshot.room = response.room;
             strongSelf.room = response.room;
             strongSelf.userService = [[NEEduUserService alloc] initLocalUser:response.member];
             strongSelf.messageService.localUser = response.member;
@@ -237,6 +238,7 @@
 }
 
 - (void)leaveClassroom {
+    self.profile = nil;
     [self.rtcService leaveChannel];
     [self.imService leaveChatRoom];
     if (!self.reuseIM) {

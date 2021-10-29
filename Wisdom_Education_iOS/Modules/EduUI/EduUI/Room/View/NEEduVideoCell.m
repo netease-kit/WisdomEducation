@@ -56,10 +56,8 @@
         self.whiteWithCons.constant = 0;
     }else {
         self.namelabel.text = member.userName.length?[NSString stringWithFormat:@"%@(学生)",member.userName]:@"";
-        if (self.showWhiteboardIcon) {
             self.whiteboard.hidden = member.properties.whiteboard.drawable ? NO : YES;
             self.whiteWithCons.constant = member.properties.whiteboard.drawable ? 20 : 0;
-        }
     }
     self.audioView.image = member.streams.audio.value ? [UIImage ne_imageNamed:@"room_audio"]:[UIImage ne_imageNamed:@"room_audio_off"];
     self.cameraView.image = member.streams.video.value ? [UIImage ne_imageNamed:@"room_video"]:[UIImage ne_imageNamed:@"room_video_off"];

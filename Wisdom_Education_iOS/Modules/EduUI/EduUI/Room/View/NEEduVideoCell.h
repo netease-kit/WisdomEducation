@@ -22,7 +22,6 @@ NS_ASSUME_NONNULL_BEGIN
 @interface NEEduVideoCell : UICollectionViewCell
 @property (nonatomic, strong) NEEduHttpUser *member;
 @property (nonatomic, strong) UIView *videoView;
-@property (nonatomic, assign) BOOL showWhiteboardIcon;
 @property (nonatomic, weak) id<NEEduVideoCellDelegate> delegate;
 
 @end

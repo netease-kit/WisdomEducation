@@ -25,6 +25,7 @@
 @import NERecordPlayUI;
 @import NERecordPlay;
 
+
 // 隐私政策URL
 static NSString *kPrivatePolicyURL = @"https://yunxin.163.com/clauses?serviceType=3";
 // 用户协议URL
@@ -306,7 +307,7 @@ static NSString *kLastUserToken = @"lastUserToken";
         }else {
             [NEAVAuthorization requestCameraAuthorization:^(BOOL granted) {
                 if (!granted) {
-                    [self.view makeToast:@"请在设置页面先打开摄像头权限"];
+                    [self.view makeToast:@"请在设置页面先开启视频权限"];
                     return;
                 }else {
                     [self enterRoom];
@@ -745,7 +746,7 @@ static NSString *kLastUserToken = @"lastUserToken";
     if (!_recordBtn) {
         _recordBtn = [UIButton buttonWithType:UIButtonTypeCustom];
         _recordBtn.translatesAutoresizingMaskIntoConstraints = NO;
-        [_recordBtn setTitle:@"观看回放" forState:UIControlStateNormal];
+        [_recordBtn setTitle:@"查看回放" forState:UIControlStateNormal];
         [_recordBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
         [_recordBtn setBackgroundColor:[UIColor colorWithRed:81/255.0 green:116/255.0 blue:246/255.0 alpha:1.0]];
         [_recordBtn addTarget:self action:@selector(recordPlayEvent:) forControlEvents:UIControlEventTouchUpInside];
