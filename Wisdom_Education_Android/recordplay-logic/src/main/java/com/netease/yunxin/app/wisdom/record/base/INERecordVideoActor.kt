@@ -6,7 +6,7 @@
 package com.netease.yunxin.app.wisdom.record.base
 
 /**
- * 时间轴演员抽象类
+ * Timeline actor Abstract class
  *
  */
 interface INERecordVideoActor : INERecordActor {

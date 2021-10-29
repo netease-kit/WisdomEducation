@@ -126,9 +126,6 @@ class LiveClassActivity(layoutId: Int = R.layout.activity_live_clazz) : BaseClas
     }
 
     private fun initEduManager() {
-        if (NEEduUiKit.instance?.neEduManager == null) {
-            finish()
-        }
         eduManager = NEEduUiKit.instance!!.neEduManager!!
         eduRoom = eduManager.getRoom()
         entryMember = eduManager.getEntryMember()

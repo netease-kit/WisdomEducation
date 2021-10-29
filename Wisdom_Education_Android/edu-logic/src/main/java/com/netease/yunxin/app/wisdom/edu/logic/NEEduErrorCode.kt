@@ -14,6 +14,13 @@ import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduHttpCode
 
 class NEEduErrorCode {
     companion object {
+        /**
+         * Get tips with error code
+         *
+         * @param context
+         * @param error error code value
+         * @return
+         */
         fun tipsWithErrorCode(context: Context, error: Int): String {
             return when (error) {
                 NEEduHttpCode.IM_LOGIN_ERROR.code -> getString(context, R.string.im_login_error)
@@ -39,7 +46,7 @@ class NEEduErrorCode {
                 NEEduHttpCode.ROOM_SIT_FULL.code -> getString(context, R.string.room_sit_full)
                 NEEduHttpCode.ROOM_SIT_USER_CONFLICT.code -> getString(context, R.string.room_sit_user_conflict)
                 NEEduHttpCode.ROOM_SIT_NOT_EXIST.code -> getString(context, R.string.room_sit_not_exist)
-                NEEduHttpCode.ROOM_STREAM_CONCURRENCY_OUT.code -> getString(context,
+                NEEduHttpCode.ROOM_MEMBER_CONCURRENCY_OUT.code -> getString(context,
                     R.string.room_stream_concurrency_out)
                 NEEduHttpCode.ROOM_SITS_BAD.code -> getString(context, R.string.room_sits_bad)
                 NEEduHttpCode.ROOM_DESTINATION_MEMBER_NOT_EXIST.code -> getString(context,

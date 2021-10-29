@@ -15,11 +15,11 @@ import com.netease.yunxin.app.wisdom.record.NERecordPlayer
  */
 internal class NERecordPlayUiKitImpl : NERecordPlayUiKit {
 
-    fun fetchRecord(
+    fun createPlayer(
         roomUuid: String,
         rtcCid: String,
     ): LiveData<NEResult<NERecordPlayer>> {
-        return NERecordPlayer.fetchRecord(roomUuid, rtcCid)
+        return NERecordPlayer.createPlayer(roomUuid, rtcCid)
     }
 
 }

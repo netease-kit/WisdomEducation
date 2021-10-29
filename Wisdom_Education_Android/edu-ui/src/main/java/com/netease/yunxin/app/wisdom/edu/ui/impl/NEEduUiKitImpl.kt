@@ -17,6 +17,7 @@ import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduRoleType
 import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduSceneType
 import com.netease.yunxin.app.wisdom.edu.ui.NEEduUiKit
 import com.netease.yunxin.app.wisdom.edu.ui.clazz.*
+import com.netease.yunxin.kit.alog.ALog
 
 /**
  * Created by hzsunyj on 4/21/21.
@@ -44,31 +45,38 @@ internal class NEEduUiKitImpl : NEEduUiKit {
     override fun enterClass(context: Context, neEduClassOptions: NEEduClassOptions): LiveData<NEResult<NEEduEntryRes>> {
         return eduManager.enterClass(neEduClassOptions).map {
             if (it.success()) {
-                if (neEduClassOptions.roleType == NEEduRoleType.HOST) {
-                    when (neEduClassOptions.sceneType) {
-                        NEEduSceneType.ONE_TO_ONE -> {
-                            OneToOneTeacherActivity.start(context)
-                        }
-                        NEEduSceneType.SMALL -> {
-                            SmallClazzTeacherActivity.start(context)
-                        }
-                        NEEduSceneType.BIG -> {
-                            BigClazzTeacherActivity.start(context)
+                when {
+                    NEEduUiKit.instance?.neEduManager == null -> {
+                        NEEduUiKit.destroy()
+                        ALog.w("eduManager not initialized!")
+                    }
+                    neEduClassOptions.roleType == NEEduRoleType.HOST -> {
+                        when (neEduClassOptions.sceneType) {
+                            NEEduSceneType.ONE_TO_ONE -> {
+                                OneToOneTeacherActivity.start(context)
+                            }
+                            NEEduSceneType.SMALL -> {
+                                SmallClazzTeacherActivity.start(context)
+                            }
+                            NEEduSceneType.BIG -> {
+                                BigClazzTeacherActivity.start(context)
+                            }
                         }
                     }
-                } else {
-                    when (neEduClassOptions.sceneType) {
-                        NEEduSceneType.ONE_TO_ONE -> {
-                            OneToOneStudentActivity.start(context)
-                        }
-                        NEEduSceneType.SMALL -> {
-                            SmallClazzStudentActivity.start(context)
-                        }
-                        NEEduSceneType.BIG -> {
-                            BigClazzStudentActivity.start(context)
-                        }
-                        NEEduSceneType.LIVE_SIMPLE -> {
-                            LiveClassActivity.start(context)
+                    else -> {
+                        when (neEduClassOptions.sceneType) {
+                            NEEduSceneType.ONE_TO_ONE -> {
+                                OneToOneStudentActivity.start(context)
+                            }
+                            NEEduSceneType.SMALL -> {
+                                SmallClazzStudentActivity.start(context)
+                            }
+                            NEEduSceneType.BIG -> {
+                                BigClazzStudentActivity.start(context)
+                            }
+                            NEEduSceneType.LIVE_SIMPLE -> {
+                                LiveClassActivity.start(context)
+                            }
                         }
                     }
                 }

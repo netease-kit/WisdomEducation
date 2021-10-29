@@ -25,6 +25,11 @@ import com.netease.yunxin.app.wisdom.record.options.NERecordOptions
 import com.netease.yunxin.app.wisdom.record.video.widget.NEEduVideoViewPool
 import com.netease.yunxin.kit.alog.ALog
 
+/**
+ * Recording and playback core business class
+ *
+ * @property recordOptions
+ */
 class NERecordPlayer(var recordOptions: NERecordOptions) : NERecordUIListener, INERecordActor {
     private lateinit var clockActor: NERecordClockActor
     private lateinit var controlView: INERecordControlView
@@ -38,7 +43,14 @@ class NERecordPlayer(var recordOptions: NERecordOptions) : NERecordUIListener, I
         var volume = 1f
         var videoEnable = true
 
-        fun fetchRecord(
+        /**
+         * Query recording playback history and create a NERecordPlayer instance
+         *
+         * @param roomUuid room unique ID
+         * @param rtcCid rtc ID
+         * @return
+         */
+        fun createPlayer(
             roomUuid: String,
             rtcCid: String,
         ): LiveData<NEResult<NERecordPlayer>> {
@@ -50,18 +62,18 @@ class NERecordPlayer(var recordOptions: NERecordOptions) : NERecordUIListener, I
                         managerLD.postValue(NEResult(NEEduHttpCode.NO_CONTENT.code))
                     } else {
                         var roomName: String?
-                        var roomUuid1: String?
+                        var roomUuid: String?
                         var teacherName: String? = null
-                        val instanceRecordPlayer = t.data!!.let {
+                        val recordPlayer = t.data!!.let {
                             it.snapshotDto.snapshot.also { it1 ->
                                 roomName = it1.room.roomName
-                                roomUuid1 = it1.room.roomUuid
+                                roomUuid = it1.room.roomUuid
                                 teacherName = it1.members.firstOrNull { it2 -> it2.isHost() }?.userName
                             }
-                            NERecordPlayer(NERecordOptions(it, roomName, roomUuid1, teacherName))
+                            NERecordPlayer(NERecordOptions(it, roomName, roomUuid, teacherName))
                         }
-                        instance = instanceRecordPlayer
-                        managerLD.postValue(NEResult(t.code, instanceRecordPlayer))
+                        instance = recordPlayer
+                        managerLD.postValue(NEResult(t.code, recordPlayer))
                     }
                 } else {
                     destroy()
@@ -71,6 +83,10 @@ class NERecordPlayer(var recordOptions: NERecordOptions) : NERecordUIListener, I
             return managerLD
         }
 
+        /**
+         * destroy instance of NERecordPlayer
+         *
+         */
         fun destroy() {
             if(this::instance.isInitialized) {
                 instance.stop()
@@ -79,6 +95,12 @@ class NERecordPlayer(var recordOptions: NERecordOptions) : NERecordUIListener, I
         }
     }
 
+    /**
+     * record player initialize
+     *
+     * @param application context
+     * @param controlView record player UI update interface
+     */
     fun init(application: Application, controlView: INERecordControlView) {
         context = application
         this.controlView = controlView
@@ -91,64 +113,130 @@ class NERecordPlayer(var recordOptions: NERecordOptions) : NERecordUIListener, I
         }
     }
 
+    /**
+     * whiteboard record list
+     *
+     * @return
+     */
     fun getWhiteboardList(): List<NERecordItem> {
         return recordOptions.recordData.recordItemList.filter { it.type == NERecordItem.TYPE_WHITEBOARD }
     }
 
+    /**
+     * start time of record
+     *
+     * @return
+     */
     fun getStartTime(): Long {
         return recordOptions.recordData.record.startTime
     }
 
+    /**
+     * video record list
+     *
+     * @return
+     */
     fun getVideoList(): List<NERecordItem> {
         return recordOptions.recordData.recordItemList.filter { it.type == NERecordItem.TYPE_VIDEO && !it.subStream }
     }
 
+    /**
+     * sub video record list
+     *
+     * @return
+     */
     fun getSubVideoList(): List<NERecordItem> {
         return recordOptions.recordData.recordItemList.filter { it.type == NERecordItem.TYPE_VIDEO && it.subStream }
     }
 
     /**
-     * 新增事件拦截器
+     * Added event interceptor
      *
-     * @param handler 事件拦截器
+     * @param handler event interceptor
      */
     fun addHandler(handler: NERecordEventHandler) {
         clockActor.addHandler(handler)
     }
 
+    /**
+     * add record actor to actor list
+     *
+     * @param actor
+     */
     fun addActor(actor: INERecordActor) {
         recordManager.addActor(actor)
     }
 
+    /**
+     * remove record actor from actor list
+     *
+     * @param actor
+     */
     fun removeActor(actor: INERecordActor) {
         recordManager.removeActor(actor)
     }
 
+    /**
+     * get target actor from actor list
+     *
+     * @param recordItem
+     * @return
+     */
     fun getActor(recordItem: NERecordItem): INERecordActor? {
         return recordManager.getActor(recordItem)
     }
 
+    /**
+     * get target actor which has subStream or not, from actor list
+     *
+     * @param recordItem
+     * @return
+     */
     fun getActor(recordItem: NERecordItem, subStream: Boolean): INERecordActor? {
         return recordManager.getActor(recordItem, subStream)
     }
 
+    /**
+     * add host actor to host actors list
+     *
+     * @param actor
+     */
     fun addHostActor(actor: NERecordVideoActor) {
         hostActors.add(actor)
     }
 
+    /**
+     * get host actor from host actors list
+     *
+     * @return
+     */
     fun getHostActors(): List<NERecordVideoActor> {
         return hostActors
     }
 
+    /**
+     * Event preprocessing
+     *
+     */
     fun prepareEvent() {
         recordManager.prepareEvent()
     }
 
+    /**
+     * Update actor count
+     *
+     * @param actorCount
+     */
     fun setActorCount(actorCount: Int) {
         ALog.i("setActorCount $actorCount")
         recordManager.actorCount = actorCount
     }
 
+    /**
+     * Get actor count
+     *
+     * @return
+     */
     fun getActorCount(): Int {
         return recordManager.actorCount
     }
@@ -178,63 +266,128 @@ class NERecordPlayer(var recordOptions: NERecordOptions) : NERecordUIListener, I
         controlView.setVolume(volume)
     }
 
-
+    /**
+     * start playback
+     *
+     */
     override fun start() {
         recordManager.start()
     }
 
+    /**
+     * pause playback
+     *
+     */
     override fun pause() {
         recordManager.pause()
     }
 
+    /**
+     * seek playback progress
+     *
+     * @param positionMs
+     */
     override fun seek(positionMs: Long) {
         recordManager.seek(positionMs)
     }
 
+    /**
+     * stop playback
+     *
+     */
     override fun stop() {
         recordManager.stop()
     }
 
+    /**
+     * change playback speed
+     *
+     * @param speed
+     */
     override fun setSpeed(speed: Float) {
         recordManager.setSpeed(speed)
     }
 
+    /**
+     * Get playback Duration
+     *
+     * @return
+     */
     override fun getDuration(): Long {
         return recordManager.getDuration()
     }
 
+    /**
+     * get current playback position
+     *
+     * @return current playback position
+     */
     override fun getCurrentPosition(): Long {
         return recordManager.getCurrentPosition()
     }
 
+    /**
+     * get current playback state
+     *
+     * @return current playback state
+     */
     @NERecordPlayState
     override fun getState(): Int {
         return recordManager.getState()
     }
 
+    /**
+     * observe playback state changess
+     *
+     * @return
+     */
     override fun onStateChange(): LiveData<Int> {
         return recordManager.onStateChange()
     }
 
+    /**
+     * @suppress
+     *
+     * @param playState
+     */
     override fun updateState(playState: Int) {
-//        recordManager.updateState(playState)
+
     }
 
+    /**
+     * switch audio
+     *
+     * @param audioEnable enable or disable
+     */
     fun switchAudio(audioEnable: Boolean) {
         recordManager.switchAudio(!audioEnable)
         NERecordPlayer.audioEnable = !audioEnable
     }
 
+    /**
+     * Adjust the volume
+     *
+     * @param volume
+     */
     fun setVolume(volume: Float) {
         recordManager.setVolume(volume)
         NERecordPlayer.volume = volume
     }
 
+    /**
+     * Switch video
+     *
+     * @param videoEnable enable or disable
+     */
     fun switchVideo(videoEnable: Boolean) {
         recordManager.switchVideo(!videoEnable)
         NERecordPlayer.videoEnable = !videoEnable
     }
 
+    /**
+     * release resources related to player
+     *
+     */
     fun release() {
         recordManager.removeAllActor()
         NEEduVideoViewPool.clear()

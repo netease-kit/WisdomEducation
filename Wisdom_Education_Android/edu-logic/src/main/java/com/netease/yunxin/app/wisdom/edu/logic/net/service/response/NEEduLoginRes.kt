@@ -6,13 +6,13 @@
 package com.netease.yunxin.app.wisdom.edu.logic.net.service.response
 
 /**
- * 获取im接口返回的信息
+ * the information data returned by the login interface
  *
- * @property userUuid
- * @property userToken 操作者userToken
- * @property imToken
- * @property imKey
- * @property rtcKey
+ * @property userUuid user's unique id
+ * @property userToken user's token
+ * @property imToken im token
+ * @property imKey im key
+ * @property rtcKey rtc key
  */
 data class NEEduLoginRes(
     val userUuid: String,

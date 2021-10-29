@@ -14,11 +14,11 @@ import com.netease.yunxin.app.wisdom.record.base.INERecordActor
 import com.netease.yunxin.kit.alog.ALog
 
 /**
- * actor装饰器类
+ * Actor decorator class
  *
  * @constructor
  *
- * @param clockActor 管理者
+ * @param clockActor time manager
  */
 class NERecordManager(private var clockActor: NERecordClockActor) : NERecordDecorator(clockActor) {
     private var actorList: MutableList<NERecordDecorator> = mutableListOf()

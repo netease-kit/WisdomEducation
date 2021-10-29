@@ -14,7 +14,7 @@ import com.netease.yunxin.app.wisdom.record.whiteboard.config.NERecordWhiteboard
 import com.netease.yunxin.app.wisdom.record.whiteboard.view.NERecordWhiteboardView
 
 /**
- * 时间轴白板Actor类
+ * Timeline whiteboard Actor class
  *
  */
 class NERecordWhiteboardActor : INERecordActor {
@@ -68,9 +68,9 @@ class NERecordWhiteboardActor : INERecordActor {
     }
 
     /**
-     * 切换播放地址
+     * Switching the Playing Address
      *
-     * @param urls gz文件地址列表
+     * @param urls Gz File address list
      */
     fun switchContentUrls(urls: List<String>) {
 

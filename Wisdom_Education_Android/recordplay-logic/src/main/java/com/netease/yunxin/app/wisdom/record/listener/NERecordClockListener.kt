@@ -6,7 +6,7 @@
 package com.netease.yunxin.app.wisdom.record.listener
 
 /**
- * 进度同步回调监听
+ * Progress synchronization callback listening
  *
  */
 interface NERecordClockListener {

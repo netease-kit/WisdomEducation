@@ -124,14 +124,9 @@ enum class NEEduHttpCode(val code: Int, val msg: String) {
     ROOM_SIT_NOT_EXIST(1011, "Room Sit Not Exist"),
 
     /**
-     * put:member.stream时，该流的并发超限，并发超限，如屏幕共享同时只能一人
+     * put:member.stream|property时，该属性的并发超限，并发超限，如屏幕共享同时只能一人
      */
-    ROOM_STREAM_CONCURRENCY_OUT(1012, "Stream Exists"),
-
-    /**
-     * put:member.property时，该流的并发超限，并发超限, 如同时上台的数量只能有限个数
-     */
-    ROOM_PROPERTY_CONCURRENCY_OUT(1012, "Stream Out of Currency Limit"),
+    ROOM_MEMBER_CONCURRENCY_OUT(1012, "Member Property or Stream Out of Currency Limit"),
 
     /**
      * 坐席配置不正确

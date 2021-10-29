@@ -10,7 +10,7 @@ import com.netease.yunxin.app.wisdom.record.base.INERecordActor
 import com.netease.yunxin.app.wisdom.record.base.INERecordVideoActor
 
 /**
- * 时间轴装饰器类
+ * Timeline decorator class
  *
  */
 abstract class NERecordDecorator(var realActor: INERecordActor) : INERecordActor {

@@ -6,7 +6,7 @@
 package com.netease.yunxin.app.wisdom.record.listener
 
 /**
- * 用来做UI交互控制
+ * UI interactive control interface
  *
  */
 interface NERecordUIListener {

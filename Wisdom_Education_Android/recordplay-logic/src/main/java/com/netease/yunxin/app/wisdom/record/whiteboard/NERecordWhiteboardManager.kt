@@ -29,6 +29,8 @@ object NERecordWhiteboardManager : NERecordWhiteboardApi() {
 
     private val playStateLD: MediatorLiveData<Int> = MediatorLiveData()
 
+    private var playState: Int = NERecordPlayState.IDLE
+
     fun init(webView: NERecordWhiteboardView, config: NERecordWhiteboardConfig) {
         this.config = config
         this.webView = webView
@@ -64,7 +66,8 @@ object NERecordWhiteboardManager : NERecordWhiteboardApi() {
 
     override fun seek(time: Long) {
         jsBridge.jsSeekTo(time)
-        jsBridge.jsPlay() // continue play
+        if (playState != NERecordPlayState.PAUSED && playState != NERecordPlayState.PREPARED)
+            jsBridge.jsPlay() // continue play
     }
 
     override fun stop() {
@@ -118,6 +121,7 @@ object NERecordWhiteboardManager : NERecordWhiteboardApi() {
                 setTimeRange(config.startTime, null)
             }
         }
+        this.playState = playState
         playStateLD.postValue(playState)
     }
 }

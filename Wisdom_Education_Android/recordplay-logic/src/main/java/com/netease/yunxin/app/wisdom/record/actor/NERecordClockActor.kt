@@ -22,12 +22,13 @@ import java.util.concurrent.atomic.AtomicLong
 import kotlin.math.max
 
 /**
- * 处理事件类以及UI进度更新
+ * Handles event and UI progress updates Class
  *
  */
 class NERecordClockActor(recordOptions: NERecordOptions, private var uiListener: NERecordUIListener) :
     INERecordActor, NERecordEventListener, NERecordClockListener {
     private val tag: String = "NERecordClockActor"
+
     @NERecordPlayState
     private var state: Int = NERecordPlayState.IDLE
 
@@ -36,17 +37,17 @@ class NERecordClockActor(recordOptions: NERecordOptions, private var uiListener:
     private var nextEvent: NERecordEvent? = null
 
     /**
-     * 已执行的事件
+     * Events that have been executed
      */
     private val executedEventList: LinkedList<NERecordEvent> = LinkedList()
 
     /**
-     * 未执行的事件
+     * not executed events
      */
     private val pendingEventList: LinkedList<NERecordEvent> = LinkedList()
 
     /**
-     * 事件处理器
+     * Event handlers. Each handler should handle a series of related types of events
      */
     private val eventHandlers: MutableList<NERecordEventHandler> = mutableListOf()
 
@@ -63,18 +64,10 @@ class NERecordClockActor(recordOptions: NERecordOptions, private var uiListener:
 
     private val record = recordOptions.recordData
     private var startTime: Long = record.record.startTime
-    private var endTime: Long = max(record.record.stopTime, record.eventList.lastOrNull()?.timestamp?: 0)
+    private var endTime: Long = max(record.record.stopTime, record.eventList.lastOrNull()?.timestamp ?: 0)
     private val eventList: MutableList<NERecordEvent> = recordOptions.recordData.eventList
 
     fun prepare() {
-//        // 过滤主持人最后的离开房间的事件
-//        eventList.lastOrNull { it.roomUid == (hostActor as NERecordVideoActor).recordItem.roomUid.toString()
-//                && (NERecordMemberHandler.memberJoin(it) || NERecordMemberHandler.memberLeave(it))
-//        }?.apply {
-//            if (NERecordMemberHandler.memberLeave(this)) {
-//                eventList.remove(this)
-//            }
-//        }
         pendingEventList.addAll(eventList)
     }
 
@@ -98,7 +91,8 @@ class NERecordClockActor(recordOptions: NERecordOptions, private var uiListener:
         }
 
         eventDispatcher?.let {
-            executeNextEvent()}
+            executeNextEvent()
+        }
     }
 
     private fun startTimer() {
@@ -138,7 +132,7 @@ class NERecordClockActor(recordOptions: NERecordOptions, private var uiListener:
     }
 
     /**
-     * 清空事件调度器，将当前事件移到pendingEvents
+     * Clear the event scheduler and move the current event to pendingEvents
      *
      */
     private fun revertNextEvent() {
@@ -152,28 +146,33 @@ class NERecordClockActor(recordOptions: NERecordOptions, private var uiListener:
     override fun seek(positionMs: Long) {
         stopTimer()
         playedTime.set(positionMs)
-        startTimer()
-        
+        if (state != NERecordPlayState.PAUSED && state != NERecordPlayState.PREPARED) {
+            startTimer()
+        }
+
         eventDispatcher?.let {
-            // 0. 缓存之前的被执行队列
+            // 0. The executed queue before caching
             val prevExecutedEventList: LinkedList<NERecordEvent> = LinkedList()
             prevExecutedEventList.addAll(executedEventList)
-            // 1. 清空事件调度器，将当前事件移到pendingEvents
+            // 1. Clear the event scheduler and move the current event to pendingEvents
             revertNextEvent()
-            // 2. 根据 positionMs，重新划分finishEvents和pendingEvents，当前lastEvent会被移到pendingEvents
+            // 2. Repartition finishEvents and pendingEvents based on positionMs.
+            // The current lastEvent will be moved to pendingEvents
             rearrangeEvents(positionMs)
 
-            // 3. 处理seek事件
+            // 3. Handling seek events
             eventHandlers.forEach {
                 it.resetToInit()
                 it.processSeek(prevExecutedEventList, executedEventList)
             }
 
-            // 4. 继续事件处理流程
-            executeNextEvent()
+            if (state != NERecordPlayState.PAUSED && state != NERecordPlayState.PREPARED) {
+                // 4. Continue the event processing process
+                executeNextEvent()
+            }
 
-            // 5. UI更新
-            if (state != NERecordPlayState.PLAYING) {
+            // 5. The UI update
+            if (state == NERecordPlayState.STOPPED) {
                 updateState(NERecordPlayState.PLAYING)
                 uiListener.onStart()
             }
@@ -183,7 +182,10 @@ class NERecordClockActor(recordOptions: NERecordOptions, private var uiListener:
     private fun rearrangeEvents(positionMs: Long) {
         val tempQueue = eventList
         val currIndex = tempQueue.indexOfFirst {
-            ALog.i(tag, "rearrangeEvents result: ${it.timestamp} $startTime $positionMs ${it.timestamp - startTime > positionMs}")
+            ALog.i(
+                tag,
+                "rearrangeEvents result: ${it.timestamp} $startTime $positionMs ${it.timestamp - startTime > positionMs}"
+            )
             it.timestamp - startTime > positionMs
         }
         ALog.i(tag, "rearrangeEvents $currIndex")
@@ -207,7 +209,7 @@ class NERecordClockActor(recordOptions: NERecordOptions, private var uiListener:
 
     override fun stop() {
         stopTimer()
-        playedTime.set(endTime)
+        playedTime.set(0)
 
         clearDispatcher()
         nextEvent = null
@@ -275,8 +277,8 @@ class NERecordClockActor(recordOptions: NERecordOptions, private var uiListener:
     }
 
     override fun onClockStop() {
-        uiListener.onProgressChanged(getDuration(), getDuration())
         stop()
+        uiListener.onProgressChanged(0, getDuration())
     }
 
     override fun dispose() {

@@ -115,11 +115,6 @@ abstract class BaseNormalClassActivity(layoutId: Int = R.layout.activity_normal_
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)// keep screen on
-        if (NEEduUiKit.instance?.neEduManager == null) {
-            NEEduUiKit.destroy()
-            finish()
-            return
-        }
         initEduManager()
         initViews()
         registerObserver()
@@ -473,7 +468,7 @@ abstract class BaseNormalClassActivity(layoutId: Int = R.layout.activity_normal_
                 if (t.success()) {
                     requestScreenCapture(this.applicationContext, this)
                 } else {
-                    if (t.code == NEEduHttpCode.ROOM_STREAM_CONCURRENCY_OUT.code) {
+                    if (t.code == NEEduHttpCode.ROOM_MEMBER_CONCURRENCY_OUT.code) {
                         ToastUtil.showShort(getString(R.string.someone_share))
                     } else {
                         ToastUtil.showShort(getString(R.string.share_screen_fail))

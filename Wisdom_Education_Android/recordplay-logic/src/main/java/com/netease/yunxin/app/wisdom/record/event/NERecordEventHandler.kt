@@ -9,7 +9,7 @@ import com.netease.yunxin.app.wisdom.record.model.NERecordEvent
 import java.util.*
 
 /**
- * 处理相关事件类型的类，1个EventHandler对应1组相关事件类型
+ * Classes that handle related event types. One EventHandler corresponds to one group of related event types
  *
  *
  */

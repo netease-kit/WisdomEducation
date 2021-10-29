@@ -22,7 +22,7 @@ import com.netease.yunxin.app.wisdom.record.model.NERecordPlayState
 import com.netease.yunxin.kit.alog.ALog
 
 /**
- * 时间轴音视频Actor类
+ * Timeline audio and video Actor class
  *
  */
 class NERecordVideoActor : INERecordVideoActor {
@@ -52,19 +52,26 @@ class NERecordVideoActor : INERecordVideoActor {
 
     var seekOnFirstRender = false
 
+    /**
+     * This flag means pause after seek is complete. Pause playback, through seek to change the progress of the way,
+     * midway inserted video, will be the first frame after the completion of loading suspended,
+     * but the progress is not accurate, need to wait for seek to complete and then suspended
+     */
+    var pauseAfterSeek = false
+
     companion object {
 
         val options by lazy {
             val options = VideoOptions()
             options.hardwareDecode = false
             /**
-             * isPlayLongTimeBackground 控制退到后台或者锁屏时是否继续播放，开发者可根据实际情况灵活开发,我们的示例逻辑如下：
-             * 使用软件解码：
-             * isPlayLongTimeBackground 为 false 时，直播进入后台停止播放，进入前台重新拉流播放
-             * isPlayLongTimeBackground 为 true 时，直播进入后台不做处理，继续播放,
+             * isPlayLongTimeBackground controls whether to continue playing when backing to the background or locking the screen.* Developers can flexibly develop according to the actual situation. Our example logic is as follows:
+             * Use software to decode:
+             * When isPlayLongTimeBackground is false, the live broadcast stops playing in the background, and starts streaming again in the foreground
+             * When isPlayLongTimeBackground is true, the live broadcast enters the background and continues to play.
              *
-             * 使用硬件解码：
-             * 直播进入后台停止播放，进入前台重新拉流播放
+             * Use hardware decoding:
+             * Enter the background to stop the broadcast, enter the foreground to pull the stream again
              */
             options.isPlayLongTimeBackground = false
             options.bufferStrategy = VideoBufferStrategy.ANTI_JITTER
@@ -104,6 +111,7 @@ class NERecordVideoActor : INERecordVideoActor {
 
     override fun start() {
         player.start()
+        pauseAfterSeek = false
         // 从stopped状态返回，手动更新一次 PLAYING 状态
         if (state == NERecordPlayState.STOPPED) {
             updateState(NERecordPlayState.PLAYING)
@@ -119,12 +127,10 @@ class NERecordVideoActor : INERecordVideoActor {
         ALog.i(tag, "seek positionMs: $positionMs duration: ${player.duration} target: $targetPos")
         player.seekTo(targetPos)
         // seek完成之后，直接继续播放
-        if (state != NERecordPlayState.PLAYING) {
+        if (state == NERecordPlayState.STOPPED) {
             player.start()
-            // 从stopped状态seek，手动更新一次 PLAYING 状态
-            if (state == NERecordPlayState.STOPPED) {
-                updateState(NERecordPlayState.PLAYING)
-            }
+            pauseAfterSeek = false
+            updateState(NERecordPlayState.PLAYING)
         }
     }
 
@@ -159,7 +165,7 @@ class NERecordVideoActor : INERecordVideoActor {
     }
 
     /**
-     * 切换播放地址
+     * Switching the Playing Address
      *
      * @param url
      */
@@ -179,6 +185,10 @@ class NERecordVideoActor : INERecordVideoActor {
 
         override fun onSeekCompleted() {
             ALog.i(tag, "onSeekCompleted")
+            if (pauseAfterSeek) {
+                pause()
+                pauseAfterSeek = false
+            }
         }
 
         override fun onCompletion() {
@@ -208,6 +218,7 @@ class NERecordVideoActor : INERecordVideoActor {
             ALog.i(tag, "The first frame of video has been parsed")
             if (seekOnFirstRender) {
                 seek(NERecordPlayer.instance.getCurrentPosition())
+                if (NERecordPlayer.instance.getState() == NERecordPlayState.PAUSED) pauseAfterSeek = true
                 seekOnFirstRender = false
             } else {
                 pause()
