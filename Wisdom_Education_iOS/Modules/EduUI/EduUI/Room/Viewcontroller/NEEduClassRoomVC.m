@@ -81,6 +81,8 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
         [strongSelf addWhiteboardView];
         //load chatroom function
         [strongSelf addChatroom];
+        // update menue
+        [strongSelf updateMenueItemWithProfile:profile];
     }];
 }
 
@@ -105,7 +107,7 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
 }
 
 - (void)updateMenueItemWithProfile:(NEEduRoomProfile *)profile {
-    
+
 }
 
 - (NSArray <NEEduHttpUser *> *)placeholderMembers {
@@ -226,8 +228,8 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
     audoItem.type = NEEduMenuItemTypeAudio;
     [audoItem setSelctedImage:[UIImage ne_imageNamed:@"menu_audio_off"]];
     
-    NEEduMenuItem *videoItem = [[NEEduMenuItem alloc] initWithTitle:@"关闭摄像头" image:[UIImage ne_imageNamed:@"menu_video"]];
-    videoItem.selectTitle = @"打开摄像头";
+    NEEduMenuItem *videoItem = [[NEEduMenuItem alloc] initWithTitle:@"关闭视频" image:[UIImage ne_imageNamed:@"menu_video"]];
+    videoItem.selectTitle = @"开启视频";
     videoItem.type = NEEduMenuItemTypeVideo;
     [videoItem setSelctedImage:[UIImage ne_imageNamed:@"menu_video_off"]];
 
@@ -595,7 +597,7 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
         [[NMCWhiteboardManager sharedManager] callEnableDraw:self.whiteboardWritable];
         [[NMCWhiteboardManager sharedManager] hiddenTools:!self.whiteboardWritable];
     }
-    
+    [self.collectionView reloadData];
     //更新membervc
     if (self.membersVC) {
         for (NEEduMember *member in self.membersVC.members) {

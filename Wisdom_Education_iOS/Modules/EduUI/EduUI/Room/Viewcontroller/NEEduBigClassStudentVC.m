@@ -41,17 +41,7 @@
 - (void)initMenuItems {
     NEEduMenuItem *membersItem = [[NEEduMenuItem alloc] initWithTitle:@"课堂成员" image:[UIImage ne_imageNamed:@"menu_members"]];
     membersItem.type = NEEduMenuItemTypeMembers;
-    if ([NEEduManager shared].profile.snapshot.room.states.step.value == NEEduLessonStateClassIn) {
-//        NEEduMenuItem *handsupItem = [[NEEduMenuItem alloc] initWithTitle:@"举手" image:[UIImage ne_imageNamed:@"menu_handsup"]];
-//        handsupItem.selectTitle = @"举手中";
-//        handsupItem.type = NEEduMenuItemTypeHandsup;
-//        [handsupItem setSelctedImage:[UIImage ne_imageNamed:@"menu_handsup_select"]];
-//        [handsupItem setSelctedTextColor:[UIColor colorWithRed:55/255.0 green:114/255.0 blue:255/255.0 alpha:1.0]];
-//        self.handsupItem = handsupItem;
-        self.menuItems = @[membersItem,self.handsupItem];
-    }else {
-        self.menuItems = @[membersItem];
-    }
+    self.menuItems = @[membersItem];
 }
 
 - (void)updateMenueItemWithProfile:(NEEduRoomProfile *)profile {
@@ -292,8 +282,8 @@
         self.handsupItem.selectTitle = @"下讲台";
         self.handsupItem.isSelected = YES;
         
-        NEEduMenuItem *videoItem = [[NEEduMenuItem alloc] initWithTitle:@"关闭摄像头" image:[UIImage ne_imageNamed:@"menu_video"]];
-        videoItem.selectTitle = @"打开摄像头";
+        NEEduMenuItem *videoItem = [[NEEduMenuItem alloc] initWithTitle:@"关闭视频" image:[UIImage ne_imageNamed:@"menu_video"]];
+        videoItem.selectTitle = @"开启视频";
         videoItem.type = NEEduMenuItemTypeVideo;
         [videoItem setSelctedImage:[UIImage ne_imageNamed:@"menu_video_off"]];
         [self.maskView insertItem:videoItem atIndex:0];

@@ -28,7 +28,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) NEEduMessageService *messageService;
 @property (nonatomic, strong) NEEduUserService *userService;
 
-@property (nonatomic, strong) NEEduRoomProfile *profile;
+@property (nonatomic, strong ,nonnull) NEEduRoomProfile *profile;
 @property (nonatomic, strong ,readonly) NEEduHttpUser *localUser;
 
 @property (nonatomic, copy, readonly) NSString *imKey;
