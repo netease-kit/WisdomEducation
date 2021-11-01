@@ -21,7 +21,7 @@
 > CurTime=1234567890123<br>
 > <b>计算可得</b>: CheckSum=0990f3d1615b5fa19fcbcea6b105270053fdf6a7<br>
 
->若调用端是java语言，则可直接使用[示例代码](/toolkit/src/main/java/com/netease/util/CheckSumBuilder.java)计算checksum, 注意参数顺序
+>若调用端是java语言，则可直接使用[示例代码](toolkit/src/main/java/com/netease/util/CheckSumBuilder.java)计算checksum, 注意参数顺序
 
 # 基本概念
 | 名称| 	类型| 	描述|
