@@ -22,7 +22,7 @@
 
 ### CheckSum：hex.lowercase(sha1(utf8.decode(AppSecret+Nonce+CurTime+hex.lowercase(md5(body)))))
 
-> 若调用端是java语言，则可直接使用[示例代码](CheckSumBuilder.java)计算checksum, 注意参数顺序
+> 若调用端是java语言，则可直接使用[示例代码](toolkit/src/main/java/com/netease/util/CheckSumBuilder.java)计算checksum, 注意参数顺序
 
 # 通知格式
 
