@@ -30,7 +30,6 @@ subprojects {
         JacksonVersion = '2.8.10'
         SpringVersion = '5.0.7.RELEASE'
         SpringBootVersion = '2.1.5.RELEASE'
-        Slf4jApiVersion = '1.7.25'
     }
 
     buildscript {
@@ -40,12 +39,7 @@ subprojects {
             maven { url "https://plugins.gradle.org/m2/"}
         }
         dependencies {
-            classpath("org.springframework.boot:spring-boot-gradle-plugin:2.1.5.RELEASE")
+            classpath("org.springframework.boot:spring-boot-gradle-plugin:2.5.5")
         }
-    }
-    
-    configurations {
-        compile.exclude module: "log4j"
-        compile.exclude module: "commons-logging"
     }
 }
