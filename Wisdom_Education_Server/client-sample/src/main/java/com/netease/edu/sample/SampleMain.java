@@ -43,28 +43,5 @@ public class SampleMain {
         SpringApplication app = new SpringApplicationBuilder(SampleMain.class)
                 .bannerMode(Banner.Mode.OFF).build();
         ApplicationContext applicationContext = app.run(args);
-        try {
-            applicationContext.getBean(EduUserService.class).putUser("5fa5726d7fde462d8198bf35476c4047", "467e3cd45f7a", "test12345test12345");
-            applicationContext.getBean(EduUserService.class).putUser("5fa5726d7fde462d8198bf35476c4047", "467e3cd45f7a", "test12345test12345111", "UserToken1234");
-            UserCreateParam userCreateDto = new UserCreateParam();
-            userCreateDto.setUserToken("hahahah");
-            userCreateDto.setUpdateOnConflict(true);
-            applicationContext.getBean(EduUserService.class).putUser("5fa5726d7fde462d8198bf35476c4047", "467e3cd45f7a", "test12345test12345", userCreateDto);
-
-            userCreateDto.setUserToken("hhhhhhh");
-            userCreateDto.setUpdateOnConflict(false);
-            applicationContext.getBean(EduUserService.class).putUser("5fa5726d7fde462d8198bf35476c4047", "467e3cd45f7a", "test12345test12345", userCreateDto);
-
-            PutRoomParam putRoomParam = new PutRoomParam();
-            putRoomParam.setRoomName("testROOMROOM");
-            putRoomParam.setConfigId(5L);
-            applicationContext.getBean(EduRoomService.class).putRoom("5fa5726d7fde462d8198bf35476c4047", "467e3cd45f7a", "abcdef_room", putRoomParam);
-
-
-            applicationContext.getBean(EduRoomService.class).deleteRoom("5fa5726d7fde462d8198bf35476c4047", "467e3cd45f7a", "abcdef_room");
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 }
