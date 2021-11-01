@@ -32,9 +32,6 @@ dependencies {
     // orika
     compile("ma.glasnost.orika:orika-core:1.5.2")
 
-    compile("org.springframework.boot:spring-boot-starter-data-redis"){
-        exclude group: 'io.netty'
-    }
 }
 
 jar {
