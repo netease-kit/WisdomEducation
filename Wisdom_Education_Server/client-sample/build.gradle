@@ -1,0 +1,45 @@
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+
+dependencies {
+    compile project(":toolkit")
+
+    compile("com.google.guava:guava:${GuavaVersion}")
+
+    compile("com.google.code.gson:gson:${GsonVersion}")
+    //apache common
+    compile("commons-io:commons-io:${CommonsIOVersion}")
+    compile("commons-codec:commons-codec:${CommonsCodecVersion}")
+    compile("org.apache.commons:commons-lang3:${CommonsLang3Version}")
+    compile("org.apache.commons:commons-pool2:${CommonsPool2Version}")
+    compile("org.apache.httpcomponents:httpclient:${HttpClientVersion}")
+    compile ("org.apache.curator:curator-framework:2.12.0")
+    compile ("org.apache.curator:curator-recipes:2.12.0")
+
+    compile "joda-time:joda-time:${JodaTimeVersion}"
+    compile "org.slf4j:slf4j-api"
+    compileOnly group: 'javax.servlet', name: 'javax.servlet-api', version: '3.0.1'
+
+    //msg pack
+    compile("org.msgpack:msgpack:0.6.12")
+    compile("org.msgpack:jackson-dataformat-msgpack:0.8.16")
+    
+    //jackson
+    compile "com.fasterxml.jackson.core:jackson-annotations"
+    compile "com.fasterxml.jackson.core:jackson-core"
+    compile "com.fasterxml.jackson.core:jackson-databind"
+
+    // orika
+    compile("ma.glasnost.orika:orika-core:1.5.2")
+
+    compile("org.springframework.boot:spring-boot-starter-data-redis"){
+        exclude group: 'io.netty'
+    }
+}
+
+jar {
+    enabled = true
+}
+bootJar {
+    enabled = false
+}
