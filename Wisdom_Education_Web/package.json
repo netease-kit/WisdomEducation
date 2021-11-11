@@ -1,6 +1,6 @@
 {
   "name": "app-wisdon-education-web",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "homepage": "./",
   "private": true,
   "main": "./build/app/main.js",
@@ -58,7 +58,9 @@
     "rebuild": "electron-rebuild -f -w nertc-electron-sdk",
     "postinstall": "electron-builder install-app-deps",
     "build-mac:ele": "electron-builder --mac",
-    "build-win:ele": "electron-builder --win"
+    "build-win:ele": "electron-builder --win",
+    "pack:test": "sh ./bin/deploy.sh test",
+    "pack": "sh ./bin/deploy.sh master"
   },
   "eslintConfig": {
     "extends": [

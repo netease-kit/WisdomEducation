@@ -326,15 +326,15 @@ export class NeElertc extends EnhancedEventEmitter {
 
   public async setVideoProfile(): Promise<void> {
     const res = this._nertcEngine.setVideoConfig({
-      max_profile: 3,
-      width: 0,
-      height: 0,
+      max_profile: 1,
+      width: 320,
+      height: 240,
       crop_mode: 0,
-      framerate: 24,
+      framerate: 15,
       min_framerate: 0,
       bitrate: 0,
       min_bitrate: 0,
-      degradation_preference: 3,
+      degradation_preference: 1,
     });
     if (res === 0) {
       logger.log("setVideoConfig success");
@@ -492,7 +492,7 @@ export class NeElertc extends EnhancedEventEmitter {
         "";
       // options.audio ? this.open('audio', this._pubConf.microphoneId) : this.close('audio')
       // options.video ? this.open('video', this._pubConf.cameraId) : this.close('video');
-      // await this.setVideoProfile();
+      await this.setVideoProfile();
       await this.setParameters();
       const joinRes = this._nertcEngine.joinChannel(
         options.token,

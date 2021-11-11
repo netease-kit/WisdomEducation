@@ -333,7 +333,7 @@ const DeviceList: React.FC = observer(() => {
                 }
               />
               <p className={localData?.hasVideo ? "gray" : "red"}>
-                {localData?.hasVideo ? "关闭摄像头" : "打开摄像头"}
+                {localData?.hasVideo ? "关闭视频" : "开启视频"}
               </p>
             </div>
             <div className="list-arrows">

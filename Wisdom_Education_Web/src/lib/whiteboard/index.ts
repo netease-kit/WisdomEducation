@@ -3,8 +3,8 @@
  * Use of this source code is governed by a MIT license that can be found in the LICENSE file
  */
 
-import WhiteBoard from './sdk/WhiteBoardSDK_v3.5.1.js';
-import ToolCollection from './sdk/ToolCollection_v3.5.1.js';
+import WhiteBoard from './sdk/WhiteBoardSDK_v3.5.2.js';
+import ToolCollection from './sdk/ToolCollection_v3.5.2.js';
 import { EnhancedEventEmitter } from '../event';
 import logger from '../logger';
 
