@@ -100,7 +100,7 @@ object RtcManager : NERtcCallbackEx, NERtcStatsObserver {
     /**
      * must join success
      */
-    override fun onJoinChannel(code: Int, chenelId: Long, elapsed: Long) {
+    override fun onJoinChannel(code: Int, chenelId: Long, elapsed: Long, uid: Long) {
         ALog.i(TAG, "onJoinChannel $code")
         if (code != 0) {
             errorLD.postValue(code)

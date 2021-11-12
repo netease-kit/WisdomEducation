@@ -131,7 +131,7 @@ object PreferenceUtil {
 
     var lowLatencyLive: Boolean
         get() {
-            return get(LOW_LATENCY_LIVE, true)
+            return get(LOW_LATENCY_LIVE, false)
         }
         set(enable) {
             put(LOW_LATENCY_LIVE, enable)
