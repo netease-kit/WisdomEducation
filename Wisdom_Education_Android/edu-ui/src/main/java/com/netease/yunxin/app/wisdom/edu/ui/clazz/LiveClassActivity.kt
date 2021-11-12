@@ -65,7 +65,7 @@ class LiveClassActivity(layoutId: Int = R.layout.activity_live_clazz) : BaseClas
 
     private val membersFragment: LiveClazzMembersFragment = LiveClazzMembersFragment()
 
-    private lateinit var player: VodPlayer
+    private var player: VodPlayer? = null
 
     private var textureView: AdvanceTextureView? = null
 
@@ -415,7 +415,7 @@ class LiveClassActivity(layoutId: Int = R.layout.activity_live_clazz) : BaseClas
 
     private fun initVideo(url: String) {
         player = PlayerManager.buildVodPlayer(this, url, options)
-        player.registerPlayerObserver(playerObserver, true)
+        player?.registerPlayerObserver(playerObserver, true)
 
     }
 
@@ -503,11 +503,11 @@ class LiveClassActivity(layoutId: Int = R.layout.activity_live_clazz) : BaseClas
         viewGroup.removeAllViews()
         viewGroup.addView(videoView)
         textureView = videoView
-        player.setupRenderView(textureView, VideoScaleMode.FIT)
+        player?.setupRenderView(textureView, VideoScaleMode.FIT)
     }
 
     private fun startPlayer() {
-        player.start()
+        player?.start()
     }
 
     private fun releasePlayer() {
@@ -515,7 +515,7 @@ class LiveClassActivity(layoutId: Int = R.layout.activity_live_clazz) : BaseClas
             return
         }
         isReleasePlayer = true
-        player.apply {
+        player?.apply {
             registerPlayerObserver(playerObserver, false)
             setupRenderView(null, VideoScaleMode.NONE)
             stop()
