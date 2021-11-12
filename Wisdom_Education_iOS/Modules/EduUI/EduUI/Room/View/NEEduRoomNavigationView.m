@@ -43,7 +43,7 @@
     NSLayoutConstraint *stateCenterX = [NSLayoutConstraint constraintWithItem:self.lessonStateLabel attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterX multiplier:1.0 constant:0];
     NSLayoutConstraint *stateTop = [NSLayoutConstraint constraintWithItem:self.lessonStateLabel attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeTop multiplier:1.0 constant:0];
     NSLayoutConstraint *stateBottom = [NSLayoutConstraint constraintWithItem:self.lessonStateLabel attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeBottom multiplier:1.0 constant:0];
-    NSLayoutConstraint *stateWidth = [NSLayoutConstraint constraintWithItem:self.lessonStateLabel attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:130];
+    NSLayoutConstraint *stateWidth = [NSLayoutConstraint constraintWithItem:self.lessonStateLabel attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:180];
     [self addConstraints:@[stateCenterX,stateTop,stateBottom]];
     [self.lessonStateLabel addConstraint:stateWidth];
     
@@ -84,7 +84,6 @@
     }
     self.lessonStateLabel.text = self.lessonState;
     self.lessonNameLabel.text = room.roomName;
-    
 }
 
 - (void)initTimerCount:(NSInteger)timeCount {
@@ -101,10 +100,18 @@
     //每秒执行一次
     dispatch_source_set_timer(timer, dispatch_walltime(NULL, 0), 1.0*NSEC_PER_SEC, 0);
     dispatch_source_set_event_handler(timer, ^{
-        long hours = weakself.timeCount / 3600;
-        long minutes = (weakself.timeCount - (3600*hours)) / 60;
-        long seconds = weakself.timeCount % 60;
-        NSString *strTime = [NSString stringWithFormat:@"%.2ld:%.2ld",minutes,seconds];
+        long tmp = weakself.timeCount;
+        long hours = tmp / 3600;
+        tmp = tmp % 3600;
+        long minutes = tmp / 60;
+        long seconds = tmp % 60;
+
+        NSString *strTime;
+        if (hours > 0) {
+            strTime = [NSString stringWithFormat:@"%.2ld:%.2ld:%.2ld",hours,minutes,seconds];
+        }else {
+            strTime = [NSString stringWithFormat:@"%.2ld:%.2ld",minutes,seconds];
+        }
         dispatch_async(dispatch_get_main_queue(), ^{
             weakself.lessonStateLabel.text = [NSString stringWithFormat:@"%@(%@)",self.lessonState,strTime];
         });

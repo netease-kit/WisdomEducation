@@ -26,7 +26,6 @@
 		9E858EC22654B5170068B75E /* EduCustomPickView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9E858EBD2654B5170068B75E /* EduCustomPickView.m */; };
 		9E858ED32654BED00068B75E /* NENavigationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9E858ECF2654BED00068B75E /* NENavigationViewController.m */; };
 		9E858ED42654BED00068B75E /* NEBaseViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9E858ED02654BED00068B75E /* NEBaseViewController.m */; };
-		9E913868272AA37700C85761 /* GroupActivities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9E913866272AA33500C85761 /* GroupActivities.framework */; };
 		9E9C33AE26B02AD100D39EAC /* IMLoginVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9E9C33AB26B02AD100D39EAC /* IMLoginVC.xib */; };
 		9E9C33AF26B02AD100D39EAC /* IMLoginVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 9E9C33AD26B02AD100D39EAC /* IMLoginVC.m */; };
 		9EDA44A1267C85C500E816AC /* NEAVAuthorization.m in Sources */ = {isa = PBXBuildFile; fileRef = 9EDA449F267C85C500E816AC /* NEAVAuthorization.m */; };
@@ -121,7 +120,6 @@
 		9E858ED02654BED00068B75E /* NEBaseViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NEBaseViewController.m; sourceTree = "<group>"; };
 		9E858ED12654BED00068B75E /* NEBaseViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NEBaseViewController.h; sourceTree = "<group>"; };
 		9E858ED22654BED00068B75E /* NENavigationViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NENavigationViewController.h; sourceTree = "<group>"; };
-		9E913866272AA33500C85761 /* GroupActivities.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GroupActivities.framework; path = System/Library/Frameworks/GroupActivities.framework; sourceTree = SDKROOT; };
 		9E9C33AB26B02AD100D39EAC /* IMLoginVC.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = IMLoginVC.xib; sourceTree = "<group>"; };
 		9E9C33AC26B02AD100D39EAC /* IMLoginVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IMLoginVC.h; sourceTree = "<group>"; };
 		9E9C33AD26B02AD100D39EAC /* IMLoginVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IMLoginVC.m; sourceTree = "<group>"; };
@@ -140,7 +138,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				3A9BD21B245CCB575B690CF7 /* Pods_WisdomEducation.framework in Frameworks */,
-				9E913868272AA37700C85761 /* GroupActivities.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -319,7 +316,6 @@
 		9ED284569A69109BA690808D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				9E913866272AA33500C85761 /* GroupActivities.framework */,
 				9E82E8042664DD70001A806A /* ReplayKit.framework */,
 				9E82E8112664DD71001A806A /* UIKit.framework */,
 				03FA091B8EE29773CFE99322 /* Pods_WisdomEducation.framework */,
@@ -821,10 +817,11 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.7.0;
+				MARKETING_VERSION = 1.7.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.netease.yunxin.app.wisdom.education;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = wisdomProfileDev;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_WORKSPACE = NO;
 			};
@@ -851,10 +848,11 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.7.0;
+				MARKETING_VERSION = 1.7.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.netease.yunxin.app.wisdom.education;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = WisdomEducationUniversalDistribution;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_WORKSPACE = NO;
 			};

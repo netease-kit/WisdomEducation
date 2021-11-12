@@ -9,7 +9,7 @@
 
 #import "NEEduIMService.h"
 #import "NEEduIMCustomDecoder.h"
-@interface NEEduIMService ()<NIMPassThroughManagerDelegate,NIMChatroomManagerDelegate,NIMChatManagerDelegate>
+@interface NEEduIMService ()<NIMPassThroughManagerDelegate,NIMChatroomManagerDelegate,NIMChatManagerDelegate,NIMLoginManager>
 @property (nonatomic, strong ,readwrite) NIMChatroom *chatRoom;
 @property (nonatomic, strong ,readwrite) NSMutableArray *chatMessages;
 @end
@@ -25,6 +25,7 @@
     [[NIMSDK sharedSDK].passThroughManager addDelegate:self];
     [[NIMSDK sharedSDK].chatroomManager addDelegate:self];
     [[NIMSDK sharedSDK].chatManager addDelegate:self];
+    [[NIMSDK sharedSDK].loginManager addDelegate:self];
 }
 - (void)registerCustomDecoder:(id<NIMCustomAttachmentCoding>)decoder {
     [NIMCustomObject registerCustomDecoder:decoder];
@@ -120,12 +121,12 @@
     imageMessage.messageObject = [[NIMImageObject alloc] initWithImage:image];
     NIMSession *session = [NIMSession session:self.chatRoom.roomId type:NIMSessionTypeChatroom];
     BOOL result = [[NIMSDK sharedSDK].chatManager sendMessage:imageMessage toSession:session error:error];
-    NSLog(@"result:%d",result);
+    NCKLogInfo(@"result:%d",result);
 }
 
 - (void)resendMessage:(NIMMessage *)message error:(NSError * __nullable *)error {
     BOOL result = [[NIMSDK sharedSDK].chatManager resendMessage:message error:error];
-    NSLog(@"resendMessage result:%d",result);
+    NCKLogInfo(@"resendMessage result:%d",result);
 }
 
 #pragma mark - NIMPassThroughManagerDelegate
@@ -159,13 +160,13 @@
 
 #pragma mark - NIMChatroomManagerDelegate
 - (void)chatroomBeKicked:(NIMChatroomBeKickedResult *)result {
-    NSLog(@"[IM Chatroom] %s",__func__);
+    NCKLogInfo(@"[IM Chatroom] %s",__func__);
 }
 - (void)chatroom:(NSString *)roomId autoLoginFailed:(NSError *)error {
-    NSLog(@"[IM Chatroom] %s",__func__);
+    NCKLogInfo(@"[IM Chatroom] %s",__func__);
 }
 - (void)chatroom:(NSString *)roomId connectionStateChanged:(NIMChatroomConnectionState)state {
-    NSLog(@"[IM Chatroom] %s  state:%d",__func__,state);
+    NCKLogInfo(@"[IM Chatroom] %s  state:%d",__func__,state);
 }
 
 - (void)leaveChatRoom {

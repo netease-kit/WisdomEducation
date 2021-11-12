@@ -22,6 +22,9 @@
 @property (nonatomic, assign) NSInteger currentSequence;
 @property (nonatomic, strong) NEEduRoomProfile *profileInfo;
 
+/// 当消息序列号间断时，会发起http请求，拉取间断消息，改字段判断是否在请求中。
+@property (nonatomic, assign) BOOL isFetching;
+
 @end
 
 @implementation NEEduMessageService
@@ -32,7 +35,7 @@
 }
 #pragma mark - NEEduIMServiceDelegate
 - (void)didRecieveSignalMessage:(NSString *)message fromUser:(NSString *)fromUser {
-    NSLog(@"IM:%@",message);
+    NCKLogInfo(@"IM Recieve:\n%@",message);
     NEEduSignalMessage *messageModel = [NEEduSignalMessage yy_modelWithJSON:message];
     //过滤不同房间的消息
     if (![self.profileInfo.snapshot.room.roomUuid isEqualToString:messageModel.roomUuid]) {
@@ -47,23 +50,26 @@
     /**
      1.根据sequence是否连续，判断消息是否丢失
      是：
-     请求拉取丢失消息，分发
+     请求拉取丢失消息，分发(为了避免消息重复，请求期间不处理新来的消息)
      否:
      更新当前sequence
      type = @'RM'不管sequence
      */
+    if (self.isFetching) return;
     if (messageModel.sequence - self.currentSequence > 1 && messageModel.sequence - self.currentSequence < 5) {
         //请求丢失的消息
-        NSLog(@"sequence不连续 currentS:%d msgS:%d",self.currentSequence,messageModel.sequence);
+        NCKLogInfo(@"sequence不连续 currentS:%d msgS:%d",self.currentSequence,messageModel.sequence);
+        self.isFetching = YES;
         [HttpManager getMessageWithRoomUuid:self.profileInfo.snapshot.room.roomUuid nextId:self.currentSequence + 1 classType:[NEEduLostMessages class] success:^(NEEduLostMessages *  _Nonnull objModel) {
+            self.isFetching = NO;
             NEEduSignalMessage *lastMessage = objModel.list.lastObject;
             self.currentSequence = lastMessage.sequence;
             for (NEEduSignalMessage *messageModel in objModel.list) {
-                NSLog(@"sequence不连续 重新拉取%d",messageModel.sequence);
+                NCKLogInfo(@"sequence不连续 重新拉取%d",messageModel.sequence);
                 [self dispatchMessage:messageModel];
             }
         } failure:^(NSError * _Nullable error, NSInteger statusCode) {
-            NSLog(@"sequence不连续 重新拉取失败:%error",error);
+            NCKLogInfo(@"sequence不连续 重新拉取失败:%error",error);
         }];
     }else {
         //消息分发
