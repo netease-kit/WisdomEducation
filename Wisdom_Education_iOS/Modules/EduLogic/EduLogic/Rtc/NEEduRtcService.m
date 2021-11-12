@@ -25,7 +25,8 @@
     NERtcVideoEncodeConfiguration *config = [[NERtcVideoEncodeConfiguration alloc] init];
     config.width = 320;
     config.height = 240;
-    config.frameRate = kNERtcVideoFrameRateFps24;
+    config.frameRate = kNERtcVideoFrameRateFps15;
+    config.degradationPreference = kNERtcDegradationMaintainFramerate;
     [[NERtcEngine sharedEngine] setLocalVideoConfig:config];
     // 设置音频质量&场景
     [[NERtcEngine sharedEngine] setAudioProfile:kNERtcAudioProfileStandard scenario:kNERtcAudioScenarioSpeech];
@@ -43,8 +44,7 @@
         kNERtcKeyAutoSubscribeAudio: @(param.subscribeAudio),
     };
     [[NERtcEngine sharedEngine] setParameters:params];
-    
-    [[NERtcEngine sharedEngine] joinChannelWithToken:param.rtcToken channelName:param.channelID myUid:param.userID completion:^(NSError * _Nullable error, uint64_t channelId, uint64_t elapesd) {
+    [[NERtcEngine sharedEngine] joinChannelWithToken:param.rtcToken channelName:param.channelID myUid:param.userID completion:^(NSError * _Nullable error, uint64_t channelId, uint64_t elapesd, uint64_t uid) {
         NSLog(@"Rtc:joinError:%@",error);
         if (completion) {
             completion(error,channelId);

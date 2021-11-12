@@ -21,7 +21,6 @@
 #import "UIImage+NE.h"
 #import "NEEduNavigationViewController.h"
 #import <SDWebImage/SDWebImage.h>
-
 @interface NEEduClassRoomVC ()<NEEduRoomViewMaskViewDelegate,NMCWhiteboardManagerDelegate,NEScreenShareHostDelegate,NEEduVideoServiceDelegate,NEEduIMChatDelegate,NEEduMessageServiceDelegate,NEEduRoomServiceDelegate>
 
 /// 自己是否在共享
@@ -41,8 +40,14 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
 
 @implementation NEEduClassRoomVC
 
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    [[UIDevice currentDevice] setValue:[NSNumber numberWithInteger:UIInterfaceOrientationLandscapeRight] forKey:@"orientation"];
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
+    [self addNotification];
     self.netReachable = YES;
     [self.navigationController setNavigationBarHidden:NO];
     self.view.backgroundColor = [UIColor whiteColor];
@@ -58,6 +63,7 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
     __weak typeof(self)weakSelf = self;
     [[NEEduManager shared] joinRtcAndGetProfileCompletion:^(NSError * _Nonnull error, NEEduRoomProfile * _Nonnull profile) {
         if (error) {
+            NCKLogInfo(@"profileError%@",error);
             [self.view makeToast:[NSString stringWithFormat:@"加入房间失败，请退出重进 %@",error.localizedDescription]];
             return;
         }
@@ -125,9 +131,7 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
 - (void)updateUIWithMembers:(NSArray *)members {
     
 }
-- (void)viewWillAppear:(BOOL)animated {
-    [[UIDevice currentDevice] setValue:[NSNumber numberWithInteger:UIInterfaceOrientationLandscapeRight] forKey:@"orientation"];
-}
+
 - (void)setupSubviews {
     self.view.backgroundColor = [UIColor colorWithRed:26/255.0 green:32/255.0 blue:40/255.0 alpha:1.0];
     [self.view addSubview:self.maskView];
@@ -756,6 +760,7 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
     if (self.membersVC) {
         [self.membersVC dismissViewControllerAnimated:YES completion:nil];
     }
+    [self removeNotification];
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
@@ -774,7 +779,6 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
     if (self.isSharing) {
         [self stopAllScreenShare];
     }
-    
     [[NEEduManager shared] leaveClassroom];
     [[NMCWhiteboardManager sharedManager] callWebLogoutIM];
     [[NMCWhiteboardManager sharedManager] clearWebViewCache];
@@ -932,10 +936,16 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
     if (state == AFNetworkReachabilityStatusNotReachable || state == AFNetworkReachabilityStatusUnknown) {
         //断网
         //网络展示无网
+        NCKLogInfo(@"net change:%d",state);
         self.netReachable = NO;
     }else {
         //有网
         // 请求房间快照
+        if (self.netReachable) {
+            //WIFI和4G之间的切换不需要更新
+            return;
+        }
+        NCKLogInfo(@"net change:%d",state);
         self.netReachable = YES;
         __weak typeof(self)weakSelf = self;
         [[NEEduManager shared].roomService getRoomProfile:self.room.roomUuid completion:^(NSError * _Nonnull error, NEEduRoomProfile * _Nonnull profile) {
@@ -956,13 +966,36 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
              */
             [weakSelf updateUIWithRoom:profile.snapshot.room];
             [weakSelf membersWithProfile:profile];
+            
             [weakSelf updateMemberAuthorizationWithProfile:profile];
             [weakSelf updateScreenShare];
+            
             [weakSelf updateHandsupStateWithMembers:profile.snapshot.members];
             [weakSelf updateMemberVCWithProfile:profile];
         }];
     }
 }
+/*
+ // update room info
+ strongSelf.room = profile.snapshot.room;
+ [strongSelf updateUIWithRoom:strongSelf.room];
+ 
+ // update members list
+ strongSelf.members = [strongSelf showMembersWithJoinedMembers:profile.snapshot.members].mutableCopy;
+ [strongSelf.collectionView reloadData];
+ 
+ [strongSelf updateScreenShare];
+ //subclass update UI
+ [strongSelf updateUIWithMembers:profile.snapshot.members];
+ 
+ //load whiteboard view
+ [strongSelf addWhiteboardView];
+ //load chatroom function
+ [strongSelf addChatroom];
+ // update menue
+ [strongSelf updateMenueItemWithProfile:profile];
+ */
+
 - (void)updateUIWithRoom:(NEEduHttpRoom *)room {
     [self.maskView.navView updateRoomState:room serverTime:[NEEduManager shared].profile.ts];
     //初始化上课按钮
@@ -1000,7 +1033,6 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
     for (NEEduHttpUser *user in profile.snapshot.members) {
         if ([user.userUuid isEqualToString:[NEEduManager shared].localUser.userUuid]) {
             NEEduHttpUser *localUser = [NEEduManager shared].localUser;
-            
             if (user.properties.streamAV.video) {
                 //update video
                 if (localUser.properties.streamAV.video && ![user.properties.streamAV.video isEqualToNumber:localUser.properties.streamAV.video]) {
@@ -1417,6 +1449,16 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
 - (void)leaveRoom {
     [[NMCWhiteboardManager sharedManager] callWebLogoutIM];
     [[NMCWhiteboardManager sharedManager] clearWebViewCache];
+}
+#pragma mark - NSNotificationCenter
+- (void)addNotification {
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(becomeActive:) name:UIApplicationDidBecomeActiveNotification object:nil];
+}
+- (void)removeNotification {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+- (void)becomeActive:(NSNotification *)notification {
+    [[UIDevice currentDevice] setValue:[NSNumber numberWithInteger:UIInterfaceOrientationLandscapeRight] forKey:@"orientation"];
 }
 
 #pragma mark - Orientations

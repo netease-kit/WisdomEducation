@@ -118,7 +118,10 @@
     __weak typeof(self)weakSelf = self;
     [HttpManager getRoomProfile:roomUuid classType:[NEEduRoomProfile class] success:^(NEEduRoomProfile * objModel,NSInteger ts) {
         __strong typeof(self) strongSelf = weakSelf;
-        if ([NEEduManager shared].profile && objModel.snapshot.room.rtcCid != [NEEduManager shared].profile.snapshot.room.rtcCid) {
+        BOOL isEqual = [objModel.snapshot.room.rtcCid isEqualToString:[NEEduManager shared].profile.snapshot.room.rtcCid];
+        NCKLogInfo(@"isEqual:%d",isEqual);
+        if ([NEEduManager shared].profile && !isEqual) {
+            NCKLogInfo(@"profile:%@ profilerRtcCid:%@ rtcCid:%@",[NEEduManager shared].profile,[NEEduManager shared].profile.snapshot.room.rtcCid,objModel.snapshot.room.rtcCid);
             //如果请求的与当前房间信息不符
             if (completion) {
                 NSError *error = [NSError errorWithDomain:NEEduErrorDomain code:NEEduErrorTypeRoomNotFound userInfo:@{NSLocalizedDescriptionKey:@"房间不存在"}];
@@ -126,7 +129,6 @@
             }
         }
         objModel.ts = ts;
-        
         strongSelf.room.roomUuid = objModel.snapshot.room.roomUuid;
         strongSelf.room.roomName = objModel.snapshot.room.roomName;
         
