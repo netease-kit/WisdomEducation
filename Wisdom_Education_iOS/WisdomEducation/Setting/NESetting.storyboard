@@ -175,6 +175,40 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="100" id="5vw-3A-gpm">
+                                        <rect key="frame" x="0.0" y="318" width="414" height="100"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="5vw-3A-gpm" id="a05-fE-wFD">
+                                            <rect key="frame" x="0.0" y="0.0" width="414" height="100"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Byw-C2-hku">
+                                                    <rect key="frame" x="0.0" y="20" width="414" height="55"/>
+                                                    <subviews>
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="版本：" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hnD-q0-oHk">
+                                                            <rect key="frame" x="20" y="19.5" width="374" height="16"/>
+                                                            <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                                            <nil key="textColor"/>
+                                                            <nil key="highlightedColor"/>
+                                                        </label>
+                                                    </subviews>
+                                                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                                    <constraints>
+                                                        <constraint firstItem="hnD-q0-oHk" firstAttribute="centerY" secondItem="Byw-C2-hku" secondAttribute="centerY" id="VRx-9L-XOP"/>
+                                                        <constraint firstItem="hnD-q0-oHk" firstAttribute="leading" secondItem="Byw-C2-hku" secondAttribute="leading" constant="20" id="ajz-ha-8p3"/>
+                                                        <constraint firstAttribute="trailing" secondItem="hnD-q0-oHk" secondAttribute="trailing" constant="20" id="gds-gO-6Kb"/>
+                                                    </constraints>
+                                                </view>
+                                            </subviews>
+                                            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                            <constraints>
+                                                <constraint firstAttribute="bottom" secondItem="Byw-C2-hku" secondAttribute="bottom" constant="25" id="JNI-Ph-7a4"/>
+                                                <constraint firstAttribute="trailing" secondItem="Byw-C2-hku" secondAttribute="trailing" id="Yve-YC-Mwv"/>
+                                                <constraint firstItem="Byw-C2-hku" firstAttribute="top" secondItem="a05-fE-wFD" secondAttribute="top" constant="20" id="Z6R-v1-350"/>
+                                                <constraint firstItem="Byw-C2-hku" firstAttribute="leading" secondItem="a05-fE-wFD" secondAttribute="leading" id="eph-g3-VwZ"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
                                 </cells>
                             </tableViewSection>
                         </sections>
@@ -186,6 +220,7 @@
                     <connections>
                         <outlet property="useChatroom" destination="bj9-LD-vYP" id="nNi-QX-eT6"/>
                         <outlet property="useFastLive" destination="BrR-0L-29C" id="CEy-3B-LdY"/>
+                        <outlet property="versionLabel" destination="hnD-q0-oHk" id="cRX-cq-2SI"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Vue-Mw-2Ge" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

@@ -57,7 +57,7 @@ const Header: React.FC<HeaderShowProps> = observer((props) => {
   }).join('')
 
   const handleCopyClick = () => {
-    copy(roomUuid && roomUuid.substr(0, roomUuid.length - 1));
+    copy(roomUuid);
     uiStore.showToast("复制成功")
   }
 

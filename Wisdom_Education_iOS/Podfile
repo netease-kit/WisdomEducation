@@ -14,7 +14,7 @@ target 'WisdomEducation' do
   pod 'NERecordPlayUI', :path => 'Modules/NERecordPlayUI/NERecordPlayUI.podspec'
   
   pod 'NEScreenShareBroadcaster', '~> 0.1.0'
-#  pod 'Bugly'
+#  pod 'Bugly', '~> 2.5.90'
   
   target 'WisdomEducationTests' do
     inherit! :search_paths

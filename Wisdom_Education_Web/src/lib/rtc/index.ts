@@ -434,8 +434,8 @@ export class NeWebrtc extends EnhancedEventEmitter {
     }
     try{
       await this._localStream.setVideoProfile({ // 调整视频帧率与分辨率
-        resolution: WebRTC2.VIDEO_QUALITY_720p,
-        frameRate: WebRTC2.CHAT_VIDEO_FRAME_RATE_25
+        resolution: WebRTC2.VIDEO_QUALITY_480p,
+        frameRate: WebRTC2.CHAT_VIDEO_FRAME_RATE_15
       })
       await this._localStream.init()
       logger.log('initLocalStream() successed')

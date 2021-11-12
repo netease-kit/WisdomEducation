@@ -26,6 +26,7 @@ FOUNDATION_EXPORT const unsigned char EduLogicVersionString[];
 #import <EduLogic/NEEduHttpUser.h>
 #import <EduLogic/NEEduErrorType.h>
 #import <EduLogic/NEEduIMAttach.h>
+#import <EduLogic/NERtcCallKitLog.h>
 
 
 
