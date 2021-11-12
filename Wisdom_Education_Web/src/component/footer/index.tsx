@@ -134,9 +134,12 @@ const Footer: React.FC = observer(() => {
       const prevToNow = startTime.current + 1000;
       startTime.current = prevToNow;
       const seconds = Math.floor(prevToNow / 1000);
-      const minute = Math.floor(seconds / 60);
-      const second = seconds - minute * 60;
-      const time = `${minute < 10 ? `(0${minute}` : `(${minute}`} : ${second < 10 ? `0${second}` : second})`;
+      const hour = Math.floor(seconds / 3600);
+      const minute = Math.floor(seconds / 60) - hour * 60;
+      const second = seconds - hour * 3600 - minute * 60;
+      // 不足1h时只展示分秒，否则展示时分秒 
+      let time = hour > 0 ? `(${hour < 10 ? `0${hour}` : `${hour}`} : `: `(`; 
+      time += `${minute < 10 ? `0${minute}` : `${minute}`} : ${second < 10 ? `0${second}` : second})`;
       roomStore.setPrevToNowTime(time);
     }, 1000);
     await roomStore.setRoomState('正在上课');
