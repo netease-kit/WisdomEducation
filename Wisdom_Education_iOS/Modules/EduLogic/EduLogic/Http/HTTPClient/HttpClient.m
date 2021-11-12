@@ -8,7 +8,7 @@
 
 #import "HttpClient.h"
 #import <AFNetworking/AFNetworking.h>
-
+#
 typedef NS_ENUM(NSInteger, NEHttpType) {
     NEHttpTypeGet            = 0,
     NEHttpTypePost,
@@ -212,7 +212,7 @@ static HttpClient *manager = nil;
                      \nheaders==>\n%@\n\
                      \nparams==>\n%@\n\
                      ",NEHttpTypeStrings[type], url, headers, params];
-    NSLog(@"%@",msg);
+    NCKLogInfo(@"%@",msg);
 }
 + (void)httpSuccessLogWithType:(NEHttpType)type url:(NSString *)url
                      responseObject:(id)responseObject {
@@ -223,7 +223,7 @@ static HttpClient *manager = nil;
                      \nResult==>\n%@\n\
                      ",NEHttpTypeStrings[type], url, responseObject];
     
-    NSLog(@"%@",msg);
+    NCKLogInfo(@"%@",msg);
 }
 
 + (void)httpErrorLogWithType:(NEHttpType)type url:(NSString *)url
@@ -234,7 +234,7 @@ static HttpClient *manager = nil;
                      \nurl==>\n%@\n\
                      \nError==>\n%@\n\
                      ",NEHttpTypeStrings[type], url, error.description];
-    NSLog(@"%@",msg);
+    NCKLogError(@"%@",msg);
 }
 
 #pragma mark Check

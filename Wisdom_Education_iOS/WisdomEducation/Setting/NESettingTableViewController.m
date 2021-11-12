@@ -8,10 +8,12 @@
 
 #import "NESettingTableViewController.h"
 #import "IMLoginVC.h"
+#import "NEAppInfo.h"
 
 @interface NESettingTableViewController ()
 @property (weak, nonatomic) IBOutlet UISwitch *useChatroom;
 @property (weak, nonatomic) IBOutlet UISwitch *useFastLive;
+@property (weak, nonatomic) IBOutlet UILabel *versionLabel;
 
 @end
 
@@ -25,6 +27,7 @@
     BOOL useFastLive = [[[NSUserDefaults standardUserDefaults] objectForKey:useFastLiveKey] boolValue];
     [self.useChatroom setOn:useChatroom];
     [self.useFastLive setOn:useFastLive];
+    self.versionLabel.text = [NSString stringWithFormat:@"版本:%@ (%@)",[NEAppInfo appVersion],[NEAppInfo buildVersion]];
 }
 - (void)viewWillAppear:(BOOL)animated {
     [self.navigationController setNavigationBarHidden:NO];

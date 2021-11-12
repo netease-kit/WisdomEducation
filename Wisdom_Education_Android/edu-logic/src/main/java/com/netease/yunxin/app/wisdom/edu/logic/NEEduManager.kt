@@ -45,7 +45,7 @@ interface NEEduManager {
         /**
          * sdk inner version code
          */
-        private const val VERSION_CODE = 70
+        private const val VERSION_CODE = 71
 
 
         /**

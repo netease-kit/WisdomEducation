@@ -110,6 +110,7 @@ internal class NEEduSync(val neEduManager: NEEduManagerImpl) {
                         return false
                     }
                     cmdBody.sequence - lastSequenceId >= 10L -> {// snapshot
+                        snapshot(NEEduManagerImpl.getRoom().roomUuid)
                         return false
                     }
                     else -> {
