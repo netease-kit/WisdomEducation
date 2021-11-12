@@ -49,7 +49,7 @@ class TitleView(context: Context, attrs: AttributeSet?, defStyleAttr: Int = 0) :
     }
 
     fun getClazzDuration(): String {
-        return TimeUtil.stringForTimeHMS(time, "%02d:%02d")
+        return TimeUtil.stringForTimeHMS(time)
     }
 
     /**
