@@ -24,9 +24,15 @@ const DeviceList: React.FC = observer(() => {
   const [microphoneId, setMicrophoneId] = useState("");
   const [cameraId, setCameraId] = useState("");
   const [speakerId, setSpeakerId] = useState("");
+  const [microLabel, setMicroLabel] = useState("");
+  const [cameraLabel, setCameraLabel] = useState("");
+  const [speakLabel, setSpeakLabel] = useState("");
   const [shareList, setShareList] = useState<ShareListItem[]>([]);
   const [shareSelectVisible, setShareSelectVisible] = useState(false);
   const [shareInfo, setShareInfo] = useState<ShareListItem>();
+  const [originCameras, setOriginCameras] = useState([]);
+  const [originMicrophones, setOriginMicrophones] = useState([]);
+  const [originSpeakers, setOriginSpeakers] = useState([]);
 
   const roomStore = useRoomStore();
   const uiStore = useUIStore();
@@ -36,6 +42,8 @@ const DeviceList: React.FC = observer(() => {
     localData,
     roomInfo: { sceneType },
     hasOtherScreen,
+    deviceChangedCount,
+    joinFinish
   } = roomStore;
 
   const handleAudioClick = () => {
@@ -164,22 +172,29 @@ const DeviceList: React.FC = observer(() => {
             microphoneSelect = "",
             cameraSelect = "",
           }) => {
-            if (!speakers?.some((item) => item.deviceId === speakerIdSelect)) {
-              roomStore.selectSpeakers(speakers[0]?.deviceId).then(() => {
-                setSpeakerId(speakers[0]?.deviceId);
-              });
-            } else if (
-              !microphones?.some((item) => item.deviceId === microphoneSelect)
-            ) {
-              roomStore.selectAudio(microphones[0]?.deviceId).then(() => {
-                setMicrophoneId(microphones[0]?.deviceId);
-              });
-            } else if (
-              !cameras?.some((item) => item.deviceId === cameraSelect)
-            ) {
-              roomStore.selectVideo(cameras[0]?.deviceId).then(() => {
-                setCameraId(cameras[0]?.deviceId);
-              });
+            const speakerItem = speakers.find((item) => item.deviceId === speakerIdSelect)
+            const microItem = microphones.find((item) => item.deviceId === microphoneSelect)
+            const cameraItem = cameras.find((item) => item.deviceId === cameraSelect)
+            if (listType === "audio") {
+              if (!microItem || (microLabel && microItem.label !== microLabel)) {
+                roomStore.selectAudio(microphones[0]?.deviceId).then(() => {
+                  setMicrophoneId(microphones[0]?.deviceId);
+                  setMicroLabel(microphones[0]?.label);
+                });
+              } 
+              if (!speakerItem || (speakLabel && speakerItem.label !== speakLabel)) {
+                roomStore.selectSpeakers(speakers[0]?.deviceId).then(() => {
+                  setSpeakerId(speakers[0]?.deviceId);
+                  setSpeakLabel(speakers[0]?.label);
+                });
+              } 
+            } else if (listType === "video") {
+              if (!cameraItem || (cameraLabel && cameraItem.label !== cameraLabel)) {
+                roomStore.selectVideo(cameras[0]?.deviceId).then(() => {
+                  setCameraId(cameras[0]?.deviceId);
+                  setCameraLabel(cameras[0]?.label);
+                });
+              }
             }
             const data: DeviceProps["data"] = [
               {
@@ -199,6 +214,7 @@ const DeviceList: React.FC = observer(() => {
                           return true;
                         }
                       })?.[0].label;
+                      setSpeakLabel(label);
                       setSpeakerId(value);
                       setListType(null);
                       uiStore.showToast(`当前选择 ${label}`);
@@ -227,6 +243,7 @@ const DeviceList: React.FC = observer(() => {
                           return true;
                         }
                       })?.[0].label;
+                      setMicroLabel(label);
                       setMicrophoneId(value);
                       setListType(null);
                       uiStore.showToast(`当前选择 ${label}`);
@@ -253,6 +270,7 @@ const DeviceList: React.FC = observer(() => {
                           return true;
                         }
                       })?.[0].label;
+                      setCameraLabel(label);
                       setCameraId(value);
                       setListType(null);
                       uiStore.showToast(`当前选择 ${label}`);
@@ -268,6 +286,77 @@ const DeviceList: React.FC = observer(() => {
         );
     }
   }, [joined, speakerId, microphoneId, cameraId, listType]);
+
+  useEffect(() => {
+    if(!joinFinish) return
+    roomStore
+      .getDeviceListData()
+      .then(
+        ({
+          microphones = [],
+          cameras = [],
+          speakers = []
+        }) => {
+          setOriginCameras(cameras);
+          setOriginMicrophones(microphones);
+          setOriginSpeakers(speakers);
+          setMicroLabel(microphones[0]?.label);
+          setSpeakLabel(speakers[0]?.label);
+          setCameraLabel(cameras[0]?.label);          
+        }
+      )
+  }, [joinFinish])
+
+  useEffect(() => {
+    if(!joined || !joinFinish) return
+    roomStore
+      .getDeviceListData()
+      .then(
+        ({
+          microphones = [],
+          cameras = [],
+          speakers = [],
+          speakerIdSelect = "",
+          microphoneSelect = "",
+          cameraSelect = "",
+        }) => {
+          const message: Array<any> = [];
+          const speakerItem = speakers?.find((item) => item.deviceId === speakerIdSelect)
+          const microItem = microphones?.find((item) => item.deviceId === microphoneSelect)
+          const cameraItem = cameras?.find((item) => item.deviceId === cameraSelect)
+          // 需要异常提示的情况：插入设备或拔掉正在使用的设备（包括拔掉后可能发生自动切换的情况）
+          if (
+            (cameras.length > originCameras.length) || 
+            (cameraSelect && !cameraItem) || 
+            (cameraLabel && cameraItem?.label !== cameraLabel)
+          ) {
+            message.push("视频输入设备");
+          }
+          if (
+            (microphones.length > originMicrophones.length) || 
+            (microphoneSelect && !microItem) || 
+            (microLabel && microItem?.label !== microLabel)
+          ) {
+            message.push("音频输入设备");
+          }
+          if (
+            speakers.length > originSpeakers.length || 
+            (speakerIdSelect && !speakerItem) || 
+            (speakLabel && speakerItem?.label !== speakLabel)
+          ) {
+            message.push("音频输出设备");
+          }
+          if (message.length > 0) {
+            uiStore.showToast(message.join("、") + "异常，请重新进行设备选择和检测！");
+            logger.log("检测到有设备插拔：",message);
+          }
+          setListType(null);
+          setOriginCameras(cameras);
+          setOriginMicrophones(microphones);
+          setOriginSpeakers(speakers);
+        }
+      )    
+  }, [deviceChangedCount]);
 
   return (
     <div className="deviceList-wrapper">

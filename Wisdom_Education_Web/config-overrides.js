@@ -80,6 +80,11 @@ module.exports = {
     useBabelRc(),
     disableEsLint(),
     sourceMap(),
+    addWebpackExternals({
+      RecordPlayer: 'RecordPlayer',
+      ToolCollection: 'ToolCollection',
+      WhiteBoard: 'WhiteBoardSDK'
+    }),
     addWebpackModuleRule({
       test: /\.worker\.js$/,
       use: { loader: 'worker-loader' },

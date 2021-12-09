@@ -193,6 +193,10 @@ export class NeElertc extends EnhancedEventEmitter {
       "onConnectionStateChange",
       this._onConnectionStateChange.bind(this)
     );
+    window.navigator.mediaDevices.ondevicechange = (() => {
+      logger.log('监听到设备变化')
+      this.emit('device-change')
+    })
     this._nertcEngine.on(
       "onLocalVideoStats",
       this._onLocalVideoStats.bind(this)
@@ -236,9 +240,10 @@ export class NeElertc extends EnhancedEventEmitter {
         this._pubConf.microphoneId = deviceId || this._pubConf.microphoneId;
         break;
       case "video":
-        result = !deviceId
-          ? this._nertcEngine.enableLocalVideo(true)
-          : this._nertcEngine.setVideoDevice(deviceId);
+        if (deviceId) {
+          this._nertcEngine.setVideoDevice(deviceId)
+        }
+        result = this._nertcEngine.enableLocalVideo(true)
         this._pubConf.cameraId = deviceId || this._pubConf.cameraId;
         break;
       case "screen":
@@ -612,6 +617,7 @@ export class NeElertc extends EnhancedEventEmitter {
     try {
       this._nertcEngine.release();
       this._nertcEngine = null;
+      window.navigator.mediaDevices.ondevicechange = null;
     } catch (error) {
       logger.error("destroy fail: ", error);
     }
