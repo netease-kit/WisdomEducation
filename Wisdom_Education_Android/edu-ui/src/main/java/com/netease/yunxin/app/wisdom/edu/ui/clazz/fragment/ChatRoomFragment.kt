@@ -29,6 +29,7 @@ import com.netease.nimlib.sdk.chatroom.model.EnterChatRoomData
 import com.netease.nimlib.sdk.msg.constant.MsgTypeEnum
 import com.netease.nimlib.sdk.msg.model.AttachmentProgress
 import com.netease.yunxin.app.wisdom.base.util.ClipboardUtil
+import com.netease.yunxin.app.wisdom.base.util.CommonUtil
 import com.netease.yunxin.app.wisdom.base.util.CommonUtil.setOnClickThrottleFirst
 import com.netease.yunxin.app.wisdom.base.util.FileUtils
 import com.netease.yunxin.app.wisdom.base.util.ToastUtil
@@ -398,6 +399,11 @@ class ChatRoomFragment : BaseFragment(R.layout.fragment_chatroom),
 
             }
         }
+    }
+
+    override fun hideKeyBoard() {
+        super.hideKeyBoard()
+        activity?.let { CommonUtil.hideKeyBoard(it, binding.editSendMsg) }
     }
 
     override fun onDestroy() {

@@ -1,0 +1,156 @@
+{
+  "testItems": [{
+      "caseId": "loginCaseID",
+      "deviceId": "android",
+      "methodName": "enterClass",
+      "methodNameDesc": "加入课堂",
+      "params": [
+        {
+            "lessonId": "668",
+            "nickName": "Groot",
+            "classType": "一对一教学",
+            "role": 0
+        }
+      ],
+      "expectResult": [
+          {
+            "key": "resultCode",
+            "rule": "equals",
+            "value": 0
+          }
+      ]
+    },
+    {
+      "caseId": "loginCaseID",
+      "deviceId": "android",
+      "methodName": "startClass",
+      "methodNameDesc": "开始上课",
+      "params": [],
+      "expectResult": [
+          {
+            "key": "resultCode",
+            "rule": "equals",
+            "value": 0
+          }
+      ]
+    },
+    {
+      "caseId": "loginCaseID",
+      "deviceId": "android",
+      "methodName": "clickBottomBtn",
+      "methodNameDesc": "点击底部工具栏的“静音”",
+      "params": [
+        {
+            "text": "静音"
+        }
+      ],
+      "expectResult": [
+          {
+            "key": "resultCode",
+            "rule": "equals",
+            "value": 0
+          }
+      ]
+    },
+    {
+      "caseId": "loginCaseID",
+      "deviceId": "android",
+      "methodName": "clickBottomBtn",
+      "methodNameDesc": "点击底部工具栏的“解除静音”",
+      "params": [
+        {
+            "text": "解除静音"
+        }
+      ],
+      "expectResult": [
+          {
+            "key": "resultCode",
+            "rule": "equals",
+            "value": 0
+          }
+      ]
+    },
+    {
+      "caseId": "loginCaseID",
+      "deviceId": "android",
+      "methodName": "clickBottomBtn",
+      "methodNameDesc": "点击底部工具栏的“共享屏幕”",
+      "params": [
+        {
+            "text": "共享屏幕"
+        }
+      ],
+      "expectResult": [
+          {
+            "key": "resultCode",
+            "rule": "equals",
+            "value": 0
+          }
+      ]
+    },
+    {
+      "caseId": "loginCaseID",
+      "deviceId": "android",
+      "methodName": "clickBottomBtn",
+      "methodNameDesc": "点击底部工具栏的“停止共享”",
+      "params": [
+        {
+            "text": "停止共享"
+        }
+      ],
+      "expectResult": [
+          {
+            "key": "resultCode",
+            "rule": "equals",
+            "value": 0
+          }
+      ]
+    },
+    {
+      "caseId": "loginCaseID",
+      "deviceId": "android",
+      "methodName": "endClass",
+      "methodNameDesc": "结束上课",
+      "params": [],
+      "expectResult": [
+          {
+            "key": "resultCode",
+            "rule": "equals",
+            "value": 0
+          }
+      ]
+    },
+    {
+      "caseId": "loginCaseID",
+      "deviceId": "android",
+      "methodName": "checkComponent",
+      "methodNameDesc": "检查【课程已结束】文案",
+      "params": [
+        {
+            "text": "课程已结束"
+        }
+      ],
+      "expectResult": [
+          {
+            "key": "resultCode",
+            "rule": "equals",
+            "value": 0
+          }
+      ]
+    },
+    {
+        "caseId": "loginCaseID",
+        "deviceId": "android",
+        "methodName": "backToLoginAfterClass",
+        "methodNameDesc": "返回登录界面（结束上课后）",
+        "params": [],
+        "expectResult": [
+            {
+              "key": "resultCode",
+              "rule": "equals",
+              "value": 0
+            }
+        ]
+    }
+  ]
+}

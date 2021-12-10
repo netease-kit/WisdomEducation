@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="audio_collection_device_abnormal">The audio collection device is abnormal</string>
+    <string name="audio_player_device_abnormal">The audio player device is abnormal</string>
+    <string name="video_device_exception">Video device Exception</string>
+</resources>

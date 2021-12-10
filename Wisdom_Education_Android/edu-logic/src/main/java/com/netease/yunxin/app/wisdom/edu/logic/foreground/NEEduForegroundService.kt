@@ -10,9 +10,11 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ServiceInfo
+import android.media.projection.MediaProjectionManager
 import android.os.Build
 import android.os.IBinder
 import android.os.Process
+import com.netease.yunxin.app.wisdom.edu.logic.NEEduManager
 import com.netease.yunxin.kit.alog.ALog
 import kotlin.system.exitProcess
 
@@ -25,6 +27,19 @@ class NEEduForegroundService : Service() {
         private const val ONGOING_NOTIFICATION_ID = 0x9527
 
         private var foregroundServiceConfig: NEEduForegroundServiceConfig? = null
+
+        private val captureIntent: Intent by lazy {
+            val mediaProjectionManager = NEEduManager.context.getSystemService(
+                MEDIA_PROJECTION_SERVICE
+            ) as MediaProjectionManager
+            mediaProjectionManager.createScreenCaptureIntent()
+        }
+
+        /**
+         * 屏幕共享意图，用于请求屏幕共享
+         */
+        val neCaptureIntent: Intent
+            get() = captureIntent
 
         fun start(context: Context, config: NEEduForegroundServiceConfig) {
             foregroundServiceConfig = config

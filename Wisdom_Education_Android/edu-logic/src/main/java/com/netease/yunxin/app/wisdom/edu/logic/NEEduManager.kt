@@ -8,7 +8,6 @@ package com.netease.yunxin.app.wisdom.edu.logic
 import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.map
 import com.netease.nimlib.sdk.util.NIMUtil
 import com.netease.yunxin.app.wisdom.base.network.NEResult
 import com.netease.yunxin.app.wisdom.base.network.RetrofitManager

@@ -126,7 +126,7 @@ internal class NEEduSync(val neEduManager: NEEduManagerImpl) {
 
     private fun fetchNextSequences(nextId: Long) {
         ALog.i("fetchNextSequences $lastSequenceId $nextId")
-        val fetchNextSequences = neEduManager.getRoomService().fetchNextSequences("", nextId)
+        val fetchNextSequences = neEduManager.getRoomService().fetchNextSequences(NEEduManagerImpl.getRoom().roomUuid, nextId)
         fetchNextSequences.observeForeverOnce { it ->
             if (it.success()) {
                 it.data?.let {

@@ -43,7 +43,7 @@ class JsBridge(private val whiteboardApi: WhiteboardApi) : Handler(Looper.getMai
     override fun handleMessage(msg: Message) {
         super.handleMessage(msg)
         var content: String = msg.obj as String
-        ALog.i(TAG, String.format("called by js, content=%s", content))
+//        ALog.i(TAG, String.format("called by js, content=%s", content))
         try {
             var jsMessage: JsMessage? = gson.fromJson(content, JsMessage::class.java)
             jsMessage?.let {
@@ -94,7 +94,6 @@ class JsBridge(private val whiteboardApi: WhiteboardApi) : Handler(Looper.getMai
     private fun login() {
         val jsParam = JSONObject()
         val param = JSONObject()
-        val toolbar = JSONObject()
         jsParam.put("action", "jsJoinWB")
         param.put("uid", whiteboardApi.getUid())
         param.put("channelName", whiteboardApi.getChannelName())
@@ -102,6 +101,9 @@ class JsBridge(private val whiteboardApi: WhiteboardApi) : Handler(Looper.getMai
         param.put("debug", false)
         param.put("platform", "android")
         param.put("appKey", whiteboardApi.getAppKey())
+        val drawPluginParams = JSONObject()
+        drawPluginParams.put("zoomTo1AfterJoin", false)
+        param.put("drawPluginParams", drawPluginParams)
         jsParam.put("param", param)
         runJs(jsParam.toString())
     }

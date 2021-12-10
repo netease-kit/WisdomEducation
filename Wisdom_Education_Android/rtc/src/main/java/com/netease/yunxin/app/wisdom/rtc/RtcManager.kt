@@ -11,12 +11,10 @@ import android.graphics.Rect
 import android.media.projection.MediaProjection
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
-import com.netease.lava.nertc.sdk.NERtcCallbackEx
-import com.netease.lava.nertc.sdk.NERtcConstants
-import com.netease.lava.nertc.sdk.NERtcEx
-import com.netease.lava.nertc.sdk.NERtcParameters
+import com.netease.lava.nertc.sdk.*
 import com.netease.lava.nertc.sdk.stats.*
 import com.netease.lava.nertc.sdk.video.*
+import com.netease.yunxin.app.wisdom.base.util.ToastUtil
 import com.netease.yunxin.kit.alog.ALog
 
 /**
@@ -43,6 +41,8 @@ object RtcManager : NERtcCallbackEx, NERtcStatsObserver {
     /// 音视频每一通是一个实例，用完就需要销毁
     fun initEngine(context: Context, appKey: String): LiveData<Boolean> {
         val initLD: MediatorLiveData<Boolean> = MediatorLiveData()
+        val option = NERtcOption()
+        option.logLevel = NERtcConstants.LogLevel.INFO
         rtcEngine = NERtcEx.getInstance()
         rtcEngine?.let {
             val parameters = NERtcParameters()
@@ -52,7 +52,7 @@ object RtcManager : NERtcCallbackEx, NERtcStatsObserver {
             parameters.set(NERtcParameters.KEY_SERVER_RECORD_MODE, NERtcConstants.ServerRecordMode.MIX_AND_SINGLE)
             it.setParameters(parameters)
             try {
-                it.init(context, appKey, this, null)
+                it.init(context, appKey, this, option)
                 val neRtcVideoConfig = NERtcVideoConfig()
                 neRtcVideoConfig.width = 320
                 neRtcVideoConfig.height = 240
@@ -201,10 +201,25 @@ object RtcManager : NERtcCallbackEx, NERtcStatsObserver {
     override fun onAudioDeviceChanged(p0: Int) {
     }
 
-    override fun onAudioDeviceStateChange(p0: Int, p1: Int) {
+    override fun onAudioDeviceStateChange(deviceType: Int, deviceState: Int) {
+        val tipResId = if (deviceType == NERtcConstants.AudioDeviceType.RECORD) {
+            R.string.audio_collection_device_abnormal
+        } else {
+            R.string.audio_player_device_abnormal
+        }
+        if (deviceState == NERtcConstants.AudioDeviceState.INIT_ERROR
+            && deviceState == NERtcConstants.AudioDeviceState.START_ERROR
+            && deviceState == NERtcConstants.AudioDeviceState.UNKNOWN_ERROR) {
+            ToastUtil.showLong(tipResId)
+        }
     }
 
-    override fun onVideoDeviceStageChange(p0: Int) {
+    override fun onVideoDeviceStageChange(deviceState: Int) {
+        if (deviceState == NERtcConstants.VideoDeviceState.DISCONNECTED
+            && deviceState == NERtcConstants.VideoDeviceState.FREEZED
+            && deviceState == NERtcConstants.VideoDeviceState.UNKNOWNERROR) {
+            ToastUtil.showLong(R.string.video_device_exception)
+        }
     }
 
     override fun onConnectionTypeChanged(p0: Int) {
@@ -265,6 +280,12 @@ object RtcManager : NERtcCallbackEx, NERtcStatsObserver {
     override fun onMediaRelayReceiveEvent(p0: Int, p1: Int, p2: String?) {
     }
 
+    override fun onLocalPublishFallbackToAudioOnly(p0: Boolean, p1: NERtcVideoStreamType?) {
+    }
+
+    override fun onRemoteSubscribeFallbackToAudioOnly(p0: Long, p1: Boolean, p2: NERtcVideoStreamType?) {
+    }
+
     fun enableLocalVideo(enable: Boolean): Int {
         return engine.enableLocalVideo(enable)
     }
@@ -277,9 +298,11 @@ object RtcManager : NERtcCallbackEx, NERtcStatsObserver {
     fun setupRemoteVideo(remote: NERtcVideoView?, uid: Long): Int {
         if (userList.contains(uid)) {
             engine.setupRemoteVideoCanvas(remote, uid)
-            engine.subscribeRemoteVideoStream(uid,
+            engine.subscribeRemoteVideoStream(
+                uid,
                 NERtcRemoteVideoStreamType.kNERtcRemoteVideoStreamTypeHigh,
-                remote != null)
+                remote != null
+            )
         } else if (remote != null) {
             rtcVideoPendingMap[uid] = remote
         }

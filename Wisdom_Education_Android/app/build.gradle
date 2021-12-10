@@ -97,6 +97,7 @@ dependencies {
     implementation deps.viewmodel_ktx
     implementation deps.bugly
     testImplementation deps.junit
-    androidTestImplementation deps.ext_junit
-    androidTestImplementation deps.espresso_core
+
+    androidTestImplementation deps.test_rules
+    androidTestImplementation deps.integrationtest
 }

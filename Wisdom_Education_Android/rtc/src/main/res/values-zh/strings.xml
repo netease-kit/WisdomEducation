@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="audio_collection_device_abnormal">音频采集设备异常</string>
+    <string name="audio_player_device_abnormal">音频播放设备异常</string>
+    <string name="video_device_exception">视频设备异常</string>
+</resources>
