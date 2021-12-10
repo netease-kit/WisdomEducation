@@ -161,10 +161,10 @@ const Join: FC = observer(() => {
           </div>
           <div className="joinText-download">
             安装包
-            <a href="https://pgyer.netease.im/s/RqHj">
+            <a href="https://www.pgyer.com/AvhN">
               <img className="imgAndroid" src={android} alt="android" />
             </a>
-            <a href="https://pgyer.netease.im/s/cp7S">
+            <a href="https://www.pgyer.com/gRZh">
               <img className="imgIos" src={ios} alt="ios" />
             </a>
           </div>
