@@ -17,6 +17,7 @@ import com.netease.lava.nertc.sdk.stats.NERtcNetworkQualityInfo
 import com.netease.yunxin.app.wisdom.base.util.TimeUtil
 import com.netease.yunxin.app.wisdom.edu.ui.R
 import com.netease.yunxin.app.wisdom.edu.ui.databinding.LayoutTitleViewBinding
+import com.netease.yunxin.kit.alog.ALog
 import kotlin.math.max
 
 class TitleView(context: Context, attrs: AttributeSet?, defStyleAttr: Int = 0) :
@@ -96,6 +97,7 @@ class TitleView(context: Context, attrs: AttributeSet?, defStyleAttr: Int = 0) :
 
     fun setNetworkQuality(quality: NERtcNetworkQualityInfo) {
         binding.ivQuality.apply {
+            ALog.i("setNetworkQuality upStatus:${quality.upStatus} downStatus:${quality.downStatus}")
             when (max(quality.upStatus, quality.downStatus)) {
                 RTCNetworkStatusType.kRtcNetworkStatusGood, RTCNetworkStatusType.kRtcNetworkStatusExcellent -> setImageResource(
                     R.drawable

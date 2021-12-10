@@ -42,4 +42,8 @@ abstract class BaseFragment(layoutId: Int) : Fragment(layoutId) {
     open fun initData() {
 
     }
+
+    open fun hideKeyBoard() {
+
+    }
 }

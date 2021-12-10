@@ -10,7 +10,7 @@
     tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
 
     <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/iv_icon"
+        android:id="@+id/iv_bottom_icon"
         style="@style/BottomImageView"
         android:src="@drawable/ic_bottom_audio"
         app:layout_constraintEnd_toEndOf="parent"
@@ -18,7 +18,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/tv_num_unread"
+        android:id="@+id/tv_bottom_num_unread"
         android:layout_width="@dimen/common_dp_16"
         android:layout_height="@dimen/common_dp_16"
         android:layout_marginStart="@dimen/common_dp_16"
@@ -29,29 +29,29 @@
         android:textColor="@color/white"
         android:textSize="@dimen/ts_10_dp"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@id/iv_icon"
-        app:layout_constraintStart_toStartOf="@id/iv_icon"
+        app:layout_constraintBottom_toBottomOf="@id/iv_bottom_icon"
+        app:layout_constraintStart_toStartOf="@id/iv_bottom_icon"
         tools:text="12"
         tools:visibility="gone" />
 
     <View
-        android:id="@+id/tv_small_unread"
+        android:id="@+id/tv_bottom_small_unread"
         android:layout_width="@dimen/common_dp_8"
         android:layout_height="@dimen/common_dp_8"
         android:layout_marginStart="@dimen/common_dp_20"
         android:layout_marginBottom="@dimen/common_dp_20"
         android:background="@drawable/bg_small_dot"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@id/iv_icon"
-        app:layout_constraintStart_toStartOf="@id/iv_icon"
+        app:layout_constraintBottom_toBottomOf="@id/iv_bottom_icon"
+        app:layout_constraintStart_toStartOf="@id/iv_bottom_icon"
         tools:visibility="visible" />
 
     <TextView
-        android:id="@+id/tv_label"
+        android:id="@+id/tv_bottom_label"
         style="@style/BottomTextView"
-        app:layout_constraintEnd_toEndOf="@id/iv_icon"
-        app:layout_constraintStart_toStartOf="@id/iv_icon"
-        app:layout_constraintTop_toBottomOf="@id/iv_icon"
+        app:layout_constraintEnd_toEndOf="@id/iv_bottom_icon"
+        app:layout_constraintStart_toStartOf="@id/iv_bottom_icon"
+        app:layout_constraintTop_toBottomOf="@id/iv_bottom_icon"
         tools:text="关闭摄像头" />
 
 </merge>

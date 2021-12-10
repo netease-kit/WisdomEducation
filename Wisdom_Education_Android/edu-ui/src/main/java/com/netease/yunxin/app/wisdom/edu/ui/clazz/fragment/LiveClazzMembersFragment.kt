@@ -10,6 +10,7 @@ import android.text.TextWatcher
 import android.view.View
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.netease.yunxin.app.wisdom.base.util.CommonUtil
 import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduMember
 import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduRoleType
 import com.netease.yunxin.app.wisdom.edu.ui.R
@@ -114,5 +115,10 @@ class LiveClazzMembersFragment : BaseFragment(R.layout.fragment_liveclazz_member
                 chatViewModel.fetchLiveRoomMembers()
             }
         }
+    }
+
+    override fun hideKeyBoard() {
+        super.hideKeyBoard()
+        activity?.let { CommonUtil.hideKeyBoard(it, binding.etMembersSearch) }
     }
 }

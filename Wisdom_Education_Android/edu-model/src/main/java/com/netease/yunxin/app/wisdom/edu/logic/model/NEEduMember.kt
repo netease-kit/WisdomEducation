@@ -113,4 +113,8 @@ open class NEEduMember(
     fun updateSubVideo(state: NEEduStreamSubVideo?) {
         streams?.subVideo = state
     }
+
+    override fun toString(): String {
+        return "NEEduMember(role='$role', userName='$userName', userUuid='$userUuid', rtcUid=$rtcUid, time=$time)"
+    }
 }

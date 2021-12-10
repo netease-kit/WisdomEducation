@@ -39,18 +39,18 @@ class ItemBottomView(context: Context, attrs: AttributeSet?, defStyleAttr: Int =
             }
             selected = a.getBoolean(R.styleable.ItemBottomView_selected, true)
 
-            binding.ivIcon.isSelected = selected
-            tvLabel.text = if (selected) text else unSelectText
+            binding.ivBottomIcon.isSelected = selected
+            tvBottomLabel.text = if (selected) text else unSelectText
 
-            ivIcon.setImageDrawable(a.getDrawable(R.styleable.ItemBottomView_src))
+            ivBottomIcon.setImageDrawable(a.getDrawable(R.styleable.ItemBottomView_src))
         }
         a.recycle()
     }
 
     override fun setSelected(selected: Boolean) {
         super.setSelected(selected)
-        binding.ivIcon.isSelected = selected
-        binding.tvLabel.text = if (selected) text else unSelectText
+        binding.ivBottomIcon.isSelected = selected
+        binding.tvBottomLabel.text = if (selected) text else unSelectText
         this.selected = selected
     }
 
@@ -59,7 +59,7 @@ class ItemBottomView(context: Context, attrs: AttributeSet?, defStyleAttr: Int =
     }
 
     fun setNumUnread(num: Int) {
-        binding.tvNumUnread.apply {
+        binding.tvBottomNumUnread.apply {
             if (num > 0) {
                 visibility = View.VISIBLE
                 text = num.toString()
@@ -70,7 +70,7 @@ class ItemBottomView(context: Context, attrs: AttributeSet?, defStyleAttr: Int =
     }
 
     fun setSmallUnread(num: Int) {
-        binding.tvSmallUnread.apply {
+        binding.tvBottomSmallUnread.apply {
             ALog.i("setSmallUnread $num")
             visibility = if (num > 0) View.VISIBLE else View.GONE
         }

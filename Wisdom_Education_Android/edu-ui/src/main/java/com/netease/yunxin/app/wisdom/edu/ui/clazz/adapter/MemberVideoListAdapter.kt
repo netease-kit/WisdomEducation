@@ -6,6 +6,7 @@
 package com.netease.yunxin.app.wisdom.edu.ui.clazz.adapter
 
 import android.view.ViewGroup
+import android.widget.TextView
 import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduMember
 import com.netease.yunxin.app.wisdom.edu.ui.R
 import com.netease.yunxin.app.wisdom.edu.ui.clazz.BaseNormalClassActivity
@@ -37,6 +38,8 @@ class MemberVideoListAdapter(
     }
 
     inner class MemberViewHolder(val view: RtcVideoAudioView) : BaseViewHolder<NEEduMember>(view) {
+        var tvName: TextView = view.findViewById(R.id.tv_name)
+
         override fun findViews() {
 
         }

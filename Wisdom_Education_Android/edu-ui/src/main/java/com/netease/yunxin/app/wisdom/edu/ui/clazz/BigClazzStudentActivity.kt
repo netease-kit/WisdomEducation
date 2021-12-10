@@ -9,6 +9,7 @@ import android.content.Context
 import android.content.Intent
 import android.view.View
 import android.widget.TextView
+import com.netease.yunxin.app.wisdom.base.util.CommonUtil.compareList
 import com.netease.yunxin.app.wisdom.base.util.CommonUtil.setOnClickThrottleFirst
 import com.netease.yunxin.app.wisdom.base.util.ToastUtil
 import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduMember
@@ -78,7 +79,9 @@ class BigClazzStudentActivity : BaseBigClassActivity() {
             var list = mutableListOf<NEEduMember>()
             eduManager.getMemberService().getMemberList().firstOrNull { it.isHost() }?.let { list.add(it) }
             list.addAll(t)
-            memberVideoAdapter.setData(preprocessList(list))
+            preprocessList(list).let {
+                if(!compareList(it, memberVideoAdapter.dataList)) memberVideoAdapter.setData(it)
+            }
         }
     }
 
