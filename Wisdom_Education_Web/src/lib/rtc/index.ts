@@ -120,6 +120,11 @@ export class NeWebrtc extends EnhancedEventEmitter {
       this.emit('connection-state-change', _data)
     })
 
+    window.navigator.mediaDevices.ondevicechange = (() => {
+      logger.log('监听到设备变化')
+      this.emit('device-change')
+    })
+
     this._client.on('peer-online', (_data: any) => {
       logger.log(`${_data.uid} 加入房间`)
       this.emit('peer-online', _data)
@@ -212,6 +217,15 @@ export class NeWebrtc extends EnhancedEventEmitter {
       logger.log('屏幕共享被关闭')
       this.emit('stopScreenSharing', _data)
     })
+
+    this._client.on('accessDenied', (_data: any) => {
+      this.emit('accessDenied', _data);
+    })
+
+    this._client.on('beOccupied', (_data: any) => {
+      this.emit('beOccupied', _data);
+    })
+
     // @ts-ignore
     window._client = this._client;
   }
@@ -320,6 +334,9 @@ export class NeWebrtc extends EnhancedEventEmitter {
       logger.log('open() localstream', this._localStream)
     } catch(e: any) {
       logger.log('open() failed:', e)
+      if((e+'').includes("Could not start video source")) {
+        this.emit('video-occupied')
+      }
       throw new Error(e);
     }
   }
@@ -710,6 +727,7 @@ export class NeWebrtc extends EnhancedEventEmitter {
       this._client = null;
       WebRTC2.destroy();
       this._mapRemoteStreams.clear()
+      window.navigator.mediaDevices.ondevicechange = null;
     } catch (error) {
       logger.log('destroy() error', error);
     }

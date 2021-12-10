@@ -1,12 +1,12 @@
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("react"), require("./lib/RecordPlayer/RecordPlayer_v3.4.1.js"));
+		module.exports = factory(require("react"), require("RecordPlayer"));
 	else if(typeof define === 'function' && define.amd)
-		define(["react", "./lib/RecordPlayer/RecordPlayer_v3.4.1.js"], factory);
+		define(["react", "RecordPlayer"], factory);
 	else if(typeof exports === 'object')
-		exports["NERTCReplay"] = factory(require("react"), require("./lib/RecordPlayer/RecordPlayer_v3.4.1.js"));
+		exports["NERTCReplay"] = factory(require("react"), require("RecordPlayer"));
 	else
-		root["NERTCReplay"] = factory(root["react"], root["./lib/RecordPlayer/RecordPlayer_v3.4.1.js"]);
+		root["NERTCReplay"] = factory(root["react"], root["RecordPlayer"]);
 })(self, function(__WEBPACK_EXTERNAL_MODULE_react__, __WEBPACK_EXTERNAL_MODULE_RecordPlayer__) {
 return /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
@@ -1963,9 +1963,9 @@ module.exports = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5v
 /***/ }),
 
 /***/ "RecordPlayer":
-/*!************************************************************!*\
-  !*** external "./lib/RecordPlayer/RecordPlayer_v3.4.1.js" ***!
-  \************************************************************/
+/*!*******************************!*\
+  !*** external "RecordPlayer" ***!
+  \*******************************/
 /***/ ((module) => {
 
 "use strict";

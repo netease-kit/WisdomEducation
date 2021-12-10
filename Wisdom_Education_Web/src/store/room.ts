@@ -210,6 +210,9 @@ export class RoomStore extends EnhancedEventEmitter {
   @observable
   networkQuality: Array<any> = [];
 
+  @observable
+  _deviceChangedCount = 0;
+
   constructor(appStore: AppStore) {
     super();
     makeObservable(this);
@@ -437,6 +440,11 @@ export class RoomStore extends EnhancedEventEmitter {
     );
   }
 
+  @computed
+  get deviceChangedCount(): number {
+    return this._deviceChangedCount;
+  }
+
   /**
    * @description: 加入房间
    * @param {*}
@@ -600,6 +608,11 @@ export class RoomStore extends EnhancedEventEmitter {
           this.connectionStateChange = _data;
         });
       });
+      this._webRtcInstance.on("device-change", () => {
+        debounce(() => {
+          this._deviceChangedCount++;
+        }, 1200)
+      })
       this._webRtcInstance.on("peer-online", (_data: any) => {
         logger.log("成员加入", _data);
         runInAction(() => {
@@ -661,13 +674,38 @@ export class RoomStore extends EnhancedEventEmitter {
       // this.updateStream(_data.uid, _data.mediaType, null);
       });
       this._webRtcInstance.on("play-local-stream", (_data: any) => {
-        logger.log("本地视频获取", _data);
+        logger.log("本地"+_data.mediaType+"流获取", _data);
         this.updateStream(_data.uid, _data.mediaType, null);
         this.updateMemberList(_data.uid, "add");
         runInAction(() => {
           this.updateStream(_data.uid, _data.mediaType, _data.stream);
         });
       });
+
+      // this._webRtcInstance.on("audioTrackEnded", (_data: any) => {
+      //   logger.log("检测到音频轨道结束。造成的原因可能是设备被拔出（或禁用）。");
+      //   this.appStore.uiStore.showToast("音频设备异常，请重新进行设备选择和检测！");
+      // });
+
+      // this._webRtcInstance.on("videoTrackEnded", (_data: any) => {
+      //   logger.log("检测到视频轨道结束。造成的原因可能是设备被拔出（或禁用）。");
+      //   this.appStore.uiStore.showToast("视频输入设备异常，请重新进行设备选择和检测！");
+      // });
+
+      this._webRtcInstance.on("accessDenied", (_data: any) => {
+        logger.log("检测到设备权限被拒绝");
+        // this.appStore.uiStore.showToast("获取设备权限被拒绝");
+      })
+
+      this._webRtcInstance.on("beOccupied", (_data: any) => {
+        logger.log("检测到获取设备权限时，设备被占用");
+        this.appStore.uiStore.showToast("获取麦克风或摄像头权限时，设备被占用。")
+      })
+
+      this._webRtcInstance.on("video-occupied", (_data: any) => {
+        logger.log("视频开启异常");
+        this.appStore.uiStore.showToast("视频输入设备异常，请重新进行设备选择和检测！");
+      })
 
       const mediaStatus =
       RoomTypes.bigClass !== Number(this.appStore.roomInfo.sceneType) ||
@@ -739,6 +777,14 @@ export class RoomStore extends EnhancedEventEmitter {
       const speakerIdSelect = this._webRtcInstance?.speakerId;
       const microphoneSelect = this._webRtcInstance?.microphoneId;
       const cameraSelect = this._webRtcInstance?.cameraId;
+      logger.log("getDeviceListData",{
+        microphones,
+        cameras,
+        speakers,
+        speakerIdSelect,
+        microphoneSelect,
+        cameraSelect,
+      })
       return {
         microphones,
         cameras,
@@ -1587,6 +1633,12 @@ export class RoomStore extends EnhancedEventEmitter {
     //   this.memberFullList = [...members];
     //   logger.log('memberFullList', this.memberFullList, members);
     // })
+
+    /**
+     * http://jira.netease.com/browse/YYTX-3640
+     * 解决房间关闭后请求传参为空导致的鉴权异常
+     */
+    if(!this.roomInfo?.roomUuid) return
     getSnapShot(this.roomInfo.roomUuid).then(
       ({ snapshot: { members = [], room = {} }, timestamp = 0 }) => {
         runInAction(() => {

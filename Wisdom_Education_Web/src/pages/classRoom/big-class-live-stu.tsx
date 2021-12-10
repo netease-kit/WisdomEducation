@@ -44,7 +44,11 @@ const BigClassLiveStu: React.FC = observer(() => {
           height: videoRef.current.clientHeight,
           techOrder: ['html5','flvjs'],
           errMsg7: '拉流超时',
-          streamTimeoutTime: 30 * 1000
+          streamTimeoutTime: 30 * 1000,
+          controlBar: {
+            playToggle: !nertsLive, // 低延时页面不显示暂停按钮
+            progressControl: !nertsLive //低延时页面上不显示进度条
+          }
         }, () => {
           let retryCount = 0
           let retryTimer

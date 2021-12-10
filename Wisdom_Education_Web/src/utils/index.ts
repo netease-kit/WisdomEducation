@@ -123,15 +123,21 @@ export const matchExt = (extname: string): string => {
  * @param {*} ms
  * @return {*}
  */
-export function debounce(fn: any, ms = 2000): (...rest: any[]) => void {
-  let timeoutId
-  return  (...rest) => {
-    clearTimeout(timeoutId)
-    timeoutId = setTimeout(() => {
-      // @ts-ignore
-      fn.apply(this, rest)
-    }, ms)
-  }
+// export function debounce(fn: any, ms = 2000): (...rest: any[]) => void {
+//   let timeoutId
+//   return  (...rest) => {
+//     clearTimeout(timeoutId)
+//     timeoutId = setTimeout(() => {
+//       // @ts-ignore
+//       fn.apply(this, rest)
+//     }, ms)
+//   }
+// }
+
+let timeout: any;
+export function debounce(fn, wait = 2000) { // 防抖
+  if(timeout !== null) clearTimeout((timeout as any));timeout = null;
+  timeout = setTimeout(fn, wait) as any
 }
 
 /**
