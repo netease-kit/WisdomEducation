@@ -44,6 +44,8 @@
         kNERtcKeyAutoSubscribeAudio: @(param.subscribeAudio),
     };
     [[NERtcEngine sharedEngine] setParameters:params];
+    [[NERtcEngine sharedEngine] enableLocalAudio:NO];
+    [[NERtcEngine sharedEngine] enableLocalVideo:NO];
     [[NERtcEngine sharedEngine] joinChannelWithToken:param.rtcToken channelName:param.channelID myUid:param.userID completion:^(NSError * _Nullable error, uint64_t channelId, uint64_t elapesd, uint64_t uid) {
         NSLog(@"Rtc:joinError:%@",error);
         if (completion) {

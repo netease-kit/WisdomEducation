@@ -25,6 +25,7 @@
 @import NERecordPlayUI;
 @import NERecordPlay;
 
+
 // 隐私政策URL
 static NSString *kPrivatePolicyURL = @"https://yunxin.163.com/clauses?serviceType=3";
 // 用户协议URL
@@ -336,7 +337,6 @@ static NSString *kLastUserToken = @"lastUserToken";
         [self.view makeToast:error.localizedDescription];
     }];
 }
-
 - (void)enterRoom {
     [self.view makeToastActivity:CSToastPositionCenter];
     self.view.userInteractionEnabled = NO;

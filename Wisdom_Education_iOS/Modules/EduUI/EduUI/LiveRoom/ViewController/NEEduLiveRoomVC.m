@@ -573,6 +573,10 @@ static NSString *kLastRtcCid = @"lastRtcCid";
         self.infoView.lessonItem.titleLabel.text = self.room.roomUuid;
         self.infoView.lessonName.text = self.room.roomName;
         self.infoView.teacherName.text = self.members.firstObject.roomNickname;
+#ifdef DEBUG
+        self.infoView.cid.text = self.room.rtcCid;
+#else
+#endif
         [self.view addSubview:_infoView];
         NSLayoutConstraint *top = [NSLayoutConstraint constraintWithItem:_infoView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeTop multiplier:1.0 constant:0];
         NSLayoutConstraint *right = [NSLayoutConstraint constraintWithItem:_infoView attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeRight multiplier:1.0 constant:-0];
