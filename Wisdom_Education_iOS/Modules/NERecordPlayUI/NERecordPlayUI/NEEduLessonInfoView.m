@@ -62,7 +62,11 @@
     [self addConstraints:@[stackLeft,stacktop,stackbottom,stackRight]];
 }
 - (void)loadData {
+#ifdef DEBUG
+    NSArray *leftTitle = @[@"课堂号",@"课堂名称",@"老师",@"cid"];
+#else
     NSArray *leftTitle = @[@"课堂号",@"课堂名称",@"老师"];
+#endif
     for (NSString *title in leftTitle) {
         UILabel *lable  = [[UILabel alloc] init];
         lable.textColor = [UIColor colorWithRed:148/255.0 green:151/255.0 blue:154/255.0 alpha:1.0];
@@ -70,7 +74,11 @@
         lable.text = title;
         [self.leftLabels addObject:lable];
     }
+#ifdef DEBUG
+    self.rightLabels = @[self.lessonItem,self.lessonName,self.teacherName,self.cid];
+#else
     self.rightLabels = @[self.lessonItem,self.lessonName,self.teacherName];
+#endif
 }
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
     self.hidden = !self.hidden;
@@ -128,6 +136,15 @@
         _teacherName.translatesAutoresizingMaskIntoConstraints = NO;
     }
     return _teacherName;
+}
+- (UILabel *)cid {
+    if (!_cid) {
+        _cid = [[UILabel alloc] init];
+        _cid.font = [UIFont systemFontOfSize:14];
+        _cid.textColor = [UIColor whiteColor];
+        _cid.translatesAutoresizingMaskIntoConstraints = NO;
+    }
+    return _cid;
 }
 - (NSMutableArray *)leftLabels {
     if (!_leftLabels) {

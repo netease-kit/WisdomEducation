@@ -59,7 +59,9 @@ NSString * const setTimeRangeAction = @"jsSetTimeRange";
 - (void)pause {
     [[NMCMessageHandlerDispatch sharedManager] nativeCallWebWithWebView:self.webview action:pauseAction param:nil];
 }
-
+- (void)stop  {
+    [self clearWebViewCache];
+}
 - (void)seekToTimeInterval:(NSInteger)interval {
     NSDictionary *param = @{@"time":@(interval)};
     [[NMCMessageHandlerDispatch sharedManager] nativeCallWebWithWebView:self.webview action:seekToAction param:param];
@@ -128,7 +130,6 @@ NSString * const setTimeRangeAction = @"jsSetTimeRange";
     NSLog(@"[WBrecord]:%s",__func__);
 }
 
-
 #pragma mark - NEWBRecordPlayDelegate
 - (void)onPrepared:(NSDictionary *)dic {
     // 3.didLoadUrls
@@ -139,18 +140,24 @@ NSString * const setTimeRangeAction = @"jsSetTimeRange";
 }
 
 - (void)onPlayTime:(NSInteger)time {
-//    NSLog(@"RealTime wb:%.3f",time / 1000.0);
+    if (self.delegate &&[self.delegate respondsToSelector:@selector(onPlayTime:)]) {
+        [self.delegate onPlayTime:time / 1000.0];
+    }
 }
 
 - (void)onPlayFinished {
     NSLog(@"onPlayFinished");
+    if (self.delegate && [self.delegate respondsToSelector:@selector(onPlayFinished)]) {
+        [self.delegate onPlayFinished];
+    }
 }
 
 - (void)onDurationChanged:(NSInteger)duration {
+    self.duration = duration;
     NSLog(@"onDurationChanged:%d",duration);
 }
 #pragma mark - Private
-- (UIViewController *)viewController{
+- (UIViewController *)viewController {
     for (UIView* next = [_webview superview]; next; next = next.superview){
         UIResponder* nextResponder = [next nextResponder];
         if ([nextResponder isKindOfClass:[UIViewController class]]) {
@@ -303,10 +310,15 @@ NSString * const setTimeRangeAction = @"jsSetTimeRange";
         _webview.navigationDelegate = self;
         _webview.scrollView.scrollEnabled = NO;
         _webview.scrollView.bounces = NO;
-//        NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"https://apptest.netease.im/webdemo/whiteboard/stable/3.3.1/webview_vconsole.record.html"]];
-//        [_webview loadRequest:request];
     }
     return _webview;
+}
+
+//FIXME :临时使用切换URL的方式停止播放器的timer，等白班SDK开放destroy接口后替换
+- (void)clearWebViewCache {
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"https://yunxin.163.com/"]];
+    [self.webview loadRequest:request];
+
 }
 
 @end

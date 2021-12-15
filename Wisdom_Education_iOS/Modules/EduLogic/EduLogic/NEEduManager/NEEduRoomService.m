@@ -86,9 +86,6 @@
     if (subVideo.value) {
         streams.subVideo = subVideo;
     }
-//    streams.audio = audio;
-//    streams.video = video;
-    
     request.userName = room.userName;
     request.role = NEEduRoleBroadcaster;
     if (room.role == NEEduRoleTypeStudent) {

@@ -18,6 +18,7 @@ public enum PlayState {
 
 public protocol NEEduRecordPlayerDelegate: NSObjectProtocol {
     func onPrepared(playerItem:Any)
+    func onFirstVideoDisplay(player:NEEduRecordPlayerProtocol)
     func onPlay(player: Any)
     func onPause(player: Any)
     func onSeeked(player: Any ,time:Double, errorCode:Int)

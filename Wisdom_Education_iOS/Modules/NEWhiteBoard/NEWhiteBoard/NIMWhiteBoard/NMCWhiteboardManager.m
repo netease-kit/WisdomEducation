@@ -10,8 +10,8 @@
 #import "NMCWebView.h"
 #import "NMCMessageHandlerDispatch.h"
 #import "NMCWebViewHeader.h"
-
-NSString * const NMCWhiteboardURL = @"https://yiyong-xedu-v2-static.netease.im/whiteboard-webview/g2/webview_vconsole.html";
+//NSString * const NMCWhiteboardURL = @"https://yiyong-xedu-v2-static.netease.im/whiteboard-webview/g2/webview_vconsole.html";
+NSString * const NMCWhiteboardURL = @"https://yiyong-xedu-v2-static.netease.im/whiteboard-webview/g2/webview.html";
 
 @interface NMCWhiteboardManager()<WKNavigationDelegate,WKUIDelegate>
 @property(nonatomic, strong) NMCWebView *webview;
