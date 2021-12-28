@@ -169,6 +169,7 @@ const Footer: React.FC = observer(() => {
           setModalVisible(false);
           break;
         case roomStep === StepTypes.isStart || isEleClose:
+          setModalVisible(false);
           await roomStore.endClassRoom();
           await classTimeStop();
           await roomStore.leave();
@@ -178,6 +179,7 @@ const Footer: React.FC = observer(() => {
           setModalVisible(false);
           break;
         default:
+          setModalVisible(false);
           await roomStore.endClassRoom();
           await classTimeStop();
           await roomStore.leave();

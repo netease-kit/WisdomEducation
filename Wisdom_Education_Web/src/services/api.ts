@@ -44,6 +44,7 @@ export interface EntryRoomResponse {
 }
 
 export interface SnapShotResponse {
+  sequence: number,
   snapshot: {
     room: {
       roomName: string;
@@ -66,6 +67,65 @@ export interface SnapShotResponse {
   },
   timestamp?: number;
 }
+
+export interface SequenceListResponse {
+  sequence: number,
+  data: {
+    stream: {
+
+    },
+    room: {
+      roomName: string;
+      roomUuid: string;
+      rtcCid: string|number
+      properties: {
+        chatRoom: {
+          chatRoomId: string|number;
+          roomCreatorId: string|number;
+        }
+      },
+      states?: {
+        [key: string]: {
+          value?: number;
+          time?: number;
+        }
+      }
+    },
+    members: SequenceListResponseMembers
+  },
+  cmd: number
+}
+
+export type SequenceListResponseMembers = Array<{
+  properties: {
+    screenShare?: {
+      value: number
+    },
+    streamAV?: {
+      value: number,
+      video?: number,
+      audio?: number
+    },
+    avHandsUp?: {
+      value: number
+    },
+    whiteboard?: {
+      drawable: number
+    }
+  };
+  streams: {
+    audio?: {
+      audio: number
+    },
+    video?: {
+      video: number
+    }
+  };
+  userName: string;
+  userUuid: string;
+  role: string;
+  rtcUid: number;
+}>
 
 export type SnapShotResponseMembers = Array<{
   userName: string;
@@ -260,6 +320,16 @@ export async function getSnapShot(roomUuid: number|string): Promise<SnapShotResp
     }
   })
   return res;
+}
+
+export async function getSequence(options):Promise<Array<SequenceListResponse>> {
+  const res = await get(`/v1/rooms/${options.roomUuid}/sequence?nextId=${options.nextId}`, {
+    headers: {
+      user: GlobalStorage.read('user')?.userUuid,
+      token: GlobalStorage.read('user')?.userToken
+    }
+  })
+  return res.list;
 }
 
 /**

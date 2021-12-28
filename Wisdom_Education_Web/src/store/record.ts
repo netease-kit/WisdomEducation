@@ -137,6 +137,7 @@ export class RecordStore {
             end: record.startTime + (item.duration || 1) * 1000
           })
         } else {
+          const userLeaveEvent = rawEvents.find(ele => ele.roomUid == item.roomUid && ele.type == 2)
           videoTracks.push({
             id: item.roomUid, // ?
             userId: item.roomUid,
@@ -144,9 +145,10 @@ export class RecordStore {
             role: item.role || '未知身份',
             url: item.url,
             type: 'video',
-            start: record.startTime,
+            start: item.timestamp, // 学生视频开始时间以系统生成时间为准
             subStream: item.subStream,
-            end: record.startTime + (item.duration || 1) * 1000
+            end: userLeaveEvent ? userLeaveEvent.timestamp : record.stopTime,
+            // end: item.timestamp + (item.duration || 1) * 1000
           })
         }
       } else {
