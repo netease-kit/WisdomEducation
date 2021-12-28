@@ -13,7 +13,17 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @protocol NEWBRecordPlayerDelegate <NSObject>
+
+/// 白板资源加载完成
+/// @param info 加载资源信息
 - (void)onPreparedWithRecordInfo:(NEWBRecordInfo *)info;
+
+/// 播放进度回调
+/// @param time second
+- (void)onPlayTime:(NSTimeInterval)time;
+
+/// 播放完成回调
+- (void)onPlayFinished;
 
 @end
 
@@ -21,6 +31,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, weak) id<NEWBRecordPlayerDelegate> delegate;
 @property (nonatomic, strong) WKWebView *webview;
 
+/// 回放时长，单位秒
+@property (nonatomic, assign) NSTimeInterval duration;
 /// 初始化白板播放器
 /// @param param 参数
 - (instancetype)initPlayerWithContentView:(UIView *)view param:(NEWBRecordPlayerParam *)param;
@@ -33,6 +45,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 暂停
 - (void)pause;
+
+/// 停止
+- (void)stop;
 
 /// 跳转到指定时间
 /// @param interval 相对于起始时间的偏移量，单位：ms

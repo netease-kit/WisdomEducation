@@ -120,6 +120,7 @@
 		9E858ED02654BED00068B75E /* NEBaseViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NEBaseViewController.m; sourceTree = "<group>"; };
 		9E858ED12654BED00068B75E /* NEBaseViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NEBaseViewController.h; sourceTree = "<group>"; };
 		9E858ED22654BED00068B75E /* NENavigationViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NENavigationViewController.h; sourceTree = "<group>"; };
+		9E913866272AA33500C85761 /* GroupActivities.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GroupActivities.framework; path = System/Library/Frameworks/GroupActivities.framework; sourceTree = SDKROOT; };
 		9E9C33AB26B02AD100D39EAC /* IMLoginVC.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = IMLoginVC.xib; sourceTree = "<group>"; };
 		9E9C33AC26B02AD100D39EAC /* IMLoginVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IMLoginVC.h; sourceTree = "<group>"; };
 		9E9C33AD26B02AD100D39EAC /* IMLoginVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IMLoginVC.m; sourceTree = "<group>"; };
@@ -316,6 +317,7 @@
 		9ED284569A69109BA690808D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				9E913866272AA33500C85761 /* GroupActivities.framework */,
 				9E82E8042664DD70001A806A /* ReplayKit.framework */,
 				9E82E8112664DD71001A806A /* UIKit.framework */,
 				03FA091B8EE29773CFE99322 /* Pods_WisdomEducation.framework */,
@@ -805,7 +807,7 @@
 				CODE_SIGN_ENTITLEMENTS = WisdomEducation/WisdomEducationDebug.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 70;
+				CURRENT_PROJECT_VERSION = 91;
 				DEVELOPMENT_TEAM = 569GNZ5392;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -817,7 +819,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.7.1;
+				MARKETING_VERSION = 1.9.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.netease.yunxin.app.wisdom.education;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = wisdomProfileDev;
@@ -836,7 +838,7 @@
 				CODE_SIGN_ENTITLEMENTS = WisdomEducation/WisdomEducation.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 70;
+				CURRENT_PROJECT_VERSION = 91;
 				DEVELOPMENT_TEAM = 569GNZ5392;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -848,7 +850,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.7.1;
+				MARKETING_VERSION = 1.9.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.netease.yunxin.app.wisdom.education;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = WisdomEducationUniversalDistribution;
@@ -863,8 +865,8 @@
 			baseConfigurationReference = 9B67D07EA26EA18B7C763859 /* Pods-WisdomEducationTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = RYY6HE6A34;
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = 569GNZ5392;
 				INFOPLIST_FILE = WisdomEducationTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.4;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -874,6 +876,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.netease.yunxin.app.wisdom.education.WisdomEducationTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WisdomEducation.app/WisdomEducation";
 			};
@@ -884,8 +888,8 @@
 			baseConfigurationReference = 5AD1B391FE45828C6EC14F3D /* Pods-WisdomEducationTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = RYY6HE6A34;
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = 569GNZ5392;
 				INFOPLIST_FILE = WisdomEducationTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.4;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -895,6 +899,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.netease.yunxin.app.wisdom.education.WisdomEducationTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WisdomEducation.app/WisdomEducation";
 			};
@@ -904,8 +910,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 79A5CF91AAC1DD1E48D79C6B /* Pods-WisdomEducation-WisdomEducationUITests.debug.xcconfig */;
 			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = RYY6HE6A34;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = 569GNZ5392;
 				INFOPLIST_FILE = WisdomEducationUITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -914,6 +922,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.netease.yunxin.app.wisdom.education.WisdomEducationUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "Wildcard Dev";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = WisdomEducation;
 			};
@@ -923,8 +933,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 8D3C682D9579E0747A1A4109 /* Pods-WisdomEducation-WisdomEducationUITests.release.xcconfig */;
 			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = RYY6HE6A34;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = 569GNZ5392;
 				INFOPLIST_FILE = WisdomEducationUITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -933,6 +945,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.netease.yunxin.app.wisdom.education.WisdomEducationUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "Wildcard Dev";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = WisdomEducation;
 			};

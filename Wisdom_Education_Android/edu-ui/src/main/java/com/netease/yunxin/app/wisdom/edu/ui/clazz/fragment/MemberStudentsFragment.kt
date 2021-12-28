@@ -9,6 +9,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.netease.yunxin.app.wisdom.base.util.CommonUtil
 import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduMember
 import com.netease.yunxin.app.wisdom.edu.ui.R
 import com.netease.yunxin.app.wisdom.edu.ui.base.BaseFragment
@@ -67,6 +68,11 @@ class MemberStudentsFragment : BaseFragment(R.layout.fragment_member_item) {
             }
 
         }
+    }
+
+    override fun hideKeyBoard() {
+        super.hideKeyBoard()
+        activity?.let { CommonUtil.hideKeyBoard(it, binding.etMembersSearch) }
     }
 
 }

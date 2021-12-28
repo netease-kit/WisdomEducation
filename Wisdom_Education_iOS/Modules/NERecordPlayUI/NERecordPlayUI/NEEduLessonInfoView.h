@@ -16,6 +16,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (strong, nonatomic) IBOutlet UILabel *lessonName;
 @property (strong, nonatomic) IBOutlet UILabel *teacherName;
 @property (nonatomic, strong) NEEduLessonInfoItem *lessonItem;
+@property (strong, nonatomic) IBOutlet UILabel *cid;
+
 @end
 
 NS_ASSUME_NONNULL_END

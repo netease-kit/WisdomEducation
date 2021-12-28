@@ -4,7 +4,9 @@
  */
 package com.netease.yunxin.app.wisdom.base.util
 
+import android.app.Activity
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import java.lang.reflect.InvocationHandler
 import java.lang.reflect.Method
 import java.lang.reflect.Proxy
@@ -43,5 +45,15 @@ object CommonUtil {
 
     fun View.setOnClickThrottleFirst(listener: View.OnClickListener) {
         setOnClickListener(listener.throttleFirst())
+    }
+
+    fun <T> compareList(list1: List<T>, list2: List<T>): Boolean {
+        return list1.size == list2.size && list1.containsAll(list2)
+                && list2.containsAll(list1)
+    }
+
+    fun hideKeyBoard(activity: Activity, view: View) {
+        val inputMethodManager = activity.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.hideSoftInputFromWindow(view.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
     }
 }

@@ -303,6 +303,7 @@ class LiveClassActivity(layoutId: Int = R.layout.activity_live_clazz) : BaseClas
     override fun hideFragmentWithChatRoom() {
         getIMLayout().visibility = View.GONE
         chatViewModel.clearUnread()
+        getChatroomFragment().hideKeyBoard()
     }
 
     override fun showFragmentWithMembers() {
@@ -315,6 +316,7 @@ class LiveClassActivity(layoutId: Int = R.layout.activity_live_clazz) : BaseClas
         getMembersFragment().let {
             getMembersLayout().visibility = View.GONE
         }
+        getMembersFragment().hideKeyBoard()
     }
 
     override fun onBackPressed() {

@@ -15,7 +15,7 @@ import Alamofire
 public class NERecordViewController: UIViewController {
 
     @objc public var recordData: RecordData?
-    var player: NEEduRecorderPlayerManager?
+    var playerManager: NEEduRecorderPlayerManager?
     var recordList: [RecordItem]?
     lazy var contentView = UIView()
     var controlView = NERecordControlView()
@@ -23,6 +23,8 @@ public class NERecordViewController: UIViewController {
     var screenShareView: UIView = UIView()
     var infoView = NEEduLessonInfoView()
     var navView = NERecordNavigationView()
+    
+    var durationString: String = "00:00";
     private let cellID = "recordCellID"
     
     private var collectionView: UICollectionView?
@@ -113,22 +115,25 @@ public class NERecordViewController: UIViewController {
                 controlView.heightAnchor.constraint(equalToConstant: 68)
             ])
         }
-        
         controlView.playButton.addTarget(self, action: #selector(playButtonEvent), for: .touchUpInside)
         controlView.playButton.isEnabled = false
         controlView.volumeButton.addTarget(self, action: #selector(volumeButtonEvent), for: .touchUpInside)
         controlView.slider.addTarget(self, action: #selector(sliderEvent), for: .valueChanged)
     }
-
+    
     func createPlayer() {
         guard let data = recordData  else {
             print("error:recordData = nil")
             return
         }
-        player = NEEduRecorderPlayerManager(data: data, view: contentView)
-        player?.delegate = self
-        recordList = player?.playingRecordItems
-        player?.prepareToPlay()
+        
+        playerManager = NEEduRecorderPlayerManager(data: data, view: contentView,autoPlay: true)
+        playerManager!.delegate = self
+        recordList = playerManager!.playingRecordItems
+        playerManager!.prepareToPlay()
+        
+        self.durationString = playerManager!.duration.hour > 0 ? playerManager!.duration.hourMinuteSecond : playerManager!.duration.minuteSecond;
+        controlView.progressLabel.text = String(format: "00:00/%@",self.durationString);
     }
     func addNetListen() {
         NetworkReachabilityManager.default?.startListening(onUpdatePerforming: { state in
@@ -146,7 +151,7 @@ public class NERecordViewController: UIViewController {
     
     // MARK:Event
     @objc func backButtonEvent(button: UIButton) {
-        player?.stop()
+        playerManager?.stop()
         self.dismiss(animated: true, completion: nil)
     }
     
@@ -157,12 +162,12 @@ public class NERecordViewController: UIViewController {
     @objc func playButtonEvent(button: UIButton) {
         print(#function,button)
         button.isSelected = !button.isSelected
-        button.isSelected ? player?.play() : player?.pause()
+        button.isSelected ? playerManager?.play() : playerManager?.pause()
     }
     
     @objc func volumeButtonEvent(button: UIButton) {
         button.isSelected = !button.isSelected
-        player?.muteAudio(mute: button.isSelected)
+        playerManager?.muteAudio(mute: button.isSelected)
     }
     
     @objc func sliderEvent(slider: UISlider, event: UIEvent) {
@@ -174,7 +179,7 @@ public class NERecordViewController: UIViewController {
             seeking = true
         case .ended,.cancelled:
             seeking = false
-            player?.seekTo(time: Double(slider.value) * player!.duration)
+            playerManager?.seekTo(time: Double(slider.value) * playerManager!.duration)
         default:
             return
         }
@@ -234,14 +239,14 @@ public class NERecordViewController: UIViewController {
 extension NERecordViewController: NERecordCellDelegate {
     
     func audioMute(mute: Bool, url: String) {
-        guard let player = self.player?.playerDic[url] else {
+        guard let player = self.playerManager?.playerDic[url] else {
             return
         }
         player.muteAudio(mute: mute)
     }
     
     func videoClose(cell: NERecordCell, url: String) {
-        guard let player = self.player?.playerDic[url] else {
+        guard let player = self.playerManager?.playerDic[url] else {
             return
         }
         if cell.videoButton.isSelected {
@@ -258,33 +263,42 @@ extension NERecordViewController: NERecordCellDelegate {
 
 // MARK: NEEduRecordPlayEvent
 extension NERecordViewController:NEEduRecordPlayerDelegate {
-    
     public func onPrepared(playerItem: Any) {
         print("[VC]:onPrepared")
         controlView.playButton.isEnabled = true
+        controlView.playButton.isSelected = true
+    }
+    
+    public func onFirstVideoDisplay(player: NEEduRecordPlayerProtocol) {
+        print("[VC]:onFirstVideoDisplay")
     }
     
     public func onPlay(player: Any) {
-        
+        print("[VC]:onPlay")
+//        controlView.playButton.isSelected = true
     }
     
     public func onPause(player: Any) {
-        
+        print("[VC]:onPause")
+//        controlView.playButton.isSelected = false
     }
 
     public func onSeeked(player: Any, time: Double, errorCode: Int) {
         print("onSeeked:\(time)")
+        if !controlView.playButton.isSelected {
+            controlView.playButton.isSelected = true
+        }
     }
     
     public func onFinished(player: Any) {
         controlView.playButton.isSelected = false
         controlView.slider.setValue(0, animated: false)
-        recordList = self.player?.playingRecordItems
+        recordList = self.playerManager?.playingRecordItems
         collectionView?.reloadData()
     }
     public func onResetPlayer(player: NEEduRecordPlayerProtocol) {
         screenShareView.isHidden = true
-        recordList = self.player?.playingRecordItems
+        recordList = self.playerManager?.playingRecordItems
         collectionView?.reloadData()
     }
     
@@ -295,7 +309,10 @@ extension NERecordViewController:NEEduRecordPlayerDelegate {
     public func onPlayTime(player: NEEduRecordPlayerProtocol, time: Double) {
         if seeking {return}
         let progress = Float(time/player.duration)
-        controlView.slider.setValue(progress, animated: false)
+        controlView.slider.setValue(progress, animated: true)
+     
+        let currentString = time.hour > 0 ? time.hourMinuteSecond : time.minuteSecond;
+        controlView.progressLabel.text = String(format: "%@/%@",currentString,self.durationString);
     }
     public func onSubStreamStart(player: NEEduRecordPlayerProtocol, videoView: UIView?) {
         guard let view = videoView else {
@@ -315,13 +332,13 @@ extension NERecordViewController:NEEduRecordPlayerDelegate {
     }
     
     public func userEnter(item: RecordItem) {
-        recordList = player?.playingRecordItems
+        recordList = playerManager?.playingRecordItems
         self.collectionView?.reloadData()
     }
     
     public func userLeave(item: RecordItem) {
-        print("用户离开：\(item.url) 剩余用户：\(player?.playingRecordItems.count)")
-        recordList = player?.playingRecordItems
+        print("用户离开：\(item.url) 剩余用户：\(playerManager?.playingRecordItems.count)")
+        recordList = playerManager?.playingRecordItems
         self.collectionView?.reloadData()
     }
 }
@@ -342,7 +359,7 @@ extension NERecordViewController: UICollectionViewDelegate,UICollectionViewDataS
         cell.nameLabel.text = item.userName == nil ? role : item.userName! + role
         cell.delegate = self
         //view
-        let playerItem = player?.playerDic[item.url]
+        let playerItem = playerManager?.playerDic[item.url]
         if cell.url != item.url {
             cell.url = item.url
             if cell.videoView.subviews.first != nil {

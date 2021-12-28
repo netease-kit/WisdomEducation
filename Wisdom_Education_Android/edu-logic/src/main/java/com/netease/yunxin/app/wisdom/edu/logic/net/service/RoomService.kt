@@ -56,7 +56,7 @@ internal interface RoomService {
     /**
      * 收件箱拉取列表
      */
-    @GET("scene/apps/{appKey}/v1/rooms/{roomId}/sequence/nextId={nextId}")
+    @GET("scene/apps/{appKey}/v1/rooms/{roomId}/sequence")
     fun fetchNextSequences(
         @Path("appKey") appKey: String,
         @Path("roomId") roomId: String,

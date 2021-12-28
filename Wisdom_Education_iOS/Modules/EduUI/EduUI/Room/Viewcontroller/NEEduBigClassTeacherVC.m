@@ -235,15 +235,17 @@
             [self.totalMembers insertObject:user atIndex:1];
             if (user.properties.avHandsUp.value == NEEduHandsupStateTeaAccept) {
                 [self.members insertObject:user atIndex:1];
+                [self.collectionView reloadData];
             }
         }else {
             [self.totalMembers addObject:user];
             if (user.properties.avHandsUp.value == NEEduHandsupStateTeaAccept) {
                 [self.members addObject:user];
+                [self.collectionView reloadData];
             }
         }
     }
-    [self.collectionView reloadData];
+//    [self.collectionView reloadData];
     //更新课堂成员页面
     if (self.membersVC) {
         if ([user.role isEqualToString:NEEduRoleHost]) {
@@ -269,6 +271,7 @@
         }
         if (removeUser) {
             [self.members removeObject:removeUser];
+            [self.collectionView reloadData];
         }
         NEEduHttpUser *remove;
         for (NEEduHttpUser *tempUser in self.totalMembers) {
@@ -280,7 +283,7 @@
             [self.totalMembers removeObject:remove];
         }
     }
-    [self.collectionView reloadData];
+    
     //更新课堂成员页面
     if (self.membersVC) {
         if ([user.role isEqualToString:NEEduRoleHost]) {

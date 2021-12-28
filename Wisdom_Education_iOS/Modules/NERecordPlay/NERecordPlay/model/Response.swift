@@ -16,7 +16,7 @@ public struct Response: Codable {
 
 @objc public class RecordData:NSObject, Codable {
     var sceneType: String?
-    var record: Record
+    public var record: Record
     var eventList: Array<Event>
     var recordItemList: Array<RecordItem>
     public var snapshotDto: SnapshotDto
@@ -27,8 +27,8 @@ public struct Record: Codable {
     var recordId: String
     var roomUuid: String
     var roomCid: String
-    var startTime: Int
-    var stopTime: Int
+    public var startTime: Int
+    public var stopTime: Int
 }
 struct Event: Codable {
     var roomUid: String

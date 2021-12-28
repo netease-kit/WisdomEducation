@@ -27,6 +27,7 @@ import com.netease.yunxin.app.wisdom.edu.logic.net.service.request.NEEduUpdateMe
 import com.netease.yunxin.app.wisdom.edu.logic.service.NEEduRtcService
 import com.netease.yunxin.app.wisdom.edu.logic.service.widget.NEEduRtcVideoViewPool
 import com.netease.yunxin.app.wisdom.rtc.RtcManager
+import com.netease.yunxin.kit.alog.ALog
 
 /**
  * Created by hzsunyj on 2021/5/20.
@@ -214,6 +215,7 @@ internal class NEEduRtcServiceImpl : NEEduRtcService() {
 
     override fun updateRtcVideo(rtcView: ViewGroup?, member: NEEduMember) {
         var videoView: NERtcVideoView? = null
+        ALog.i("updateRtcVideo, rtcView: $rtcView member $member  member.hasVideo(): ${member.hasVideo()}")
         if (rtcView == null || !member.hasVideo()) {
             NEEduRtcVideoViewPool.recycleRtcVideo(member.rtcUid)
         } else {

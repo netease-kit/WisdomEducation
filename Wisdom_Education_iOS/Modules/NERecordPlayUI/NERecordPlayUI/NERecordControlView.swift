@@ -11,6 +11,7 @@ class NERecordControlView: UIView {
     public var playButton = UIButton(type: .custom)
     public var slider = UISlider()
     public var volumeButton = UIButton(type: .custom)
+    public var progressLabel = UILabel()
 
     
     override init(frame: CGRect) {
@@ -47,6 +48,19 @@ class NERecordControlView: UIView {
             slider.leadingAnchor.constraint(equalTo: playButton.trailingAnchor, constant: 24),
             slider.centerYAnchor.constraint(equalTo: self.centerYAnchor),
             slider.heightAnchor.constraint(equalToConstant: 40)
+        ])
+        
+        progressLabel.translatesAutoresizingMaskIntoConstraints = false
+        progressLabel.text = "00:00/00:00"
+        progressLabel.font = .systemFont(ofSize: 12.0)
+        progressLabel.textAlignment = .right
+        progressLabel.textColor = .white
+        addSubview(progressLabel)
+        NSLayoutConstraint.activate([
+            progressLabel.trailingAnchor.constraint(equalTo: slider.trailingAnchor, constant:0),
+            progressLabel.topAnchor.constraint(equalTo: slider.centerYAnchor, constant: 0),
+            progressLabel.widthAnchor.constraint(equalToConstant: 100),
+            progressLabel.heightAnchor.constraint(equalToConstant: 22)
         ])
         
         volumeButton.translatesAutoresizingMaskIntoConstraints = false

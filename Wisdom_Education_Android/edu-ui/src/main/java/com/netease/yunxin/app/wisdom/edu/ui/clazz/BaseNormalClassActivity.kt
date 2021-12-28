@@ -10,7 +10,6 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Rect
 import android.media.projection.MediaProjection
-import android.media.projection.MediaProjectionManager
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.View
@@ -32,6 +31,7 @@ import com.netease.yunxin.app.wisdom.base.util.PreferenceUtil
 import com.netease.yunxin.app.wisdom.base.util.ToastUtil
 import com.netease.yunxin.app.wisdom.base.util.observeForeverOnce
 import com.netease.yunxin.app.wisdom.edu.logic.NEEduErrorCode
+import com.netease.yunxin.app.wisdom.edu.logic.foreground.NEEduForegroundService
 import com.netease.yunxin.app.wisdom.edu.logic.model.*
 import com.netease.yunxin.app.wisdom.edu.ui.NEEduUiKit
 import com.netease.yunxin.app.wisdom.edu.ui.R
@@ -493,11 +493,7 @@ abstract class BaseNormalClassActivity(layoutId: Int = R.layout.activity_normal_
     }
 
     open fun requestScreenCapture(applicationContext: Context, activity: Activity) {
-        val mediaProjectionManager = applicationContext.getSystemService(
-            MEDIA_PROJECTION_SERVICE
-        ) as MediaProjectionManager
-        val captureIntent = mediaProjectionManager.createScreenCaptureIntent()
-        activity.startActivityForResult(captureIntent, CAPTURE_PERMISSION_REQUEST_CODE)
+        activity.startActivityForResult(NEEduForegroundService.neCaptureIntent, CAPTURE_PERMISSION_REQUEST_CODE)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -522,8 +518,7 @@ abstract class BaseNormalClassActivity(layoutId: Int = R.layout.activity_normal_
                 eduManager.getShareScreenService().startScreenCapture(config, data, object :
                     MediaProjection.Callback() {
                     override fun onStop() {
-                        runOnUiThread { stopLocalShareScreen() }
-
+//                        runOnUiThread { stopLocalShareScreen() }
                     }
                 })
                 eduManager.getMemberService().getLocalUser()?.updateSubVideo(NEEduStreamSubVideo())
@@ -814,6 +809,7 @@ abstract class BaseNormalClassActivity(layoutId: Int = R.layout.activity_normal_
         getMembersFragment()?.let {
             getMembersLayout().visibility = View.GONE
         }
+        getMembersFragment()?.hideKeyBoard()
     }
 
     override fun onBackPressed() {
@@ -893,6 +889,7 @@ abstract class BaseNormalClassActivity(layoutId: Int = R.layout.activity_normal_
     override fun hideFragmentWithChatRoom() {
         getIMLayout().visibility = View.GONE
         chatViewModel.clearUnread()
+        getChatroomFragment()?.hideKeyBoard()
     }
 
     override fun getZoomImageLayout(): View {
