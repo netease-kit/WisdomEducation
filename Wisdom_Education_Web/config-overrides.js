@@ -122,7 +122,7 @@ module.exports = {
         environmentHash: {
           root: process.cwd(),
           directories: [],
-          files: ['package.json', 'package-lock.json', 'yarn.lock', '.env', '.env.local', 'env.local'],
+          files: ['package.json', 'package-lock.json', 'yarn.lock', '.env', '.env.local', 'env.local', '.env.development', '.env.production'],
         }
       })
     ),

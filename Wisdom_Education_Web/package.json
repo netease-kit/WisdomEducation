@@ -1,6 +1,6 @@
 {
   "name": "app-wisdon-education-web",
-  "version": "1.9.0",
+  "version": "1.9.1",
   "homepage": "./",
   "private": true,
   "main": "./build/app/main.js",

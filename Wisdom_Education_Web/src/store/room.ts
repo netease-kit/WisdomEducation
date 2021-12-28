@@ -17,6 +17,7 @@ import {
   entryRoom,
   EntryRoomResponse,
   getSnapShot,
+  getSequence,
   changeMemberStream,
   changeRoomState,
   deleteRoomState,
@@ -78,7 +79,7 @@ export interface SnapRoomInfo {
     chatRoom?: {
       chatRoomId?: number | string;
     };
-    whiteboard: {
+    whiteboard?: {
       channelName: number | string;
     };
     live?: {
@@ -186,6 +187,10 @@ export class RoomStore extends EnhancedEventEmitter {
       },
     },
   };
+
+  @observable
+  _snapSequence = 0;
+
   @observable
   classDuration = 0;
 
@@ -560,6 +565,7 @@ export class RoomStore extends EnhancedEventEmitter {
       );
       this._nimInstance.on("im-connect", () => {
         if (this.joined) {
+          console.log("/snapshot im-connect")
           this.getMemberList().then(() => {
             const result: any = this.memberList.filter(
               (item) => item.userUuid === this.localData?.userUuid
@@ -617,18 +623,18 @@ export class RoomStore extends EnhancedEventEmitter {
         logger.log("成员加入", _data);
         runInAction(() => {
           this.updateMemberList(_data.uid, "add");
-          this.getMemberList().then(() => {
-            this.syncMember();
-          });
+          // this.getMemberList().then(() => {
+          //   this.syncMember();
+          // });
         });
       });
       this._webRtcInstance.on("peer-leave", (_data: any) => {
         logger.log("成员离开", _data);
         runInAction(() => {
-          this.updateMemberList(_data.uid, "remove");
-          this.getMemberList().then(() => {
-            this.syncMember();
-          });
+          // this.updateMemberList(_data.uid, "remove");
+          // this.getMemberList().then(() => {
+          //   this.syncMember();
+          // });
         });
       });
       this._webRtcInstance.on("stopScreenSharing", async (_data: any) => {
@@ -736,6 +742,7 @@ export class RoomStore extends EnhancedEventEmitter {
       // await this.appStore.whiteBoardStore.setEnableDraw(enbaleDraw);
       }
     }
+    console.log("/snapshot join()")
     await this.getMemberList();
     runInAction(() => {
       this._joinFinish = true;
@@ -834,94 +841,150 @@ export class RoomStore extends EnhancedEventEmitter {
     const onlineData = this.studentData.filter(
       (item) => item?.avHandsUp === HandsUpTypes.teacherAgree
     );
-    if (value === HandsUpTypes.teacherAgree && onlineData?.length >= 6) {
-      this.appStore.uiStore.showToast("上台人数超过限制");
-      throw Error("上台人数超过限制");
-    }
     await changeMemberProperties({
       roomUuid: this.roomInfo.roomUuid,
       userUuid,
       propertyType: "avHandsUp",
       value,
+    }).catch((err) => {
+      if(err.code === 1012) {
+        this.appStore.uiStore.showToast("上台人数超过限制");
+        throw Error("上台人数超过限制");
+      }
     });
   }
 
   @action
   public async nimNotify(_data, needGetSnapShot = true): Promise<void> {
     logger.log("服务器通知消息", _data);
-    logger.log("当前房间数据", this.roomInfo);
-    const { cmd, data, timestamp, type } = _data.body;
-    const { states, roomUuid } = data;
-    if (roomUuid === this.roomInfo.roomUuid && type === "R") {
-      switch (cmd) {
-        case NIMNotifyTypes.RoomStatesChange: {
-          needGetSnapShot && await this.getMemberList();
-          this.stateUpdateByChange(states, timestamp, roomUuid);
-          break;
-        }
-        case NIMNotifyTypes.RoomStatesDelete: {
-          needGetSnapShot && await this.getMemberList();
-          break;
-        }
-        case NIMNotifyTypes.RoomPropertiesChange: {
-          needGetSnapShot && await this.getMemberList();
-          break;
-        }
-        case NIMNotifyTypes.RoomPropertiesDelete: {
-          needGetSnapShot && await this.getMemberList();
-          break;
-        }
-        case NIMNotifyTypes.RoomMemberPropertiesChange: {
-          needGetSnapShot && await this.getMemberList();
-          const {
-            properties,
-            member: { userUuid },
-          } = data;
-          this.propertiesUpdataByChange(properties, userUuid);
-          break;
-        }
-        case NIMNotifyTypes.RoomMemberPropertiesDelete: {
-          needGetSnapShot && await this.getMemberList();
-          break;
-        }
-        case NIMNotifyTypes.RoomMemberJoin: {
-          this.getMemberList();
-          // this.syncMember();
-          break;
-        }
-        case NIMNotifyTypes.RoomMemberLeave: {
-          this.getMemberList();
-          // this.syncMember();
-          // const { members } = data;
-          // for (const ele of members) {
-          //   if (ele.userUuid === this.localData.userUuid) {
-          //     this.appStore.uiStore.showToast('该账号在其他设备登录', 'error')
-          //     this.leave();
-          //     history.push(`/`);
-          //   }
-          // }
-          break;
-        }
-        case NIMNotifyTypes.StreamChange: {
-          logger.log("成员流变更");
-          needGetSnapShot && await this.getMemberList();
-          const { streams, member } = data;
-          this.updateMemberStream(member.userUuid, streams);
-          break;
-        }
-        case NIMNotifyTypes.StreamRemove: {
-          // needGetSnapShot && await this.getMemberList();
-          const { streamType, member } = data;
-          this.deleteMemberStream(member.userUuid, streamType);
-          break;
-        }
-        case NIMNotifyTypes.CustomMessage: {
-          needGetSnapShot && await this.getMemberList();
-          break;
-        }
-        default:
-          break;
+    logger.log("当前房间数据", this.roomInfo, needGetSnapShot);
+    const { data: {roomUuid}, sequence, type } = _data.body;
+    if (roomUuid === this.roomInfo.roomUuid || type === "R"){
+      if (sequence <= this._snapSequence) {
+        // 丢弃消息
+        console.log("异常数据 丢弃 ",{sequence, _snapSequence:this._snapSequence})
+        return
+      } else if (sequence - this._snapSequence === 1) {
+        // 连续数据，直接进行合并
+        console.log("连续数据 合并 ",{sequence, _snapSequence:this._snapSequence})
+        this.dealSequenceData(_data.body, needGetSnapShot)
+        this._snapSequence++;
+      } else if (sequence - this._snapSequence > 10) {
+        // 数据差超过10次，获取全量最新数据
+        console.log("/snapshot sequence差大于10 ",{sequence, _snapSequence:this._snapSequence})
+        await this.getMemberList();
+      } else if(sequence - this._snapSequence <= 10) {
+        // 数据差在10次以内，获取该sequence之后的所有数据
+        console.log("/sequence sequence差<=10",{sequence, _snapSequence:this._snapSequence})
+        await getSequence({
+          roomUuid,
+          nextId: this._snapSequence + 1
+        }).then(async (res) => {
+          // 增量的状态 必须依次更新上去
+          for (const item of res) {
+            if (item.sequence === this._snapSequence + 1){
+              await this.dealSequenceData(item, needGetSnapShot);
+              this._snapSequence++;
+            }
+          }
+        })
       }
+    }
+  }
+
+  @action
+  public roomPropertyUpdataByChange(properties, type="change"):void {
+    if (!this._snapRoomInfo.properties) this._snapRoomInfo.properties = {}
+    for (const key in properties) {
+      if (Object.prototype.hasOwnProperty.call(properties, key)) {
+        const snapItem = this._snapRoomInfo.properties[key]
+        if (type === "change") {
+          this._snapRoomInfo.properties[key] = Object.assign({}, snapItem, properties[key])
+        }
+      }
+    }
+    if (type === "delete") {
+      this._snapRoomInfo.properties = {}
+    }
+  }
+
+  @action
+  public async dealSequenceData(_data, needGetSnapShot = true): Promise<void> {
+    logger.log("当前处理的通知消息", _data);
+    const { cmd, data, timestamp } = _data;
+    const { states, properties, roomUuid } = data;
+    switch (cmd) {
+      case NIMNotifyTypes.RoomStatesChange: {
+        this.stateUpdateByChange(states, timestamp, roomUuid);
+        break;
+      }
+      case NIMNotifyTypes.RoomStatesDelete: {
+        this.stateUpdateByChange(states, timestamp, roomUuid);
+        break;
+      }
+      case NIMNotifyTypes.RoomPropertiesChange: {
+        this.roomPropertyUpdataByChange(properties);
+        break;
+      }
+      case NIMNotifyTypes.RoomPropertiesDelete: {
+        this.roomPropertyUpdataByChange(properties, 'delete');
+        break;
+      }
+      case NIMNotifyTypes.RoomMemberPropertiesChange: {
+        const {
+          properties,
+          member: { userUuid },
+        } = data;
+        this.propertiesUpdataByChange(properties, userUuid);
+        break;
+      }
+      case NIMNotifyTypes.RoomMemberPropertiesDelete: {
+        const {
+          properties,
+          member: { userUuid },
+        } = data;
+        this.propertiesUpdataByChange(properties, userUuid);
+        break;
+      }
+      case NIMNotifyTypes.RoomMemberJoin: {
+        const {operatorMember: {rtcUid}, members} = data
+        this.updateMemberList(rtcUid, "add");
+        this.memberFullList = [...this.memberFullList, ...members];
+        break;
+      }
+      case NIMNotifyTypes.RoomMemberLeave: {
+        const {operatorMember: {rtcUid}} = data
+        this.updateMemberList(rtcUid, "remove").then(() => {
+          this.syncMember();
+        });
+        // this.syncMember();
+        // const { members } = data;
+        // for (const ele of members) {
+        //   if (ele.userUuid === this.localData.userUuid) {
+        //     this.appStore.uiStore.showToast('该账号在其他设备登录', 'error')
+        //     this.leave();
+        //     history.push(`/`);
+        //   }
+        // }
+        break;
+      }
+      case NIMNotifyTypes.StreamChange: {
+        logger.log("成员流变更");
+        const { streams, member } = data;
+        this.updateMemberStream(member.userUuid, streams);
+        break;
+      }
+      case NIMNotifyTypes.StreamRemove: {
+        const { streamType, member } = data;
+        this.deleteMemberStream(member.userUuid, streamType);
+        break;
+      }
+      case NIMNotifyTypes.CustomMessage: {
+        needGetSnapShot && await this.getMemberList();
+        break;
+      }
+      default:
+        break;
     }
   }
 
@@ -936,6 +999,13 @@ export class RoomStore extends EnhancedEventEmitter {
     properties: { [key: string]: any },
     userUuid: string
   ): Promise<void> {
+    this.memberFullList.some((item) => {
+      if (item.userUuid === userUuid) {
+        if (properties) item.properties = Object.assign({}, item.properties, properties)
+        else delete item.properties
+      }
+    })
+    if (!properties) return
     if (this.localUserInfo.userUuid === userUuid) {
       for (const key in properties) {
         if (Object.prototype.hasOwnProperty.call(properties, key)) {
@@ -1520,6 +1590,7 @@ export class RoomStore extends EnhancedEventEmitter {
   @action
   public updateOnlineStatus(): void {
     if (navigator.onLine && !this.beforeOnlineType) {
+      console.log("/snapshot onLine")
       this.getMemberList();
     }
     this.beforeOnlineType = navigator.onLine;
@@ -1640,13 +1711,18 @@ export class RoomStore extends EnhancedEventEmitter {
      */
     if(!this.roomInfo?.roomUuid) return
     getSnapShot(this.roomInfo.roomUuid).then(
-      ({ snapshot: { members = [], room = {} }, timestamp = 0 }) => {
+      ({ sequence, snapshot: { members = [], room = {} }, timestamp = 0 }) => {
         runInAction(() => {
           this._snapRoomInfo = Object.assign({}, this._snapRoomInfo, room);
           this.memberFullList = [...members];
+          this._snapSequence = sequence;
+          console.log("更新_snapSequence ", this._snapSequence);
           (window as any).memberFullList = this.memberFullList;
           const { states, roomUuid } = room;
           this.stateUpdateByChange(states, timestamp, roomUuid, false);
+          for (const item of this.memberFullList) {
+            this.updateMemberList(item.rtcUid, "add");
+          }
           logger.log("memberFullList", this.memberFullList, members);
         });
       }
@@ -1677,6 +1753,10 @@ export class RoomStore extends EnhancedEventEmitter {
     operatorRoomUuid?: string,
     fromNotify = true
   ): void {
+    if (!states && this._snapRoomInfo.states) {
+      this._snapRoomInfo.states = {}
+      return
+    }
     for (const key in states) {
       if (Object.prototype.hasOwnProperty.call(states, key)) {
         const item = states[key];
@@ -1826,7 +1906,7 @@ export class RoomStore extends EnhancedEventEmitter {
    * @return {*}
    */
   @action
-  public updateMemberList(uid: number, type: "add" | "remove"): void {
+  public async updateMemberList(uid: number, type: "add" | "remove"): Promise<void> {
     // TODO
     const index = this.memberList.findIndex((item: number) => item === uid);
     switch (type) {
