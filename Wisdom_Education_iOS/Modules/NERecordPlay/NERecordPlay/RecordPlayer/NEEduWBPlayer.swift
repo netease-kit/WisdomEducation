@@ -55,6 +55,12 @@ public class NEEduWBPlayer:NSObject, NEEduRecordPlayerProtocol,NEWBRecordPlayerD
         player?.setTimeRangeStartTime(startTime, endTime: endTime)
     }
     
+    /// 设置视角
+    /// - Parameter viewer: 观众视角
+    public func setViewer(viewer: Int) {
+        self.player?.setViewer(viewer)
+    }
+    
     public func onPrepared(with info: NEWBRecordInfo) {
         state = .prepared
         self.delegate?.onPrepared(playerItem: self)

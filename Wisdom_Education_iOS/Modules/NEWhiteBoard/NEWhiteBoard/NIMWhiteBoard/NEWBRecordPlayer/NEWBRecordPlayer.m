@@ -72,9 +72,10 @@ NSString * const setTimeRangeAction = @"jsSetTimeRange";
     [[NMCMessageHandlerDispatch sharedManager] nativeCallWebWithWebView:self.webview action:setSpeedAction param:param];
 }
 
-- (void)setViewer:(NSString *)viewer {
-    if (viewer.length) {
-        NSDictionary *param = @{@"viewer":viewer};
+- (void)setViewer:(NSInteger)viewer {
+    if (viewer) {
+        NSString *string = [NSString stringWithFormat:@"%ld",(long)viewer];
+        NSDictionary *param = @{@"viewer":string};
         [[NMCMessageHandlerDispatch sharedManager] nativeCallWebWithWebView:self.webview action:setViewerAction param:param];
     }
 }
