@@ -48,6 +48,7 @@ public class NEEduRecorderPlayerManager: NSObject, NEEduRecordPlayerProtocol, NE
     
     /// 当前正在播放的RecordItem
     public var playingRecordItems = [RecordItem]()
+    public var teacher: Member?
     
     public var playerDic: [String:NEEduRecordPlayer] = [:]
     var autoPlay: Bool = false
@@ -101,6 +102,13 @@ public class NEEduRecorderPlayerManager: NSObject, NEEduRecordPlayerProtocol, NE
             timeEvent[timeKey] = event
         }
         print("timeEvent:\(timeEvent)");
+        
+        for member in data.snapshotDto.snapshot.members {
+            if member.isTeacher {
+                teacher = member
+                break
+            }
+        }
     }
     
     /// 创建播放器
@@ -117,7 +125,6 @@ public class NEEduRecorderPlayerManager: NSObject, NEEduRecordPlayerProtocol, NE
                 itemList.append(player)
                 playerDic[recordItem.url] = player
                 //统计刚进入回放就需要播放的播放器
-                
 //                let offset = (recordItem.timestamp - data.record.startTime)/1000
                 if showVideoView(record: recordItem) {
                     if recordItem.isTeacher() {
@@ -153,7 +160,6 @@ public class NEEduRecorderPlayerManager: NSObject, NEEduRecordPlayerProtocol, NE
         }
         return false;
     }
-    
     
     func resetPlayers(recordList:[RecordItem]) {
         var players = [NEEduRecordPlayer]()
@@ -234,6 +240,7 @@ public class NEEduRecorderPlayerManager: NSObject, NEEduRecordPlayerProtocol, NE
             self.subPlayer!.pause()
         }
     }
+
 
 // MARK: - NEEduRecordPlayProtocol
     public func prepareToPlay() {
@@ -359,6 +366,7 @@ public class NEEduRecorderPlayerManager: NSObject, NEEduRecordPlayerProtocol, NE
 //    MARK:NEEduRecordPlayEvent
     public func onPrepared(playerItem: Any) {
         if let wbPlayer = playerItem as? NEEduWBPlayer {
+            wbPlayer.setViewer(viewer:teacher?.rtcUid ?? 0)
             wbPlayer.setDuration(startTime: data.record.startTime, endTime: data.record.stopTime)
         }
         if let player = playerItem as? NEEduRecordPlayer {
