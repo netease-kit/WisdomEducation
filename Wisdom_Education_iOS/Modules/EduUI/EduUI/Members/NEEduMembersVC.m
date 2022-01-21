@@ -101,7 +101,20 @@ static NSString *memberCellID = @"memberCellID";
     }
 }
 - (void)memberIn:(NEEduMember *)member {
-    [self.members addObject:member];
+    // 去重处理
+    if (!self.members.count) {
+        [self.members addObject:member];
+    } else {
+        BOOL isRepeat = NO;
+        for (NEEduMember *m in self.members) {
+            if ([m.userID isEqualToString:member.userID]) {
+                isRepeat = YES;
+                break;
+            }
+        }
+        if (!isRepeat) [self.members addObject:member];
+    }
+    
     if (self.presentingViewController) {
         if (self.isSearching) {
             self.currentArray = [self searchMembsersWithName:self.searchView.textField.text];

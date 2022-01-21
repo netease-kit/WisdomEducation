@@ -29,6 +29,7 @@ typedef NS_ENUM(NSInteger, NEEduSceneType) {
 @property (nonatomic, strong) NSString *roomUuid;
 /// 班级类型
 @property (nonatomic, assign) NEEduSceneType sceneType;
+/// 配置ID
 @property (nonatomic, assign) NSInteger configId;
 /// 房间功能开关配置
 @property (nonatomic, strong) NERoomConfig *config;

@@ -20,6 +20,8 @@ extern NSString *const NMCWhiteboardURL;
 @interface NMCWhiteboardManager : NSObject
 
 @property(nonatomic, weak) id<NMCWhiteboardManagerDelegate> delegate;
+/// 配置文件 参数读取开关
+@property (nonatomic, assign, getter=isConfigRead) BOOL configRead;
 + (instancetype)sharedManager;
 
 - (WKWebView *)createWebViewFrame:(CGRect)frame;

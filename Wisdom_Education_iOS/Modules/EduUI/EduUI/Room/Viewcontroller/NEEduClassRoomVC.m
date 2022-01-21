@@ -61,6 +61,7 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
     self.members = [NSMutableArray arrayWithArray:[self placeholderMembers]];
     //请求
     __weak typeof(self)weakSelf = self;
+    NCKLogInfo(@"ClassRoom viewDidLoad");
     [[NEEduManager shared] joinRtcAndGetProfileCompletion:^(NSError * _Nonnull error, NEEduRoomProfile * _Nonnull profile) {
         if (error) {
             NCKLogInfo(@"profileError%@",error);
@@ -218,6 +219,8 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
     ]];
 }
 - (void)addWhiteboardView {
+    // 读取配置开关
+//    NMCWhiteboardManager.sharedManager.configRead = YES;
     [self.contentView insertSubview:self.boardView belowSubview:self.shareScreenView];
     [NSLayoutConstraint activateConstraints:@[
         [self.boardView.topAnchor constraintEqualToAnchor:self.contentView.topAnchor],

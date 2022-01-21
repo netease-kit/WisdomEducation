@@ -12,8 +12,7 @@
 #import "NEEduUserProperty.h"
 
 NS_ASSUME_NONNULL_BEGIN
-
-
+/// 进入房间 请求
 @interface NEEduEnterRoomRequest : NSObject
 @property (nonatomic , strong) NEEduStreams              * streams;
 @property (nonatomic , strong) NEEduUserProperty              * properties;

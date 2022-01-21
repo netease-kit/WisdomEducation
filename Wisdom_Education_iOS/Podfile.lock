@@ -59,20 +59,19 @@ DEPENDENCIES:
   - NEWhiteBoard (from `Modules/NEWhiteBoard/NEWhiteBoard.podspec`)
 
 SPEC REPOS:
-  https://github.com/CocoaPods/Specs.git:
+  trunk:
     - AFNetworking
     - Alamofire
     - MJRefresh
     - NEDyldYuv
     - NELivePlayer
+    - NERtcSDK
     - NEScreenShareBroadcaster
     - NEScreenShareHost
     - NIMSDK_LITE
     - SDWebImage
     - YXAlog_iOS
     - YYModel
-  trunk:
-    - NERtcSDK
 
 EXTERNAL SOURCES:
   EduLogic:
@@ -107,4 +106,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 413dce87682bcf52790b2fbe29359ef3e4d78f45
 
-COCOAPODS: 1.10.1
+COCOAPODS: 1.11.2

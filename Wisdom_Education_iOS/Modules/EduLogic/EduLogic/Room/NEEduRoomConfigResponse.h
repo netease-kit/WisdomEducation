@@ -10,6 +10,7 @@
 #import "NEEduRoomConfigResource.h"
 NS_ASSUME_NONNULL_BEGIN
 
+/// 房间配置信息
 @interface NEEduRoomConfigResponse : NSObject
 @property (nonatomic, strong) NEEduEnterRoomResponse *permissions;
 @property (nonatomic, strong) NEEduRoomConfigResource *resource;

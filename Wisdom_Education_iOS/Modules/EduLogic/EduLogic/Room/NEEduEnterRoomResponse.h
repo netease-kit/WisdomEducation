@@ -13,6 +13,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/// 进入房间 回调
 @interface NEEduEnterRoomResponse : NSObject
 @property (nonatomic , strong) NEEduHttpUser              * member;
 @property (nonatomic , strong) NEEduHttpRoom              * room;

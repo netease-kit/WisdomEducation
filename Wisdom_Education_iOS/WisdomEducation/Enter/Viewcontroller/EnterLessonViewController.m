@@ -70,6 +70,7 @@ static NSString *kLastUserToken = @"lastUserToken";
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
     self.lessonTypes = @[@"一对一教学",@"多人小班课",@"互动大班课",@"直播大班课"];
     [self.tableview registerClass:[UITableViewCell class] forCellReuseIdentifier:@"cellID"];
     [self setupSubviews];
@@ -123,7 +124,7 @@ static NSString *kLastUserToken = @"lastUserToken";
     }
     
 #ifdef DEBUG
-    EduInputView *userIDView = [[EduInputView alloc] initWithPlaceholder:@"请输入ID"];
+    EduInputView *userIDView = [[EduInputView alloc] initWithPlaceholder:@"请输入ID(可选)"];
     userIDView.textField.keyboardType = UIKeyboardTypeDefault;
     [self.view addSubview:userIDView];
     [NSLayoutConstraint activateConstraints:@[
@@ -133,7 +134,7 @@ static NSString *kLastUserToken = @"lastUserToken";
         [userIDView.heightAnchor constraintEqualToConstant:44]
     ]];
     self.userIdView = userIDView;
-    EduInputView *tokenView = [[EduInputView alloc] initWithPlaceholder:@"请输入token"];
+    EduInputView *tokenView = [[EduInputView alloc] initWithPlaceholder:@"请输入token(可选)"];
     tokenView.textField.keyboardType = UIKeyboardTypeDefault;
     [self.view addSubview:tokenView];
     [NSLayoutConstraint activateConstraints:@[
@@ -344,6 +345,8 @@ static NSString *kLastUserToken = @"lastUserToken";
     NEEduKitOptions *option = [[NEEduKitOptions alloc] init];
     option.authorization = [KeyCenter authorization];
     option.baseURL = [KeyCenter baseURL];
+    // 开启自动读取 config文件中配置
+//    option.configRead = YES;
     [[NEEduManager shared] setupAppKey:[KeyCenter appKey] options:option];
     NSString *userId = [self.userIdView.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     NSString *token = [self.tokenView.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
@@ -416,23 +419,19 @@ static NSString *kLastUserToken = @"lastUserToken";
     NERoomConfig *config = [[NERoomConfig alloc] init];
     config.resource.chatroom = showChatroom;
     switch (room.sceneType) {
-        case NEEduSceneType1V1:
-        {
+        case NEEduSceneType1V1: {
             room.configId = 5;
         }
             break;
-        case NEEduSceneTypeSmall:
-        {
+        case NEEduSceneTypeSmall: {
             room.configId = 6;
         }
             break;
-        case NEEduSceneTypeBig:
-        {
+        case NEEduSceneTypeBig: {
             room.configId = 7;
         }
             break;
-        case NEEduSceneTypeLive:
-        {
+        case NEEduSceneTypeLive: {
             room.configId = 20;
             config.resource.live = YES;
         }

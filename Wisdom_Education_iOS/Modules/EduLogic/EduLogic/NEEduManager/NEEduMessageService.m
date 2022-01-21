@@ -81,8 +81,7 @@
 
 - (void)dispatchMessage:(NEEduSignalMessage *)messageModel {
     switch (messageModel.cmd) {
-        case 1:
-        {
+        case 1: {
             NEEduHttpRoom *lessonModel = [NEEduHttpRoom yy_modelWithJSON:messageModel.data];
             if (lessonModel.states.step) {
                 //上下课状态更改
@@ -105,8 +104,7 @@
             }
         }
             break;
-        case 30:
-        {
+        case 30: {
             //用户加入
             //更新 profile
             NEEduSignalUserIn *userIn = [NEEduSignalUserIn yy_modelWithJSON:messageModel.data];
@@ -133,8 +131,7 @@
             }
         }
             break;
-        case 31:
-        {
+        case 31: {
             //用户离开
             NEEduSignalUserIn *userIn = [NEEduSignalUserIn yy_modelWithJSON:messageModel.data];
             NEEduHttpUser *newUser = userIn.members.firstObject;
@@ -155,8 +152,7 @@
             }
         }
             break;
-        case 40:
-        {
+        case 40: {
             //用户开关音视频
             NEEduSignalStreamOnOff *streamOnOff = [NEEduSignalStreamOnOff yy_modelWithJSON:messageModel.data];
             NSMutableArray *temMembers = [NSMutableArray arrayWithArray:self.profileInfo.snapshot.members];
@@ -184,8 +180,7 @@
             }
         }
             break;
-        case 41:
-        {
+        case 41: {
             //用户开关音视频
             NEEduSignalStreamOnOff *streamOnOff = [NEEduSignalStreamOnOff yy_modelWithJSON:messageModel.data];
             NSMutableArray *temMembers = [NSMutableArray arrayWithArray:self.profileInfo.snapshot.members];
@@ -213,8 +208,7 @@
             }
         }
             break;
-        case 20:
-        {
+        case 20: {
             NEEduSignalProperty *property = [NEEduSignalProperty yy_modelWithJSON:messageModel.data];
             NSMutableArray *temMembers = [NSMutableArray arrayWithArray:self.profileInfo.snapshot.members];
             NEEduHttpUser *tempUser;
@@ -279,8 +273,7 @@
            }
         }
             break;
-        case 21:
-        {
+        case 21: {
             NEEduRemoveProperty *remove = [NEEduRemoveProperty yy_modelWithDictionary:messageModel.data];
             if ([remove.key isEqualToString:@"screenShare"]) {
                 for (NEEduHttpUser *user in self.profileInfo.snapshot.members) {

@@ -9,7 +9,7 @@
 
 #import "NEEduRtcService.h"
 #import <NERtcSDK/NERtcSDK.h>
-
+#import <YYModel/YYModel.h>
 @interface NEEduRtcService ()<NERtcEngineDelegateEx,NERtcEngineMediaStatsObserver>
 @property (nonatomic, assign) BOOL subscribeVideo;
 @property (nonatomic, assign) BOOL subscribeAideo;
@@ -19,7 +19,8 @@
 
 @implementation NEEduRtcService
 
-- (void)setupAppkey:(NSString *)appKey {
+- (void)setupAppkey:(NSString *)appKey isConfigRead:(BOOL)isConfigRead {
+    /// 进入房间前 设置场景
     [[NERtcEngine sharedEngine] setChannelProfile:kNERtcChannelProfileCommunication];
     // 设置视频发送配置(帧率/分辨率)
     NERtcVideoEncodeConfiguration *config = [[NERtcVideoEncodeConfiguration alloc] init];
@@ -33,6 +34,17 @@
     NERtcEngineContext *context = [[NERtcEngineContext alloc] init];
     context.engineDelegate = self;
     context.appKey = appKey;
+    if (isConfigRead) {
+        NSString *path = [NSBundle.mainBundle pathForResource:@"rtc_server" ofType:@"conf"];
+        NSData *data = [NSData dataWithContentsOfFile:path];
+        if (data) {
+            NSError *error = nil;
+            NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
+            if (!error) {
+                context.serverAddress = [NERtcServerAddresses yy_modelWithJSON:dict];
+            }
+        }
+    }
     [[NERtcEngine sharedEngine] setupEngineWithContext:context];
     [[NERtcEngine sharedEngine] setExternalVideoSource:YES isScreen:YES];
     [[NERtcEngine sharedEngine] addEngineMediaStatsObserver:self];

@@ -26,7 +26,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, weak) id <NEEduVideoServiceDelegate>delegate;
 ///在subscribeVideo为NO的情况下，缓存需要订阅的用户，解决外部收到用户加入的回调时，用户还未加入Rtc房间，手动订阅失败的问题（实则是App服务器的bug，应该收到用户加入和Rtc用户加入后，才能通知客户端）。
 @property (nonatomic, copy) NSIndexSet *subscribeCacheList;
-- (void)setupAppkey:(NSString *)appKey;
+- (void)setupAppkey:(NSString *)appKey isConfigRead:(BOOL)isConfigRead;
 - (void)joinChannel:(NEEduRtcJoinChannelParam *)param completion:(void(^)(NSError *error,uint64_t channelID))completion;
 //video canvas
 - (int)setupLocalVideo:(NERtcVideoCanvasExtention * _Nullable)local;

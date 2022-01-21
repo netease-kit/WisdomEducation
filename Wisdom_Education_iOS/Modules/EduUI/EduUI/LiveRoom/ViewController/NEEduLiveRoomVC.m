@@ -37,6 +37,7 @@ static NSString *kLastRtcCid = @"lastRtcCid";
     [NEEduManager shared].roomService.delegate = self;
     //请求
     __weak typeof(self)weakSelf = self;
+    NCKLogInfo(@"LiveRoom viewDidLoad");
     [[NEEduManager shared].roomService getRoomProfile:self.roomUuid completion:^(NSError * _Nonnull error, NEEduRoomProfile * _Nonnull profile) {
         if (error) {
             [self.view makeToast:[NSString stringWithFormat:@"加入房间失败，请退出重进 %@",error.localizedDescription]];
@@ -514,6 +515,7 @@ static NSString *kLastRtcCid = @"lastRtcCid";
         case AFNetworkReachabilityStatusReachableViaWWAN:
         case AFNetworkReachabilityStatusReachableViaWiFi:{
             self.maskView.navView.netStateView.image = [UIImage ne_imageNamed:@"net_3"];
+            NCKLogInfo(@"LiveRoom net change:%d",state);
             [[NEEduManager shared].roomService getRoomProfile:self.room.roomUuid completion:^(NSError * _Nonnull error, NEEduRoomProfile * _Nonnull profile) {
                 if(error){
                     if(error.code == NEEduErrorTypeRoomNotFound){

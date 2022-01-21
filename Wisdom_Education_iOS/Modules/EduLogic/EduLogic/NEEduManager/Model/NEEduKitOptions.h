@@ -12,6 +12,8 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface NEEduKitOptions : NSObject
+/// config文件读取开关 默认NO
+@property (nonatomic, assign, getter=isConfigRead) BOOL configRead;
 @property (nonatomic, copy) NSString *authorization;
 @property (nullable, nonatomic,copy) NSString *baseURL;
 

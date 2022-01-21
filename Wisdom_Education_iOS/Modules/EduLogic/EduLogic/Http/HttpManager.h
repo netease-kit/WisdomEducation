@@ -17,11 +17,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface HttpManagerConfig : NSObject
 @property(nonatomic, strong) NSString *baseURL;
+/// 版本号
 @property(nonatomic, strong) NSString *version;
 @property(nonatomic, strong) NSString *appKey;
-
-//header
+/// 授权
 @property(nonatomic, strong) NSString *authorization;
+/// 设备ID
 @property(nonatomic, strong) NSString *deviceId;
 
 @end
