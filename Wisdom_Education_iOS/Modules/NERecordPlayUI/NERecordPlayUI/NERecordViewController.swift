@@ -126,7 +126,6 @@ public class NERecordViewController: UIViewController {
             print("error:recordData = nil")
             return
         }
-        
         playerManager = NEEduRecorderPlayerManager(data: data, view: contentView,autoPlay: true)
         playerManager!.delegate = self
         recordList = playerManager!.playingRecordItems
@@ -193,11 +192,12 @@ public class NERecordViewController: UIViewController {
         var roomId: String = data.snapshotDto.snapshot.room.roomUuid
         infoView.lessonName.text = String(roomId[roomId.startIndex ..< roomId.index(before: roomId.endIndex)])
         infoView.lessonItem.titleLabel.text = recordData?.snapshotDto.snapshot.room.roomUuid
-        for member in data.snapshotDto.snapshot.members {
-            if member.isTeacher {
-                infoView.teacherName.text = member.userName
-            }
-        }
+//        for member in data.snapshotDto.snapshot.members {
+//            if member.isTeacher {
+//                infoView.teacherName.text = member.userName
+//            }
+//        }
+        infoView.teacherName.text = playerManager?.teacher?.userName;
         self.view.addSubview(infoView)
         NSLayoutConstraint.activate([
             infoView.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 0),

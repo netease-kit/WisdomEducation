@@ -59,7 +59,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 设置观看视角
 /// @param viewer 观看者的账号（登录时的account字段）
-- (void)setViewer:(NSString *)viewer;
+- (void)setViewer:(NSInteger)viewer;
 
 /// 设置播放范围
 /// @param startTime 起始时间
