@@ -1,9 +1,12 @@
 import { PlatForms, ShareListItem } from "@/config";
 import { EnhancedEventEmitter } from "../event";
 import logger from "../logger";
+import rtc_server_conf from './rtc_server_conf.json';
 
 // @ts-ignore
 const { NERtcSDK, ipcRenderer, eleRemote, platform } = window;
+const needPrivate = process.env.REACT_APP_SDK_RTC_PRIVATE;
+needPrivate === "true" && logger.log("eleactron-RTC私有化配置", rtc_server_conf);
 ipcRenderer && ipcRenderer.send("hasRender");
 ipcRenderer &&
   ipcRenderer.on("onWindowRender", (event, data) => {
@@ -113,6 +116,7 @@ export class NeElertc extends EnhancedEventEmitter {
   private _screen: any;
   private _windowsList: ShareListItem[] = [];
   private _localStream = null;
+  private _localVolumeLevel: any;
 
   constructor(appKey: string) {
     super();
@@ -120,11 +124,23 @@ export class NeElertc extends EnhancedEventEmitter {
     this._nertcEngine = new NERtcSDK.NERtcEngine();
     // this._nertcEngine.app_key = this._appKey;
     this._nertcEngine.log_dir_path = "";
+    const server_config = {
+      channel_server: rtc_server_conf.channelServer,
+      statistics_server: rtc_server_conf.statisticsServer,
+      room_server: rtc_server_conf.roomServer,
+      compat_server: rtc_server_conf.compatServer,
+      nos_lbs_server: rtc_server_conf.nosLbsServer,
+      nos_upload_sever: rtc_server_conf.nosUploadSever,
+      nos_token_server: rtc_server_conf.nosTokenServer,
+      use_ipv6: rtc_server_conf.useIPv6
+    }
     const res = this._nertcEngine.initialize({
       app_key: this._appKey,
       log_file_max_size_KBytes: 0, // 设置日志文件的大小上限，单位为 KB。如果设置为 0，则默认为 20 M
       // @ts-ignore
       log_dir_path: window.electronLogPath,
+      log_level: 3,
+      server_config: needPrivate === "true" ? server_config : {} // 私有化配置
     });
     if (res !== 0) {
       logger.error("initialize fail", this._appKey);
@@ -217,6 +233,11 @@ export class NeElertc extends EnhancedEventEmitter {
     ipcRenderer.send("hasJoinClass");
     // 通话统计回调
     // this._nertcEngine.on('onRtcStats', this._onRtcStats.bind(this));
+    // 提示频道内本地用户瞬时音量的回调
+    this._nertcEngine.on(
+      "onLocalAudioVolumeIndication",
+      this._onLocalAudioVolumeIndication.bind(this)
+    );
   }
 
   /**
@@ -370,6 +391,15 @@ export class NeElertc extends EnhancedEventEmitter {
     //TODO
   }
 
+  public async enableAudioVolumeIndication(enable: boolean, interval=100): Promise<void> {
+    const result = this._nertcEngine.enableAudioVolumeIndication(enable, interval)
+    if (result === 0) {
+      logger.log("enableVolumeIndication success: ", enable)
+      return
+    }
+    logger.log("enableVolumeIndication fail: ", enable)
+  }
+
   /**
    * @description: 切换扬声器
    * @param {string} deviceId
@@ -453,6 +483,26 @@ export class NeElertc extends EnhancedEventEmitter {
     logger.log("speakers", result);
     return result;
   }
+  
+  // 调节录音音量 0-400
+  setMicrophoneCaptureVolume(volume: number): void {
+    const result = this._nertcEngine.adjustRecordingSignalVolume(volume/100*400)
+    console.log("adjustRecordingSignalVolume ", volume/100*400, result)
+    return result
+  }
+
+  //获取当前音频采集设备音量 0-255
+  getAudioLevel(): number {
+    logger.log("getAudioLevel ", this._localVolumeLevel)
+    return this._localVolumeLevel
+  }
+
+  // 设置播放音量 0-400
+  setAudioVolume(volume: number): void {
+    const result = this._nertcEngine.adjustPlaybackSignalVolume(volume/100*400)
+    return result
+  }
+  
 
   public async publish(): Promise<void> {
     //TODO
@@ -602,7 +652,7 @@ export class NeElertc extends EnhancedEventEmitter {
     if (res === 0) {
       logger.log("leaveChannel success");
     } else {
-      logger.error("leaveChannel fail");
+      logger.error("leaveChannel fail", res);
     }
     ipcRenderer.removeAllListeners("onWindowCreate");
   }
@@ -762,5 +812,10 @@ export class NeElertc extends EnhancedEventEmitter {
     logger.log("_onWindowCreate", eleRemote, data);
     this._screen = eleRemote?.screen;
     // this._windowsList = data.windowsList;
+  }
+
+  private async _onLocalAudioVolumeIndication(volume: number) {
+    logger.log("_onLocalAudioVolumeIndication", volume)
+    this._localVolumeLevel = volume
   }
 }

@@ -7,6 +7,9 @@ import WhiteBoard from 'WhiteBoard';
 import ToolCollection from 'ToolCollection';
 import { EnhancedEventEmitter } from '../event';
 import logger from '../logger';
+import wb_server_conf from "./wb_server_conf.json";
+const needPrivate = process.env.REACT_APP_SDK_WB_PRIVATE;
+needPrivate === "true" && logger.log("WB私有化配置", wb_server_conf);
 
 export interface WhiteBoardInitOptions {
   appKey: string;
@@ -71,6 +74,7 @@ export class NeWhiteBoard extends EnhancedEventEmitter {
       container: options.container,
       platform: 'web',
       record: false,
+      privateConf: needPrivate === "true" ? wb_server_conf : {}, // 私有化配置
       getAuthInfo: async () => ({
         checksum: options.checksum,       //sha1(appsecret + nonce + curTime)
         nonce: options.nonce,             //随机长度小于128位的字符串

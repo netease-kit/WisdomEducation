@@ -2,17 +2,20 @@
  * @Copyright (c) 2021 NetEase, Inc.  All rights reserved.
  * Use of this source code is governed by a MIT license that can be found in the LICENSE file
  */
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { useRoomStore, useUIStore } from '@/hooks/store';
 import logger from '@/lib/logger';
-import { Tooltip, message } from 'antd';
+import { Tooltip, message, Modal } from 'antd';
+import { SettingOutlined } from '@ant-design/icons';
 import copy from 'copy-to-clipboard';
 import { NetStatusItem } from '@/store/room';
 import './index.less';
 import copyImg from '@/assets/imgs/copy.png';
 import { LeftOutlined } from '@ant-design/icons';
-import { history } from '@/utils';
+import { history, debounce } from '@/utils';
+import DeviceCheck from '@/component/device-check';
+import { RoleTypes, RoomTypes } from "@/config";
 
 interface HeaderShowProps {
   isHave?: boolean;
@@ -45,16 +48,26 @@ const netXinhaoImgMap = {
 const Header: React.FC<HeaderShowProps> = observer((props) => {
   const roomStore = useRoomStore();
   const uiStore = useUIStore();
+  const [showDeviceModal, setShowDeviceModal] = useState(false);
   const userInfo = roomStore?.localUserInfo || {};
-  const { snapRoomInfo: { roomUuid = '', roomName = '' } } = roomStore;
+  const { snapRoomInfo: { roomUuid = '', roomName = '' }, 
+    roomInfo: { sceneType },
+    localData,
+  } = roomStore;
   const networkQuality = roomStore?.networkQuality || [];
   const memberFullList = roomStore?.memberFullList || [];
+  const [isLiveStu, setIsLiveStu] = useState(false);
 
   const hostName = memberFullList.filter((item) => {
     return item.role === "host"
   }).map((item) => {
     return item.userName
   }).join('')
+
+  useEffect(() => {
+    const flag = Number(sceneType) === RoomTypes.bigClasLive && localData?.role !== RoleTypes.host
+    setIsLiveStu(flag)
+  }, [sceneType, localData?.role])
 
   const handleCopyClick = () => {
     copy(roomUuid);
@@ -103,8 +116,31 @@ const Header: React.FC<HeaderShowProps> = observer((props) => {
             <div>
               <img src={netXinhaoImgMap[maxNetworkQuality.toString()] || require('@/assets/imgs/xinhao1.png').default} alt="sign" className="signImg"/>
             </div>
+            {
+              !isLiveStu &&
+              <div className="setDiv">
+                <SettingOutlined style={{ color: '#ffffff', fontSize: '12px' }} onClick={() => setShowDeviceModal(true)}/>
+              </div>
+            }
           </div>
       }
+      <Modal
+        title="设备设置"
+        wrapClassName="settingModal"
+        visible={showDeviceModal}
+        centered
+        footer={null}
+        onCancel={() => {
+          setShowDeviceModal(false)
+        }}
+        destroyOnClose={true}
+      >
+        <DeviceCheck 
+          onOk={() => {
+            setShowDeviceModal(false)
+          }}
+        />
+      </Modal>
 
     </div>
   )

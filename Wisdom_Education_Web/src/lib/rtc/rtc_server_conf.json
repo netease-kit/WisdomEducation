@@ -1,0 +1,11 @@
+{
+  "__comment__":"RTC_SDK私有化配置文件，请输入具体配置项。",
+  "channelServer":"",
+  "compatServer":"",
+  "nosLbsServer":"",
+  "nosTokenServer":"",
+  "nosUploadSever":"",
+  "roomServer":"",
+  "statisticsServer":"",
+  "useIPv6":""
+}

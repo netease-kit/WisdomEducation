@@ -3,9 +3,12 @@
  * Use of this source code is governed by a MIT license that can be found in the LICENSE file
  */
 
-import NIM from './sdk/NIM_Web_SDK_v8.2.5.js';
+import NIM from './sdk/NIM_Web_SDK_v8.6.0.js';
 import { EnhancedEventEmitter } from '../event';
 import logger from '../logger';
+import nim_server_conf from './nim_server_conf.json';
+const needPrivate = process.env.REACT_APP_SDK_IM_PRIVATE;
+needPrivate === "true" && logger.log("IM私有化配置", nim_server_conf);
 
 interface loginOptions {
   imAppkey: string;
@@ -57,7 +60,7 @@ export class NENim extends EnhancedEventEmitter {
         syncSuperTeams: false,
         syncRoamingMsgs: false,
         syncSuperTeamRoamingMsgs: false,
-        // privateConf: this.mapMeetingInfo.get('NIMconf') || {},
+        privateConf: needPrivate === "true" ? nim_server_conf : {}, // 私有化配置
         ...options.NIMconf,
         onconnect: () => {
           logger.debug('im连接认证成功...');
@@ -95,7 +98,7 @@ export class NENim extends EnhancedEventEmitter {
    * @return {*}
    */
   private onNotify(data: any): void{
-    logger.debug('收到服务器通知', data)
+    logger.debug('IM-收到服务器通知')
     if (data && data.body) {
       data.body = JSON.parse(data.body)
     }
