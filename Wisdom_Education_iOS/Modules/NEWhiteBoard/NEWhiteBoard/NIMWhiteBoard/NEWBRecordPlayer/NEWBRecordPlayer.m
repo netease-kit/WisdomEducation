@@ -16,10 +16,7 @@ NSString * const seekToAction = @"jsSeekTo";
 NSString * const setSpeedAction = @"jsSetPlaySpeed";
 NSString * const setViewerAction = @"jsSetViewer";
 NSString * const setTimeRangeAction = @"jsSetTimeRange";
-// https://yiyong-xedu-v2-static.netease.im/whiteboard-webview/g2/webview.record.html
 NSString * const NMCWhiteboardRecordUrl = @"https://yiyong-xedu-v2-static.netease.im/whiteboard-webview/g2/webview.record.html";
-// 私有化回放 测试地址
-//NSString * const NMCWhiteboardRecordUrl = @"https://yunxinent-demo.netease.im/xedu/webview/g2/webview.record.html";
 
 @interface NEWBRecordPlayer ()<NMCWhiteboardManagerDelegate,NEWBRecordPlayDelegate,WKUIDelegate,WKNavigationDelegate>
 @property (nonatomic, strong) NEWBRecordPlayerParam *param;
