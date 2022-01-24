@@ -14,6 +14,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/// 创建房间 配置
 @interface NEEduCreateRoomRequest : NSObject
 /// 班级名称
 @property (nonatomic, strong) NSString *roomName;

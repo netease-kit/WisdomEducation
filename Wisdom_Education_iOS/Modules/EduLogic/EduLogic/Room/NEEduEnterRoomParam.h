@@ -11,8 +11,11 @@
 #import "NEEduUser.h"
 NS_ASSUME_NONNULL_BEGIN
 
+/// 进入 房间参数
 @interface NEEduEnterRoomParam : NEEduRoom
+/// 角色 学生: 0, 老师: 1
 @property (nonatomic, assign) NEEduRoleType role;
+/// 用户名
 @property (nonatomic, strong) NSString *userName;
 
 // default NO

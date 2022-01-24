@@ -10,8 +10,10 @@
 #import "NMCWebView.h"
 #import "NMCMessageHandlerDispatch.h"
 #import "NMCWebViewHeader.h"
-//NSString * const NMCWhiteboardURL = @"https://yiyong-xedu-v2-static.netease.im/whiteboard-webview/g2/webview_vconsole.html";
+
+
 NSString * const NMCWhiteboardURL = @"https://yiyong-xedu-v2-static.netease.im/whiteboard-webview/g2/webview.html";
+
 
 @interface NMCWhiteboardManager()<WKNavigationDelegate,WKUIDelegate>
 @property(nonatomic, strong) NMCWebView *webview;
@@ -74,6 +76,20 @@ NSString * const NMCWhiteboardURL = @"https://yiyong-xedu-v2-static.netease.im/w
     [param setObject:@"ios" forKey:@"platform"];
     [param setObject:@(loginParam.height) forKey:@"height"];
     [param setObject:@(loginParam.width) forKey:@"width"];
+    
+    // 读取配置文件 参数
+    if (self.isConfigRead) {
+        NSString *path = [NSBundle.mainBundle pathForResource:@"wb_server" ofType:@"conf"];
+        NSData *data = [NSData dataWithContentsOfFile:path];
+        if (data) {
+            NSError *error = nil;
+            NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
+            if (dict) {
+                [param addEntriesFromDictionary:dict];
+            }
+        }
+    }
+    
     [[NMCMessageHandlerDispatch sharedManager] nativeCallWebWithWebView:_webview action:NMCMethodActionWebJoin param:param];
 }
 - (void)sendAuthNonce:(NSString *)nonce curTime:(NSString *)curTime checksum:(NSString *)checksum {

@@ -26,7 +26,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)onPlayFinished;
 
 @end
-
+/// 回放地址
+extern NSString *const NMCWhiteboardRecordUrl;
 @interface NEWBRecordPlayer : NSObject
 @property (nonatomic, weak) id<NEWBRecordPlayerDelegate> delegate;
 @property (nonatomic, strong) WKWebView *webview;

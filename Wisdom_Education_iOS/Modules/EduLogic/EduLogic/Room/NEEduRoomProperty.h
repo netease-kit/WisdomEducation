@@ -15,10 +15,13 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/// 房间属性
 @interface NEEduRoomProperty : NSObject
+/// 聊天室
 @property (nonatomic, strong) NEEduChatRoom *chatRoom;
 @property (nonatomic, strong) NEEduHandsupProperty *avHandsUp;
 @property (nonatomic, strong) NEEduWhiteboardInfo *whiteboard;
+/// 直播信息
 @property (nonatomic, strong) NEEduLiveInfo *live;
 
 @end

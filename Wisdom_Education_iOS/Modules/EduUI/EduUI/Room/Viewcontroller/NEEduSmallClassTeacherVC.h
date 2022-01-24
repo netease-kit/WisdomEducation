@@ -11,6 +11,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/// 多人小班课 老师角色
 @interface NEEduSmallClassTeacherVC : NEEduClassRoomVC
 
 @end

@@ -19,6 +19,7 @@
 @property (nonatomic, copy, readwrite) NSString *imKey;
 @property (nonatomic, strong) NEEduEnterRoomParam *roomParam;
 @property (nonatomic, strong) NEEduHttpRoom *room;
+@property (nonatomic, assign) BOOL configRead;
 @end
 
 @implementation NEEduManager
@@ -35,12 +36,13 @@
     config.appKey = appKey;
     config.authorization = options.authorization;
     config.baseURL = options.baseURL;
+    self.configRead = options.isConfigRead;
     [self handleHttpRequestError];
 }
 - (void)login:(NSString *)userID token:(NSString *)token success:(void(^)(NEEduUser *user))success failure:(void(^)(NSError *error))failure {
     [HttpManager loginWithUserId:userID token:token analysisClass:[NEEduUser class] success:^(NEEduUser * _Nonnull objModel) {
         self.imKey = objModel.imKey;
-        [self.rtcService setupAppkey:objModel.rtcKey];
+        [self.rtcService setupAppkey:objModel.rtcKey isConfigRead:self.configRead];
         
         [self.imService addIMDelegate];
         self.imService.delegate = self.messageService;
@@ -87,7 +89,7 @@
         if (objModel.userUuid && objModel.userToken) {
             [HttpManager addHeaderFromDictionary:@{@"user":objModel.userUuid,@"token":objModel.userToken}];
         }
-        [self.rtcService setupAppkey:objModel.rtcKey];
+        [self.rtcService setupAppkey:objModel.rtcKey isConfigRead:self.configRead];
         [self.imService setupAppkey:objModel.imKey];
         [self.imService addIMDelegate];
         self.imService.delegate = self.messageService;

@@ -11,6 +11,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/// RTC 加入房间的参数
 @interface NEEduRtcJoinChannelParam : NSObject
 @property (nonatomic, strong) NSString *channelID;
 @property (nonatomic, strong) NSString *rtcToken;

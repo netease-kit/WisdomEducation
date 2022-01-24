@@ -155,6 +155,7 @@
     return _leftLabels;
 }
 - (IBAction)copyClick:(UIButton *)sender {
+    if (!self.lessonItem.titleLabel.text) return;
     UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
     pasteboard.string = self.lessonItem.titleLabel.text;
     [self.superview makeToast:@"复制成功，可粘贴课堂号"];
