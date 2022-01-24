@@ -1,0 +1,12 @@
+{
+  "__comment__": "IM_SDK私有化配置文件，请输入具体配置项",
+  "lbs_web": "",
+  "link_web": "",
+  "link_ssl_web": "",
+  "nos_uploader_web": "",
+  "https_enabled": "",
+  "nos_downloader": "",
+  "nos_accelerate": "",
+  "nos_accelerate_host": "",
+  "nt_server": ""
+}

@@ -30,7 +30,6 @@ const RoomControl: React.FC = observer(({ children }) => {
 
   useEffect(() => {
     const joinParams = GlobalStorage.read('user');
-    // debugger
     if (!joinParams?.role) {
       history.push('/');
       return;
@@ -61,8 +60,13 @@ const RoomControl: React.FC = observer(({ children }) => {
             break;
           case 401:
             break;
+          case 1017:
+            uiStore.showToast("创建房间时房间已经存在且房间类型冲突");
+            break;
+          case 1004:
+            break;  
           default:
-            uiStore.showToast(err?.message && '加入房间失败');
+            uiStore.showToast(err?.message || '加入房间失败');
             break;
         }
         setTimeout(() => {

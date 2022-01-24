@@ -43,7 +43,7 @@ const OneToOne: React.FC = observer(() => {
       <Sider width={230} className="layout-sider">
         <StudentList>
           {!teacherData ? (
-            <VideoPlayer />) : (
+            <VideoPlayer isLocal={false}/>) : (
             <VideoPlayer
               {...teacherData}
               showMoreBtn={false}
@@ -53,7 +53,7 @@ const OneToOne: React.FC = observer(() => {
             studentData[0] ? (
               <VideoPlayer {...studentData[0]} />
             ) : (
-              <VideoPlayer />
+              <VideoPlayer isLocal={false}/>
             )
           }
         </StudentList>

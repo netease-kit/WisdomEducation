@@ -1,0 +1,10 @@
+{
+    "__comment__":"WhiteBoard_SDK私有化配置文件，请输入具体配置项。",
+    "roomServerAddr": "",
+    "sdkLogNosAddr": "",
+    "dataReportAddr": "",
+    "directNosAddr": "",
+    "mediaUploadAddr": "",
+    "docTransAddr": "",
+    "fontDownloadUrl": ""
+}

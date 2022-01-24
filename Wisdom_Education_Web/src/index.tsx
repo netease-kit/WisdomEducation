@@ -73,9 +73,9 @@ ReactDOM.render(
         <Route exact path="/endCourse">
           <EndCourse />
         </Route>
-        <Route exact path="/deviceCheck">
+        {/* <Route exact path="/deviceCheck">
           <DeviceCheck />
-        </Route>
+        </Route> */}
       </Switch>
     </Router>
   </Provider>
