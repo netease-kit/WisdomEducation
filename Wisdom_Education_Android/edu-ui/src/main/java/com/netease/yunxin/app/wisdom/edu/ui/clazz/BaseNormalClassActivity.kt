@@ -158,7 +158,7 @@ abstract class BaseNormalClassActivity(layoutId: Int = R.layout.activity_normal_
             replaceFragment(R.id.layout_members, it)
         }
 
-        // 底部按钮
+        // Bottom button
         getVideoView().visibility = View.GONE
         getAudioView().visibility = View.GONE
         getVideoView().setOnClickThrottleFirst {
@@ -194,12 +194,12 @@ abstract class BaseNormalClassActivity(layoutId: Int = R.layout.activity_normal_
             }
         }
 
-        // 白板
+        // Whiteboard
         eduRoom.whiteBoardCName()?.let {
             replaceFragment(R.id.layout_whiteboard, whiteboardFragment)
         }
 
-        // 聊天室
+        // Chat room
         eduRoom.chatRoomId()?.let {
             if (!eduManager.roomConfig.is1V1()) {
                 getChatroomFragment()?.let {
@@ -222,10 +222,10 @@ abstract class BaseNormalClassActivity(layoutId: Int = R.layout.activity_normal_
             showFragmentWithMembers()
         }
 
-        // 顶部返回按钮
+        // The back button at the top
         handleBackBtn(getBackView())
 
-        // 右侧rtc列表
+        // RTC list at the right side
         val rcvMemberVideo = getMemberVideoRecyclerView()
         val layoutManager = LinearLayoutManager(this)
         rcvMemberVideo.layoutManager = layoutManager
@@ -236,7 +236,7 @@ abstract class BaseNormalClassActivity(layoutId: Int = R.layout.activity_normal_
         memberVideoAdapter.setOnItemChildClickListener(this)
         rcvMemberVideo.adapter = memberVideoAdapter
 
-        // 课程状态 & 暂离 & 开始/结束课程
+        // Class state & paused & start/end class
         getChangeClazzStateView()?.visibility = View.GONE
         getLeaveClazzView()?.visibility = View.GONE
         eduManager.roomConfig.roomStatesPermission()?.apply {
@@ -247,7 +247,7 @@ abstract class BaseNormalClassActivity(layoutId: Int = R.layout.activity_normal_
             }
             pause.let {
                 if (it.hasPermission(self.role)) {
-                    getLeaveClazzView()?.visibility = View.GONE // TODO 离开课堂功能
+                    getLeaveClazzView()?.visibility = View.GONE // TODO Leave class
                 }
             }
         }
@@ -285,7 +285,7 @@ abstract class BaseNormalClassActivity(layoutId: Int = R.layout.activity_normal_
     }
 
     /**
-     * 设置rtc列表item之间的间距
+     * Spacing between items in the RTC list
      *
      * @property spaceSize
      */
@@ -307,7 +307,7 @@ abstract class BaseNormalClassActivity(layoutId: Int = R.layout.activity_normal_
         states.step?.value?.also {
             when (it) {
                 NEEduRoomStep.START.ordinal -> {
-                    // 保存回放请求参数
+                    // Save playback request parameters
                     PreferenceUtil.recordPlay =
                         Pair(eduRoom.roomUuid, eduRoom.rtcCid)
 
@@ -331,6 +331,7 @@ abstract class BaseNormalClassActivity(layoutId: Int = R.layout.activity_normal_
                     hideFragmentWithChatRoom()
                     hideFragmentWithMembers()
                     eduManager.getRtcService().leave()
+                    eduManager.getBoardService().dispose()
                     getClazzTitleView().apply { setFinishClazzState(getClazzDuration()) }
                     getClassFinishReplay().setOnClickThrottleFirst {
                         TODO("Not yet implemented")
@@ -361,7 +362,7 @@ abstract class BaseNormalClassActivity(layoutId: Int = R.layout.activity_normal_
     }
 
     private fun onMemberPropertiesChange(member: NEEduMember, properties: NEEduMemberProperties) {
-        // 刷新视频列表白板 屏幕共享状态
+        // Refresh the whiteboard and screen share
         memberVideoAdapter.refreshDataAndNotify<Boolean>(member, false)
         if (!isSelf(member) || member.isHost()) return
         properties.streamAV?.also {

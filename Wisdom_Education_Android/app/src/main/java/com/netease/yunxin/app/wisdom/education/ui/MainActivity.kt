@@ -25,10 +25,10 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.Theme_EduApp)
         super.onCreate(savedInstanceState)
-        if (!isTaskRoot) {
-            finish()
-            return
-        }
+//        if (!isTaskRoot) {
+//            finish()
+//            return
+//        }
         StatusBarUtil.hideStatusBar(window, true)
         requestPermissions()
         setContentView(R.layout.main_activity)

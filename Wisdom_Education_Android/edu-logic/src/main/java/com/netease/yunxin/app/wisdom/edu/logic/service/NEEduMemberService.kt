@@ -11,49 +11,49 @@ import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduMemberProperties
 import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduStreams
 
 /**
- * 提供可供 App 调用的管理课堂成员相关方法
+ * Methods used to manage members in the class
  *
  */
 abstract class NEEduMemberService : INEEduService() {
     /**
-     * 获取当前课堂成员详情
+     * Get the details of members in the class
      */
     abstract fun getMemberList(): MutableList<NEEduMember>
 
     /**
-     * 变更成员加入
-     * @param increment true 表示增量，false表示全量
+     * Update the member list if new members join the class
+     * @param increment true indicates increment load and false indicates full load.
      */
     abstract fun updateMemberJoin(list: List<NEEduMember>, increment: Boolean)
 
     /**
-     * 人员在线/离线状态发生变化
+     * Status changes if the member joins the room
      */
     abstract fun onMemberJoin(): LiveData<List<NEEduMember>>
 
     /**
-     * 变更成员离开
+     * Update the member list if members leave the room
      */
     abstract fun updateMemberLeave(list: List<NEEduMember>)
 
     /**
-     * 人员在线/离线状态发生变化
+     * Status changes if the member leaves the room
      */
     abstract fun onMemberLeave(): LiveData<List<NEEduMember>>
 
     /**
-     * 成员流的变更
+     * Update the stream changes
      */
     internal abstract fun updateStreamChange(member: NEEduMember, streams: NEEduStreams): NEEduMember?
 
 
     /**
-     * 成员流的删除
+     * Delete the member stream
      */
     internal abstract fun updateStreamRemove(member: NEEduMember, streamType: String): NEEduMember?
 
     /**
-     * 更新成员属性的本地缓存
+     * Update the local cache of member properties
      */
     internal abstract fun updateMemberPropertiesCache(
         member: NEEduMember,
@@ -61,14 +61,14 @@ abstract class NEEduMemberService : INEEduService() {
     ): NEEduMember?
 
     /**
-     * 获取当前用户
+     * Get the current member
      *
      * @return
      */
     abstract fun getLocalUser(): NEEduMember?
 
     /**
-     * 成员属性变更
+     * Update member properties
      */
     internal abstract fun updateMemberPropertiesChange(member: NEEduMember, properties: NEEduMemberProperties)
 

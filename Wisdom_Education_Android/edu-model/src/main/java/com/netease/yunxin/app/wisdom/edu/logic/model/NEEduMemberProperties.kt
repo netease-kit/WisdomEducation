@@ -28,7 +28,7 @@ data class NEEduMemberProperties(
     }
 
     /**
-     * 比较计算差异
+     * Compare the calculated difference
      */
     fun diff(properties: NEEduMemberProperties?): NEEduMemberProperties {
         if(properties == null) {

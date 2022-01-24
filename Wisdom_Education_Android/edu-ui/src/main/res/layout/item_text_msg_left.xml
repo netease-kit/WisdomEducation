@@ -19,7 +19,7 @@
         android:layout_marginStart="@dimen/common_dp_46"
         android:textColor="@color/color_7e8a99"
         android:textSize="@dimen/ts_12_dp"
-        tools:text="Seven(老师)" />
+        tools:text="Steven(Teacher)" />
 
     <TextView
         android:id="@+id/tv_content"
@@ -37,6 +37,6 @@
         android:paddingEnd="@dimen/common_dp_12"
         android:paddingBottom="@dimen/common_dp_10"
         android:textColor="@color/white"
-        tools:text="High起来！！" />
+        tools:text="Cheer up !!" />
 
 </LinearLayout>

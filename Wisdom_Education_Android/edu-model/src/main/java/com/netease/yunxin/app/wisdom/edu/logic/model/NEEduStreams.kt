@@ -6,7 +6,7 @@
 package com.netease.yunxin.app.wisdom.edu.logic.model
 
 /**
- * Created by hzsunyj on 2021/5/20.
+ * 
  */
 class NEEduStreams(
     var audio: NEEduStreamAudio?,
@@ -14,7 +14,7 @@ class NEEduStreams(
     var subVideo: NEEduStreamSubVideo? = null,
 ) {
     /**
-     * 同步流状态
+     * Synced stream state
      */
     fun merge(targetStreams: NEEduStreams): NEEduStreams {
         targetStreams.audio?.let {

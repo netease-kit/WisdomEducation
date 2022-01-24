@@ -18,7 +18,7 @@ import static com.netease.yunxin.app.wisdom.education.NEEduTestConstants.ViewIds
 import static com.netease.yunxin.app.wisdom.education.NEEduTestConstants.ViewIds.LOGIN_TYPE_TEACHER;
 
 /**
- * 登录页
+ * Login page
  */
 @ClassRegister
 public class LoginUITest {
@@ -49,13 +49,13 @@ public class LoginUITest {
 
     public static void inputClassType(String classType) {
         waitForTime(1000);
-        assertViewExist(classType); // In case the UI component is not found
+        assertViewExist(classType); // the UI component is not found
         viewClick(classType);
         waitForTime(1000);
     }
 
     public static void chooseRoleType(int role) {
-        BaseTestUtils.assertViewExist(LOGIN_TYPE_TEACHER); // In case the UI component is not found
+        BaseTestUtils.assertViewExist(LOGIN_TYPE_TEACHER); // the UI component is not found
         BaseTestUtils.assertViewExist(LOGIN_TYPE_STUDENT);
         if (role == 0) {
             viewClick(LOGIN_TYPE_TEACHER);
@@ -66,7 +66,8 @@ public class LoginUITest {
 
     public static void clickJoin() {
         viewClick(LOGIN_JOIN);
-        assertViewExist(CLASS_NOT_START);
+        waitForTime(3000);
+//        assertViewExist(CLASS_NOT_START);
         assertViewExist(MUTE);
         assertViewExist(SCREEN_SHARE);
     }

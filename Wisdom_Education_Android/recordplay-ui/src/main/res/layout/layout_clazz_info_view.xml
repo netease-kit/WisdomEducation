@@ -81,7 +81,7 @@
             android:includeFontPadding="false"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="第 1 节课 - 英文情景对话" />
+            tools:text="Class 1 - Dialogue" />
 
         <TextView
             android:id="@+id/tv_teacher_name"

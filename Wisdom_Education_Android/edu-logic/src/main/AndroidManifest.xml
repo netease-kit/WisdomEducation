@@ -8,7 +8,7 @@
     package="com.netease.yunxin.app.wisdom.edu.logic">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <!-- 8.0 系统上需要-->
+    <!-- 8.0 system required-->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application>

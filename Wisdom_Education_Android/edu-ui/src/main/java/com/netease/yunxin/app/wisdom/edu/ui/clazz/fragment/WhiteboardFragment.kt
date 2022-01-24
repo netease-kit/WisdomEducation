@@ -5,11 +5,14 @@
 
 package com.netease.yunxin.app.wisdom.edu.ui.clazz.fragment
 
+import com.netease.yunxin.app.wisdom.edu.logic.NEEduManager
+import com.netease.yunxin.app.wisdom.edu.logic.config.NEEduPrivatizationConfig
 import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduWbAuth
 import com.netease.yunxin.app.wisdom.edu.ui.R
 import com.netease.yunxin.app.wisdom.edu.ui.base.BaseFragment
 import com.netease.yunxin.app.wisdom.edu.ui.databinding.FragmentWhiteboardBinding
 import com.netease.yunxin.app.wisdom.viewbinding.viewBinding
+import com.netease.yunxin.app.wisdom.whiteboard.config.NEWbPrivateConf
 import com.netease.yunxin.app.wisdom.whiteboard.config.WhiteboardConfig
 import com.netease.yunxin.app.wisdom.whiteboard.model.NEWbAuth
 
@@ -22,6 +25,12 @@ class WhiteboardFragment : BaseFragment(R.layout.fragment_whiteboard) {
 
     override fun parseArguments() {
         super.parseArguments()
+
+        var wbPrivateConf: NEWbPrivateConf? = null // white board private Server Addresses
+        if(NEEduManager.eduOptions.useWbAssetServerAddressConfig == true) {
+            wbPrivateConf = context?.let { NEEduPrivatizationConfig.getWbPrivateConf(it) }
+        }
+
         eduManager.apply {
             config = WhiteboardConfig(
                 eduLoginRes.imKey,
@@ -31,7 +40,8 @@ class WhiteboardFragment : BaseFragment(R.layout.fragment_whiteboard) {
                 eduLoginRes.imToken,
                 getRoom().whiteBoardCName()!!,
                 "",
-                isHost()
+                isHost(),
+                wbPrivateConf
             )
         }
     }

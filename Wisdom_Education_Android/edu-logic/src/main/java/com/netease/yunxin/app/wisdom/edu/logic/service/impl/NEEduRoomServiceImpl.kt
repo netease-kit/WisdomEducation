@@ -24,7 +24,7 @@ import com.netease.yunxin.app.wisdom.edu.logic.options.NEEduClassOptions
 import com.netease.yunxin.app.wisdom.edu.logic.service.NEEduRoomService
 
 /**
- * Created by hzsunyj on 2021/5/17.
+ * 
  */
 internal class NEEduRoomServiceImpl : NEEduRoomService() {
 
@@ -114,7 +114,7 @@ internal class NEEduRoomServiceImpl : NEEduRoomService() {
     }
 
     /**
-     * 变更房间状态
+     * Change room states
      */
     override fun updateRoomStatesChange(eduRoomStates: NEEduRoomStates, merge: Boolean) {
         if (!merge) {

@@ -112,7 +112,7 @@ class NERecordVideoActor : INERecordVideoActor {
     override fun start() {
         player.start()
         pauseAfterSeek = false
-        // 从stopped状态返回，手动更新一次 PLAYING 状态
+        // Resume from the stopped state. Mannually update the PLAYING state
         if (state == NERecordPlayState.STOPPED) {
             updateState(NERecordPlayState.PLAYING)
         }
@@ -126,7 +126,7 @@ class NERecordVideoActor : INERecordVideoActor {
         val targetPos = MathUtils.clamp(positionMs - recordItem.offset, 0, player.duration)
         ALog.i(tag, "seek positionMs: $positionMs duration: ${player.duration} target: $targetPos")
         player.seekTo(targetPos)
-        // seek完成之后，直接继续播放
+        // Continue playback after the seek operation
         if (state == NERecordPlayState.STOPPED) {
             player.start()
             pauseAfterSeek = false

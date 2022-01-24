@@ -15,21 +15,21 @@ import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduMemberProperties
 import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduState
 
 /**
- * 提供可供 App 调用的屏幕共享相关方法
+ * Methods for screen share
  *
  */
 abstract class NEEduShareScreenService : INEEduService() {
     /**
-     * 屏幕共享授权或取消授权
+     * Grant or revoke permissions of screen share
      *
-     * @param userId 用户id
-     * @param grant 是否授予/取消权限
+     * @param userId User ID
+     * @param grant Specify whether to grant or revoke the permissions
      *
      */
     abstract fun grantPermission(userId: String, grant: Boolean): LiveData<NEResult<Void>>
 
     /**
-     * 发送屏幕共享，不主动打开截屏
+     * Share the screen and do not enable screenshot
      *
      */
     abstract fun shareScreen(
@@ -38,7 +38,7 @@ abstract class NEEduShareScreenService : INEEduService() {
     ): LiveData<NEResult<NEEduState>>
 
     /**
-     * 结束屏幕共享，不主动关闭截屏
+     * Stop sharing the screen and do not disable screenshot
      */
     abstract fun finishShareScreen(
         roomUuid: String,
@@ -46,44 +46,44 @@ abstract class NEEduShareScreenService : INEEduService() {
     ): LiveData<NEResult<Void>>
 
     /**
-     * 开始屏幕共享
+     * Start sharing the screen
      */
     abstract fun startScreenCapture(config: NERtcScreenConfig, intent: Intent, callback: MediaProjection.Callback): Int
 
     /**
-     * 停止屏幕共享
+     * Stop sharing the screen
      */
     abstract fun stopScreenCapture()
 
     /**
-     * 屏幕共享权限发生变化
+     * The permissions of screen share change
      */
     abstract fun onPermissionGranted(): LiveData<NEEduMember>
 
     /**
-     * 屏幕共享状态变更
+     * The state of screen share changes
      */
     abstract fun onScreenShareChange(): LiveData<List<NEEduMember>>
 
 
     /**
-     * 对应的成员流的变更
+     * The stream of a specified member changes
      */
     internal abstract fun updateStreamChange(member: NEEduMember)
 
     /**
-     * 屏幕共享状态变更
+     * The state of screen share changes
      */
     internal abstract fun updateStreamRemove(member: NEEduMember)
 
 
     /**
-     * 成员加入流变更
+     * The stream changes when a member joins the room
      */
     internal abstract fun updateMemberJoin(list: MutableList<NEEduMember>, increment: Boolean)
 
     /**
-     * 成员离开流变更
+     * The stream changes if a member leave the room
      */
     internal abstract fun updateMemberLeave(list: MutableList<NEEduMember>)
 

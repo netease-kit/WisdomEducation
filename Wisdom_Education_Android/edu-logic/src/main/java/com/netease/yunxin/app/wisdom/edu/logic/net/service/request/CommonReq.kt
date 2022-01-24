@@ -7,6 +7,6 @@ package com.netease.yunxin.app.wisdom.edu.logic.net.service.request
 
 /**
  *
- * @property value 传递的数据
+ * @property value The transmitted data 
  */
 data class CommonReq(var value: Any)

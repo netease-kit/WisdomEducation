@@ -77,7 +77,7 @@ class NERecordMemberHandler(
             } else if (prevEvent != null) {
                 val showInit = initVideoList.any { it1 -> it.roomUid == it1.roomUid }
                 memberJoin(prevEvent).apply {
-                    // 只有前面有事件时，前面要跟初始不一样才需要处理，回到初始状态
+                    // If the event before the seek operation is different from the initial state of the current event, set the event to the initial state
                     if (this != showInit) {
                         if (showInit) inVideoList.add(it) else outVideoList.add(it)
                     }
@@ -85,7 +85,7 @@ class NERecordMemberHandler(
             } else if (targetEvent != null) {
                 val showInit = initVideoList.any { it1 -> it.roomUid == it1.roomUid }
                 memberJoin(targetEvent).apply {
-                    // 只有后面有事件时，后面要跟初始不一样才需要处理，换到后面状态
+                    // If the event after the seek operation is different from the initial state of the current event, swtich to the state of the event after the seek operation
                     if (this != showInit) {
                         if (this) inVideoList.add(it) else outVideoList.add(it)
                     }

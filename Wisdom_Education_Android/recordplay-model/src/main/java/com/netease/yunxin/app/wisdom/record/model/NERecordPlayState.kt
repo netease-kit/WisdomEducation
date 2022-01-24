@@ -20,37 +20,37 @@ import androidx.annotation.IntDef
 annotation class NERecordPlayState {
     companion object {
         /**
-         * 初始状态
+         * The initial state
          */
         const val IDLE = 0
 
         /**
-         * 准备中
+         * Preparing
          */
         const val PREPARING = 1
 
         /**
-         * 准备完成
+         * Prepared
          */
         const val PREPARED = 2
 
         /**
-         * 开始播放
+         * Playing
          */
         const val PLAYING = 3
 
         /**
-         * 暂停
+         * Paused
          */
         const val PAUSED = 4
 
         /**
-         * 出错
+         * An error occurred
          */
         const val ERROR = 5
 
         /**
-         * 停止（已销毁）本质上与IDLE状态相同
+         * The Stopped state (destroyed) is the same as the IDLE state
          */
         const val STOPPED = 6
 

@@ -1,153 +1,151 @@
-# 云信智慧云课堂组件（Android）
+# Wisdom Education Component（Android）
 
-智慧云课堂（PaaS 方案）是网易云信提供的在线互动课堂场景解决方案。基于在线教育的常见场景，网易云信提供智慧云课堂开源项目，为您演示 1 对 1、小班课和大班课的典型方案。您可以直接基于我们的 Demo 修改适配，也可以参考 Demo，自行集成云信 IM SDK、音视频通话 2.0 NERTC SDK 和互动白板 SDK，实现在线教育场景。
+Wisdom Education (PaaS solution) is the online interactive class solution provided by CommsEase. Starting from the common education scenarios, the Wisdom Education is the open source project that you can implement 1v1 tutoring, breakout class, and large class activities. You can also develop your features based on the demo project that incorporates the IM SDK, Audio & Video SDK, and whiteboard SDK.
 
-效果展示：
+Visual effects:
 
-课堂页面：
+Class UI:
 
 <img src="./Images/lesson.png" alt="lesson" style="zoom:50%;" />
 
-聊天页面：
+Chat UI:
 
 <img src="./Images/chat.png" alt="chat" style="zoom:50%;" />
 
-课堂成员管理页面：
+Participant Management UI:
 
 <img src="./Images/members.png" alt="members" style="zoom:80%;" />
 
-### 功能介绍
+### Features
 
-- 开始/结束上课
+- Start/end class
 
-- 音视频通话
+- Audio and video calls
 
-- 屏幕共享
+- Screen sharing
 
-- 白板绘制
+- Whiteboarding
 
-- 聊天互动
+- Message chats
 
-- 举手上台
+- Raising hands
 
-- 教师对学生权限控制（授予/收回白板编辑权限、授予/收回屏幕共享权限、开关音视频、全体禁言）
+- Access control over students（Grant/revoke permissions, including whiteboard, screen sharing, audio and video, and mute all）
 
-本文展示如何编译并运行 Android 平台的智慧云课堂示例项目，体验各个场景的在线课堂。
+This topic illustrates how to compile and run the demo project for Android and use features for online learning.
 
-### 前提条件
+### Prerequisites
 
-在开始运行示例项目之前，请确保您已完成以下操作：
+Before you run the demo project, make sure that you have completed the following operations:
 
-- 在云信控制台创建应用，并获取对应的 AppKey。
+- Create a project in the CommsEase console and get the AppKey.
 
-- AUTHORIZATION： 请联系[联系云信商务经理](https://yunxin.163.com/bizQQWPA.html)
+- Activate the following services:
+  - Audio & Video Call, IM Pro, Chat room, signaling, whiteboard, cloud recording, and VOD.
 
-- 为此应用开通以下相关服务与抄送：
-  - 产品服务：音视频通话 2.0、IM 专业版、聊天室、信令、互动白板、云端录制、点播。
+- Features:
+  - Cloud recording and message delivery.
 
-- 产品功能：
-  - 音视频通话 2.0 的云端录制和抄送功能。
+- File transcoding and cloud recording.
 
-- 互动白板的文档转码和云端录制功能。
-
-- 音视频通话 2.0 抄送：1-房间启动、2-房间结束、3-房间录制文件下载信息抄送 、4-用户进入房间、5-用户离开房间、8-房间时长抄送。
+- Message delivery: 1-start room, 2-end room,3-Message deliver for recording downloads, 4-A users join a room, 5- a user leaves a room, 8- Room duration.
 
 ```
-注意：
+Note:
 ```
 
-- 开通相关产品功能与抄送，请联系[联系云信商务经理](https://yunxin.163.com/bizQQWPA.html)。
-- `如果仅需要本地跑通示例项目，简单体验智慧云课堂，您可以使用智慧云课堂``体验账号``。体验账号已开通相关权限与抄送，课堂时长限制为 30 分钟。`
-- 体验账号仅供开发者体验与测试，请勿在线上环境中使用。
+- To activate services and message delivery, contact [your account manager](https://yunxin.163.com/bizQQWPA.html).
+- To run the demo project in the local environment, you can use trial accounts that are provided with the required services. The class duration for trials is 30 minutes.
+- Trial accounts are used for trials and testing only. Do not log in to the trial accounts when your application is deployed for service.
 
-### 开发环境
+### Development environment
 
-在开始运行示例项目之前，请确保开发环境满足以下要求：
+Before you start running the demo project, make sure that the following environment is ready:
 
-| 环境要求         | 说明                                                         |
+| Requirement         | Description                                                        |
 | ---------------- | ------------------------------------------------------------ |
-| JDK 版本         | 1.8.0 及以上版本                                             |
-| Android API 版本 | API 23、Android 6.0 及以上版本                               |
-| CPU架构          | ARM64、ARMV7                                                 |
+| JDK version         | 1.8.0 or later                                             |
+| Android API version | API 23 and Android 6.0 or later                               |
+| CPU          | ARM64、ARMV7                                                 |
 | IDE              | Android Studio                                               |
-| 其他             | 依赖 Androidx，不支持 support 库。Android 系统 4.3 或以上版本的移动设备。 |
+| Miscellaneous              | Androidx without support library. Devices with Android OS 4.3 or later |
 
-### 运行示例项目
+### Running the demo project
 
-1. 获取示例项目。
+1. Get the demo project
 
-在智慧云课堂Demo体验页面下载需要体验的示例项目或 Demo 源码工程。
+Download the demo project or the source code on the Wisdom Education page.
 
-2. 开启 Android 设备的开发者选项，通过 USB 连接线将 Android 设备接入电脑。
-3. 通过 Android Studio 打开项目。
-4. 在示例项目中配置相关字段。
+1. Enable the Developer Options on the Android device and connect the device with your computer using the USB interface.
+2. Open the demo project in Android Studio.
+3. Configure required settings for the demo project.
 
-如果需要基于 Demo 开发自己的应用，在 `config.properties` 中将以下字段改为您的真实信息。
+If you want to develop your application based on the demo project, edit the following fields in `config.properties` for your purpose.
 
-| 配置项        | 说明                                        |
+| Field        | Description                                       |
 | ------------- | ------------------------------------------- |
-| APP_KEY       | 应用的 AppKey。可以在网易云信控制台中查看。 |
-| AUTHORIZATION | 调用服务端接口时，请求头中的校验参数。      |
+| APP_KEY       | The AppKey that you can view in the CommsEase console. |
+| AUTHORIZATION | The verification parameter in the request header when you call server APIs.      |
 
 ```
-注意：如果仅需要本地跑通示例项目，您可以使用``网易云信体验账号``。体验账号的课堂时长限制为 30 分钟。
+Note: If you want to run the demo project in your local environment, use a trial account. The class duration for a trial account is 30 minutes long.
 ```
 
-5. 选中设备直接运行，即可体验 Demo。
+1. You can directly run the demo on your device.
 
-### 功能实现
+### Configure features
 
-示例项目结构：
+Demo project structure:
 
 ```
-├── app                      壳工程
-├── base                     公共基础组件
-├── edu-logic                教育核心业务模块
-│   ├── cmd                 IM透传通知
-│   ├── model               数据定义
-│   ├── net.service         API接口请求      
-│   ├── option              基础配置定义
-│   └── service             业务服务
-├── edu-ui                   UIKit组件
-│   ├── clazz               各种房间Activity
-├── edu-model                教育业务model模块
-├── im                       IM服务组件
-├── rtc                      音视频通话服务组件
-├── whiteboard               白板组件
-├── recordplay-logic         录制回放逻辑模块
-├── recordplay-model         录制回放model模块
-├── recordplay-ui            录制回放UI模块
-├── rvadapter                adapter工具模块
-├── viewbinding              viewbinding工具模块
-└── config.properties        定义项目需要的各种配置信息
+├── app                      Shell project
+├── base                     Public basic component
+├── edu-logic                Education core business module
+│   ├── cmd                  IM pass-through notification
+│   ├── model                data source
+│   ├── net.service          API requests      
+│   ├── option               Basic configuration
+│   └── service              Business service
+├── edu-ui                   UIKit component
+│   ├── clazz                Activity
+├── edu-model                Education model
+├── im                       IM service component
+├── rtc                      Audio and video call component
+├── whiteboard               Whiteboard component
+├── recordplay-logic         Recording playback logic
+├── recordplay-model         Recording playback module
+├── recordplay-ui            Recording playback UI module
+├── rvadapter                adapter tool module
+├── viewbinding              viewbinding tool module
+└── config.properties        Custom configuration
 ```
 
-如果 Demo 中默认实现的 UI 不符合您的预期，您可以按需实现自己的用户界面，即只使用我们封装好的组件所提供的音视频能力，自行实现 UI 部分。
+If the UI of the demo project does not meet your business requirements, you can develop your UI component and use the capabilities of audio and video call provided by CommsEase.
 
-教育组件功能模块：
+Modules:
 
 <img src="./Images/layer.svg" alt="layer" style="zoom:100%;" />
 
-**EduUI：**包含教育组件的UI的实现，包括1v1、小班课、大班课场景的ViewController、View以及model部分。
+**EduUI:** includes the component UI, ViewController、View and model for 1v1 tutoring, breakout class, and large class.
 
-**EduLogic：**是依赖云信的音视频SDK、IMSDK以及白板SDK对于教育逻辑的实现，分别对应NEEduRtcService、NEEduIMService、NEEduBoardService。
+**EduLogic:** implements the education logic with NEEduRtcService, NEEduIMService, and NEEduBoardService supported separately by CommsEase Audio & Video Call, IM SDK, and Whiteboard SDK.
 
-集成组件
+Integrate the component
 
-### 1 集成到项目
+### Integrate the component into the project
 
-1. 新建 Android 工程。
-   a. 运行 Android Sudio，在顶部菜单依次选择 “File -> New -> New Project...” 新建工程。
-   b. 选择 'Phone and Tablet' -> 'Empty Activity' ，并单击Next。
-   c. 配置工程相关信息。
+1. Create an Android project
+   a. Open Android Studio and create a new project by selecting File > New > New Project from the main menu.
+   b. Select Phone and Tablet > Empty Activity and click Next.
+   c. Configure the project settings.
 
-注意： Minimum API Level 为 API 21。
+Note: Minimum API Level uses API 21.
 
-   d. 单击 'Finish'，完成工程创建。
+   d. If you are ready to create your project, click Finish.
 
-2. 添加依赖模块。  
-   a. 复制示例项目中的Modules和config.gradle、config.properties等相关配置文件至当前目录。
-   b. settings.gradle引入Modules。
+2. Add dependencies  
+   a. Copy Modules, config.gradle and config.properties of the project to the current folder.
+   b. Import modules in settings.gradle.
 
 ```
 include ':edu-ui'
@@ -158,7 +156,7 @@ include ':rtc'
 include ':base'
 ```
 
-   c. 修改工程目录下的 'app/build.gradle' 文件，添加智慧云课堂 SDK相关的依赖。
+   c. Edit the 'app/build.gradle' file and add dependencies of Wisdom Education.
 
 ```
 allprojects {
@@ -173,9 +171,9 @@ allprojects {
 
 
 
-// 若出现 More than one file was found with OS independent path 'lib/arm64-v8a/libc++_shared.so'.
+// If the message appears that More than one file was found with OS independent path 'lib/arm64-v8a/libc++_shared.so',
 
-// 可以在主 module 的 build.gradle 文件中 android 闭包内追加如下 packageOptions 配置
+// you can add the following configurations in packageOptions in the android closure in the build.gradle file of the module
 android{
     //......
     packagingOptions {
@@ -190,47 +188,47 @@ android{
 
 dependencies {
     //......
-    // 添加EduUI依赖
+    // Add EduUI dependency
     implementation project(':edu-ui')
 }
 ```
 
-d. 在顶部菜单单击 'Build -> Make Project' 构建工程，下载依赖。
+d. Create a project by selecting 'Build -> Make Project' and download dependencies.
 
-下载完成后即可在代码中引入 云课堂组件 中的类和方法。
+After the download is complete, import classes and methods provided by Wisdom Education.
 
-3. 权限配置。
+3. Permissions configuration
 
-智慧云课堂 SDK 正常工作需要应用获取以下权限：
+The Wisdom Education SDK requires the following permissions:
 
-以上权限已经在SDK内部进行声明，开发者无需在`AndroidManifest.xml`文件中重新声明这些权限，但需要自己编码实现运行时的权限申请。运行时的权限可在应用首页中统一申请，详细信息请参考[Android运行时权限申请示例](https://developer.android.google.cn/guide/topics/permissions/overview)。
+The previous permissions are declared in the SDK. Developers do not need to declare the permissions in `AndroidManifest.xml`. However, the permissions request is needed when the app is running. For more information, see [Android permissions request example](https://developer.android.google.cn/guide/topics/permissions/overview)。
 
 ```
-<!-- 网络相关 -->
+<!-- Network -->
 <uses-permission android:name="android.permission.INTERNET" />
 <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
-<!-- 多媒体 -->
+<!-- Multimedia -->
 <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 <uses-permission android:name="android.Manifest.permission.READ_PHONE_STATE"/>
 
 <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 ```
 
-### 2 初始化组件
+### 2 Initialize the component
 
-步骤：
+Procedure:
 
-1. 进行全局配置
+1. Configure global settings
 
-首先，创建 `NEEduOptions` 实例对 SDK 进行全局配置，然后调用 `config` 方法传入该实例。`NEEduOptions` 包含以下参数：
+Configure global settings using `NEEduOptions`, and pass `config` in `NEEduOptions`.`NEEduOptions` includes the following parameters:
 
-| 配置项        | 说明                                                         |
+| Parameter       | Description                                                         |
 | ------------- | ------------------------------------------------------------ |
-| APP_KEY       | 应用的 AppKey。可以在网易云信控制台中查看。                  |
-| BASE_URL      | 应用服务器地址。私有化配置时需替换为私有化部署地址           |
-| AUTHORIZATION | 调用服务端接口时，请求头中的校验参数。                       |
-| reuseIM       | 配置是否复用底层NIM-SDK的长连接通道，默认关闭。仅当应用中同时还需独立接入和使用NIM-SDK，才需要开启该配置，其他情况下请忽略该配置。 |
+| APP_KEY       | The AppKey that can be viewed in the CommsEase console.               |
+| BASE_URL      | The URL of the app server. Replace the URL for on-premises deployment.           |
+| AUTHORIZATION | The verification parameter in the request header for server APIs.                       |
+| reuseIM       | Specify whether to reuse the persistent connection provided by the NIM-SDK. By default, the parameter is disabled. You can enable the parameter if separate NIM-SDK is used. Otherwise, ignore this parameter. |
 
 ```
 NEEduUiKit.config(
@@ -244,34 +242,34 @@ NEEduUiKit.config(
 )
 ```
 
-2. 初始化
+2. Initialize an instance
 
-配置完成后，创建 `NEEduUiKit` 实例，调用 `init` 方法进行初始化。包含以下参数：
+When the configuration is complete, create a `NEEduUiKit` instance and initialize the instance using `init` with the following parameters:
 
-| 配置项 | 说明                                            |
+| Parameter | Description                                            |
 | ------ | ----------------------------------------------- |
-| uuid   | 用户鉴权userUuid。匿名登录时请设置为空字符串""  |
-| token  | 用户鉴权userToken。匿名登录时请设置为空字符串"" |
+| uuid   | The userUuid for authentication. Set the value to "" for anonymous login. |
+| token  | The userToken used for authentication. Set the value to "" for anonymous login. |
 
-示例代码：
+Example code:
 
 ```
 NEEduUiKit.init(uuid, token).observeOnce(viewLifecycleOwner, initObserver)
 ```
 
-### 3 学生或老师加入课堂
+### Students or teacher join the class
 
-学生或老师加入课堂时，会使用`NEEduClassOptions`的实例创建课堂并且加入，如果对应课堂号的课堂已经存在就直接加入。`NEEduClassOptions` 包含以下参数：
+When a participant joins a class, the client create the class by calling `NEEduClassOptions`. If the class with the specified class ID already exists, then join the class. `NEEduClassOptions` contains the following parameters:
 
-| 配置项    | 说明                                                         |
+| Parameter    | Description                                                          |
 | --------- | ------------------------------------------------------------ |
-| classId   | 课程号，课堂唯一标识                                         |
-| className | 课程名称                                                     |
-| nickName  | 用户在课堂中的昵称                                           |
-| sceneType | 课堂类型，有三种类型： 1v1， 小班课， 大班课                 |
-| roleType  | 角色类型：host：教育场景中映射为老师，broadcaster: 教育场景中映射为学生 |
+| classId   | The unique identifier of the class                                         |
+| className | The class name                                                    |
+| nickName  | The display name in the class                                          |
+| sceneType | Class type: 1v1, breakout class, and large class                 |
+| roleType  | Role type. host: teacher and broadcaster: student |
 
-示例代码：
+Example code:
 
 ```
 eduManager.enterClass(neEduClassOptions).map {
@@ -310,37 +308,37 @@ eduManager.enterClass(neEduClassOptions).map {
 }
 ```
 
-### 4 实现提问互动
+### Interaction
 
-教学双方加入教室后，开启课程。智慧云课堂提供了丰富的课堂功能，如：互动白板、屏幕共享、举手、视频、语音等。
+When all participants join a class, the teacher can start the class. Wisdom Education offers a variety of features for engaging interactions during the class. For example, whiteboard, share screen, raising hands, audio and video calls.
 
-1. 开始上课。
+1. Start class
 
-教师端开始上课。示例代码：
+The teacher client starts class. Example code:
 
 ```
-// 教师端开始上课
+// The teacher starts class
 eduManager.getRoomService().startClass(roomUuid = eduRoom.roomUuid)
     .observe(this@BaseClassActivity, {
         ALog.i(tag, "startClazz")
     })
 ```
 
-2. 学生管理。  
-   a. 教师端调用 remoteUserVideoEnable、remoteUserAudioEnable 方法控制学生端的摄像头和麦克风。如果需要和学生互动，可以开启对方的麦克风。示例代码：
+2. The teacher manages students  
+   a. The teacher can control microphones and cameras of students by calling remoteUserVideoEnable and remoteUserAudioEnable. To invite specified students to speak, unmute the camera. Example code:
 
 ```
-// 控制学生打开摄像头
+// Control the cameras of the students
 
 eduManager.roomConfig.memberStreamsPermission()?.apply {
     val self = entryMember
     video?.let { it ->
-        // 首先检查自己是否有权限
+        // Check the permissions status
         if (it.hasAllPermission(self.role)) {
-            // 接着调用remoteUserVideoEnable打开指定userUuid学生的摄像头
+            // Turn on the cameras of students with specified userUuid by calling remoteUserVideoEnable
             eduManager.getRtcService().remoteUserVideoEnable(userUuid, true)
                 .observe(this@BaseClassActivity, {
-                    // 最后处理结果回调
+                    // Handle the callback result
                     ALog.i(tag, "switchRemoteUserVideo")
                     ToastUtil.showShort(R.string.operation_successful)
                 })
@@ -350,17 +348,17 @@ eduManager.roomConfig.memberStreamsPermission()?.apply {
 
 
 
-// 控制学生打开音频
+// Control the microphones of the students
 
 eduManager.roomConfig.memberStreamsPermission()?.apply {
     val self = entryMember
     audio?.let { it ->
-        // 首先检查自己是否有权限
+        // Check whether the permissions are granted
         if (it.hasAllPermission(self.role)) {
-            // 接着调用remoteUserAudioEnable打开指定userUuid学生的音频
+            // unmute the specified student by calling remoteUserAudioEnable
             eduManager.getRtcService().remoteUserAudioEnable(member.userUuid, !member.hasAudio())
                 .observe(this@BaseClassActivity, {
-                    // 最后处理结果回调
+                    // handle callback result
                     ALog.i(tag, "switchRemoteUserAudio")
                     toastOperateSuccess()
                 })
@@ -369,19 +367,19 @@ eduManager.roomConfig.memberStreamsPermission()?.apply {
 }
 ```
 
-   b. 教师端调用 grantPermission方法授权学生使用白板或屏幕共享。示例代码：
+   b. Grant whiteboard or screen sharing permissions by calling grantPermission. Example code:
 
 ```
-// 授权学生使用白板
+// Grant whiteboard permissions to students
 eduManager.roomConfig.memberPropertiesPermission()?.apply {
     val self = entryMember
     whiteboard?.let { it ->
-        // 首先检查自己是否有权限
+        // Check the permissions status
         if (it.hasAllPermission(self.role)) {
-            // 接着调用grantPermission授权学生使用白板
+            // Grant the white permissions by calling grantPermission
             eduManager.getBoardService().grantPermission(member.userUuid, !member.isGrantedWhiteboard())
                 .observe(this@BaseClassActivity, {
-                    // 最后处理结果回调
+                    // Handle callbacl result
                     ALog.i(tag, "grantWhiteboardPermission")
                 })
         }
@@ -389,178 +387,178 @@ eduManager.roomConfig.memberPropertiesPermission()?.apply {
 }
 ```
 
-3. 屏幕共享。
+3. Screen sharing
 
-教师端或学生端调用 startScreenCapture 发起屏幕共享，共享本端屏幕给其他人观看。示例代码：
+Start screen sharing by calling startScreenCapture. Example code:
 
 ```
-// 发起屏幕共享
-// 首先创建屏幕共享配置实例
+// Start screen sharing
+// Create the configuration instance for screen sharing
 val config = NERtcScreenConfig().apply {
     contentPrefer = NERtcScreenConfig.NERtcSubStreamContentPrefer.CONTENT_PREFER_DETAILS
     videoProfile = RTCVideoProfile.kVideoProfileHD1080p
 }
-// 接着发起本地屏幕共享
+// Share the local screen
 eduManager.getShareScreenService().startScreenCapture(config, data, object :
     MediaProjection.Callback() {
     override fun onStop() {
-        // 最后处理结果回调
+        // Handle callback result
         runOnUiThread { stopLocalShareScreen() }
     }
 })
 ```
 
-4. 在线聊天室。
+1. Chat room
 
-在 1 对 1 和互动大班课中，可以通过聊天室实现消息收发，学生和学生、学生和老师之间通过聊天室发送文字或图片消息，教师端可以禁言或解禁聊天室。
+Messages can be sent and received in the chat room in 1v1 tutoring and interactive large class. Students and teachers can communicate with each other using text and image messages. Teachers can mute or unmute the class.
 
-师生调用 enterChatRoom 加入聊天室，并通过 sendMessage发送文字和图片消息。示例代码：
+Teachers and students join the class by calling enterChatRoom and send text and image messages by calling sendMessage. Example code:
 
 ```
-// 发起加入聊天室
-// 首先创建EnterChatRoomData实例
+// Start chat room
+// Create the EnterChatRoomData instance
 val data = EnterChatRoomData(activity.eduRoom?.chatRoomId())
-// 接着使用EnterChatRoomData实例进入聊天室
+// Join the chat room using EnterChatRoomData
 imService.enterChatRoom(data).observe(this, { it ->
-    // 最后处理结果回调
+    // handle the callback result
     if (it.success()) roomInfo = it.data!!.roomInfo
     it
 }
 
 
 
-// 发送文本消息
-// 首先创建文本消息
+// Sent text messages
+// Create text messages
 val chatMessage = ChatRoomMessageBuilder.createChatRoomTextMessage(it.roomId, text)
-// 接着发送消息
+// Continue sending messages
 imService.sendMessage(chatMessage)
 
 
 
 
 
-// 发送图片消息
-// 首先创建图片消息
+// Send image messages
+// Create image messages
 val chatMessage =
     ChatRoomMessageBuilder.createChatRoomImageMessage(it.roomId, file, file?.name)
-// 接着发送消息
+// Continue sending image messages
 imService.sendMessage(chatMessage)
 ```
 
 ### EduLogic API
 
-**NEEduLogic组件的 API 接口列表如下：**
+**APIs supported by the NEEduLogic component are described in the following table:**
 
-- `**NEEduUiKit**`**单例类，提供SDK配置，SDK初始化等基础能力，同时获取NEEduManager。**
+- `**NEEduUiKit**`**Singleton class that provides SDK configuration and initializes the SDK and gets NEEduManager.**
 
-| 接口                                                   | 备注              |
+| Interface                                                  | Description              |
 | ------------------------------------------------------ | ----------------- |
-| config(context: Application, eduOptions: NEEduOptions) | 该接口用于SDK配置 |
-| init()                                                 | 初始化组件        |
-| enterClass(neEduClassOptions: NEEduClassOptions)       | 加入课堂          |
+| config(context: Application, eduOptions: NEEduOptions) | Configure the SDK |
+| init()                                                 | Initialize the component        |
+| enterClass(neEduClassOptions: NEEduClassOptions)       | Join a class          |
 
-- `**NEEduManager**`**单例类，使用SDK提供的各种业务服务。**
+- `**NEEduManager**`**singleton class. The SDK provides services.**
 
-| 接口                  | 备注             |
+| interface                  | Description              |
 | --------------------- | ---------------- |
-| getRoomService        | 获得课堂管理服务 |
-| getMemberService      | 获得课堂成员服务 |
-| getRtcService         | 获得音视频服务   |
-| getIMService          | 获得消息聊天服务 |
-| getShareScreenService | 获得屏幕共享服务 |
-| getBoardService       | 获得白板服务     |
-| getHandsUpService     | 获得举手上台服务 |
-| destroy()             | 销毁对象         |
+| getRoomService        | Get the room service |
+| getMemberService      | Get the member service |
+| getRtcService         | Get the rtc service  |
+| getIMService          | Get the IM service |
+| getShareScreenService | Get the screen share service |
+| getBoardService       | Get the whiteboard service   |
+| getHandsUpService     | Get the raise hand service |
+| destroy()             | Release the instance       |
 
-- `**NEEduRoomService：课堂管理类。**`
+- `**NEEduRoomService: Class management class**`
 
-| 接口                    | 备注                   |
+| Interface                   | Description                    |
 | ----------------------- | ---------------------- |
-| startClass              | 老师开始课堂           |
-| finishClass:            | 老师结束课堂           |
+| startClass              | Start a class           |
+| finishClass:            | End a class           |
 |                         |                        |
-| 回调方法                | 备注                   |
-| onCurrentRoomInfo       | 当前课堂详情变化通知。 |
-| onRoomStatesChange:     | 房间状态通知           |
-| onNetworkQualityChange: | 网络变更通知           |
+| Callback                | Description                    |
+| onCurrentRoomInfo       | Notifications for class profile changes |
+| onRoomStatesChange:     | Notifications for Room state changes       |
+| onNetworkQualityChange: | Notifications for network changes          |
 
-- `**NEEduMemberService：**``***课堂成员***``**管理类。**`
+- `**NEEduMemberService: **``***Participants***``**management class**`
 
-| 接口                     | 备注                     |
+| Interface                     | Description                      |
 | ------------------------ | ------------------------ |
-| getMemberList            | 获取当前课堂成员详情列表 |
-| getLocalUser             | 获取当前用户             |
+| getMemberList            | Get the list of participants in the class |
+| getLocalUser             | Get the current participant          |
 |                          |                          |
-| 回调方法                 | 备注                     |
-| onMemberJoin             | 成员在线状态变化通知     |
-| onMemberLeave            | 成员离开房间通知         |
-| onMemberPropertiesChange | 成员属性变化通知         |
+| Callback                 | Description                      |
+| onMemberJoin             | Get notified when online member status changes   |
+| onMemberLeave            | Get notified when a member leaves the class       |
+| onMemberPropertiesChange | Get notified when member properties change       |
 
-- `**NEEduRtcService**`**：音视频管理类。**
+- `**NEEduRtcService**`**: Audio & video management class**
 
-| 接口                   | 备注                                   |
+| Interface                   | Description                                   |
 | ---------------------- | -------------------------------------- |
-| muteAllAudio:          | 发送全体静音。                         |
-| updateRtcAudio:        | 设置音频，会开关硬件                   |
-| enableLocalVideo:      | 开关本地视频，会开关硬件               |
-| updateRtcVideo:        | 设置成员的视频视图                     |
-| updateRtcSubVideo:     | 设置辅流视频                           |
-| localUserVideoEnable:  | 取消/发送本地视频，不开关硬件          |
-| localUserAudioEnable:  | 取消/发送本地音频，不开关硬件          |
-| remoteUserVideoEnable: | 老师开关远程视频                       |
-| remoteUserAudioEnable: | 老师开关远程音频                       |
-| destroy                | 离开音视频房间。                       |
+| muteAllAudio:          | Mute all audio                         |
+| updateRtcAudio:        | Set audio by enabling or disabling hardware                   |
+| enableLocalVideo:      | Enable or disable video by turning on or off hardware               |
+| updateRtcVideo:        | Set member video view                     |
+| updateRtcSubVideo:     | Set substream                           |
+| localUserVideoEnable:  | Enable or disable local video without turning on or off hardware          |
+| localUserAudioEnable:  | Enable or disable local audio without turning on or off hardware    |
+| remoteUserVideoEnable: | Enable or disable remote video       |
+| remoteUserAudioEnable: | Enable or disable remote audio         |
+| destroy                | Leave the room.                       |
 |                        |                                        |
-| 回调方法               | 备注                                   |
-| onMuteAllAudio:        | 全体静音通知                           |
-| onStreamChange:        | 流状态（音频、视频、辅流视频）变化通知 |
+| Callback                | Description                                    |
+| onMuteAllAudio:        | Notification for the mute all event                           |
+| onStreamChange:        | notifications for stream state changes (audio, video and substream)|
 
-- `**NEEduIMService**`**：聊天管理类。**
+- `**NEEduIMService**`**: Chat room management class**
 
-| 接口                        | 备注                        |
+| Interface                       | Description                         |
 | --------------------------- | --------------------------- |
-| sendMessage:                | 发送消息。                  |
-| muteAllChat:                | 发送全体聊天禁言            |
-| enterChatRoom:              | 加入聊天室                  |
-| exitChatRoom:               | 退出聊天室                  |
+| sendMessage:                | Send a message               |
+| muteAllChat:                | Mute all members          |
+| enterChatRoom:              | Join a chat room                  |
+| exitChatRoom:               | Leave a chat room                  |
 |                             |                             |
-| 回调方法                    | 备注                        |
-| onReceiveMessage:           | 聊天消息通知。              |
-| onMessageStatusChange:      | 图片消息状态变化通知。      |
-| onAttachmentProgressChange: | 消息附件上传/下载进度通知。 |
+| Callback                    | Description                         |
+| onReceiveMessage:           | Notification for receiving messages             |
+| onMessageStatusChange:      | Notifications for image message state changes      |
+| onAttachmentProgressChange: | Notifications for progress of message attachment upload or download progress changes |
 
-- `**NEEduShareScreenService**`**：屏幕共享管理类。**
+- `**NEEduShareScreenService**`**: Screen sharing management class**
 
-| 接口                | 备注                             |
+| Interface                | Description                              |
 | ------------------- | -------------------------------- |
-| grantPermission:    | 授权或取消授权成员的屏幕共享权限 |
-| shareScreen         | 发送屏幕共享，不开关截屏         |
-| finishShareScreen   | 取消屏幕共享，不开关截屏         |
-| startScreenCapture  | 开始屏幕共享                     |
-| stopScreenCapture   | 停止屏幕共享                     |
+| grantPermission:    | Grant or revoke screen sharing permissions |
+| shareScreen         | Send screen sharing request without screenshot         |
+| finishShareScreen   | Cancel screen sharing without screenshot  |
+| startScreenCapture  | Start screen sharing                     |
+| stopScreenCapture   | Stop screen sharing                     |
 |                     |                                  |
-| 回调方法            | 备注                             |
-| onPermissionGranted | 屏幕共享权限发生变化             |
-| onScreenShareChange | 屏幕共享状态变更                 |
+| Callback            | Description                              |
+| onPermissionGranted | Screen sharing permissions change        |
+| onScreenShareChange | Screen sharing state changes             |
 
-- `**NEEduBoardService**`**：白板管理类。**
+- `**NEEduBoardService**`**: Whiteboard management class**
 
-| 接口                 | 备注                         |
+| Interface                 | Description                          |
 | -------------------- | ---------------------------- |
-| grantPermission:     | 授权或取消授权成员的白板权限 |
-| initBoard            | 初始化白板                   |
-| setEnableDraw        | 设置是否允许绘制             |
+| grantPermission:     | Grant or revoke the whiteboard permissions for students |
+| initBoard            | Initialize whiteboard              |
+| setEnableDraw        | Enable or disable drawing        |
 |                      |                              |
-| 回调方法             | 备注                         |
-| onPermissionGranted: | 白板权限变化通知             |
+| Callback            | Description                          |
+| onPermissionGranted: | Notification for whiteboard permissions change         |
 
-- `**NEEduHandsUpService**`**：举手上台（适用于大班课场景）管理类。**
+- `**NEEduHandsUpService**`**: Raise hand management class（apply to large classes**
 
-| 接口                  | 备注                     |
+| Interface                  | Description                     |
 | --------------------- | ------------------------ |
-| getHandsUpApplyList:  | 获取当前举手中的成员详情 |
-| getOnStageMemberList  | 获取当前台上成员详情     |
-| handsUpStateChange    | 改变举手状态             |
+| getHandsUpApplyList:  | Get the list of members who raise their hands |
+| getOnStageMemberList  | Details of members as speaker  |
+| handsUpStateChange    | Change the raise hand state         |
 |                       |                          |
-| 回调方法              | 备注                     |
-| onHandsUpStateChange: | 学生台上状态发生变化     |
+| Callback              | Description                    |
+| onHandsUpStateChange: | The student state changes   |

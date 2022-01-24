@@ -91,7 +91,7 @@ object ImageUtil {
     }
 
     /**
-     * 获得旋转角度
+     * Get the rotary angle
      *
      * @param rotate
      * @return
@@ -143,7 +143,7 @@ object ImageUtil {
                 bound[1].toFloat(), dstMaxWH.toFloat(), dstMinWH.toFloat()
             )
             srcBitmap = BitmapDecoder.decodeSampled(srcFile.path, size.width, size.height)
-            // 旋转
+            // Rotation
             val localExifInterface = ExifInterface(srcFile.absolutePath)
             val rotateInt = localExifInterface.getAttributeInt(
                 ExifInterface.TAG_ORIENTATION,
@@ -154,17 +154,17 @@ object ImageUtil {
             matrix.postRotate(rotate)
             var inSampleSize = 1f
             if (srcBitmap!!.width >= dstMinWH && srcBitmap.height <= dstMaxWH && srcBitmap.width >= dstMinWH && srcBitmap.height <= dstMaxWH) {
-                //如果第一轮拿到的srcBitmap尺寸都符合要求，不需要再做缩放
+                //If the size of srcBitmap meets the requirements in the first round, no scaling is required
             } else {
                 if (srcBitmap.width != size.width || srcBitmap.height != size.height) {
                     val widthScale = size.width.toFloat() / srcBitmap.width.toFloat()
                     val heightScale = size.height.toFloat() / srcBitmap.height.toFloat()
                     if (widthScale >= heightScale) {
                         size.width = srcBitmap.width
-                        size.height /= widthScale.toInt() //必定小于srcBitmap.getHeight()
+                        size.height /= widthScale.toInt() // Must be smaller than srcBitmap.getHeight()
                         inSampleSize = widthScale
                     } else {
-                        size.width /= heightScale.toInt() //必定小于srcBitmap.getWidth()
+                        size.width /= heightScale.toInt() //Must be smaller than srcBitmap.getWidth()
                         size.height = srcBitmap.height
                         inSampleSize = heightScale
                     }
@@ -259,10 +259,10 @@ object ImageUtil {
 //    }
 
     /**
-     * 获取图片类型
+     * Get the image type
      *
-     * @param path 图片绝对路径
-     * @return 图片类型image/jpeg image/png
+     * @param path The absolute Path of the image
+     * @return Image type: image/jpeg and image/png
      */
     fun getImageType(path: String?): String {
         val options = BitmapFactory.Options()
@@ -285,10 +285,10 @@ object ImageUtil {
             val rotate: Float
             val mimeType = getImageType(srcFile.absolutePath)
             rotate = if (!TextUtils.isEmpty(mimeType) && mimeType == "image/png") {
-                // png格式不能使用ExifInterface
+                // Images in PNG format cannot use ExifInterface
                 0f
             } else {
-                // 旋转
+                // Rotation
                 val localExifInterface = ExifInterface(srcFile.absolutePath)
                 val rotateInt = localExifInterface.getAttributeInt(
                     ExifInterface.TAG_ORIENTATION,
@@ -391,7 +391,7 @@ object ImageUtil {
 //    }
 
     /**
-     * 下载失败与获取失败时都统一显示默认下载失败图片
+     * Display the default download failure image if downloading fails
      *
      * @return
      */

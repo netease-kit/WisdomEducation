@@ -17,7 +17,7 @@ import com.netease.yunxin.app.wisdom.edu.ui.R
 import com.netease.yunxin.app.wisdom.edu.ui.databinding.RtcVideoAudioViewBinding
 
 /**
- * Created by hzsunyj on 2021/5/20.
+ * 
  */
 class RtcVideoAudioView(context: Context, attrs: AttributeSet?, defStyleAttr: Int = 0) : ConstraintLayout(
     context,

@@ -9,55 +9,55 @@ package com.netease.yunxin.app.wisdom.player.sdk.model;
 import com.netease.yunxin.app.wisdom.player.sdk.constant.DecryptionConfigCode;
 
 /**
- * 点播视频解密配置
- * 只适用于点播
+ * VOD decryption configuration
+ * Applies only to VOD
  *
  * @author netease
  */
 public class DecryptionConfig {
 
     /**
-     * 解密选项
-     * 只适用于点播
+     * Decryption options
+     * Applies only to VOD
      * {@link DecryptionConfigCode}
      */
     public int decryptionCode;
 
 
     /**
-     * 获取密钥所需的令牌
+     * Token required to get the key
      */
     public String transferToken;
     /**
-     * 视频云用户创建的其子用户id
+     * subaccount ID
      */
     public String accid;
     /**
-     * 开发者平台分配的AppKey
+     * The AppKey in the CommsEase console
      */
     public String appKey;
     /**
-     * 视频云用户子用户的token
+     * The token the belongs to the subaccount
      */
     public String token;
 
     /**
-     * 密钥
+     * Key
      */
     public byte[] flvKey;
     /**
-     * 密钥长度
+     * Key length
      */
     public int flvKeyLen;
 
     /**
-     * 解密信息方式
-     * 使用解密信息对视频进行解密时需要设置相关的解密信息
+     * Decryption method
+     * The decryption configuration
      *
-     * @param transferToken 获取密钥所需的令牌
-     * @param accid         视频云用户创建的其子用户id
-     * @param appKey        开发者平台分配的AppKey
-     * @param token         视频云用户子用户的token
+     * @param transferToken The token used to get the key
+     * @param accid         The subaccount ID
+     * @param appKey        The AppKey in the CommsEase console
+     * @param token         The token the belongs to the subaccount
      */
     public DecryptionConfig(String transferToken, String accid, String appKey, String token) {
         this.transferToken = transferToken;
@@ -68,12 +68,12 @@ public class DecryptionConfig {
     }
 
     /**
-     * 解密密钥方式
-     * 在已知密钥的情况下直接使用密钥对密钥做相关的校验
-     * 使用解密秘钥对视频进行解密时需要设置相关的解密秘钥
+     * Decryption method
+     * Verify the key if the key is obtained
+     * Set the key to decrypt the video content
      *
-     * @param flvKey    密钥
-     * @param flvKeyLen 密钥长度
+     * @param flvKey    Key
+     * @param flvKeyLen Key length
      */
     public DecryptionConfig(byte[] flvKey, int flvKeyLen) {
         this.flvKey = flvKey;

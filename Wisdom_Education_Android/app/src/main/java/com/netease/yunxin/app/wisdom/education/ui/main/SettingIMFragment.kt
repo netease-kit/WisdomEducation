@@ -74,7 +74,7 @@ class SettingIMFragment : Fragment(R.layout.setting_im_fragment), Observer<Statu
 
     private fun logout() {
         NIMClient.getService(AuthService::class.java).logout()
-        //延迟刷新
+        // Delayed refresh
         binding.firstEditor.postDelayed({ refreshOnlineStatus() }, 2000)
     }
 
@@ -103,6 +103,6 @@ class SettingIMFragment : Fragment(R.layout.setting_im_fragment), Observer<Statu
 
     private fun refreshOnlineStatus() {
         val fromAccount = MessageBuilder.createTextMessage("", SessionTypeEnum.None, "").fromAccount
-        binding.imLoginState.text = "当前IM状态: $fromAccount#${NIMClient.getStatus()}."
+        binding.imLoginState.text = "Current IM state: $fromAccount#${NIMClient.getStatus()}."
     }
 }

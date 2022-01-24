@@ -19,8 +19,8 @@ import com.netease.yunxin.app.wisdom.player.sdk.model.VideoScaleMode;
 import com.netease.yunxin.app.wisdom.player.view.IRenderView;
 
 /**
- * 网易云信直播拉流播放器接口
- * 基于播放器SDK封装的直播相关的接口
+ * Interfaces of the live streaming player powered by CommsEase
+ * Live streaming related APIs based on the SDK
  * <p>
  *
  * @author netease
@@ -32,76 +32,76 @@ public abstract class LivePlayer {
     public enum STATE {
 
         /**
-         * 播放器初始状态
+         * The initial state of the player
          */
         IDLE,
 
         /**
-         * 播放器准备中
+         * The player is preparing
          */
         PREPARING,
 
         /**
-         * 播放器准备完成
+         * The player is ready
          */
         PREPARED,
 
         /**
-         * 播放器开始播放
+         * The player is playing video files
          */
         PLAYING,
 
         /**
-         * [点播专用]暂停
+         * [VOD only] The player is paused
          */
         PAUSED,
 
         /**
-         * 播放过程出错，播放结束
+         * An error occurred in playback and the player stops
          */
         ERROR,
 
         /**
-         * 播放器停止（已销毁）本质上与IDLE状态相同
+         * The player stops (released) and has the same state as IDLE
          */
         STOPPED,
     }
 
     /**
-     * 监听/取消监听播放器状态/事件回调
+     * Register or unregister the observer for player states or events
      *
-     * @param observer 播放器观察者
-     * @param register true表示注册; false表示注销
+     * @param observer The player observer
+     * @param register true: register the observer; false: unregister the observer
      */
     public abstract void registerPlayerObserver(LivePlayerObserver observer, boolean register);
 
     /**
-     * 注册获取音频帧数据的回调及回调音频参数，用户需要实现回调函数OnAudioFrameFilterListener来接收音频帧
+     * Register the callback for the event of getting the audio PCM data and audio parameters. The data must be received by OnAudioFrameFilterListener
      *
-     * @param config   音频回调PCM数据的配置参数
-     * @param listener 回调的结果
-     * @return 非0表示失败
+     * @param config   The configuration parameters for audio PCM data callback
+     * @param listener The callback result
+     * @return A value of non-zero indicates failure
      */
     public abstract int registerAudioFrameFilterListener(NEAudioPcmConfig config, NELivePlayer.OnAudioFrameFilterListener listener, boolean register);
 
     /**
-     * 注册获取视频帧数据的回调，用户需要实现回调函数OnVideoFrameFilterListener来接收视频帧
-     * 只支持软件解码
+     * Register the callback for the event of getting the video frame data. The data must be received by OnVideoFrameFilterListener
+     * Support only software decoding
      *
-     * @param format   回调的视频数据格式，例如NELP_YUV420
-     * @param listener 回调的结果
-     * @return 非0表示失败
+     * @param format   The video data format, such as NELP_YUV420
+     * @param listener The callback result
+     * @return A value of non-zero indicates failure
      */
     public abstract int registerVideoFrameFilterListener(int format, NELivePlayer.OnVideoFrameFilterListener listener, boolean register);
 
 
     /**
-     * 注册播放过程的实时真实时间戳回调
-     * 在start接口后调用
+     * Register the current position callback
+     * The method is called after the start method is called
      *
-     * @param interval 预期的回调的时间间隔(单位：毫秒 ms)
-     * @param listener 回调监听器
-     * @param register true表示注册; false表示注销
+     * @param interval The callback interval in milliseconds
+     * @param listener The callback listener
+     * @param register true: register the listener; false: unregister the listener
      */
     public abstract void registerPlayerCurrentPositionListener(final long interval,
                                                                NELivePlayer.OnCurrentPositionListener listener,
@@ -109,190 +109,190 @@ public abstract class LivePlayer {
 
 
     /**
-     * 注册播放过程的实时真实时间戳回调
-     * 在start接口后调用
+     * Register the real-time timestamp callback
+     * The method is called after the start method is called
      *
-     * @param interval 预期的回调的时间间隔(单位：毫秒 ms)
-     * @param listener 回调监听器
-     * @param register true表示注册; false表示注销
+     * @param interval The callback interval in milliseconds
+     * @param listener The callback listener
+     * @param register true: register the listener; false: unregister the listener
      */
     public abstract void registerPlayerCurrentRealTimestampListener(final long interval, NELivePlayer.OnCurrentRealTimeListener listener, boolean register);
 
 
     /**
-     * 注册播放过程的实时同步时间戳回调
-     * 在start接口后调用
+     * Register the player current sync timestamp callback
+     * The method is called after the start method is called
      *
-     * @param interval 预期的回调的时间间隔(单位：毫秒 ms)
-     * @param listener 回调监听器
-     * @param register true表示注册; false表示注销
+     * @param interval The callback interval in milliseconds
+     * @param listener The callback listener
+     * @param register true: register the listener; false: unregister the listener
      */
     public abstract void registerPlayerCurrentSyncTimestampListener(final long interval, NELivePlayer.OnCurrentSyncTimestampListener listener, boolean register);
 
     /**
-     * 注册播放过程的实时内容时间戳回调
-     * 在start接口后调用
+     * register the player current sync content callback
+     * The method is called after the start method is called
      *
-     * @param listener 回调监听器
-     * @param register true表示注册; false表示注销
+     * @param listener The callback listener
+     * @param register true: register the listener; false: unregister the listener
      */
     public abstract void registerPlayerCurrentSyncContentListener(NELivePlayer.OnCurrentSyncContentListener listener, boolean register);
 
     /**
-     * 将当前播放器实例的时钟跟目标播放器同步起来。
-     * 开启该功能需要保证两个流中均存在时间基准一致的同步时间戳信息，
-     * 当前播放器的播放进度将以同步时间戳信息为基准同步到目标播放器。
+     * Sync the timestamp between the current player with the target player
+     * Before the feature is enabled, the two streams must have the consistent timestamp.
+     * The current playback position is synchronized with the target player based on the timestamp
      * <p>
-     * 必须在prepare前调用。
+     * The method is called before the prepare operation is complete
      *
-     * @param player 需要同步到的播放器实例。
+     * @param player the target player instance
      */
     public abstract void syncClockTo(LivePlayer player);
 
     /**
-     * 异步初始化并自动播放
+     * Asynchronous initialization and auto start
      */
     public abstract void start();
 
     /**
-     * 安装要渲染拉流画面的SurfaceView或者TextureView
-     * 可以在播放器启动后按需安装，也可以在播放器启动前安装好。
+     * Set up SurfaceView or TextureView for rendering
+     * The method can be called before or after the player starts
      *
-     * @param renderView     SurfaceView/TextureView
-     * @param videoScaleMode 视频缩放策略，默认是等比例拉伸。
+     * @param renderView     SurfaceView or TextureView
+     * @param videoScaleMode The scale mode. The default value is proportional scaling
      */
     public abstract void setupRenderView(IRenderView renderView, VideoScaleMode videoScaleMode);
 
     /**
-     * 单独设置当前已设置视频渲染View的缩放模式。
-     * 在已设置视频渲染View后有效。
+     * Set the scale mode for View
+     * The method applies after View takes effect.
      *
-     * @param videoScaleMode 视频缩放策略
+     * @param videoScaleMode The scale mode
      */
     public abstract void setVideoScaleMode(VideoScaleMode videoScaleMode);
 
     /**
-     * Activity生命周期函数onStop()触发时请务必调用此接口
+     * The method must be called when onStop() of Activity is invoked
      *
-     * @param isLive 是否是直播
+     * @param isLive Check whether the activity is live streaming
      */
     public abstract void onActivityStop(boolean isLive);
 
     /**
-     * Activity生命周期函数onResume()触发时请务必调用此接口
+     * The method must be called when onResume() of Activity is invokedActivity
      *
-     * @param isLive 是否是直播
+     * @param isLive Check whether the activity is live streaming
      */
     public abstract void onActivityResume(boolean isLive);
 
     /**
-     * 隐藏渲染View
+     * hide View
      */
     public abstract void hideView();
 
     /**
-     * 显示渲染View
+     * display View
      */
     public abstract void showView();
 
     /**
-     * 检测是否正在播放
+     * Check whether playback is running
      *
-     * @return 是否正在播放 true: 正在播放 false: 不在播放
+     * @return check whether playback is running. true: playing, false: not playing
      */
     public abstract boolean isPlaying();
 
     /**
-     * 设置静音
+     * Mute or unmute
      *
-     * @param mute true表示静音，false表示取消静音
+     * @param mute true: muted，false: unmuted
      */
     public abstract void setMute(boolean mute);
 
     /**
-     * 设置镜像
+     * Mirroring
      *
-     * @param isMirror 是否镜像 true: 镜像，false: 不镜像
+     * @param isMirror Whether to create a mirror. true: create a mirror，false: do not create a mirror
      */
     public abstract void setMirror(boolean isMirror);
 
     /**
-     * 设置音量(0.0 ~ 1.0, 0.0为静音，1.0为最大)
+     * Set volume. Value range: 0.0 to 1.0. 0.0: muted. 1.0: the maximum volume
      *
      * @param volume
      */
     public abstract void setVolume(float volume);
 
     /**
-     * 销毁播放器，这里不会清空观察者。
-     * 销毁后，如果需要重新使用，请调用asyncInit方法重新初始化。
+     * Release the player. No observers will be destroyed
+     * If a player is released, you must initialize the player again by calling asyncInit.
      */
     public abstract void stop();
 
     /**
-     * 获取当前播放器的状态信息
+     * Get the current player state.
      *
-     * @return 播放器当前的状态信息：状态{@link STATE}、导致该状态的原因 {@link com.netease.yunxin.app.wisdom.player.sdk.constant.CauseCode}
+     * @return The current state of the player: state {@link STATE} and reason {@link com.netease.yunxin.app.wisdom.player.sdk.constant.CauseCode}
      */
     public abstract StateInfo getCurrentState();
 
     /**
-     * 获取当前播放位置的时间点 单位: ms, 需要在收到onPrepare的通知后调用
+     * Get the timestamp of current position in milliseconds. The method is called when the onPrepare operation is complete and sends a notification
      *
-     * @return 当前播放位置的时间点 -1: 失败
+     * @return The timestamp of current position -1: failure
      */
     public abstract long getCurrentPosition();
 
     /**
-     * 获取当前直播拉流的实时同步的时间戳
+     * Get the real-time timestamp of the live stream
      *
-     * @return 当前相对直播推流开始的时间戳
+     * @return The timestamp compared to the start time of the live stream
      */
     public abstract long getCurrentSyncTimestamp();
 
     /**
-     * 截图，仅在软件解码条件下支持，硬件解码不支持，需要在收到onPrepared的通知后调用
+     * Screenshot is supported by software decoding. hardware decoding does not support screenshot. When the onPrepare operation is complete and sends a notification
      *
-     * @return 如果截图失败则返回 null，截图成功返回位图对象
+     * @return If screen capture fails, a value of null is returned. the bitmap object is returned if the operation is successful.
      */
     public abstract Bitmap getSnapshot();
 
     /**
-     * 播放过程中切换播放地址，第一次播放不能调用该接口，仅支持当前播放结束切换到下一个视频，或者播放过程中切换下一个视频
-     * 该接口通过调用播放器SDK的接口实现
+     * The interface is not invoked when the player starts playback for the first time. The interface is called when the playback is complete or change to the next video and the player loads the next video file
+     * The interface is called by the player SDK
      *
-     * @param url 播放地址
+     * @param url The playback URL
      */
     public abstract void switchContentUrl(String url);
 
     /**
-     * 切换播放地址
-     * 该接口通过调用播放器的重置和重新创建进行拉流实现
+     * Switch the URLs of video fules
+     * The method is called when the player is reset or initialized again
      *
-     * @param path 待播放的地址
+     * @param path The URL of the video file to be played
      */
     public abstract void switchContentPath(String path);
 
     /**
-     * 根据url查询调度地址
+     * Query the scheduling address based on URLs
      *
      * @param url
-     * @param listener 回调
+     * @param listener The listner
      */
     public abstract void queryPreloadUrlResult(String url, NEGslbResultListener listener);
 
     /**
-     * 切换播放地址
+     * Switch URLs of video files
      * <p>
-     * 先获取地址，之后在设置地址，
+     * Get and set the URL.
      *
-     * @param session 查询请求返回的标识
-     * @param result  设置的地址
+     * @param session The identifier returned in the response
+     * @param result  The URL to be set
      */
     public abstract void switchWithGslbResult(Object session, NEGslbServerModel result);
 
     /**
-     * 获取当前播放地址
+     * Get the current playback URL
      *
      * @return
      */
@@ -300,38 +300,38 @@ public abstract class LivePlayer {
 
 
     /**
-     * 获取当前播放媒体的音轨信息，需要在prepare完成后调用
+     * Get the information about the current audio track. The method is called after the prepare operation is complete
      *
-     * @return 音轨信息数组或null
+     * @return The array that contains audio track information or null
      */
     public abstract NEAudioTrackInfo[] getAudioTracksInfo();
 
     /**
-     * 获取当前选择的音轨序号，需要在prepare完成后调用
+     * Select the index of the selected audio track. The method is called after the prepare operation is complete
      *
-     * @return 当前的音轨序号，或者-1
+     * @return Index of the current audio track or -1
      */
     public abstract int getSelectedAudioTrack();
 
     /**
-     * 切换音轨，需要在prepare完成后调用。
+     * Switch audio tracks. The method is called after the prepare operation is complete
      *
-     * @param index 需要切换的音轨序号，音轨数量通过 getSelectedAudioTrack 返回的数组大小确定。
-     * @return 成功返回0，否则表示切换失败。
+     * @param index The index of the audio track to switch to. The number of audio tracks is determined by the array retuned by getSelectedAudioTrack.
+     * @return A value of 0 indicates success. Otherwise, the operation failed.
      */
     public abstract int setSelectedAudioTrack(int index);
 
     /**
-     * 配置自动重试信息
+     * Configure auto retries
      *
-     * @param config 配置参数
+     * @param config Configuration parameter
      */
     public abstract void setAutoRetryConfig(AutoRetryConfig config);
 
     /**
-     * 获取播放实时数据
+     * Get the real-time playback statistics
      *
-     * @return 统计数据结果
+     * @return playback statistics
      */
     public abstract NEMediaRealTimeInfo getMediaRealTimeInfo();
 

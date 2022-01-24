@@ -8,7 +8,7 @@ package com.netease.yunxin.app.wisdom.edu.logic
 import com.netease.lava.nertc.sdk.NERtcConstants
 
 /**
- * Created by hzsunyj on 2021/8/27.
+ * 
  */
 enum class NEEduRtcCode(val code: Int, val msg: String) {
     //rtc error

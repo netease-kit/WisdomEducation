@@ -22,7 +22,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="朱迪斯" />
+        tools:text="Adam" />
 
     <TextView
         android:id="@+id/btn_accept"
@@ -31,7 +31,7 @@
         android:layout_marginEnd="@dimen/common_dp_223"
         android:gravity="center"
         android:background="@drawable/bg_hands_up_btn"
-        android:text="同意"
+        android:text="@string/agree"
         android:textColor="@color/color_b4bfd0"
         android:textSize="@dimen/ts_14_dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -44,8 +44,8 @@
         android:layout_height="@dimen/common_dp_36"
         android:layout_marginEnd="@dimen/common_dp_135"
         android:gravity="center"
-        android:background="@drawable/ic_handsup_btn"
-        android:text="拒绝"
+        android:background="@drawable/bg_hands_up_btn"
+        android:text="@string/decline"
         android:textColor="@color/color_b4bfd0"
         android:textSize="@dimen/ts_14_dp"
         app:layout_constraintBottom_toBottomOf="parent"

@@ -10,8 +10,8 @@ import com.netease.yunxin.app.wisdom.player.sdk.model.MediaInfo;
 import com.netease.yunxin.app.wisdom.player.sdk.model.StateInfo;
 
 /**
- * 直播拉流播放器状态/事件回调函数观察者
- * 基于播放器SDK封装的直播相关的状态/事件回调
+ * Observers for live streaming player states and events
+ * Live streaming player states and events based on the player SDK
  * <p>
  *
  * @author netease
@@ -20,70 +20,70 @@ import com.netease.yunxin.app.wisdom.player.sdk.model.StateInfo;
 public interface LivePlayerObserver {
 
     /**
-     * [重要]正在初始化准备播放
-     * 开发者可以在此时做加载、等待动画
+     * [Important] The player instance is being initialized
+     * Waiting animation can be added at the moment
      */
     void onPreparing();
 
     /**
-     * [重要]初始化完成并开始播放
-     * 开发者可以在此取消加载、等待动画
+     * [Important]The player is initialized and ready for playback
+     * Waiting animation can be removed at the moment
      */
     void onPrepared(MediaInfo mediaInfo);
 
     /**
-     * [重要]视频播放器出现错误
-     * 开发者可以在此结束播放、给予用户出错提示、开启重新播放按钮等
+     * [Important]An error occurred while playing
+     * Developers can end the playback, prompt the error message and restart the playback
      *
-     * @param code  错误码 {@link com.netease.neliveplayer.sdk.constant.NEErrorType}
-     *              如果 code=-9999 表示视频码流解析失败，此时音频播放正常，视频可能无画面，开发者可以针对此错误码添加处理逻辑，例如退出、重新播放。
-     * @param extra 错误附加信息
+     * @param code  Error code {@link com.netease.neliveplayer.sdk.constant.NEErrorType}
+     *              code=-9999 indicates failure to parse the video stream. The audio stream is playing without video images. Developers can handle the error with operations such as exit or restart the playback.
+     * @param extra extra information about the error
      */
     void onError(int code, int extra);
 
     /**
-     * [重要]视频第一帧显示，标志着视频正在播放
+     * [Important]The first video frame. If the first frame is loaded, the playback starts
      */
     void onFirstVideoRendered();
 
     /**
-     * 音频第一帧显示
+     * The first audio frame
      */
     void onFirstAudioRendered();
 
     /**
-     * 视频开始缓冲
+     * Video buffering starts
      */
     void onBufferingStart();
 
     /**
-     * 视频缓冲结束
+     * Video buffering ends
      */
     void onBufferingEnd();
 
     /**
-     * 视频缓冲进度
+     * Video buffering progress
      */
     void onBuffering(int percent);
 
     /**
-     * 硬件解码是否开启
-     * value表示是否开启硬件解码，value是1时开启了硬件解码，其他值时开启了软解解码
+     * Check whether the hardware decoding is enabled
+     * The value parameter indicates whether hardware decoding is enabled. 1: hardware is enabled, other values: software decoding is enabled.
      */
     void onVideoDecoderOpen(int value);
 
     /**
-     * 播放器状态回调
+     * The player state callback
      *
-     * @param stateInfo 播放器当前状态及导致状态的原因
+     * @param stateInfo The current state of the player and the reason
      */
     void onStateChanged(StateInfo stateInfo);
 
     /**
-     * 拉流http状态信息
+     * HTTP response information
      *
-     * @param code   状态码
-     * @param header 头信息
+     * @param code   Status code
+     * @param header Header information
      */
     void onHttpResponseInfo(int code, String header);
 

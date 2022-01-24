@@ -26,7 +26,7 @@ import com.netease.yunxin.app.wisdom.im.IMManager
 import com.netease.yunxin.kit.alog.ALog
 
 /**
- * Created by hzsunyj on 2021/6/9.
+ * 
  */
 internal class NEEduIMServiceImpl : NEEduIMService() {
 
@@ -36,7 +36,7 @@ internal class NEEduIMServiceImpl : NEEduIMService() {
     private val receiveCustomCMDMessage: MediatorLiveData<NEEduCMDBody> = MediatorLiveData()
 
 
-    // remember last value , otherwise when network reconnect will notify more
+    // remember last value, otherwise when network reconnect will notify more
     private var muteAllChat: Boolean? = null
 
     private val muteAllChatLD: MediatorLiveData<Boolean> = MediatorLiveData()
@@ -79,13 +79,13 @@ internal class NEEduIMServiceImpl : NEEduIMService() {
         if (NEEduManagerImpl.isLiveClass()) {
             messages.filter { t -> t.sessionId == NEEduManagerImpl.getRoom().chatRoomId() }.forEach {
                 if (it.msgType == MsgTypeEnum.custom) {
-                    // 处理IM自定义CMD
+                    // handle custom messages
                     val cmdBody = CMDActionFactory.parseIMCMDMessage(it.attachStr)?.data
                     cmdBody?.apply {
                         receiveCustomCMDMessage.value = this
                     }
                 } else if (it.msgType == MsgTypeEnum.notification) {
-                    // 成员进出
+                    // Join or leave the room
                     val attachment = (it.attachment) as ChatRoomNotificationAttachment
                     if (attachment.type == NotificationType.ChatRoomMemberIn) {
                         getBroadcasterList(attachment).apply {
@@ -156,13 +156,13 @@ internal class NEEduIMServiceImpl : NEEduIMService() {
     }
 
     /**
-     * 消息状态变化观察者
+     * Observer for message state changes
      */
     private val messageStatusObserver =
         Observer<ChatRoomMessage> { message -> updateMessageStatus(message) }
 
     /**
-     * 消息附件上传/下载进度观察者
+     * Observer for progress of uploading or downloading message attachments 
      */
     private val attachmentProgressObserver =
         Observer<AttachmentProgress> { progress -> updateAttachmentProgress(progress) }

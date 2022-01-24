@@ -16,7 +16,7 @@ import retrofit2.http.*
 internal interface StreamService{
 
     /**
-     * 更新流状态
+     * Update the stream state
      */
     @PUT("scene/apps/{appKey}/v1/rooms/{roomUuid}/members/{userUuid}/streams/{streamType}")
     fun updateStreamInfo(
@@ -28,7 +28,7 @@ internal interface StreamService{
     ): LiveData<NEResult<NEEduState>>
 
     /**
-     * 删除流
+     * Delete streams
      */
     @DELETE("scene/apps/{appKey}/v1/rooms/{roomUuid}/members/{userUuid}/streams/{streamType}")
     fun deleteStream(
@@ -39,7 +39,7 @@ internal interface StreamService{
     ): LiveData<NEResult<Void>>
 
     /**
-     * 删除流
+     * Delete streams
      */
     @POST("scene/apps/{appKey}/v1/rooms/{roomUuid}/batch")
     fun batchStreams(

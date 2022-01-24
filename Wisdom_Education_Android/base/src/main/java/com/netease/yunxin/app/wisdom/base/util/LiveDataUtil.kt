@@ -13,7 +13,7 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Observer
 
 /**
- * Created by hzsunyj on 2021/7/8.
+ * 
  */
 
 private val handler: Handler = Handler(Looper.getMainLooper())

@@ -112,7 +112,7 @@ class MainFragment : Fragment(R.layout.main_fragment) {
                 if (!TextUtils.isEmpty(tip)) {
                     ToastUtil.showLong(tip!!)
                 } else {
-                    ToastUtil.showLong(getString(R.string.join_class_fail_try_again))// show error whit error code
+                    ToastUtil.showLong(getString(R.string.join_class_fail_try_again))// prompt the error message with a specified error code
                 }
             }
         } else {
@@ -121,7 +121,7 @@ class MainFragment : Fragment(R.layout.main_fragment) {
     }
 
     /**
-     * 加入课堂
+     * Join a class
      *
      */
     private fun joinClass() {
@@ -186,7 +186,7 @@ class MainFragment : Fragment(R.layout.main_fragment) {
                     if (!TextUtils.isEmpty(tip)) {
                         ToastUtil.showLong(tip!!)
                     } else {
-                        ToastUtil.showLong(getString(R.string.join_class_fail_try_again))// show error whit error code
+                        ToastUtil.showLong(getString(R.string.join_class_fail_try_again))// prompt the error message with a specified error code
                     }
                 }
             }
@@ -204,7 +204,7 @@ class MainFragment : Fragment(R.layout.main_fragment) {
     }
 
     /**
-     * 录制回放
+     * Recording playback
      *
      */
     private fun recordPlay() {

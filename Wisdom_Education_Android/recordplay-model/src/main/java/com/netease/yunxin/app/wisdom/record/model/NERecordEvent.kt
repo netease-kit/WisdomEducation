@@ -6,12 +6,12 @@
 package com.netease.yunxin.app.wisdom.record.model
 
 /**
- * Event事件
+ * Event
  *
  * @property roomUid
  * @property timestamp
  * @property type
- * @property data 自定义数据
+ * @property data custom data
  */
 data class NERecordEvent(
     val roomUid: String,

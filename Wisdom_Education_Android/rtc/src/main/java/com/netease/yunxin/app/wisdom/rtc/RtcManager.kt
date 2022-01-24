@@ -18,7 +18,7 @@ import com.netease.yunxin.app.wisdom.base.util.ToastUtil
 import com.netease.yunxin.kit.alog.ALog
 
 /**
- * Created by hzsunyj on 2021/5/13.
+ *
  */
 object RtcManager : NERtcCallbackEx, NERtcStatsObserver {
 
@@ -38,10 +38,15 @@ object RtcManager : NERtcCallbackEx, NERtcStatsObserver {
 
     private val userList: MutableList<Long> = mutableListOf()
 
-    /// 音视频每一通是一个实例，用完就需要销毁
-    fun initEngine(context: Context, appKey: String): LiveData<Boolean> {
+    /// Each call instantiates an instance. If the call ends, the instance will be destroyed.
+    fun initEngine(
+        context: Context,
+        appKey: String,
+        rtcAddresses: NERtcServerAddresses?
+    ): LiveData<Boolean> {
         val initLD: MediatorLiveData<Boolean> = MediatorLiveData()
         val option = NERtcOption()
+        rtcAddresses?.let { option.serverAddresses = it }
         option.logLevel = NERtcConstants.LogLevel.INFO
         rtcEngine = NERtcEx.getInstance()
         rtcEngine?.let {

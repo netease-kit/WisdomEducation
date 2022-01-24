@@ -6,7 +6,7 @@
 package com.netease.yunxin.app.wisdom.edu.logic.model
 
 /**
- * 角色类型： host： 教育场景中映射为老师， broadcaster: 教育场景中映射为学生， audience： 教育场景中映射为观众，主要在大班课中使用
+ * Role type: host: teacher, broadcaster: student, audience: viewer in large classes
  */
 enum class NEEduRoleType(var value: String) {
     HOST("host"),

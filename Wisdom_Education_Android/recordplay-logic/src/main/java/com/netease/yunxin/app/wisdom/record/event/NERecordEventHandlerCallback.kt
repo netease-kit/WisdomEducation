@@ -9,10 +9,10 @@ import com.netease.yunxin.app.wisdom.record.model.NERecordItem
 
 interface NERecordEventHandlerCallback {
     /**
-     * 上下台/进出房间 音视频UI回调
+     * The callback is triggered if a member joins or leaves the speaker group and joins or leaves the room. 
      *
-     * @param inVideoList 上台/进入房间列表
-     * @param outVideoList 下台/离开房间列表
+     * @param inVideoList Raise hand accepted or joining the room
+     * @param outVideoList Raise hand rejected or leave the room
      */
     fun onMemberVideoChange(inVideoList: MutableList<NERecordItem>, outVideoList: MutableList<NERecordItem>)
 }

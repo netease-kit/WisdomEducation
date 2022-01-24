@@ -5,16 +5,17 @@
 
 package com.netease.yunxin.app.wisdom.whiteboard.api
 
+import com.netease.yunxin.app.wisdom.whiteboard.config.NEWbPrivateConf
 import com.netease.yunxin.app.wisdom.whiteboard.model.WhiteboardUser
 import com.netease.yunxin.app.wisdom.whiteboard.view.WhiteboardView
 
 /**
- * Created by hzsunyj on 2021/5/21.
+ * 
  */
 abstract class WhiteboardApi {
 
     /**
-     * 获取白板房间通道
+     * Get the channel name of the whiteboard
      */
     abstract fun getChannelName(): String
 
@@ -39,4 +40,6 @@ abstract class WhiteboardApi {
     abstract fun getCurTime(): Long?
 
     abstract fun getNonce(): String?
+
+    abstract fun getPrivateConf(): NEWbPrivateConf?
 }

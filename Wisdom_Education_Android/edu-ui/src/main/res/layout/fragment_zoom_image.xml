@@ -34,7 +34,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="图片发送于2021-07-01" />
+        tools:text="Image sent on 2021-07-01" />
 
     <View
         android:id="@+id/line_horizontal_top"

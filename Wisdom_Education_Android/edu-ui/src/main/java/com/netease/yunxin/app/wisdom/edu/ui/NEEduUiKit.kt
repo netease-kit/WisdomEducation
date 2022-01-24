@@ -19,7 +19,7 @@ import com.netease.yunxin.app.wisdom.edu.logic.options.NEEduOptions
 import com.netease.yunxin.app.wisdom.edu.ui.impl.NEEduUiKitImpl
 
 /**
- * 提供SDK配置，SDK初始化等基础能力，同时获取NEEduManager
+ * Configure and initialize the SDK and get NEEduManager
  */
 interface NEEduUiKit {
 
@@ -31,11 +31,11 @@ interface NEEduUiKit {
         var instance: NEEduUiKit? = null
 
         /**
-         * 初始化组件
+         * Initialize components
          *
-         * @param uuid 用户鉴权userUuid。匿名登录时请设置为空字符串""
-         * @param token 用户鉴权userToken。匿名登录时请设置为空字符串""
-         * @return 接口回调
+         * @param uuid The userUuid for authentication. set "" for anonymous login
+         * @param token The userToken for authentication. set "" for anonymous login
+         * @return callback
          */
         fun init(uuid: String, token: String): LiveData<NEResult<NEEduUiKit>> {
             val liveData: MediatorLiveData<NEResult<NEEduUiKit>> = MediatorLiveData()
@@ -63,10 +63,10 @@ interface NEEduUiKit {
         }
 
         /**
-         * 全局配置 SDK，必须在application的onCreate中调用
+         * Configure the SDK. Call the interface in onCreate of application
          *
-         * @param context 应用上下文
-         * @param eduOptions 配置项
+         * @param context The context information
+         * @param eduOptions configuration options
          */
         fun config(context: Application, eduOptions: NEEduOptions) {
             NEEduManager.config(context, eduOptions)

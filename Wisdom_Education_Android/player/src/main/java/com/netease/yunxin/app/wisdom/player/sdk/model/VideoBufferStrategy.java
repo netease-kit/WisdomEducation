@@ -9,34 +9,34 @@ package  com.netease.yunxin.app.wisdom.player.sdk.model;
 import com.netease.neliveplayer.sdk.constant.NEBufferStrategy;
 
 /**
- * 视频缓冲策略
+ * Video buffer strategy
  *
  * @author netease
  */
 
 public enum VideoBufferStrategy {
     /**
-     * 直播极速模式
+     * Fast mode
      */
     FAST(NEBufferStrategy.NELPTOPSPEED),
 
     /**
-     * 直播低延时模式
+     * Low-latency mode
      */
     LOW_LATENCY(NEBufferStrategy.NELPLOWDELAY),
 
     /**
-     * 直播流畅模式
+     * Fluency mode
      */
     FLUENCY(NEBufferStrategy.NELPFLUENT),
 
     /**
-     * 点播抗抖动模式
+     * Anti-jitter mode
      */
     ANTI_JITTER(NEBufferStrategy.NELPANTIJITTER),
 
     /**
-     * 直播延时追赶模式
+     * Delay pull-up mode
      */
     DELAY_PULL_UP(NEBufferStrategy.NELPDELAYPULLUP);
 

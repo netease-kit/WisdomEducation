@@ -6,6 +6,6 @@
 package com.netease.yunxin.app.wisdom.edu.logic.net.service.response
 
 /**
- * Created by hzsunyj on 2021/6/1.
+ * 
  */
 class BatchStreamRes(val list: MutableList<Any?>)

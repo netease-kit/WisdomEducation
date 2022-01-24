@@ -1,12 +1,12 @@
 package com.netease.yunxin.app.wisdom.education;
 
 /**
- * 智慧云课堂中使用到的 id
+ * IDs used in Wisdom Education
  */
 public final class NEEduTestConstants {
 
     /**
-     * view id 列表
+     * view ID list
      */
     public interface ViewIds {
         int LOGIN_ROOM_ID = R.id.et_room_id;
@@ -26,6 +26,10 @@ public final class NEEduTestConstants {
 
         int MAIN_BOTTOM_ITEM_LABEL = R.id.tv_bottom_label;
 
+        int MAIN_BOTTOM_ITEM_AUDIO = R.id.item_audio;
+        int MAIN_BOTTOM_ITEM_VIDEO = R.id.item_video;
+        int MAIN_BOTTOM_ITEM_SHARE = R.id.item_share;
+
         int MAIN_MEMBER_VIDEO = R.id.rcv_member_video;
 
         int CLASS_MEMBER_VIDEO_LIST = R.id.rcv_member_video;
@@ -34,7 +38,7 @@ public final class NEEduTestConstants {
     }
 
     /**
-     * 文本内容
+     * Text
      */
     public interface TextContent {
         String CLASS_NOT_START = "课堂未开始";
@@ -46,11 +50,19 @@ public final class NEEduTestConstants {
         String WISDOM_EDUCATION = "智慧云课堂";
         String ENTER_CLASS = "加入课堂";
 
+        String AUDIO_OFF = "静音";
+        String AUDIO_ON = "解除静音";
+        String VIDEO_ON = "开启视频";
+        String VIDEO_OFF = "关闭视频";
+        String SHARE_ON = "共享屏幕";
+        String SHARE_OFF = "停止共享";
+
         String BEGIN_IMMEDIATELY = "立即开始";
+        String ALLOW = "允许";
     }
 
     /**
-     * 图片资源 id 列表
+     * IDs of image resources
      */
     public interface DrawableRes {
 

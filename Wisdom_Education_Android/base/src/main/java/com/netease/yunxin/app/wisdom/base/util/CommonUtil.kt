@@ -15,7 +15,7 @@ object CommonUtil {
     /**
      * Emits only the first event during sequential time windows of a specified duration
      * @param duration duration time
-     * @param combine 一个接口中的所有回调方法是否共用防抖时间
+     * @param combine Specify whether all callback methods for an API share the anti-jitter time
      */
     fun <T> T.throttleFirst(duration: Long = 500L, combine: Boolean = false, defaultReturnValue: Any? = null): T {
         return Proxy.newProxyInstance(this!!::class.java.classLoader, this!!::class.java.interfaces,

@@ -14,12 +14,12 @@ import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduStreams
 import com.netease.yunxin.app.wisdom.edu.logic.service.NEEduMemberService
 
 /**
- * Created by hzsunyj on 2021/5/20.
+ * 
  */
 internal class NEEduMemberServiceImpl : NEEduMemberService() {
 
     /**
-     * 房间内所有成员
+     * All members in the room
      */
     private val joinList: MutableList<NEEduMember> = mutableListOf()
 
@@ -42,10 +42,10 @@ internal class NEEduMemberServiceImpl : NEEduMemberService() {
     }
 
     /**
-     * 更新本地成员列表
+     * Update the member list
      *
-     * @param list 更新成员
-     * @param increment 是否增量更新
+     * @param list The member list
+     * @param increment Check whether an increment occurs
      */
     override fun updateMemberJoin(list: List<NEEduMember>, increment: Boolean) {
         synchronized(joinList) {
@@ -110,11 +110,11 @@ internal class NEEduMemberServiceImpl : NEEduMemberService() {
     }
 
     /**
-     * 更新成员属性的本地缓存
+     * Update the local cache of member properties
      *
-     * @param member 变更成员
-     * @param properties 变更属性
-     * @return 发生变化的成员
+     * @param member The members
+     * @param properties The changed properties
+     * @return The members with changes
      */
     override fun updateMemberPropertiesCache(member: NEEduMember, properties: NEEduMemberProperties): NEEduMember? {
         for (element in joinList) {

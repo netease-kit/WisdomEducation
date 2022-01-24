@@ -11,7 +11,7 @@ data class NEEduUpdateMemberPropertyReq(
     val value: Int? = NEEduStateValue.OPEN,
     val audio: Int? = null,
     val video: Int? = null,
-    val drawable: Int? = null, // 白板
+    val drawable: Int? = null, // Whiteboard
 )
 
 enum class NEEduMemberPropertiesType(val type: String) {

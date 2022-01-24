@@ -10,7 +10,7 @@ import com.netease.yunxin.app.wisdom.player.sdk.LivePlayerObserver;
 import com.netease.yunxin.app.wisdom.player.sdk.model.MediaInfo;
 
 /**
- * 播放器状态回调观察者
+ * Observers of player status callbacks
  * <p>
  *
  * @author netease

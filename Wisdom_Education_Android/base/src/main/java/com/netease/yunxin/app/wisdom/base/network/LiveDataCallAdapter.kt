@@ -16,7 +16,7 @@ import java.lang.reflect.Type
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
- * Created by hzsunyj on 4/20/21.
+ * 
  */
 class LiveDataCallAdapter<T>(private val responseType: Type) : CallAdapter<T, LiveData<T>> {
 

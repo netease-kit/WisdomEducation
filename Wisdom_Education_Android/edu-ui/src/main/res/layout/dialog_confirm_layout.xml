@@ -30,7 +30,7 @@
             android:textColor="@color/black"
             android:textSize="@dimen/ts_17_dp"
             android:textStyle="bold"
-            tools:text="共享屏幕" />
+            tools:text="Share Screen" />
 
         <TextView
             android:id="@+id/message"
@@ -44,7 +44,7 @@
             android:textColor="@color/color_333333"
             android:textSize="@dimen/ts_13_dp"
             android:visibility="gone"
-            tools:text="云课堂将开始截取您的屏幕上显示的所有内容。"
+            tools:text="Wisdom Education is capturing your screen."
             tools:visibility="visible" />
 
         <View

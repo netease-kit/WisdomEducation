@@ -15,7 +15,7 @@ import android.webkit.*
 import com.netease.yunxin.app.wisdom.whiteboard.BuildConfig
 
 /**
- * Created by hzsunyj on 2021/5/21.
+ * 
  */
 open class WhiteboardView(context: Context, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int) :
     WebView(context, attrs, defStyleAttr, defStyleRes) {

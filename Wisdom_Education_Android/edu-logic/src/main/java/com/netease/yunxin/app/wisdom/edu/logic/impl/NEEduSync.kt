@@ -12,19 +12,19 @@ import com.netease.yunxin.app.wisdom.edu.logic.model.*
 import com.netease.yunxin.kit.alog.ALog
 
 /**
- * Created by hzsunyj on 2021/5/17.
+ * 
  */
 internal class NEEduSync(val neEduManager: NEEduManagerImpl) {
 
 
-    private var lastSequenceId: Long = -1
+    private var lastSequenceId: Long = -1 // The last sequence ID of the local cache
 
     var syncing: Boolean = false
 
-    /**一个同步流程中的id集合*/
+    /**The ID set of a sync process*/
     private var sequenceList = mutableListOf<Long>()
 
-    /**一个同步流程中的cmd数据集合*/
+    /**CMD data set of a sync process*/
     private val sequenceData: ArrayMap<Long, NEEduCMDBody> = ArrayMap()
 
     val errorLD: MediatorLiveData<Int> = MediatorLiveData()
@@ -39,7 +39,7 @@ internal class NEEduSync(val neEduManager: NEEduManagerImpl) {
                 val next = iterable.next()
                 if (next.type == NEEduNotifyType.R.value && next.roomUuid == NEEduManagerImpl.getRoom().roomUuid) {
                     next.sequence?.let {
-                        if (next.sequence > lastSequenceId) {
+                        if (next.sequence > lastSequenceId) { // Sequence sorting one by one to the last sequence.
                             sequenceList.add(next.sequence)
                             sequenceData[next.sequence] = next
                         }
@@ -89,7 +89,9 @@ internal class NEEduSync(val neEduManager: NEEduManagerImpl) {
     }
 
     /**
-     * lastSequenceId==-1， 说明还没有拉取snapshot，下行就已经到了， 先缓存
+     * Handle notifications from the server
+     *
+     * If the initial value lastSequenceId==-1, no snapshots are pulled. The notifications are saved in local cache
      */
     fun handle(cmdBody: NEEduCMDBody): Boolean {
         if (cmdBody.roomUuid != NEEduManagerImpl.getRoom().roomUuid) {
@@ -102,18 +104,18 @@ internal class NEEduSync(val neEduManager: NEEduManagerImpl) {
                         cacheCmdData(cmdBody)
                         return false
                     }
-                    cmdBody.sequence - lastSequenceId == 1L -> {
+                    cmdBody.sequence - lastSequenceId == 1L -> { //
                         lastSequenceId = cmdBody.sequence
                         return true
                     }
-                    cmdBody.sequence <= lastSequenceId -> {// error loss
+                    cmdBody.sequence <= lastSequenceId -> { // error loss, if the sequence is less than lastSequenceId in the local cache，drop the message
                         return false
                     }
-                    cmdBody.sequence - lastSequenceId >= 10L -> {// snapshot
+                    cmdBody.sequence - lastSequenceId >= 10L -> { // If the sequence is 10 greater than lastSequenceId in the local cache, query the full data of the snapshot
                         snapshot(NEEduManagerImpl.getRoom().roomUuid)
                         return false
                     }
-                    else -> {
+                    else -> { // If the sequce is greater than lastSequenceId but the difference is less than or equal to 10, update to the newest sequence using the sequence API.
                         fetchNextSequences(lastSequenceId + 1)
                         return false
                     }
@@ -126,13 +128,14 @@ internal class NEEduSync(val neEduManager: NEEduManagerImpl) {
 
     private fun fetchNextSequences(nextId: Long) {
         ALog.i("fetchNextSequences $lastSequenceId $nextId")
-        val fetchNextSequences = neEduManager.getRoomService().fetchNextSequences(NEEduManagerImpl.getRoom().roomUuid, nextId)
+        val fetchNextSequences =
+            neEduManager.getRoomService().fetchNextSequences(NEEduManagerImpl.getRoom().roomUuid, nextId)
         fetchNextSequences.observeForeverOnce { it ->
             if (it.success()) {
                 it.data?.let {
                     cacheCmdData(it.list)
                 }
-            } else {// fail 2 snapshot
+            } else {// fail, to snapshot
                 snapshot(NEEduManagerImpl.getRoom().roomUuid)
             }
         }
@@ -153,7 +156,7 @@ internal class NEEduSync(val neEduManager: NEEduManagerImpl) {
                 }
                 return@observeForeverOnce
             }
-            // network break, close class room, but client no sense, create the same classId room, when network
+            // network break, close class room, but no response from clients, create the same classId room, when network
             // reconnect, request snapshot, response new class snapshot, but client still old class snapshot
             if (t.data != null && neEduManager.getRoom().rtcCid != t.data!!.snapshot.room.rtcCid) {
                 errorLD.postValue(NEEduHttpCode.ROOM_NOT_EXIST.code)
@@ -168,7 +171,7 @@ internal class NEEduSync(val neEduManager: NEEduManagerImpl) {
 
     private fun dispatchSnapshotEvent(it: NEEduSnapshotRes) =
         if (it.sequence <= lastSequenceId) {
-            // do nothing, 说明消息已经到前面去了，等待下一次sync
+            // Do nothing. In this case, the message is updated to the top. Wait for next sync
         } else {
             lastSequenceId = it.sequence
             if (it.snapshot.members.size > 0) {

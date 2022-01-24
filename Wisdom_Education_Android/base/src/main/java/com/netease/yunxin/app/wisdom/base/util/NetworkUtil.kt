@@ -9,7 +9,7 @@ import android.content.Context
 import android.net.ConnectivityManager
 
 /**
- * Created by hzsunyj on 2021/6/2.
+ * 
  */
 object NetworkUtil {
 

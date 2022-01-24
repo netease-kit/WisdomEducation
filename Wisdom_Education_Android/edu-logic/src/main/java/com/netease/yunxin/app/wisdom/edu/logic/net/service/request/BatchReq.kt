@@ -8,6 +8,6 @@ package com.netease.yunxin.app.wisdom.edu.logic.net.service.request
 import com.google.gson.JsonArray
 
 /**
- * Created by hzsunyj on 2021/6/2.
+ * 
  */
 data class BatchReq(val operations: JsonArray)

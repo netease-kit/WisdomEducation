@@ -112,8 +112,8 @@
     <string name="sure_start_class">确认开始上课？</string>
     <string name="start_class_tips">开课后教学内容将同步至学生端，并正式开始课堂录制</string>
     <string name="sure_leave_class">确认离开课堂？</string>
-    <string name="leave_class_teacher_tips">离开教室后将暂停教学，学生需要等待您再次进入课堂后方可继续上课？</string>
-    <string name="leave_class_student_tips">离开教室后将暂停学习，需要等待您再次进入课堂后方可继续上课？</string>
+    <string name="leave_class_teacher_tips">离开教室后将暂停教学，学生需要等待您再次进入课堂后方可继续上课。</string>
+    <string name="leave_class_student_tips">离开教室后将暂停学习，需要等待您再次进入课堂后方可继续上课。</string>
     <string name="start_class_first">请先开始上课</string>
     <string name="teacher_label">(老师)</string>
     <string name="item_audio_unselected">解除静音</string>
@@ -150,4 +150,7 @@
     <string name="loading">正在加载中...</string>
     <string name="load_failed">加载失败，请点我重试</string>
     <string name="load_end">没有更多成员</string>
+    <string name="the_class_does_not_begin_please_wait_for_a_moment">课程还未开始，请耐心等待哦</string>
+    <string name="agree">同意</string>
+    <string name="decline">拒绝</string>
 </resources>

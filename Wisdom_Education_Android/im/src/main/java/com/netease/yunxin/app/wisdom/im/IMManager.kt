@@ -24,7 +24,7 @@ import com.netease.nimlib.sdk.util.NIMUtil
 import com.netease.yunxin.kit.alog.ALog
 
 /**
- * Created by hzsunyj on 4/21/21.
+ * 
  */
 object IMManager {
 
@@ -52,7 +52,7 @@ object IMManager {
 
     private var loginInfo: LoginInfo? = null
 
-    //dispatch message
+    //Send messages
     private val passthrougthObserver = Observer<PassthroughNotifyData> { t ->
         t?.body?.let {
             // post value may be lost message
@@ -89,12 +89,13 @@ object IMManager {
         }
     }
 
-    fun config(context: Context, appKey: String, reuse: Boolean) {
+    fun config(context: Context, appKey: String, reuse: Boolean, useIMAssetServerAddressConfig: Boolean) {
         this.reuseIM = reuse
         if (!this.reuseIM) {
             val value = SDKOptions()
             value.appKey = appKey
             value.disableAwake = true
+            value.useAssetServerAddressConfig = useIMAssetServerAddressConfig
             NIMClient.config(context, null, value)
         }
         if (NIMUtil.isMainProcess(context)) {

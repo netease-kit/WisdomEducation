@@ -19,8 +19,8 @@ import com.netease.yunxin.kit.alog.ALog;
 
 /**
  * @author netease
- * 单一TextureView
- * 适用于播放页面只有一个TextureView时，支持后台播放
+ * Single TextureView
+ * The method is applicable to the case where only on TextureView on the page. Support background playback.
  */
 
 public class BaseTextureView extends TextureView implements IRenderView, TextureView.SurfaceTextureListener {
@@ -45,7 +45,7 @@ public class BaseTextureView extends TextureView implements IRenderView, Texture
     private MeasureHelper mMeasureHelper;
 
     /**
-     * ******************************** 构造器 ****************************
+     * ******************************** Constructor ****************************
      */
 
     public BaseTextureView(Context context) {
@@ -80,7 +80,7 @@ public class BaseTextureView extends TextureView implements IRenderView, Texture
     @Override
     public void setCallback(SurfaceCallback callback) {
         if (mCallback != null || callback == null) {
-            return; // 已经注册过的或者null注册的，直接返回
+            return; // If the callback is registered or nullified, return the callback
         }
 
         mCallback = callback;
@@ -169,7 +169,7 @@ public class BaseTextureView extends TextureView implements IRenderView, Texture
     @Override
     public void onSurfaceTextureAvailable(SurfaceTexture surfaceTexture, int width, int height) {
         ALog.d(TAG, "onSurfaceTextureAvailable surfaceTexture=" + surfaceTexture + " this=" + this);
-        //api 16 以上才能支持 setSurfaceTexture 接口，才能支持后台播放
+        //api 16 or higher supports setSurfaceTexture and background playback
         boolean hasSetsavedSurfaceTexture = false;
         if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) && mSavedSurfaceTexture != null) {
             try {
@@ -215,7 +215,7 @@ public class BaseTextureView extends TextureView implements IRenderView, Texture
         mWidth = 0;
         mHeight = 0;
 
-        // 如在该回调前调用releaseSurface则在此释放，否则依靠垃圾回收机制
+        // If the releaseSurface is called before this callback, the instance is released. Otherwise, the instance is released based on garbage collection mechanism
         if (mReleased) {
             releaseSurfaceInternal();
         }

@@ -24,7 +24,7 @@ data class NERecordItem(
     val url: String,
     val userName: String,
     val subStream: Boolean,
-    var offset: Long // 视频开始时间与基准时间轴的偏移量
+    var offset: Long // The offset between the start time of the video and the benchmark
 ) {
     companion object {
         const val TYPE_WHITEBOARD = "gz"

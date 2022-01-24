@@ -6,7 +6,7 @@
 package com.netease.yunxin.app.wisdom.edu.logic.extras
 
 /**
- * Created by hzsunyj on 2021/7/19.
+ * 
  */
 object NEEduExtras {
     const val AUTHORIZATION = "Authorization"

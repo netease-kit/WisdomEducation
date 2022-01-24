@@ -97,7 +97,7 @@ object SampleSizeUtil {
                 sampleSize++
             }
 
-            // 2的指数对齐
+            // round up to a power of 2
             sampleSize = roundup2n(sampleSize)
         }
         return sampleSize
@@ -105,7 +105,7 @@ object SampleSizeUtil {
 
     private var textureSize = 0
 
-    //存在第二次拿拿不到的情况，所以把拿到的数据用一个static变量保存下来
+    //Hold the value in the static variable
     fun getTextureSize(): Int {
         if (textureSize > 0) {
             return textureSize
@@ -116,7 +116,7 @@ object SampleSizeUtil {
         return textureSize
     }
 
-    // 将x向上对齐到2的幂指数
+    // round up x to a power of 2
     fun roundup2n(x: Int): Int {
         var x = x
         if (x and x - 1 == 0) {

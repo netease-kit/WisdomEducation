@@ -14,7 +14,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 /**
- * Created by hzsunyj on 4/20/21.
+ * 
  */
 class RetrofitManager private constructor() {
 

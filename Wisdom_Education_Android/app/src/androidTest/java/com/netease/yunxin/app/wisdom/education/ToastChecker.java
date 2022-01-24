@@ -3,7 +3,7 @@ package com.netease.yunxin.app.wisdom.education;
 import android.os.SystemClock;
 
 /**
- * toast监测
+ * The toast observer
  */
 public class ToastChecker implements IGlobalEventChecker {
     private String message = "";
@@ -17,7 +17,7 @@ public class ToastChecker implements IGlobalEventChecker {
     }
 
     /**
-     * 开始toast监测
+     * Start toast observer
      * @param message
      */
     public void startCheck(String message) {
@@ -26,17 +26,17 @@ public class ToastChecker implements IGlobalEventChecker {
     }
 
     /**
-     * 等待toast出现
-     * @return 2秒内监测到toast直接返回true，没有监测到返回false
+     * Wait for toast appearing
+     * @return true if toast is detected within 2 seconds, false if not detected
      */
     public boolean waitChecked() {
         return this.waitChecked(2000);
     }
 
     /**
-     * 等待toast出现
-     * @param waitTime 指定的监测时间
-     * @return 指定时间内监测到toast直接返回true，没有监测到返回false
+     * Wait for toast appearing
+     * @param waitTime The wait time
+     * @return true if toast is detected within the wait time, false if not detected
      */
     public boolean waitChecked(int waitTime) {
         long startTime = SystemClock.uptimeMillis();

@@ -10,7 +10,7 @@ import android.content.ClipboardManager
 import android.content.Context
 
 /**
- * Created by hzsunyj on 2021/6/7.
+ * 
  */
 object ClipboardUtil {
 

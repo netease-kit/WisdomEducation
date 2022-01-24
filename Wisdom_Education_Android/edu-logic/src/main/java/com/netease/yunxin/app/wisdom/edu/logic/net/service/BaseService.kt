@@ -23,7 +23,7 @@ import java.lang.reflect.Type
 import java.lang.reflect.WildcardType
 
 /**
- * Created by hzsunyj on 2021/5/26.
+ * 
  */
 internal interface BaseService {
 
@@ -88,7 +88,7 @@ internal interface BaseService {
 
     /**
      * return type : LiveData<NEResult<T>>, T is data bean type
-     *request over by passthrough
+     * request over by passthrough
      */
     fun <T> executeOverPassthrough(method: Method, vararg args: Any): LiveData<NEResult<T>> {
         val observableType = getMethodObservableType(method)

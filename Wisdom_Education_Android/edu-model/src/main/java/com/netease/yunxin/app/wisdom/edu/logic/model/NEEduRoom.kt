@@ -6,7 +6,7 @@
 package com.netease.yunxin.app.wisdom.edu.logic.model
 
 /**
- * Created by hzsunyj on 2021/5/18.
+ * 
  */
 class NEEduRoom(
     val roomName: String,
@@ -61,15 +61,15 @@ class NEEduRoom(
 }
 
 class NEEduRoomStates(
-    /**开始&结束课堂*/
+    /**Start&end class*/
     var step: NEEduState?,
-    /**暂停&继续课堂*/
+    /**Pause/resume class*/
     var pause: NEEduState?,
-    /**聊天室全体禁言*/
+    /**Mute all chat*/
     var muteChat: NEEduState?,
-    /**全体禁止视频*/
+    /**Mute all video*/
     var muteVideo: NEEduState?,
-    /**全体静音*/
+    /**Mute all audio*/
     var muteAudio: NEEduState?,
 ) {
     companion object {

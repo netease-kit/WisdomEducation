@@ -1,2 +1,2 @@
-## 说明
-- 音视频所有业务逻辑module
+## Note
+- Audio & Video Call business logic module

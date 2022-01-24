@@ -15,36 +15,36 @@ import java.util.*
  */
 interface NERecordEventHandler {
     /**
-     * 过滤事件类型
+     * Filter event types
      *
-     * @return 是否允许处理事件
+     * @return check whether to allow to handle events
      */
     fun filterType(event: NERecordEvent): Boolean
 
     /**
-     * 拖动进度条处理，更新到currentTime的状态
-     * 用户可以自定义处理流程，如从服务端获取snap的方式同步，用本地历史事件队列做兜底
+     * Handle events for dragging the progress bar. Update the state to currentTime
+     * Developers can customize the handling process. For example, get the snapshot of the current state. or manage local event history queue.
      *
-     * @param prevExecutedEventList seek前执行完成事件队列
-     * @param executedEventList seek后执行完成事件队列
+     * @param prevExecutedEventList The executed event list before the seek operation
+     * @param executedEventList The executed event list after the seek operation
      */
     fun processSeek(prevExecutedEventList: LinkedList<NERecordEvent>, executedEventList: LinkedList<NERecordEvent>)
 
     /**
-     * 正常播放执行处理每个事件
+     * Handle each event during normal playback
      *
      * @param event
      */
     fun process(event: NERecordEvent)
 
     /**
-     * 初始化重置
+     * Reset to the initial state
      *
      */
     fun resetToInit()
 
     /**
-     * 过滤其他条件
+     * Filter other conditions
      *
      */
     fun filterOther(event: NERecordEvent): Boolean

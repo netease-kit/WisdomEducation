@@ -54,9 +54,9 @@ class TitleView(context: Context, attrs: AttributeSet?, defStyleAttr: Int = 0) :
     }
 
     /**
-     * 切换到课堂结束视图
+     * directed to the class end view
      *
-     * @param duration 时间
+     * @param duration The class duration
      */
     fun setFinishClazzState(duration: String) {
         updateHandler.removeCallbacks(updateTimeRunnable)
@@ -95,9 +95,16 @@ class TitleView(context: Context, attrs: AttributeSet?, defStyleAttr: Int = 0) :
         binding.ivInfo.setOnClickListener(l)
     }
 
+    var lastUpStatus = 0
+    var lastDownStatus = 0
+
     fun setNetworkQuality(quality: NERtcNetworkQualityInfo) {
         binding.ivQuality.apply {
-            ALog.i("setNetworkQuality upStatus:${quality.upStatus} downStatus:${quality.downStatus}")
+            if(quality.upStatus != lastUpStatus && quality.downStatus != lastDownStatus) {
+                ALog.i("setNetworkQuality upStatus:${quality.upStatus} downStatus:${quality.downStatus}")
+            }
+            lastUpStatus = quality.upStatus
+            lastDownStatus = quality.downStatus
             when (max(quality.upStatus, quality.downStatus)) {
                 RTCNetworkStatusType.kRtcNetworkStatusGood, RTCNetworkStatusType.kRtcNetworkStatusExcellent -> setImageResource(
                     R.drawable

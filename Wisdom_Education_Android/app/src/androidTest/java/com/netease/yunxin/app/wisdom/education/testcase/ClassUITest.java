@@ -25,7 +25,7 @@ import static com.netease.yunxin.app.wisdom.education.NEEduTestConstants.ViewIds
 import static com.netease.yunxin.app.wisdom.education.NEEduTestConstants.ViewIds.MAIN_START_CLASS;
 
 /**
- * 课堂主页面
+ * The landing page of the class
  */
 @ClassRegister
 public class ClassUITest {
@@ -97,8 +97,8 @@ public class ClassUITest {
 
 
     /**
-     * 点击视频窗口，检查菜单项，并复位窗口状态
-     * @param member 点击视频窗口的成员名称
+     * Click the video UI view, check menu options and reset the view state
+     * @param member The name of the member
      *
      */
     public static void checkVideoItem(String member, String menuItem) {

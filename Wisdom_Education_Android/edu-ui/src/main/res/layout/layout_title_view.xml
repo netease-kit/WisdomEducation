@@ -32,7 +32,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="正在上课(10:20)" />
+        tools:text="Streaming (10:20)" />
 
     <TextView
         android:id="@+id/tv_clazz_name"
@@ -49,7 +49,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/tv_clazz_state"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="第 1 节课 - 英文情景对话" />
+        tools:text="Class 1 - Dialogue" />
 
 
     <androidx.appcompat.widget.AppCompatImageView

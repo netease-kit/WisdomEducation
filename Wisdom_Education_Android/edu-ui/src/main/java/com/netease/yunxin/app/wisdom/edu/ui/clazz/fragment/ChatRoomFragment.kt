@@ -112,7 +112,7 @@ class ChatRoomFragment : BaseFragment(R.layout.fragment_chatroom),
         enterRoom()
         viewModel.onMuteAllChat().observe(this, {
             if (!eduManager.getEntryMember().isHost()) {
-                if (firstTips) {// 首次进入，如果是非全体静音，不需要toast 提示
+                if (firstTips) {// Join the room for the first time. No toast tips appear if the room is not all muted
                     firstTips = false
                     if (it) {
                         ToastUtil.showShort(getString(R.string.chat_room_has_been_banned))
@@ -351,7 +351,7 @@ class ChatRoomFragment : BaseFragment(R.layout.fragment_chatroom),
         takePictureFile = takePictureFile?.let { FileUtils.createFile(it, "IMG_", ".jpg") }
         if (takePictureFile != null) {
             photoURI = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                //Android N必须使用这种方式
+                //Android N must use this approach
                 FileProvider.getUriForFile(
                     requireContext(), requireContext().packageName.toString() +
                             ".generic.file.provider", takePictureFile!!

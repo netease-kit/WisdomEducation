@@ -1,2 +1,2 @@
-## 说明
+## Note
 - rvadapter

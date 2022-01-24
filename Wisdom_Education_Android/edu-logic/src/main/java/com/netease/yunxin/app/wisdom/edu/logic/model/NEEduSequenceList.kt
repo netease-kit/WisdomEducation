@@ -6,7 +6,7 @@
 package com.netease.yunxin.app.wisdom.edu.logic.model
 
 /**
- * Created by hzsunyj on 2021/5/18.
+ * 
  */
 class NEEduSequenceList(
     val total: Int,

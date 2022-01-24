@@ -7,7 +7,7 @@ package com.netease.yunxin.app.wisdom.edu.logic.net.service.request
 
 import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduStreams
 
-/**加入房间时的请求参数
+/** The request parameters for joining a room
  * @param userName
  * @param role
  * @param streams

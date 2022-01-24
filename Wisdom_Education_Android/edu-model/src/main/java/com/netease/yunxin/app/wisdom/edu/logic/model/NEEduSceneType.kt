@@ -6,7 +6,7 @@
 package com.netease.yunxin.app.wisdom.edu.logic.model
 
 /**
- * 场景值，教育目前三类： 1v1， 小班课， 大班课
+ * Scenario value: 1v1, breakout class, large class
  */
 enum class NEEduSceneType(var value: String) {
     ONE_TO_ONE("EDU.1V1"),

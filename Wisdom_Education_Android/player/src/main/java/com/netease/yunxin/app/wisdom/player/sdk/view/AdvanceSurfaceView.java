@@ -12,8 +12,8 @@ import com.netease.yunxin.app.wisdom.player.view.BaseSurfaceView;
 
 
 /**
- * SurfaceView控件
- * 对SurfaceView做了封装，可直接用于播放器播放
+ * SurfaceView control
+ * SurfaceView is wrapped for the player
  *
  * @author netease
  */

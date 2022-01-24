@@ -11,15 +11,15 @@ package com.netease.yunxin.app.wisdom.record.listener
  */
 interface NERecordClockListener {
     /**
-     * 播放进度更新
+     * Update the playback position
      *
-     * @param currentTime 当前时间
-     * @param totalTime 总时间
+     * @param currentTime The current time
+     * @param totalTime The total time
      */
     fun onClockProgressChanged(currentTime: Long, totalTime: Long)
 
     /**
-     * 播放结束
+     * Playback stops
      *
      */
     fun onClockStop()

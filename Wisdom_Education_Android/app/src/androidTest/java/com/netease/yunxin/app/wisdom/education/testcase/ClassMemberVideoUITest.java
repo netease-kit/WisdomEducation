@@ -16,21 +16,21 @@ import static com.netease.yunxin.app.wisdom.education.NEEduTestConstants.ViewIds
 import static com.netease.yunxin.app.wisdom.education.NEEduTestConstants.ViewIds.CLASS_MEMBER_VIDEO_MENU_ITEM;
 
 /**
- * 课堂成员视频窗口
+ * UI view of class members
  */
 @ClassRegister
 public class ClassMemberVideoUITest {
 
     /**
-     * 点击视频窗口，检查成员视频窗口选项，并复位窗口状态
-     * @param member 点击视频窗口的成员名称
-     * @param menuText 成员视频窗口选项文案
+     * Click the video UI view，check options of the video UI view menu and reset the view state
+     * @param member The name of the member
+     * @param menuText The menu text of the video UI view option
      */
     public static void checkVideoMenu(String member, String menuText) {
-        clickOnRecyclerItemWithHolder(CLASS_MEMBER_VIDEO_LIST, hasTextInHolderWithPrefix(member)); // 点击视频窗口，打开菜单
+        clickOnRecyclerItemWithHolder(CLASS_MEMBER_VIDEO_LIST, hasTextInHolderWithPrefix(member)); // Click video UI view and open the menu.
         waitForTime(1000);
 
-        // 检查成员视频窗口选项
+        // Check the options of the video UI view
         assertViewExist(CLASS_MEMBER_VIDEO_MENU_ITEM, menuText);
         pressBack();
 
@@ -39,15 +39,15 @@ public class ClassMemberVideoUITest {
     }
 
     /**
-     * 点击视频窗口，点击成员视频窗口选项
-     * @param member 点击视频窗口的成员名称
-     * @param menuText 成员视频窗口选项文案
+     * Click the video UI view and click the options
+     * @param member The name of the member
+     * @param menuText The menu text of the video UI view option
      */
     public static void clickVideoMenu(String member, String menuText) {
-        clickOnRecyclerItemWithHolder(CLASS_MEMBER_VIDEO_LIST, hasTextInHolderWithPrefix(member)); // 点击视频窗口，打开菜单
+        clickOnRecyclerItemWithHolder(CLASS_MEMBER_VIDEO_LIST, hasTextInHolderWithPrefix(member)); // Click the video menu view to open the menu
         waitForTime(1000);
 
-        // 点击成员视频窗口选项
+        // Click the options of the video UI view
         assertViewExist(CLASS_MEMBER_VIDEO_MENU_ITEM, menuText);
         viewClick(CLASS_MEMBER_VIDEO_MENU_ITEM, menuText);
 

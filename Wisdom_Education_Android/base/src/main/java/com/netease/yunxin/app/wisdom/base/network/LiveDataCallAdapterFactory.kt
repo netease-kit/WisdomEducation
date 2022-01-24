@@ -13,7 +13,7 @@ import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 
 /**
- * Created by hzsunyj on 4/20/21.
+ * 
  */
 class LiveDataCallAdapterFactory : CallAdapter.Factory() {
     override fun get(returnType: Type, annotations: Array<out Annotation>, retrofit: Retrofit): CallAdapter<*, *>? {

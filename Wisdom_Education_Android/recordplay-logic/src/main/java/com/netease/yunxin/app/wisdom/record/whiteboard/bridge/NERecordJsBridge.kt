@@ -21,7 +21,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 
 /**
- * Created by hzsunyj on 2021/5/21.
+ * 
  */
 class NERecordJsBridge(private val whiteboardApi: NERecordWhiteboardApi) : Handler(Looper.getMainLooper()) {
 

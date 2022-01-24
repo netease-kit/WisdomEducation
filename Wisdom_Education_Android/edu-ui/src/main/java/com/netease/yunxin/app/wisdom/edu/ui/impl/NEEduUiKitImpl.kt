@@ -20,7 +20,7 @@ import com.netease.yunxin.app.wisdom.edu.ui.clazz.*
 import com.netease.yunxin.kit.alog.ALog
 
 /**
- * Created by hzsunyj on 4/21/21.
+ * 
  */
 internal class NEEduUiKitImpl : NEEduUiKit {
 

@@ -77,13 +77,13 @@ class LiveClassActivity(layoutId: Int = R.layout.activity_live_clazz) : BaseClas
             val options = VideoOptions()
             options.hardwareDecode = false
             /**
-             * isPlayLongTimeBackground 控制退到后台或者锁屏时是否继续播放，开发者可根据实际情况灵活开发,我们的示例逻辑如下：
-             * 使用软件解码：
-             * isPlayLongTimeBackground 为 false 时，直播进入后台停止播放，进入前台重新拉流播放
-             * isPlayLongTimeBackground 为 true 时，直播进入后台不做处理，继续播放,
+             * isPlayLongTimeBackground Specify whether to continue playback in the background or screen lock. Developers can modify based on requirements: For example:
+             * Software decoding is enabled:
+             * Set isPlayLongTimeBackground to false, streaming stops when the app is switched to the background and resumes to stream after switched back to the foreground.
+             * Set isPlayLongTimeBackground to true, the streaming continues after the app is switched to the background.
              *
-             * 使用硬件解码：
-             * 直播进入后台停止播放，进入前台重新拉流播放
+             * Hardware is enabled:
+             * The live stream stops if the app is switched to the background and resume streaming after the app comes back to the foreground。
              */
             options.isPlayLongTimeBackground = false
             options.bufferStrategy = VideoBufferStrategy.ANTI_JITTER
@@ -154,7 +154,7 @@ class LiveClassActivity(layoutId: Int = R.layout.activity_live_clazz) : BaseClas
     private fun initViews() {
         replaceFragment(R.id.layout_members, getMembersFragment())
 
-        // 底部按钮
+        // The button at the bottom
         binding.bottomView.apply {
             getHandsUp().visibility = View.GONE
             getHandsUpApply().visibility = View.GONE
@@ -166,7 +166,7 @@ class LiveClassActivity(layoutId: Int = R.layout.activity_live_clazz) : BaseClas
             getChatRoomView().visibility = View.VISIBLE
         }
 
-        // 聊天室
+        // Chat room
         eduRoom.chatRoomId()?.let {
             if (!eduManager.roomConfig.is1V1()) {
                 getChatroomFragment().let {
@@ -201,10 +201,10 @@ class LiveClassActivity(layoutId: Int = R.layout.activity_live_clazz) : BaseClas
             showFragmentWithMembers()
         }
 
-        // 顶部返回按钮
+        // The back button at the top
         handleBackBtn(getBackView())
 
-        // 课程状态 & 暂离 & 开始/结束课程
+        // Class state & paused & start/end class
         initClazzViews(getClazzTitleView())
         getClazzTitleView().setClazzState(getString(R.string.class_did_not_start))
 
@@ -215,7 +215,7 @@ class LiveClassActivity(layoutId: Int = R.layout.activity_live_clazz) : BaseClas
         states.step?.value?.also {
             when (it) {
                 NEEduRoomStep.START.ordinal -> {
-                    // 保存回放请求参数
+                    // Save playback request parameters
                     PreferenceUtil.recordPlay =
                         Pair(eduRoom.roomUuid, eduRoom.rtcCid)
 

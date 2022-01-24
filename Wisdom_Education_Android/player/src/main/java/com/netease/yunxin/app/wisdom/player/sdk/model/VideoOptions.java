@@ -8,7 +8,7 @@ package  com.netease.yunxin.app.wisdom.player.sdk.model;
 import com.netease.yunxin.app.wisdom.player.sdk.LivePlayer;
 
 /**
- * 视频播放配置项
+ * Playback options
  *
  * @author netease
  */
@@ -20,63 +20,63 @@ public class VideoOptions {
     }
 
     /**
-     * 播放缓冲策略，默认是极速模式
+     * Playback cache strategy. The default value is the fast mode.
      * {@link VideoBufferStrategy}
      */
     public VideoBufferStrategy bufferStrategy = VideoBufferStrategy.FAST;
 
     /**
-     * 缓冲区大小
-     * 只适用于点播，不能用于直播
-     * 可设置范围是5M~100M
+     * The cache size.
+     * Applies only to VOD not live streaming.
+     * The value range: 5M to 100M.
      */
     public int bufferSize = 150 * 1024 * 1024;
 
     /**
-     * 是否为硬件解码，默认为软件解码
+     * Specify whether to use hardware decoder. The default value is software decoder.
      */
     public boolean hardwareDecode = false;
 
     /**
-     * 是否长时间后台播放
-     * 如果是true，那么APP应用层需要开启service后台播放长时间播放，AdvanceLivePlayer里会关闭切后台3分钟回到前台就重置播放器拉流
-     * 如果是false，那么AdvanceLivePlayer里切后台3分钟回到前台就重置播放器拉流
+     * Specify whether to continue playback in the background
+     * If set to true，the application has to enable the service option to allow background playback. The player stops switching to foreground after 3 minutes in AdvanceLivePlayer
+     * If set to false，the player resets the stream 3 minutes after the player is switched back to foreground using streamsAdvanceLivePlayer
      */
     public boolean isPlayLongTimeBackground = false;
 
     /**
-     * 拉流超时时间，单位秒。只能设置(0, 10]之间的值，填0或者超过10则改为默认超时时间10秒
+     * Playback timeout. Unit: seconds. Value range: 0 to 10. A value of 0 or a number higher than 10 will be set to the default vale 10.
      */
     public int playbackTimeout = 10;
 
     /**
-     * 设置循环播放
-     * 默认是0，不循环；-1无限循环；1循环一次，2循环两次，以此类推
+     * Set loop playback
+     * The default value 0 inidcates no loop, -1: infinite loop. 1: loop playback for once and 2 for twice and the like
      */
     public int loopCount = 0;
 
     /**
-     * 设置精确seek
-     * 只适用于点播
-     * false，关闭精确seek；true，打开精确seek，默认打开精确seek
+     * Set accurate seek
+     * Apply only to VOD
+     * false: disable accurate seek；true: enable accurate seek. The default value is true.
      */
     public boolean isAccurateSeek = true;
 
     /**
-     * 是否自动播放
-     * 若设置成false，需要手动调用start()进行播放
-     * true:自动播放  false:不自动播放
+     * Specify whether to enable auto playback
+     * If set to false, the playback is implemented using the start() manually
+     * true: enables auto playback  false: disables auto playback
      */
     public boolean isAutoStart = false;
 
     /**
-     * 播放数据源配置项
+     * Data source configuration
      */
     public DataSourceConfig dataSourceConfig;
 
     /**
-     * 是否开启获取同步时间戳、同步内容信息回调
-     * 如果使用同步时间戳、同步内容信息回调相关功能，需要先打开该开关
+     * Specify whether to register the callbacks for timestamp and content synchronization events
+     * To register the callback, enable the switch
      * {@link LivePlayer#registerPlayerCurrentSyncContentListener}
      * {@link LivePlayer#getCurrentSyncTimestamp}
      * {@link LivePlayer#registerPlayerCurrentSyncTimestampListener}

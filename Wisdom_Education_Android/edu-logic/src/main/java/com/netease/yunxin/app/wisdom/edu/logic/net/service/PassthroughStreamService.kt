@@ -14,7 +14,7 @@ import com.netease.yunxin.app.wisdom.edu.logic.net.service.response.BatchStreamR
 import java.lang.reflect.Method
 
 /**
- * Created by hzsunyj on 2021/5/26.
+ * 
  */
 object PassthroughStreamService : StreamService, BaseService {
 

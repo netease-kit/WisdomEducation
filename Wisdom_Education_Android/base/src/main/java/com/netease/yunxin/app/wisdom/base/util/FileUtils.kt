@@ -15,14 +15,14 @@ import java.util.*
 
 object FileUtils {
     /**
-     * 判断SDCard是否可用
+     * Check whether SDCard is available
      */
     fun existSDCard(): Boolean {
         return Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED
     }
 
     /**
-     * 根据系统时间、前缀、后缀产生一个文件
+     * Create a file based on the system time stamp, prefix, and suffix
      */
     fun createFile(folder: File, prefix: String, suffix: String): File {
         if (!folder.exists() || !folder.isDirectory) {
@@ -42,7 +42,7 @@ object FileUtils {
             val cursor: Cursor? = context.contentResolver.query(uri, null, null, null, null)
             if (cursor != null) {
                 cursor.moveToFirst()
-                cursor.getString(cursor.getColumnIndex("_data")) // 文件路径
+                cursor.getString(cursor.getColumnIndex("_data")) // File path
             } else {
                 null
             }

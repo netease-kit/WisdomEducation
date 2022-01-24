@@ -56,7 +56,7 @@ class BigClazzMembersFragment : BaseFragment(R.layout.fragment_bigclazz_members)
         binding.apply {
             fragmentList.add(MemberStageFragment())
             fragmentList.add(MemberStudentsFragment())
-            //初始化viewPage
+            //Initialize viewPage
             viewpager.adapter = object : FragmentStateAdapter(requireActivity()) {
                 override fun getItemCount(): Int {
                     return fragmentList.size

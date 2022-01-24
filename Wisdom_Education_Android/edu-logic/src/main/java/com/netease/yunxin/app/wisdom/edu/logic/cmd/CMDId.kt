@@ -6,62 +6,62 @@
 package com.netease.yunxin.app.wisdom.edu.logic.cmd
 
 /**
- * Created by hzsunyj on 2021/5/17.
+ * 
  */
 object CMDId {
-    // 房间状态group
+    // Room state
     /**
-     *房间状态变更
+     * Room state change
      */
     const val ROOM_STATES_CHANGE = 1
 
     /**
-     *房间状态删除
+     * Delete room state
      */
     const val ROOM_STATES_DELETE = 2
 
-    // 房间属性group
+    // Room properties
     /**
-     *房间属性变更
+     * Room properties change
      */
     const val ROOM_PROPERTIES_CHANGE = 10
 
     /**
-     *房间属性删除:
+     * Delete room properties
      */
     const val ROOM_PROPERTIES_DELETE = 11
 
 
-    // 房间成员属性group
+    // Room member properties
     /**
-     *房间成员属性变更
+     * Room member properties change
      */
     const val ROOM_MEMBER_PROPERTIES_CHANGE = 20
 
     /**
-     *房间成员属性删除
+     * Delete room member properties
      */
     const val ROOM_MEMBER_PROPERTIES_DELETE = 21
 
-    // 用户进入离开group
+    // Join or leave the room
     /**
-     *用户加入
+     * Join the room
      */
     const val USER_JOIN = 30
 
     /**
-     *用户离开
+     * Leave the room
      */
     const val USER_LEAVE = 31
 
-    // 房间成员流group
+    // Member stream
     /**
-     *房间成员流变更
+     * Room members stream change
      */
     const val STREAM_CHANGE = 40
 
     /**
-     *房间成员流移除
+     * Remove members streams
      */
     const val STREAM_REMOVE = 41
 

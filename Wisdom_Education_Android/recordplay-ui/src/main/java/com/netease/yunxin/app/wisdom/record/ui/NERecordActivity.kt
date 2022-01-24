@@ -78,19 +78,19 @@ class NERecordActivity : AppCompatActivity(R.layout.activity_recordplay), INERec
 
     override fun initViews() {
         var actorCount = 0
-        // 白板
+        // Whiteboard
         recordPlayer.getWhiteboardList().takeIf { it.isNotEmpty() }?.let {
             replaceFragment(R.id.layout_whiteboard, whiteboardFragment)
             actorCount++
         }
 
-        // 屏幕共享
+        // Screen sharing
         recordPlayer.getSubVideoList().takeIf { it.isNotEmpty() }?.let {
             recordPlayer.addHandler(NERecordSubVideoHandler(it, this))
         }
 
 
-        // 右侧rtc列表
+        // RTC list on the right
         recordPlayer.getVideoList().takeIf { it.isNotEmpty() }?.let {
             val rcvMemberVideo = binding.rcvMemberVideo
             val layoutManager = LinearLayoutManager(this)
@@ -103,7 +103,7 @@ class NERecordActivity : AppCompatActivity(R.layout.activity_recordplay), INERec
             rcvMemberVideo.adapter = memberVideoAdapter
 
             val initVideoList = it.filter { it1 ->
-                // 过滤一开始不在台上的人
+                // Filter participants who are not speaker
                 recordPlayer.recordOptions.recordData.run {
                     (is1V1() || isSmall() || it1.isHost()) && snapshotDto.snapshot.members.any { it2 -> it2.rtcUid == it1.roomUid }
                 }
@@ -126,7 +126,7 @@ class NERecordActivity : AppCompatActivity(R.layout.activity_recordplay), INERec
         recordPlayer.setActorCount(actorCount)
 
 
-        // 课程信息面板
+        // Class information panel
         val option = recordPlayer.recordOptions
         binding.titleLayout.apply {
             option.roomName?.let { setClazzName(it) }
@@ -310,7 +310,7 @@ class NERecordActivity : AppCompatActivity(R.layout.activity_recordplay), INERec
     }
 
     /**
-     * 设置rtc列表item之间的间距
+     * Set the spacing beween items in the RTC list
      *
      * @property spaceSize
      */

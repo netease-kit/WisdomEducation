@@ -6,7 +6,7 @@
 package com.netease.yunxin.app.wisdom.edu.logic.model
 
 /**
- * Created by hzsunyj on 2021/6/18.
+ * 
  */
 enum class NEEduNotifyType(val value: String) {
     R("R"),

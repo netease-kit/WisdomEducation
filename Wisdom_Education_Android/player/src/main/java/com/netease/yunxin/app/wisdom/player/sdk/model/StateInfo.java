@@ -9,7 +9,7 @@ package  com.netease.yunxin.app.wisdom.player.sdk.model;
 import com.netease.yunxin.app.wisdom.player.sdk.LivePlayer;
 
 /**
- * 状态信息类
+ * Player status class
  *
  * @author netease
  */
@@ -25,18 +25,18 @@ public class StateInfo {
     }
 
     /**
-     * 当前播放器状态
+     * The player current state
      *
-     * @return 状态
+     * @return The current state
      */
     public LivePlayer.STATE getState() {
         return state;
     }
 
     /**
-     * 导致该状态的原因
+     * The reason to the state
      *
-     * @return 错误码或者停止的原因，参考 {@link CauseCode}
+     * @return Status codes or causes. For more information, see {@link CauseCode}
      */
     public int getCauseCode() {
         return causeCode;

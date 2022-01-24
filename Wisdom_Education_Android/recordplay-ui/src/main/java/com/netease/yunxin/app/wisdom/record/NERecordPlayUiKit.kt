@@ -17,7 +17,7 @@ interface NERecordPlayUiKit {
     companion object {
 
         /**
-         * create instance of record player
+         * Create the instance of a record player
          *
          * @param roomUuid
          * @param rtcCid

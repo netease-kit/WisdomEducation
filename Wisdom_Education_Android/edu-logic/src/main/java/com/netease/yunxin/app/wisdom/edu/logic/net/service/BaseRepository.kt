@@ -14,7 +14,7 @@ import java.lang.reflect.Method
 import java.lang.reflect.Type
 
 /**
- * Created by hzsunyj on 2021/5/14.
+ * 
  */
 open class BaseRepository {
 

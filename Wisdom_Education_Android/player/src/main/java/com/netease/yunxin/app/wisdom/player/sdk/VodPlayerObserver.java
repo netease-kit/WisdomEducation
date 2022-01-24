@@ -9,8 +9,8 @@ package  com.netease.yunxin.app.wisdom.player.sdk;
 import com.netease.neliveplayer.sdk.constant.NEKeyVerifyResultType;
 
 /**
- * 点播播放器状态/事件回调函数观察者
- * 基于播放器SDK封装的点播相关的状态/事件回调
+ * VOD player states/event callback observer
+ * Player states or event callbacks based on the player SDK
  * <p>
  *
  * @author netease
@@ -19,45 +19,45 @@ import com.netease.neliveplayer.sdk.constant.NEKeyVerifyResultType;
 public interface VodPlayerObserver extends LivePlayerObserver {
 
     /**
-     * [点播专用] 当前播放进度回调，1s回调一次当前播放位置，用于上层进度条控制
+     * [VOD only] The current position callback. The callback returns current positions every 1 second for progress bar control
      *
-     * @param currentPosition 当前播放的毫秒数
-     * @param duration        视频源总毫秒数
-     * @param percent         进度百分数[0.00-100.00]
-     * @param cachedPosition  当前SDK已经缓存到的位置毫秒数
+     * @param currentPosition The current position
+     * @param duration        The video duration
+     * @param percent         The percentage of progress [0.00-100.00]
+     * @param cachedPosition  The cached position
      */
     void onCurrentPlayProgress(long currentPosition, long duration, float percent, long cachedPosition);
 
     /**
-     * [点播专用] 点播seekTo到指定位置播放，跳转成功后触发
+     * [VOD only] If the seekTo operation to the specified pisition succeeds, the callback is triggered
      */
     void onSeekCompleted();
 
     /**
-     * [点播专用] 视频播放结束
-     * 开发者可以在此告知用户播放结束状态
+     * [VOD only] The playback is complete.
+     * Users can be notified that playback is complete
      */
     void onCompletion();
 
 
     /**
-     * 音视频不同步回调
-     * 在高分辨率时（如：1080p）某些视频播放可能会出现该回调，应用层收到该消息可以进行对应的处理
-     * 此时建议使用硬件解码播放，软解在某些性能不高的机器上面会出现音视频不同步
+     * The callback is triggered if audio and video are not synced
+     * If the callback is trigger, the application layer can respond as required
+     * In this case, hardware decoding is recommended. If software decoding is enabled, audio and video may be not synced on some devices
      */
     void onAudioVideoUnsync();
 
     /**
-     * [点播专用]提示网络状态比较差
-     * 如果有多种清晰度，在没有开启自动切换清晰度时，建议在此切换到低清晰度；
-     * 可以在此在UI上提示用户网络状态较差
+     * [VOD only] indicates the network connection is unreliable
+     * If multiple resolutions are available, it is recommended that a lower resolution is used if auto selecting resolution is disabled
+     * Users can be indicated on UI that the network connection is weak
      */
     void onNetStateBad();
 
     /**
-     * [点播专用]密钥获取结果
+     * [VOD only] The result of getting the key
      *
-     * @param ret 密钥校验的结果 {@link NEKeyVerifyResultType}
+     * @param ret The verification result {@link NEKeyVerifyResultType}
      */
     void onDecryption(int ret);
 }

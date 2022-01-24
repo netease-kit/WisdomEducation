@@ -146,7 +146,7 @@ abstract class MsgThumbViewHolder(bd: ViewBinding) : BaseViewHolder<ChatRoomMess
         return message.direct == MsgDirectionEnum.In
     }
 
-    // 设置控件的长宽
+    // set the width and height of the control
     protected open fun setLayoutParams(width: Int, height: Int, vararg views: View) {
         for (view in views) {
             val maskParams = view.layoutParams
@@ -161,7 +161,7 @@ abstract class MsgThumbViewHolder(bd: ViewBinding) : BaseViewHolder<ChatRoomMess
     }
 
     /**
-     * 下载附件/缩略图
+     * Download attachments or thumbnail images
      */
     protected open fun downloadAttachment(callback: RequestCallback<Void?>?) {
         if (message.attachment != null && message.attachment is FileAttachment) NIMClient.getService(

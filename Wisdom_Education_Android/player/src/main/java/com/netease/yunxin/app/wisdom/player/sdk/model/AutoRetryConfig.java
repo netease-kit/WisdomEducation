@@ -8,7 +8,7 @@ package com.netease.yunxin.app.wisdom.player.sdk.model;
 import com.netease.neliveplayer.sdk.model.NEAutoRetryConfig;
 
 /**
- * 自动重试配置类
+ * Auto retry configuration class
  *
  * @author netease
  */

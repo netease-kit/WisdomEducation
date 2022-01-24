@@ -9,7 +9,7 @@ import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduMember
 import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduStreams
 
 /**
- * Created by hzsunyj on 2021/5/27.
+ * 
  */
 class StreamChangeAction(
     appKey: String,

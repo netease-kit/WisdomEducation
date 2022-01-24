@@ -6,7 +6,7 @@
 package com.netease.yunxin.app.wisdom.edu.logic.model
 
 /**
- * Created by hzsunyj on 2021/8/27.
+ * 
  */
 enum class NEEduHttpCode(val code: Int, val msg: String) {
 
@@ -22,100 +22,100 @@ enum class NEEduHttpCode(val code: Int, val msg: String) {
     SUCCESS(0, "Success"),
 
     /**
-     * 无内容
+     * No content
      */
     NO_CONTENT(204, "No Content"),
 
     /**
-     * 参数非法,xxx
+     * Invalid parameter, xxx
      */
     BAD_REQUEST(400, "Bad Request"),
 
     /**
-     * 鉴权失败
+     * Authentication failed
      */
     UNAUTHORIZED(401, "Unauthorized"),
 
     /**
-     * 房间操作权限禁止
+     * Operation not allowed
      */
     FORBIDDEN(403, "Forbidden"),
     NOT_FOUND(404, "Not Found"),
 
     /**
-     * method不支持
+     * The method is not supported
      */
     METHOD_NOT_ALLOWED(405, "Method Not Allowed"),
 
     /**
-     * 创建房间时，房间号已经存在
+     * The room ID already exists
      */
     CONFLICT(409, "Target Already Exists"),
 
     /**
-     * 不支持的MediaType，比如非Json的body
+     * MediaType is not supported. For example, the body content is not in JSON format
      */
     UNSUPPORTED_MEDIA_TYPE(415, "Unsupported Media Type"),
 
     /**
-     * 内部异常，一般是内部服务出现问题
+     * Internal error
      */
     INTERNAL_SERVER_ERROR(500, "Internal Server Error"),
     SERVICE_UNAVAILABLE(503, "Service Busy"),
 
     /**
-     * 创建IM账户失败
+     * Failed to create the IM account
      */
     NIM_USER_CREATE_ERROR(700, "Nim Create User Error"),
 
     /**
-     * 指定IM账户不存在
+     * The specified IM account does not exist
      */
     NIM_USER_NOT_EXIST(701, "Nim User NOT exist"),
 
     /**
-     * IM服务异常
+     * IM service error
      */
     NIM_SERVICE_ERROR(702, "Nim Bad Im Service"),
 
     /**
-     * IM账户已存在
+     * The IM account already exists
      */
     NIM_USER_EXIST(703, "Nim User exist"),
 
     /**
-     * 房间内操作时，房间configId不存在，或者configId对应的config不存在，或有格式或内容有误；
-     * 课堂开始 如step(1时，rtc房间未创建，因为此时录制没发开始
+     * The configId does not exist or the configuration with the configId does not exist. invalid format or incorrect content；
+     * 
      */
     ROOM_NOT_PREPARED(1001, "Internal Server Error"),
 
     /**
-     * 加入房间时，角色数量超限
+     * The number of members exceeds the upper limit
      */
     ROOM_ROLE_EXCEED(1002, "Room Role Exceed"),
 
     /**
-     * 加入房间时，指定角色未定义
+     * The specified role is undefined
      */
     ROOM_ROLE_UNDEFINED(1003, "Room Role Undefined"),
 
     /**
-     * 任何和房间强关联的操作，指定的roomUuid查不到对应的活的房间
+     * The room does not exist
      */
     ROOM_NOT_EXIST(1004, "Room Not Found"),
 
     /**
-     * 创建房间时，config不存在或无法使用
+     * The configuration does not exist or is invalid when a room is created
      */
     ROOM_BAD_CONFIG(1005, "Bad Room Config"),
 
     /**
-     * 房间属性exclusive时put改属性，该属性已经存在
+     * The room property already exists
      */
     ROOM_PROPERTY_EXISTS(1006, "Property Exists"),
 
     /**
-     * 成员属性exclusive时put改属性，该属性已经存在
+     * The member property already exists
      */
     ROOM_MEMBER_PROPERTY_EXISTS(1007, "Room Member Property Exists"),
     ROOM_SIT_CONFLICT(1008, "Room Sit Conflict"),
@@ -124,27 +124,27 @@ enum class NEEduHttpCode(val code: Int, val msg: String) {
     ROOM_SIT_NOT_EXIST(1011, "Room Sit Not Exist"),
 
     /**
-     * put:member.stream|property时，该属性的并发超限，并发超限，如屏幕共享同时只能一人
+     * put:member.stream|property is the cocurrency limit of the attribute. For example, screen sharing is allowed for 1 member.
      */
     ROOM_MEMBER_CONCURRENCY_OUT(1012, "Member Property or Stream Out of Currency Limit"),
 
     /**
-     * 坐席配置不正确
+     * Invalid seating configuration
      */
     ROOM_SITS_BAD(1014, "Room Sits Bad"),
 
     /**
-     * 被操作的成员不存在
+     * The destination member does not exist
      */
     ROOM_DESTINATION_MEMBER_NOT_EXIST(1015, "Destination Member Server Error"),
 
     /**
-     * 用户已在房间中
+     * The member already exists
      */
     ROOM_MEMBER_EXIST(1016, "Member Exist"),
 
     /**
-     * 创建房间时房间已经存在且config冲突
+     * The room already exists and the configuration conflicts
      *
      */
     ROOM_CONFIG_CONFLICT(1017, "Bad Room Config: Conflict"),

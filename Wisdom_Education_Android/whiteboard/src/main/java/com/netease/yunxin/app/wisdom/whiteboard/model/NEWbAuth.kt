@@ -9,7 +9,7 @@ import android.os.Parcel
 import android.os.Parcelable
 
 /**
- * Created by hzsunyj on 2021/9/1.
+ * 
  */
 data class NEWbAuth(
     val checksum: String?,

@@ -47,7 +47,7 @@ import static org.junit.Assert.assertTrue;
 
 
 /**
- * 基础测试方法封装
+ * Basic testing method encapsulation
  */
 public final class BaseTestUtils {
 
@@ -74,10 +74,10 @@ public final class BaseTestUtils {
     }
 
     /**
-     * 附加输入目标文本框控件的文本内容
+     * Input the text of the target textbox control
      *
-     * @param id      目标控件的id
-     * @param content 目标控件的文本内容
+     * @param id      The ID of the target control
+     * @param content The text of the target control
      * @return View Interaction
      */
     public static ViewInteraction inputText(@IdRes int id, String content) {
@@ -86,10 +86,10 @@ public final class BaseTestUtils {
     }
 
     /**
-     * 附加输入目标文本框控件的文本内容
+     * Input the text of the target textbox control
      *
-     * @param viewMatcher 目标控件的viewMatcher
-     * @param content     目标控件的文本内容
+     * @param viewMatcher The viewMatcher of the target control
+     * @param content     The text of the target control
      * @return View Interaction
      */
     public static ViewInteraction inputText(Matcher<View> viewMatcher, String content) {
@@ -98,10 +98,10 @@ public final class BaseTestUtils {
     }
 
     /**
-     * 替换目标文本框控件的文本内容
+     * Replace the text of the target textbox control
      *
-     * @param id      目标控件的id
-     * @param content 目标控件的文本内容
+     * @param id      The ID of the target control
+     * @param content The text of the target control
      * @return View Interaction
      */
     public static ViewInteraction setText(@IdRes int id, String content) {
@@ -111,10 +111,10 @@ public final class BaseTestUtils {
     }
 
     /**
-     * 替换目标文本框控件的文本内容
+     * Replace the text of the target textbox control
      *
-     * @param viewMatcher 目标控件的viewMatcher
-     * @param content     目标控件的文本内容
+     * @param viewMatcher The viewMatcher of the target control
+     * @param content     The text of the target control
      * @return View Interaction
      */
     public static ViewInteraction setText(Matcher<View> viewMatcher, String content) {
@@ -204,9 +204,9 @@ public final class BaseTestUtils {
     }
 
     /**
-     * 等待
+     * Wait
      *
-     * @param millis 等待毫秒数
+     * @param millis The waiting time in milliseconds
      */
     public static void waitForTime(long millis) {
         try {
@@ -239,12 +239,12 @@ public final class BaseTestUtils {
     }
 
     /**
-     * 等待目标控件出现
+     * Waiting for the target control display
      *
-     * @param id       目标控件的id
-     * @param timeout  超时时间
-     * @param interval 间隔时间，以毫秒为单位，尝试查找匹配
-     * @return 是否目标控件出现
+     * @param id       The ID of the target control
+     * @param timeout  The timeout duration
+     * @param interval The interval duration in milliseconds. Try to search for matches
+     * @return The result whether the target control appears
      */
     public static boolean waitForView(@IdRes int id, long timeout, long interval) {
         long startMiles = System.currentTimeMillis();
@@ -260,12 +260,12 @@ public final class BaseTestUtils {
     }
 
     /**
-     * 等待目标控件出现
+     * Waiting for the target control display
      *
-     * @param text     目标控件的文本内容
-     * @param timeout  超时时间
-     * @param interval 间隔时间，以毫秒为单位，尝试查找匹配
-     * @return 是否目标控件出现
+     * @param text     The text of the target control
+     * @param timeout  The timeout duration
+     * @param interval The interval duration in milliseconds. Try to search for matches
+     * @return The result whether the target control appears
      */
     public static boolean waitForView(String text, long timeout, long interval) {
         long startMiles = System.currentTimeMillis();
@@ -279,13 +279,13 @@ public final class BaseTestUtils {
     }
 
     /**
-     * 等待目标控件出现
+     * Waiting for the target control display
      *
-     * @param id       目标控件的id
-     * @param text     目标控件的文本内容
-     * @param timeout  超时时间
-     * @param interval 间隔时间，以毫秒为单位，尝试查找匹配
-     * @return 是否目标控件出现
+     * @param id       The ID of the target control
+     * @param text     The text of the target control
+     * @param timeout  The timeout duration
+     * @param interval The interval duration in milliseconds. Try to search for matches
+     * @return The result whether the target control appears
      */
     public static boolean waitForView(@IdRes int id, String text, long timeout, long interval) {
         long startMiles = System.currentTimeMillis();
@@ -299,12 +299,12 @@ public final class BaseTestUtils {
     }
 
     /**
-     * 等待目标控件出现
+     * Waiting for the target control display
      *
-     * @param viewMatcher 目标控件的viewMatcher
-     * @param timeout     超时时间
-     * @param interval    间隔时间，以毫秒为单位，尝试查找匹配
-     * @return 是否目标控件出现
+     * @param viewMatcher The viewMatcher of the target control
+     * @param timeout     The timeout duration
+     * @param interval    The interval duration in milliseconds. Try to search for matches
+     * @return The result whether the target control appears
      */
     public static boolean waitForView(Matcher<View> viewMatcher, long timeout, long interval) {
         long startMiles = System.currentTimeMillis();
@@ -318,13 +318,13 @@ public final class BaseTestUtils {
     }
 
     /**
-     * 等待目标控件出现
+     * Waiting for the target control display
      *
-     * @param parentId 目标控件的父控件id
-     * @param id       目标控件的id
-     * @param timeout  超时时间
-     * @param interval 间隔时间，以毫秒为单位，尝试查找匹配
-     * @return 是否目标控件出现
+     * @param parentId The ID of the parent control of the target control
+     * @param id       The ID of the target control
+     * @param timeout  The timeout duration
+     * @param interval The interval duration in milliseconds. Try to search for matches
+     * @return The result whether the target control appears
      */
     public static boolean waitForViewInGroup(@IdRes int parentId, @IdRes int id, long timeout, long interval) {
         long startMiles = System.currentTimeMillis();
@@ -340,13 +340,13 @@ public final class BaseTestUtils {
     }
 
     /**
-     * 等待目标控件出现
-     *
-     * @param parentId 目标控件的父控件id
-     * @param text     目标控件的文本内容
-     * @param timeout  超时时间
-     * @param interval 间隔时间，以毫秒为单位，尝试查找匹配
-     * @return 是否目标控件出现
+     * Waiting for the target control display
+     * 
+     * @param parentId The ID of the parent control of the target control
+     * @param text     The text of the target control
+     * @param timeout  The timeout duration
+     * @param interval The interval duration in milliseconds. Try to search for matches
+     * @return The result whether the target control appears
      */
     public static boolean waitForViewInGroup(@IdRes int parentId, String text, long timeout, long interval) {
         long startMiles = System.currentTimeMillis();
@@ -362,9 +362,9 @@ public final class BaseTestUtils {
     }
 
     /**
-     * 查看目标控件是否出现
+     * View whether the target control appears
      *
-     * @param viewInteraction 目标控件的viewInteraction
+     * @param viewInteraction The viewInteraction of the target control
      * @return
      */
     public static boolean isViewDisplayed(ViewInteraction viewInteraction) {
@@ -377,56 +377,56 @@ public final class BaseTestUtils {
     }
 
     /**
-     * 断言指定时间内能找到目标控件
+     * Check whether the target control will appear in specified time
      *
-     * @param text 目标控件的文本内容
+     * @param text The text of the target control
      */
     public static void assertViewExist(String text) {
         assertTrue(waitForView(text, 10000L, 1000L));
     }
 
     /**
-     * 断言指定时间内能找到目标控件
+     * Check whether the target control will appear in specified time
      *
-     * @param id 目标控件的id
+     * @param id The ID of the target control
      */
     public static void assertViewExist(@IdRes int id) {
         assertTrue(waitForView(id, 10000L, 1000L));
     }
 
     /**
-     * 断言指定时间内能找到目标控件
+     * Check whether the target control will appear in specified time
      *
-     * @param id 目标控件的id
+     * @param id The ID of the target control
      */
     public static void assertViewExist(@IdRes int id, String text) {
         assertTrue(waitForView(id, text, 10000L, 1000L));
     }
 
     /**
-     * 断言指定时间内能找到目标控件
+     * Check whether the target control will appear in specified time
      *
-     * @param viewMatcher 目标控件的viewMatcher
+     * @param viewMatcher The viewMatcher of the target control
      */
     public static void assertViewExist(Matcher<View> viewMatcher) {
         assertTrue(waitForView(viewMatcher, 10000L, 1000L));
     }
 
     /**
-     * 断言指定时间内能找到目标控件
+     * Check whether the target control will appear in specified time
      *
-     * @param parentId 目标控件的父控件id
-     * @param text     目标控件的文本内容
+     * @param parentId The ID of the parent control of the target control
+     * @param text     The text of the target control
      */
     public static void assertViewExistInGroup(@IdRes int parentId, String text) {
         assertTrue(waitForViewInGroup(parentId, text, 10000L, 1000L));
     }
 
     /**
-     * 断言指定时间内能找到目标控件
+     * Check whether the target control will appear in specified time
      *
-     * @param parentId 目标控件的父控件id
-     * @param id       目标控件的id
+     * @param parentId The ID of the parent control of the target control
+     * @param id       The ID of the target control
      */
     public static void assertViewExistInGroup(@IdRes int parentId, @IdRes int id) {
         assertTrue(waitForViewInGroup(parentId, id, 10000L, 1000L));
@@ -473,8 +473,8 @@ public final class BaseTestUtils {
     }
 
     /**
-     * 点击控件（兼容系统弹窗）
-     * @param text 目标控件的文本内容
+     * Click controls（compatible with system dialog boxes）
+     * @param text The text of the target control
      */
     public static void clickUI(String text) {
         waitForTime(1000);
@@ -492,8 +492,8 @@ public final class BaseTestUtils {
     }
 
     /**
-     * 点击控件（兼容系统弹窗）
-     * @param resourceId 目标控件的resourceId
+     * Click controls（compatible with system dialog boxes）
+     * @param resourceId The resource ID of the target control
      */
     public static void clickUIWithResourceId(String resourceId) {
         UiObject uiObject = UITestRegisterHelper.getDevice().findObject(new UiSelector()

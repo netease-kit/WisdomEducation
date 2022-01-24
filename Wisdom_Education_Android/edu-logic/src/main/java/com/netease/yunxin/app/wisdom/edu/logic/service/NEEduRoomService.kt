@@ -14,20 +14,20 @@ import com.netease.yunxin.app.wisdom.edu.logic.net.service.response.NEEduRoomCon
 import com.netease.yunxin.app.wisdom.edu.logic.options.NEEduClassOptions
 
 /**
- * 提供可供 App 调用的课堂相关方法
+ * Methods for managing classes
  *
  */
 abstract class NEEduRoomService : INEEduService() {
 
     /**
-     * 配置房间，房间不存在则新建，存在则返回房间信息，加入房间之前，房间必须存在
+     * Configure a room. Create a room if the room does not exist. If the room already exists, return the room information. Before members join a room, the room must eixst.
      *
-     * @param options 配置课堂房间的参数信息
+     * @param options The parameters used to configure the class
      */
     internal abstract fun config(options: NEEduClassOptions): LiveData<NEResult<NEEduRoomConfigRes>>
 
     /**
-     * 获得房间配置
+     * Get the class configuration
      *
      * @param roomUuid
      * @return
@@ -35,58 +35,58 @@ abstract class NEEduRoomService : INEEduService() {
     internal abstract fun getConfig(roomUuid: String): LiveData<NEResult<NEEduRoomConfig>>
 
     /**
-     * 加入房间
+     * join the class
      *
-     * @param options 加入房间必要的参数信息
+     * @param options Parameters required to join a class
      */
     internal abstract fun entryClass(options: NEEduClassOptions): LiveData<NEResult<NEEduEntryRes>>
 
     internal abstract fun updateCurrentRoomInfo(room: NEEduRoom)
 
     /**
-     * 当前课堂详情变化通知
+     * Notification for class profile changes
      */
     abstract fun onCurrentRoomInfo(): LiveData<NEEduRoom>
 
     /**
-     * 用户退出房间
+     * Students leave the class
      *
      */
     abstract fun leaveClassroom()
 
     /**
-     * 老师开始课堂
+     * The teacher starts a class
      *
      */
     abstract fun startClass(roomUuid: String): LiveData<NEResult<Void>>
 
     /**
-     * 老师结束课堂
+     * The teacher ends a class
      *
      */
     abstract fun finishClass(roomUuid: String): LiveData<NEResult<Void>>
     /**
-     * 快照数据
+     * Data snapshot
      */
     internal abstract fun snapshot(roomUuid: String): LiveData<NEResult<NEEduSnapshotRes>>
 
     /**
-     *获取接下来的数据
+     * Get the subsequent data
      */
     internal abstract fun fetchNextSequences(roomUuid: String, nextId: Long): LiveData<NEResult<NEEduSequenceList>>
 
     /**
-     * 下行 merge: true,表示与之前的状态合并， false： 状态替换
+     * if the merge parameter is true, merge with the previous state. if false, replace the previous state
      */
     internal abstract fun updateRoomStatesChange(eduRoomStates: NEEduRoomStates, merge: Boolean)
 
     /**
-     * 房间状态回调
+     * Callback for class states
      */
     abstract fun onRoomStatesChange(): MediatorLiveData<NEEduRoomStates>
 
     /**
-     * 上行
+     * Send data from the client to the server.
      *
      * @param roomUuid
      * @param key
@@ -96,7 +96,7 @@ abstract class NEEduRoomService : INEEduService() {
     internal abstract fun updateProperties(roomUuid: String, key: String, value: Int): LiveData<NEResult<Void>>
 
     /**
-     *网络变更通知
+     * Notification for network changes
      */
     abstract fun onNetworkQualityChange(): LiveData<Array<out NERtcNetworkQualityInfo>>
 }

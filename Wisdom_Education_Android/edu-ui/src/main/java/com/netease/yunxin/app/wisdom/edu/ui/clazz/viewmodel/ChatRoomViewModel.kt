@@ -37,7 +37,7 @@ class ChatRoomViewModel : BaseViewModel() {
 
     private var unreadMsgCount: Int = 0
 
-    private var enterTime: Long = 0 // 游客的enterTime
+    private var enterTime: Long = 0 // The enterTime of a guest
 
     /**
      *

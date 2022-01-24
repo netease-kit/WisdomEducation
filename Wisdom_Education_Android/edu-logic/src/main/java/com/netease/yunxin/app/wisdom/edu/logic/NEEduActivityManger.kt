@@ -10,7 +10,7 @@ import android.app.Application
 import android.os.Bundle
 
 /**
- * Created by hzsunyj on 2021/5/27.
+ * 
  */
 class NEEduActivityManger {
 

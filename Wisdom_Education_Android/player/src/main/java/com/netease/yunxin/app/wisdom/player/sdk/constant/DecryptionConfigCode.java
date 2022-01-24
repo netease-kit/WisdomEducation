@@ -8,23 +8,23 @@ package  com.netease.yunxin.app.wisdom.player.sdk.constant;
 import com.netease.neliveplayer.sdk.constant.NEDecryptionConfigCode;
 
 /**
- * 解密选项
- * 只适用于点播
+ * Decryption configuration
+ * Apply only to VOD
  */
 public interface DecryptionConfigCode {
 
     /**
-     * 不需要对视频进行解密
+     * Decruption not required
      */
     int CODE_DECRYPTION_NONE = NEDecryptionConfigCode.CODE_DECRYPTION_NONE;
 
     /**
-     * 使用解密信息对视频进行解密
+     * Decrypt a video using the decryption information
      */
     int CODE_DECRYPTION_INFO = NEDecryptionConfigCode.CODE_DECRYPTION_INFO;
 
     /**
-     * 解密秘钥对视频进行解密
+     * Decrypt a video using a decryption key
      */
     int CODE_DECRYPTION_KEY = NEDecryptionConfigCode.CODE_DECRYPTION_KEY;
 

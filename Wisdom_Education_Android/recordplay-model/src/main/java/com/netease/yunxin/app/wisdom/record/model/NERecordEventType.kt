@@ -21,52 +21,52 @@ import androidx.annotation.IntDef
 annotation class NERecordEventType {
     companion object {
         /**
-         * 成员进入房间
+         * A members joins the room
          */
         const val MEMBER_JOIN = 1
 
         /**
-         * 成员离开房间
+         * A member leaves the room
          */
         const val MEMBER_LEAVE = 2
 
         /**
-         * 成员打开音频
+         * A member enables audio
          */
         const val ENABLE_AUDIO = 3
 
         /**
-         * 成员关闭音频
+         * A member disables audio
          */
         const val DISABLE_AUDIO = 4
 
         /**
-         * 成员打开视频
+         * A member enables video
          */
         const val ENABLE_VIDEO = 5
 
         /**
-         * 成员关闭视频
+         * A member disables video
          */
         const val DISABLE_VIDEO = 6
 
         /**
-         * 成员打开屏幕共享
+         * A member enables screen share
          */
         const val ENABLE_SUB_VIDEO = 7
 
         /**
-         * 成员关闭屏幕共享
+         * A member disables screen share
          */
         const val DISABLE_SUB_VIDEO = 8
 
         /**
-         * 上台
+         * Raising hand accepted
          */
         const val HANDS_UP_ACCEPTED = 9
 
         /**
-         * 下台
+         * Raising hand rejected
          */
         const val HANDS_UP_NOT_ACCEPTED = 10
     }
