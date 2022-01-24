@@ -8,42 +8,42 @@ package com.netease.yunxin.app.wisdom.edu.logic
 import com.netease.yunxin.app.wisdom.im.IMErrorCode
 
 /**
- * Created by hzsunyj on 2021/8/27.
+ * 
  */
 enum class NEEduIMCode(val code: Int, val msg: String) {
-    // IM error code, im 区分各种情况错误码
+    // IM error codes
     /**
-     * 被其他端的登录踢掉
+     * Login is invalidated by simultaneous logins on other clients using the same credentials
      */
     KICKOUT(IMErrorCode.KICKOUT.code, ""),
 
     /**
-     * 被同时在线的其他端主动踢掉
+     * Login is invalidated by simultaneous logins on other clients using the same credentials
      */
     KICK_BY_OTHER_CLIENT(IMErrorCode.KICK_BY_OTHER_CLIENT.code, ""),
 
     /**
-     * 被服务器禁止登录
+     * Login banned on the server
      */
     IM_FORBIDDEN(IMErrorCode.IM_FORBIDDEN.code, ""),
 
     /**
-     * 客户端版本错误
+     * Client version error
      */
     VER_ERROR(IMErrorCode.VER_ERROR.code, ""),
 
     /**
-     * 用户名或密码错误
+     * Incorrect username and password
      */
     PWD_ERROR(IMErrorCode.PWD_ERROR.code, ""),
 
     /**
-     * 被其他端踢出
+     * Login is invalidated by simultaneous logins on other clients using the same credentials
      */
     KICK_OUT_BY_CONFLICT_LOGIN(IMErrorCode.KICK_OUT_BY_CONFLICT_LOGIN.code, ""),
 
     /**
-     * 被管理员踢出
+     * Login is banned by admins
      */
     KICK_OUT_BY_MANAGER(IMErrorCode.KICK_OUT_BY_MANAGER.code, "");
 

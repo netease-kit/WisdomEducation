@@ -14,63 +14,63 @@ import com.netease.yunxin.app.wisdom.base.network.NEResult
 import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduCMDBody
 
 /**
- * 提供可供 App 调用的聊天消息，透传相关方法
+ * Messaging methods
  *
  */
 abstract class NEEduIMService : INEEduService() {
     /**
-     * 发送消息
+     * Send messages
      *
-     * @param message 消息内容
+     * @param message The message that is sent
      *
      */
     abstract fun sendMessage(message: ChatRoomMessage): LiveData<NEResult<Void>>
 
     /**
-     * 收到聊天消息
+     * Receive messages
      */
     abstract fun onReceiveMessage(): LiveData<List<ChatRoomMessage>>
 
     /**
-     * 收到自定义CMD消息
+     * Receive custom CMD messages
      */
     abstract fun onReceiveCustomCMDMessage(): LiveData<NEEduCMDBody>
 
     /**
-     * 图片消息状态变化通知
+     * Notification for state changes of image messages
      */
     abstract fun onMessageStatusChange(): LiveData<ChatRoomMessage>
 
     /**
-     * 消息附件上传/下载进度通知
+     * Notification for progress of uploading or downloading message attachments
      */
     abstract fun onAttachmentProgressChange(): LiveData<AttachmentProgress>
 
     /**
-     * 全体聊天禁言
+     * Mute all members
      *
-     * @param mute 是否禁言全体聊天
+     * @param mute Specify whether to mute all members
      */
     internal abstract fun updateMuteAllChat(mute: Boolean)
 
     /**
-     * 聊天禁言状态发生变化通知
+     * Notification for mute status changes
      */
     abstract fun onMuteAllChat(): LiveData<Boolean>
 
     /**
-     * 加入聊天室
+     * Join a chat room
      */
     abstract fun enterChatRoom(data: EnterChatRoomData): LiveData<NEResult<EnterChatRoomResultData>>
 
     /**
-     * 退出聊天室
+     * Leave a chat room
      */
     abstract fun exitChatRoom(roomId: String?)
 
 
     /**
-     * 全体禁言
+     * Mute all members
      *
      * @param roomUuid
      * @param state

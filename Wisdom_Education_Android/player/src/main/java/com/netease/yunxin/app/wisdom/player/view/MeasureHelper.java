@@ -20,13 +20,13 @@ public final class MeasureHelper {
 
     private WeakReference<View> mWeakView;
 
-    private int mVideoWidth; // 视频帧宽度
-    private int mVideoHeight; // 视频帧高度
-    private int mVideoSarNum; // 视频帧像素宽高比的宽，计算机产生的像素宽高比都是1:1
-    private int mVideoSarDen; // 视频帧像素宽高比的高
+    private int mVideoWidth; // Video frame width
+    private int mVideoHeight; // Video frame height
+    private int mVideoSarNum; // width of the aspect ratio
+    private int mVideoSarDen; // height of the aspect ratio
 
-    private int mMeasuredWidth; // 测量结果宽spec
-    private int mMeasuredHeight; // 测量结果高spec
+    private int mMeasuredWidth; // measured width
+    private int mMeasuredHeight; // measured height
 
     private VideoScaleMode mVideoScaleMode = VideoScaleMode.FULL;
 
@@ -75,55 +75,55 @@ public final class MeasureHelper {
         if (mVideoWidth <= 0 || mVideoHeight <= 0) {
             mMeasuredWidth = 0;
             mMeasuredHeight = 0;
-            return false; // 还没有收到画面,先不显示
+            return false; // No data is loaded. No graphic is displayed
         }
 
-        // 输出在父容器的约束下，根据视频帧的分辨率，默认的渲染宽高
+        // The output is contained by the parent container. The default rendering width and heigth based on the video resolution
         int width = View.getDefaultSize(mVideoWidth, widthMeasureSpec);
         int height = View.getDefaultSize(mVideoHeight, heightMeasureSpec);
 
         if (width == 0 && height == 0) {
             mMeasuredWidth = 0;
             mMeasuredHeight = 0;
-            return true; // 主动隐藏
+            return true; // Automatic hide
         }
 
-        // 输入宽高spec
+        // Enter width and height
        ALog.i("on measure, input widthMeasureSpec=" + MeasureSpec.toString(widthMeasureSpec)
                 + ", heightMeasureSpec=" + MeasureSpec.toString(heightMeasureSpec) + ", video scale mode=" + mVideoScaleMode);
 
         /*
-         * 父容器约束下的View最大宽、高最大尺寸
-         * 自定义View，无论选择WRAP_CONTENT还是MATCH_PARENT，他的尺寸都是size, 即父亲的尺寸;
-         * 当然模式会不一样，MATCH_PARENT对应EXACTLY，WRAP_CONTENT对应AT_MOST。
+         * The maximum width and height constrained by the parent container
+         * Custom View has the size of the parent container whether WRAP_CONTENT or MATCH_PARENT is selected
+         * The mode is different, MATCH_PARENT uses EXACTLY，WRAP_CONTENT selects AT_MOST。
          */
         int widthSpecMode = MeasureSpec.getMode(widthMeasureSpec);
         int heightSpecMode = MeasureSpec.getMode(heightMeasureSpec);
-        int widthSpecSize = MeasureSpec.getSize(widthMeasureSpec); // 父容器的宽度
-        int heightSpecSize = MeasureSpec.getSize(heightMeasureSpec); // 父容器的高度
+        int widthSpecSize = MeasureSpec.getSize(widthMeasureSpec); // The width of the parent container
+        int heightSpecSize = MeasureSpec.getSize(heightMeasureSpec); // The height of the parent container
 
-        // 父容器的宽高比
+        // Aspect ratio of the parent container
         final float specAspectRatio = (float) widthSpecSize / (float) heightSpecSize;
 
-        // 视频帧的宽高比
+        // Aspect ratio of the video frame
         float displayAspectRatio = (float) mVideoWidth / (float) mVideoHeight;
         if (mVideoSarNum > 0 && mVideoSarDen > 0) {
             displayAspectRatio = displayAspectRatio * mVideoSarNum / mVideoSarDen;
         }
 
-        // 是否视频帧的宽高比更大
+        // Check whether the video aspect ratio is greater
         final boolean shouldBeWider = displayAspectRatio > specAspectRatio;
 
-        // 根据用户指定的缩放模式来调整最终渲染的宽高
+        // Adjust the aspect ratio based on the specified scale mode
         if (mVideoScaleMode == VideoScaleMode.FILL) {
-            // 全屏，拉伸到控件允许的最大宽高(即父容器宽高)
+            // Full screen. Zoom to the maximum aspect ratio (the aspect ratio of the parent container)
             width = widthSpecSize;
             height = heightSpecSize;
         } else if (mVideoWidth > 0 && mVideoHeight > 0) {
             if (widthSpecMode == MeasureSpec.AT_MOST && heightSpecMode == MeasureSpec.AT_MOST) {
-                // WRAP_CONTENT:根据模式来确定最终绘制的宽高
+                // WRAP_CONTENT: determine width and height based on mode
                 if (mVideoScaleMode == VideoScaleMode.FIT) {
-                    // 按比例拉伸，有一边会贴黑边
+                    // Zoom proportionally with a black bar at a side
                     if (shouldBeWider) {
                         // too wide, fix width
                         width = widthSpecSize;
@@ -134,7 +134,7 @@ public final class MeasureHelper {
                         width = (int) (height * displayAspectRatio);
                     }
                 } else if (mVideoScaleMode == VideoScaleMode.FULL) {
-                    // 按比例拉伸至全屏，有一边会被裁剪
+                    // Zoom to full screen at a scale. One side will be cropped
                     if (shouldBeWider) {
                         // not high enough, fix height
                         height = heightSpecSize;
@@ -145,7 +145,7 @@ public final class MeasureHelper {
                         height = (int) (width / displayAspectRatio);
                     }
                 } else if (mVideoScaleMode == VideoScaleMode.NONE) {
-                    // 原始大小
+                    // original size
                     if (shouldBeWider) {
                         // too wide, fix width
                         width = Math.min(mVideoWidth, widthSpecSize);
@@ -159,9 +159,9 @@ public final class MeasureHelper {
                    ALog.i("on measure, unsupported scale mode!!!");
                 }
             } else if (widthSpecMode == MeasureSpec.EXACTLY && heightSpecMode == MeasureSpec.EXACTLY) {
-                // MATCH_PARENT: 控件大小已经确定即填满父容器，或者已经制定宽度高度具体dip了。
-                // 这里只做等比例拉伸，有一边会贴黑边。即 VideoScaleMode.FIT
-                // 这样会改变用户预期的控件大小，不推荐！
+                // MATCH_PARENT: The control size fit the parent container, or the width and height dip are specified.
+                // Zoom proportionally with one side of black bars. VideoScaleMode.FIT
+                // The operation changes the expected control size. Not recommended！
                 if (shouldBeWider) {
                     width = widthSpecSize;
                     height = (int) (width / displayAspectRatio);
@@ -176,7 +176,7 @@ public final class MeasureHelper {
            ALog.i("on measure, unsupported spec mode!!!");
         }
 
-        // 最后输出的结果
+        // Final output
         mMeasuredWidth = width;
         mMeasuredHeight = height;
 

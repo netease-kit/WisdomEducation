@@ -22,10 +22,10 @@ import java.util.Map;
 public class PlayerManagerImpl {
 
     /**
-     * 初始化SDK,使用播放器时必须先进行初始化才能进行后续操作。
+     * Instantiate the SDK. To use the player, the player must be Instantiated.
      *
-     * @param context 调用上下文
-     * @param options sdk配置信息
+     * @param context The context for API call
+     * @param options SDK configuration
      */
     public static void init(Context context, SDKOptions options) {
         NESDKConfig sdkConfig = new NESDKConfig();
@@ -37,26 +37,26 @@ public class PlayerManagerImpl {
             sdkConfig.dataUploadListener = options.dataUploadListener;
             sdkConfig.logListener = options.logListener;
             sdkConfig.supportDecodeListener = options.supportDecodeListener;
-            sdkConfig.isCloseTimeOutProtect = false;//这里使用播放器的SDK对准备阶段的超时进行自动处理，如果用户需要自定义实现该超时可以设置true进行关闭，然后参考playkit中的BaseLivePlayer#preparingTimeoutTask实现
+            sdkConfig.isCloseTimeOutProtect = false;//Handle the timeout in preparation using the player SDK. If developers want to handle the timeout, set the value to true, and see BaseLivePlayer#preparingTimeoutTask in playkit.
             sdkConfig.privateConfig = options.privateConfig;
         }
         NELivePlayer.init(context, sdkConfig);
     }
 
     /**
-     * 获取是否已经准备好so库文件
-     * 仅在初始化 init 接口中配置动态加载才能使用该接口查询
+     * Check if the so library is ready.
+     * The API is called when the init interface is configured with dynamic load.
      *
-     * @return 是否准备好
+     * @return Check if the so library is ready.
      */
     public static boolean isDynamicLoadReady() {
         return NELivePlayer.isDynamicLoadReady();
     }
 
     /**
-     * 获取SDK信息
+     * Get the SDK information
      *
-     * @return SDK信息实例
+     * @return The information about the SDK instance
      */
     public static SDKInfo getSDKInfo(Context context) {
         if (NELivePlayer.getSDKInfo(context) == null) {
@@ -69,36 +69,36 @@ public class PlayerManagerImpl {
     }
 
     /**
-     * 构造播放器实例对象
+     * Constuct the object of the player instance
      *
-     * @param context   上下文
-     * @param videoPath 视频资源路径
-     * @param options   播放选项
-     * @return 播放器实例对象
+     * @param context   The context information
+     * @param videoPath The path of the video asset
+     * @param options   The playback options
+     * @return The object of the player instance
      */
     public static LivePlayer buildLivePlayer(Context context, String videoPath, VideoOptions options) {
         return new LivePlayerImpl(context, videoPath, options);
     }
 
     /**
-     * 构造播放器实例对象
+     * Constuct the object of the player instance
      *
-     * @param context   上下文
-     * @param videoPath 视频资源路径
-     * @param options   播放选项
-     * @return 播放器实例对象
+     * @param context   The context information
+     * @param videoPath The path of the video asset
+     * @param options   The playback options
+     * @return The object of the player instance
      */
     public static VodPlayer buildVodPlayer(Context context, String videoPath, VideoOptions options) {
         return new LivePlayerImpl(context, videoPath, options);
     }
 
     /**
-     * 构造播放器实例对象
+     * Constuct the object of the player instance
      *
-     * @param context         上下文
-     * @param mediaDataSource 视频资源,需要实现 NEMediaDataSource 自定义数据源
-     * @param options         播放选项
-     * @return 播放器实例对象
+     * @param context         The context information
+     * @param mediaDataSource The video asset. The custom data source is required using NEMediaDataSource
+     * @param options         The playback options
+     * @return The object of the player instance
      */
     public static VodPlayer buildVodPlayer(Context context, NEMediaDataSource mediaDataSource, VideoOptions options) {
         return new LivePlayerImpl(context, mediaDataSource, options);
@@ -106,18 +106,18 @@ public class PlayerManagerImpl {
 
 
     /**
-     * 添加预加载拉流链接地址
+     * Add URLs for preloading data
      *
-     * @param urls 拉流链接地址
+     * @param urls URLs for preloading data
      */
     public static void addPreloadUrls(ArrayList<String> urls) {
         NELivePlayer.addPreloadUrls(urls);
     }
 
     /**
-     * 移除预加载拉流链接地址
+     * Remove URLs for preloading data
      *
-     * @param urls 拉流链接地址
+     * @param urls URLs for preloading data
      */
     public static void removePreloadUrls(ArrayList<String> urls) {
         NELivePlayer.removePreloadUrls(urls);
@@ -125,16 +125,16 @@ public class PlayerManagerImpl {
     }
 
     /**
-     * 查询预加载拉流链接地址的结果信息
+     * Query URLs for preloading data
      *
-     * @return Map<String, Integer> String是链接地址，Integer是状态,状态码参考 {@link com.netease.yunxin.app.wisdom.record.video.sdk.constant.PreloadStatusType}
+     * @return Map<String, Integer> String indicates URLs. Integer indicates the status. For information about status codes, see {@link com.netease.yunxin.app.wisdom.record.video.sdk.constant.PreloadStatusType}
      */
     public static Map<String, Integer> queryPreloadUrls() {
         return NELivePlayer.queryPreloadUrls();
     }
 
     /**
-     * 刷新全部拉流地址预加载信息
+     * Refresh the preload URLs
      */
     public static void refreshPreloadUrls() {
         NELivePlayer.refreshPreloadUrls();

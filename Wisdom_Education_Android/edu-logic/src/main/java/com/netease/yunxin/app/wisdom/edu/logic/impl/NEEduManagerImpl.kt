@@ -9,12 +9,14 @@ import android.text.TextUtils
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Observer
+import com.netease.lava.nertc.sdk.NERtcServerAddresses
 import com.netease.nimlib.sdk.auth.LoginInfo
 import com.netease.yunxin.app.wisdom.base.network.NEResult
 import com.netease.yunxin.app.wisdom.base.network.RetrofitManager
 import com.netease.yunxin.app.wisdom.base.util.observeForeverOnce
 import com.netease.yunxin.app.wisdom.edu.logic.NEEduManager
 import com.netease.yunxin.app.wisdom.edu.logic.cmd.CMDDispatcher
+import com.netease.yunxin.app.wisdom.edu.logic.config.NEEduPrivatizationConfig
 import com.netease.yunxin.app.wisdom.edu.logic.foreground.NEEduForegroundService
 import com.netease.yunxin.app.wisdom.edu.logic.foreground.NEEduForegroundServiceConfig
 import com.netease.yunxin.app.wisdom.edu.logic.model.*
@@ -30,7 +32,7 @@ import com.netease.yunxin.app.wisdom.rtc.RtcManager
 import com.netease.yunxin.kit.alog.ALog
 
 /**
- * Created by hzsunyj on 4/21/21.
+ * 
  */
 internal object NEEduManagerImpl : NEEduManager {
 
@@ -88,7 +90,7 @@ internal object NEEduManagerImpl : NEEduManager {
 
     private val observer: Observer<Boolean> = Observer<Boolean> {
         it?.let { t ->
-            if (t && neEduSync != null) {// t: true 表示已经重新登录，只要重新登录，需要重新同步一把数据
+            if (t && neEduSync != null) {// t: true indicates that re-login succeeded. If the account is logged in, the data needs to be synced
                 syncSnapshot()
             }
         }
@@ -126,7 +128,15 @@ internal object NEEduManagerImpl : NEEduManager {
 
     private fun initRtcAndLoginIM(initLD: MediatorLiveData<NEResult<Boolean>>) {
         val mergeLD: MediatorLiveData<Boolean> = MediatorLiveData()
-        val rtcLD = rtcManager.initEngine(NEEduManager.context, eduLoginRes.rtcKey)
+        var rtcServerAddresses: NERtcServerAddresses? = null // rtc private Server Addresses
+        if(NEEduManager.eduOptions.useRtcAssetServerAddressConfig == true) {
+            rtcServerAddresses = NEEduPrivatizationConfig.getRtcServerAddresses(NEEduManager.context)
+        }
+        val rtcLD = rtcManager.initEngine(
+            NEEduManager.context,
+            eduLoginRes.rtcKey,
+            rtcServerAddresses
+        )
         val imLoginLD = imManager.login(LoginInfo(eduLoginRes.userUuid, eduLoginRes.imToken, eduLoginRes.imKey))
         val onChanged = Observer<Boolean> {
             if (rtcLD.value == null || imLoginLD.value == null) {
@@ -154,18 +164,18 @@ internal object NEEduManagerImpl : NEEduManager {
     }
 
     /**
-     * listen im error & rtc error
+     * Listen for IM errors & RTC errors
      */
     private fun handleError() {
         errorLD.addSource(imManager.errorLD) { t -> errorLD.postValue(t) }
         errorLD.addSource(rtcManager.errorLD) { t -> errorLD.postValue(t) }
-        BaseRepository.errorLD.value = null// reset last value
+        BaseRepository.errorLD.value = null// reset the last value
         errorLD.addSource(BaseRepository.errorLD) { t -> errorLD.postValue(t) }
         neEduSync?.let { errorLD.addSource(it.errorLD) { t -> errorLD.postValue(t) } }
     }
 
     /**
-     * live class not need enter rtc room
+     * The live class not need the RTC functionality
      */
     override fun enterClass(neEduClassOptions: NEEduClassOptions): LiveData<NEResult<NEEduEntryRes>> {
         NEEduManager.classOptions = neEduClassOptions
@@ -194,7 +204,7 @@ internal object NEEduManagerImpl : NEEduManager {
             it.observeForeverOnce { t ->
                 if (t.success()) {
                     t.data!!.apply { roomConfig = this }
-                    if (roomConfig.isLiveClass()) { // double check config
+                    if (roomConfig.isLiveClass()) { // Check the configuration
                         simulationEnterLiveClass(enterLD)
                     } else {
                         destroy()
@@ -209,7 +219,7 @@ internal object NEEduManagerImpl : NEEduManager {
     }
 
     /**
-     * simulation enter live class logic
+     * Simulate the logic of joining a live class
      */
     private fun simulationEnterLiveClass(enterLD: MediatorLiveData<NEResult<NEEduEntryRes>>) {
         getRoomService().snapshot(NEEduManager.classOptions.classId).also { snap ->
@@ -220,7 +230,8 @@ internal object NEEduManagerImpl : NEEduManager {
                             eduLoginRes.rtcKey,
                             NEEduManager.classOptions.roleType.value,
                             NEEduManager.classOptions.nickName,
-                            eduLoginRes.userUuid),
+                            eduLoginRes.userUuid
+                        ),
                         room = snapRes.data!!.snapshot.room
                     )
                     observerAuth()

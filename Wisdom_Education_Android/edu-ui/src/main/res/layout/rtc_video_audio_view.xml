@@ -52,7 +52,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/bottom_view_mask"
-        tools:text="十九大较大肯德基爱哭的骄傲打卡机打卡机大看电视剧" />
+        tools:text="Wikipedia is a free online encyclopedia" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/ic_whiteboard"

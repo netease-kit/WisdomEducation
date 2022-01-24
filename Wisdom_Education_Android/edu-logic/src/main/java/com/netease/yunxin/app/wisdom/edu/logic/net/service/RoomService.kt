@@ -19,7 +19,7 @@ import retrofit2.http.*
 internal interface RoomService {
 
     /**
-     * 房间配置
+     * Room configuration
      *
      * @param roomUuid
      * @param roomConfigOptionsReq
@@ -33,7 +33,7 @@ internal interface RoomService {
     ): LiveData<NEResult<NEEduRoomConfigRes>>
 
     /**
-     * 获取房间配置
+     * Get the room configuration
      *
      * @param roomUuid
      * @return
@@ -45,7 +45,7 @@ internal interface RoomService {
     ): LiveData<NEResult<NEEduRoomConfig>>
 
     /**
-     * 查询房间快照
+     * Query room snapshots
      */
     @GET("scene/apps/{appKey}/v1/rooms/{roomUuid}/snapshot")
     fun fetchSnapshot(
@@ -54,7 +54,7 @@ internal interface RoomService {
     ): LiveData<NEResult<NEEduSnapshotRes>>
 
     /**
-     * 收件箱拉取列表
+     * Get the list from the inbox
      */
     @GET("scene/apps/{appKey}/v1/rooms/{roomId}/sequence")
     fun fetchNextSequences(
@@ -64,7 +64,7 @@ internal interface RoomService {
     ): LiveData<NEResult<NEEduSequenceList>>
 
     /**
-     * 发送自定义的点对点消息
+     * Send custom peer-to-peer messages
      */
     @POST("scene/apps/{appKey}/v1/rooms/{roomUuid}/users/{toUserUuid}/messages/peer")
     fun sendP2PMessage(
@@ -75,7 +75,7 @@ internal interface RoomService {
     ): LiveData<NEResult<String>>
 
     /**
-     * 房间状态
+     * Room states
      */
     @PUT("scene/apps/{appKey}/v1/rooms/{roomId}/states/{key}")
     fun updateRoomStates(
@@ -86,7 +86,7 @@ internal interface RoomService {
     ): LiveData<NEResult<Void>>
 
     /**
-     * 删除房间状态
+     * Delete room state
      */
     @DELETE("scene/apps/{appKey}/v1/rooms/{roomId}/states/{key}")
     fun deleteRoomStates(
@@ -96,7 +96,7 @@ internal interface RoomService {
     ): LiveData<NEResult<String>>
 
     /**
-     * 房间属性
+     * Room properties
      */
     @PUT("scene/apps/{appKey}/v1/rooms/{roomId}/properties/{key}")
     fun updateRoomProperties(
@@ -107,7 +107,7 @@ internal interface RoomService {
     ): LiveData<NEResult<Void>>
 
     /**
-     * 删除房间属性
+     * Delete room properties
      */
     @DELETE("scene/apps/{appKey}/v1/rooms/{roomId}/properties/{key}")
     fun deleteRoomProperties(

@@ -21,4 +21,12 @@
     <string name="im_resue_desc">开启IM复用后，将采用宿主应用的IM通道</string>
     <string name="low_latency_live_desc">CDN延时 2-5s, 低延时 1-2s</string>
     <string name="im_login">IM登录</string>
+    <string name="im_account">IM账号</string>
+    <string name="im_password">IM密码</string>
+    <string name="im_reuse_status_take_effect_after_restart">当前IM复用状态(修改后重启生效)：</string>
+    <string name="disabled">已关闭</string>
+    <string name="enabled">已开启</string>
+    <string name="current_im_account">当前已登录IM账号:</string>
+    <string name="login">登录</string>
+    <string name="logout">注销</string>
 </resources>

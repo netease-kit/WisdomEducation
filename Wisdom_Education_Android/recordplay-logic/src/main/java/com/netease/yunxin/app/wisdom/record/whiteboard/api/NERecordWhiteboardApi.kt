@@ -9,7 +9,7 @@ import com.netease.yunxin.app.wisdom.record.base.INERecordActor
 import com.netease.yunxin.app.wisdom.record.whiteboard.view.NERecordWhiteboardView
 
 /**
- * Created by hzsunyj on 2021/5/21.
+ * 
  */
 abstract class NERecordWhiteboardApi : INERecordActor {
     abstract fun getUrls(): List<String>

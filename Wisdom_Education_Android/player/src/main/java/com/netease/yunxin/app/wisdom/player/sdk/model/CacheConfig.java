@@ -6,19 +6,19 @@
 package  com.netease.yunxin.app.wisdom.player.sdk.model;
 
 /**
- * 缓存配置信息
+ * Cache configuration information
  *
  * @author netease
  */
 public class CacheConfig {
     /**
-     * 是否缓存音视频到本地
+     * Check whether to cache the audio and video data
      */
     public boolean isCache;
     /**
-     * 缓存的路径地址
-     * 如果为空，那么内部自动缓存到默认地址，并且每次释放播放器、重置播放器、切换拉流地址会删除缓存的视频文件
-     * 如果不为空，那么SDK会根据设置进来的路径进行缓存，APP应用层自行管理缓存的文件
+     * The address of the cache path
+     * If the cache path is unspecified, the default cache path is used, and the cache is deleted after the player is released or reset, or the URL is changed
+     * If the cache path is specified, the SDK cache the data is the specified path and the application layer manages the cached data.
      */
     public String cachePath;
 

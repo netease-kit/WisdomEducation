@@ -9,7 +9,7 @@ import android.content.Context
 import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduHttpCode
 
 /**
- * SDK通用错误码与错误描述
+ * SDK common error codes and description
  */
 
 class NEEduErrorCode {

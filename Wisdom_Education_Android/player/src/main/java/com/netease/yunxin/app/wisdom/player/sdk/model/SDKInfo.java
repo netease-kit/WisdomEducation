@@ -6,15 +6,15 @@
 package  com.netease.yunxin.app.wisdom.player.sdk.model;
 
 /**
- * SDK对外信息
+ * SDK information
  */
 public class SDKInfo {
     /**
-     * SDK版本号
+     * SDK version number
      */
     public String version;
     /**
-     * SDK内部计算出的设备ID
+     * Device ID calculated by the SDK
      */
     public String deviceId;
 }

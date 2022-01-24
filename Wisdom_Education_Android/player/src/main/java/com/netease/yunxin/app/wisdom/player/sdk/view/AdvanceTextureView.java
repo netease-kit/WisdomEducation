@@ -12,8 +12,8 @@ import com.netease.yunxin.app.wisdom.player.view.BaseTextureView;
 
 
 /**
- * TextureView控件
- * 对TextureView做了封装，可直接用于播放器播放，支持后台播放
+ * TextureView control
+ * TextureView is wrapped for the player. Background playback is supported
  *
  * @author netease
  */

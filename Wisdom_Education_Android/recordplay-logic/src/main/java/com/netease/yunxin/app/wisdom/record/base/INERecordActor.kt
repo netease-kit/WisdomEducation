@@ -14,65 +14,65 @@ import com.netease.yunxin.app.wisdom.record.model.NERecordPlayState
  */
 interface INERecordActor {
     /**
-     * 开始播放
+     * Start playback
      */
     fun start()
 
     /**
-     * 暂停播放
+     * Pause playback
      */
     fun pause()
 
     /**
-     * 设置到指定时间点播放
-     * @param positionMs 指定时间点
+     * Set a specified time for playback
+     * @param positionMs The specified time
      */
     fun seek(positionMs: Long)
 
     /**
-     * 停止播放
+     * Stop playback
      */
     fun stop()
 
     /**
-     * 设置播放速度
-     * @param speed 播放速度
+     * Set the playback speed
+     * @param speed The playback speed
      */
     fun setSpeed(speed: Float)
 
     /**
-     * 获取播放时长(单位ms)
+     * Get the duration in milliseconds
      */
     fun getDuration(): Long
 
     /**
-     * 当前播放时间(单位ms)
+     * Get the current playback position in milliseconds
      */
     fun getCurrentPosition(): Long
 
     /**
-     * 获取播放状态
+     * Get the playback state
      * @return
      */
     @NERecordPlayState
     fun getState(): Int
 
     /**
-     * 播放状态发生变化
+     * The playback state changes
      *
-     * @return 回调livedata
+     * @return The livedata callback
      */
     fun onStateChange(): LiveData<Int>
 
     /**
-     * 更新播放状态
+     * Update the playback state
      *
-     * @param playState 播放状态[NERecordPlayState]
+     * @param playState The playback state [NERecordPlayState]
      */
     fun updateState(@NERecordPlayState playState: Int)
 
     /**
-     * 销毁
+     * Release the player instance
      *
      */
     fun dispose() {}

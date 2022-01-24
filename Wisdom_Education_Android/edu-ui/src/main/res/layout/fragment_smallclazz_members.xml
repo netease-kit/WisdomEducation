@@ -34,7 +34,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="课堂成员(4)" />
+        tools:text="Participant(s)(4)" />
 
     <View
         android:id="@+id/line_horizontal_top"

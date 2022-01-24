@@ -21,7 +21,7 @@ import com.netease.yunxin.app.wisdom.edu.logic.net.service.request.NEEduUpdateMe
 import com.netease.yunxin.app.wisdom.edu.logic.service.NEEduShareScreenService
 
 /**
- * Created by hzsunyj on 2021/5/27.
+ * 
  */
 internal class NEEduShareScreenServiceImpl : NEEduShareScreenService() {
 

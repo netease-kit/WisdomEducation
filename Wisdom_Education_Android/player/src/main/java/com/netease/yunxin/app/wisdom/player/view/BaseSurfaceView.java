@@ -53,7 +53,7 @@ public class BaseSurfaceView extends SurfaceView implements IRenderView, Surface
     @Override
     public void setCallback(SurfaceCallback callback) {
         if (mCallback != null || callback == null) {
-            return; // 已经注册过的或者null注册的，直接返回
+            return; // If the callback is already registered or is nullified, return the callback
         }
 
         mCallback = callback;
@@ -101,7 +101,7 @@ public class BaseSurfaceView extends SurfaceView implements IRenderView, Surface
         boolean changed = false;
 
         if (videoWidth > 0 && videoHeight > 0 && mMeasureHelper.setVideoSize(videoWidth, videoHeight)) {
-            getHolder().setFixedSize(videoWidth, videoHeight); // 确定Surface窗口的的大小，告知系统视频帧的真实分辨率！！！
+            getHolder().setFixedSize(videoWidth, videoHeight); // Confirm the Surface view size and notify the real resolution of the video frame.
             changed = true;
         }
 
@@ -125,7 +125,7 @@ public class BaseSurfaceView extends SurfaceView implements IRenderView, Surface
     }
 
     /**
-     * ******************************** 构造器 ****************************
+     * ******************************** Constructor ****************************
      */
 
     public BaseSurfaceView(Context context) {

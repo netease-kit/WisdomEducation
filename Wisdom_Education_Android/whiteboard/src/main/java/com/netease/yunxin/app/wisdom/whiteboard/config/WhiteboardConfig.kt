@@ -10,7 +10,7 @@ import android.os.Parcelable
 import com.netease.yunxin.app.wisdom.whiteboard.model.NEWbAuth
 
 /**
- * Created by hzsunyj on 2021/5/21.
+ * 
  */
 class WhiteboardConfig(
     val appKey: String,
@@ -21,6 +21,7 @@ class WhiteboardConfig(
     val channelName: String,
     var whiteBoardUrl: String?,
     val isHost: Boolean,
+    val privateConf: NEWbPrivateConf?,
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString()!!,
@@ -30,7 +31,9 @@ class WhiteboardConfig(
         parcel.readString()!!,
         parcel.readString()!!,
         parcel.readString()!!,
-        parcel.readByte() != 0.toByte())
+        parcel.readByte() != 0.toByte(),
+        parcel.readParcelable(NEWbPrivateConf.javaClass.classLoader),
+    )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(appKey)
@@ -41,6 +44,7 @@ class WhiteboardConfig(
         parcel.writeString(channelName)
         parcel.writeString(whiteBoardUrl)
         parcel.writeByte(if (isHost) 1 else 0)
+        parcel.writeParcelable(privateConf, flags)
     }
 
     override fun describeContents(): Int {

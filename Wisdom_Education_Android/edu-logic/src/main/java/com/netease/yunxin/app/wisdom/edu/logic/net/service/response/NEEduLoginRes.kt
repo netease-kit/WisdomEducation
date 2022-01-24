@@ -6,7 +6,7 @@
 package com.netease.yunxin.app.wisdom.edu.logic.net.service.response
 
 /**
- * the information data returned by the login interface
+ * the information returned by the login interface
  *
  * @property userUuid user's unique id
  * @property userToken user's token

@@ -385,7 +385,7 @@ class NERecordPlayer(var recordOptions: NERecordOptions) : NERecordUIListener, I
     }
 
     /**
-     * release resources related to player
+     * release resources related to the player
      *
      */
     fun release() {

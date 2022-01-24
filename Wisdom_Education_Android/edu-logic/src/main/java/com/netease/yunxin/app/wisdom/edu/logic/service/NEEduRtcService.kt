@@ -12,16 +12,16 @@ import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduMember
 import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduState
 
 /**
- * 提供可供 App 调用的音视频相关方法
+ * Methods for audio and videos
  *
  */
 abstract class NEEduRtcService : INEEduService() {
 
     /**
-     * 设置本地的音视频开关，不开关硬件
+     * Set to enable or disable audio or video without plugging or unplugging devices
      *
-     * @param videoEnabled 本地视频开关
-     * @param videoEnabled 本地音频开关
+     * @param videoEnabled Enable or disable local video
+     * @param videoEnabled Enable or disable local audio
      */
     abstract fun localUserVideoAudioEnable(
         videoEnabled: Boolean,
@@ -29,21 +29,21 @@ abstract class NEEduRtcService : INEEduService() {
     ): LiveData<Pair<NEResult<Void>, NEResult<Void>>>
 
     /**
-     * 取消/发送本地视频，不开关硬件
+     * Enable or disable video without plugging or unplugging devices
      *
-     * @param videoEnabled 本地视频开关
+     * @param videoEnabled Enable or disable local video
      */
     abstract fun localUserVideoEnable(videoEnabled: Boolean): LiveData<NEResult<Void>>
 
     /**
-     * 取消/发送本地音频，不开关硬件
+     * enable or disable audio without plugging or unplugging devices
      *
-     * @param audioEnabled 本地音频开关
+     * @param audioEnabled Enable or disable local audio
      */
     abstract fun localUserAudioEnable(audioEnabled: Boolean): LiveData<NEResult<Void>>
 
     /**
-     * 老师开关远程视频
+     * The teacher enables or disables remote videos
      *
      * @param userId
      * @param videoEnabled
@@ -55,7 +55,7 @@ abstract class NEEduRtcService : INEEduService() {
     ): LiveData<NEResult<Void>>
 
     /**
-     * 老师开关远程音频
+     * The teacher enables or disables remote audios
      *
      * @param userId
      * @param audioEnabled
@@ -68,7 +68,7 @@ abstract class NEEduRtcService : INEEduService() {
 
 
     /**
-     * 发送全体静音
+     * Mute all member audios
      *
      * @param roomUuid
      * @param state
@@ -77,73 +77,73 @@ abstract class NEEduRtcService : INEEduService() {
     abstract fun muteAllAudio(roomUuid: String, state: Int): LiveData<NEResult<Void>>
 
     /**
-     * 静音状态发生变化
+     * The mute state changes
      */
     abstract fun onMuteAllAudio(): LiveData<Boolean>
 
     /**
-     * 全局静音变更
+     * Update the mute all audio status
      */
     internal abstract fun updateMuteAllAudio(muteState: NEEduState)
 
     /**
-     * 设置音频，会开关硬件
+     * Set audio by unplugging or plugging devices
      */
     abstract fun updateRtcAudio(member: NEEduMember)
 
     /**
-     * 开关本地视频，会开关硬件
+     * Enable or diable local video by unplugging or plugging devices
      */
     abstract fun enableLocalVideo(member: NEEduMember)
 
     /**
-     * 设置成员的视频
+     * Set the member stream
      */
     abstract fun updateRtcVideo(rtcView: ViewGroup?, member: NEEduMember)
 
     /**
-     * 设置辅流视频
+     * Set substream video
      */
     abstract fun updateRtcSubVideo(rtcView: ViewGroup?, member: NEEduMember)
 
     /**
-     * 流状态发生变化
+     * The stream state changes
      */
     abstract fun onStreamChange(): LiveData<Pair<NEEduMember, Boolean>>
 
     /**
-     * 对应的成员流的变更
+     * Stream of a specified member changes
      */
     internal abstract fun updateStreamChange(member: NEEduMember, updateVideo: Boolean)
 
     /**
-     * 成员流的移除
+     * Remove the member streams
      */
     internal abstract fun updateStreamRemove(member: NEEduMember, updateVideo: Boolean)
 
 
     /**
-     * 成员快照，主要回收其他不存在的人的资源
+     * The member snapshot, collecting the resources consumed by members that does not exist
      */
     internal abstract fun updateSnapshotMember(list: MutableList<NEEduMember>)
 
     /**
-     * 成员进入流变更
+     * The stream changes if the member joins the room
      */
     internal abstract fun updateMemberJoin(list: MutableList<NEEduMember>, increment: Boolean)
 
     /**
-     * 成员离开流变更
+     * The stream changes if the member leaves the room
      */
     internal abstract fun updateMemberLeave(list: MutableList<NEEduMember>)
 
     /**
-     * 成员下台流变更
+     * The stream changes if the member leaves the stage
      */
     internal abstract fun updateMemberOffStageStreamChange(member: NEEduMember)
 
     /**
-     * 离开音视频房间
+     * Leave the room
      */
     abstract fun leave()
 }

@@ -6,7 +6,7 @@
 package com.netease.yunxin.app.wisdom.base.network
 
 /**
- * Created by hzsunyj on 4/20/21.
+ * 
  */
 class ErrorCode {
 

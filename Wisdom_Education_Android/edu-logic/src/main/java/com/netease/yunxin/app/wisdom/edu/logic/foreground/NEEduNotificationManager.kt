@@ -17,7 +17,7 @@ import android.text.TextUtils
 import androidx.core.app.NotificationCompat
 
 /**
- * Created by hzsunyj on 2021/5/27.
+ * 
  */
 object NEEduNotificationManager {
 

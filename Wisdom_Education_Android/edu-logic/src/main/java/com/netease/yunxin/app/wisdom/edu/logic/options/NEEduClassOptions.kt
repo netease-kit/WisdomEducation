@@ -8,13 +8,13 @@ package com.netease.yunxin.app.wisdom.edu.logic.options
 import com.netease.yunxin.app.wisdom.edu.logic.model.*
 
 /**
- * 课堂配置
+ * Class configuration
  *
- * @property classId 课程号
- * @property className 课程名称
- * @property nickName 用户在课堂中的昵称
- * @property sceneType 课堂类型，有三种类型： 1v1， 小班课， 大班课
- * @property roleType 角色类型：host：教育场景中映射为老师，broadcaster: 教育场景中映射为学生
+ * @property classId Class ID
+ * @property className Class name
+ * @property nickName User alias in the class
+ * @property sceneType Class type: One-to-one, breakout class, and large class
+ * @property roleType Role type: host. In the education scenario, the host represents the teacher，and broadcaster indicates students
  */
 class NEEduClassOptions(
     var classId: String,

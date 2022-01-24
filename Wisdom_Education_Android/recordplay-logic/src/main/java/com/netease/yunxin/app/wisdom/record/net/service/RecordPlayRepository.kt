@@ -11,7 +11,7 @@ import com.netease.yunxin.app.wisdom.base.network.RetrofitManager
 import com.netease.yunxin.app.wisdom.record.model.NEEduRecordData
 
 /**
- * Created by hzsunyj on 2021/8/27.
+ * 
  */
 object RecordPlayRepository {
     private val recordPlayService by lazy { getService(RecordPlayService::class.java) }

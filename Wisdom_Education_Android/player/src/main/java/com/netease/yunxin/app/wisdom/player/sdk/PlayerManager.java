@@ -17,37 +17,37 @@ import java.util.ArrayList;
 import java.util.Map;
 
 /**
- * 网易云信视频播放器管理类
- * 基于播放器SDK封装的全局操作接口
+ * Player management class
+ * Global operations based on the player SDK
  * <p>
  *
  * @author netease
  */
 public class PlayerManager {
     /**
-     * 初始化SDK,使用播放器时必须先进行初始化才能进行后续操作。
+     * Initialize the player SDK. To use the player, the player SDK must be initialized.
      *
-     * @param context 调用上下文
-     * @param config  sdk配置信息
+     * @param context The context for the method call
+     * @param config  The SDK configuration
      */
     public static void init(Context context, SDKOptions config) {
         PlayerManagerImpl.init(context, config);
     }
 
     /**
-     * 获取是否已经准备好so库文件
-     * 仅在初始化 init 接口中配置动态加载才能使用该接口查询
+     * Checke whether the so library is ready
+     * The interface is used when dynamic loading is required using the init operation
      *
-     * @return 是否准备好
+     * @return the result
      */
     public static boolean isDynamicLoadReady() {
         return PlayerManagerImpl.isDynamicLoadReady();
     }
 
     /**
-     * 获取SDK信息
+     * Get the SDK information
      *
-     * @return SDK信息实例
+     * @return the SDK information
      */
     public static SDKInfo getSDKInfo(Context context) {
         return PlayerManagerImpl.getSDKInfo(context);
@@ -55,54 +55,54 @@ public class PlayerManager {
 
 
     /**
-     * 构造播放器实例对象
+     * Create a player object
      *
-     * @param context   上下文
-     * @param videoPath 视频资源路径
-     * @param options   播放选项
-     * @return 播放器实例对象
+     * @param context   Context information
+     * @param videoPath Path of the video asset
+     * @param options   Playback options
+     * @return The player object
      */
     public static LivePlayer buildLivePlayer(Context context, String videoPath, VideoOptions options) {
         return PlayerManagerImpl.buildLivePlayer(context, videoPath, options);
     }
 
     /**
-     * 构造播放器实例对象
+     * Create a player object
      *
-     * @param context   上下文
-     * @param videoPath 视频资源路径
-     * @param options   播放选项
-     * @return 播放器实例对象
+     * @param context   Context information
+     * @param videoPath Path of the video asset
+     * @param options   Playback options
+     * @return The player object
      */
     public static VodPlayer buildVodPlayer(Context context, String videoPath, VideoOptions options) {
         return PlayerManagerImpl.buildVodPlayer(context, videoPath, options);
     }
 
     /**
-     * 构造播放器实例对象
+     * Create a player object
      *
-     * @param context         上下文
-     * @param mediaDataSource 自定义视频资源
-     * @param options         播放选项
-     * @return 播放器实例对象
+     * @param context         Context information
+     * @param mediaDataSource Custome media data source
+     * @param options         Playback options
+     * @return The player object
      */
     public static VodPlayer buildVodPlayer(Context context, NEMediaDataSource mediaDataSource, VideoOptions options) {
         return PlayerManagerImpl.buildVodPlayer(context, mediaDataSource, options);
     }
 
     /**
-     * 添加预加载拉流链接地址
+     * Add preload URLs
      *
-     * @param urls 拉流链接地址
+     * @param urls Stream URLs
      */
     public static void addPreloadUrls(ArrayList<String> urls) {
         PlayerManagerImpl.addPreloadUrls(urls);
     }
 
     /**
-     * 移除预加载拉流链接地址
+     * Remove preload URLs
      *
-     * @param urls 拉流链接地址
+     * @param urls Stream URLs
      */
     public static void removePreloadUrls(ArrayList<String> urls) {
         PlayerManagerImpl.removePreloadUrls(urls);
@@ -110,16 +110,16 @@ public class PlayerManager {
     }
 
     /**
-     * 查询预加载拉流链接地址的结果信息
+     * Query the result of preload URLs
      *
-     * @return Map<String, Integer> String是链接地址，Integer是状态,状态码参考 {@link com.netease.neliveplayer.sdk.constant.NEPreloadStatusType}
+     * @return Map<String, Integer> String represents URLs and Integer represents states. For more information, see {@link com.netease.neliveplayer.sdk.constant.NEPreloadStatusType}
      */
     public static Map<String, Integer> queryPreloadUrls() {
         return PlayerManagerImpl.queryPreloadUrls();
     }
 
     /**
-     * 刷新全部拉流地址预加载信息
+     * Refreshe preload URLs
      */
     public static void refreshPreloadUrls() {
         PlayerManagerImpl.refreshPreloadUrls();

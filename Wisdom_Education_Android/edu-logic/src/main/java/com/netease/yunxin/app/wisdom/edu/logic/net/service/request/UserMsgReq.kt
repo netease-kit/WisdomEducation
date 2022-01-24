@@ -6,9 +6,9 @@
 package com.netease.yunxin.app.wisdom.edu.logic.net.service.request
 
 /**
- * 发送点对点消息
+ * Send peer-to-peer messages
  *
- * @property type 消息类型
+ * @property type The message type
  * @property body
  */
 data class UserMsgReq(var type: Int, val body: MutableMap<String, Any>?)

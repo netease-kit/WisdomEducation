@@ -95,7 +95,7 @@ class ZoomImageFragment : BaseFragment(R.layout.fragment_zoom_image) {
         }
     }
 
-    // 加载并显示
+    // load and display the image
     private fun loadMsgAndDisplay() {
         if (mode == MODE_NORMAL) {
             resetDownload()
@@ -120,7 +120,7 @@ class ZoomImageFragment : BaseFragment(R.layout.fragment_zoom_image) {
         }
     }
 
-    // 若图片已下载，直接显示图片；若图片未下载，则下载图片
+    // If the image is downloaded, display the image. If the image is not downloaded, download it
     private fun requestOriImage(msg: IMMessage) {
         if (isOriginImageHasDownloaded(msg)) {
             onDownloadSuccess(msg)
@@ -129,7 +129,7 @@ class ZoomImageFragment : BaseFragment(R.layout.fragment_zoom_image) {
 
         // async download original image
         onDownloadStart(msg)
-        message = msg // 下载成功之后，判断是否是同一条消息时需要使用
+        message = msg // After the download is complete, check whether the messages are the same
         downloadFuture = NIMClient.getService(MsgService::class.java).downloadAttachment(msg, false)
         downloadFuture?.setCallback(object : RequestCallback<Void?> {
             override fun onSuccess(param: Void?) {
@@ -148,7 +148,7 @@ class ZoomImageFragment : BaseFragment(R.layout.fragment_zoom_image) {
     }
 
     /**
-     * ******************************** 设置图片 *********************************
+     * ******************************** Image settings *********************************
      */
     private fun setThumbnail(msg: IMMessage) {
         val thumbPath = (msg.attachment as ImageAttachment).thumbPath

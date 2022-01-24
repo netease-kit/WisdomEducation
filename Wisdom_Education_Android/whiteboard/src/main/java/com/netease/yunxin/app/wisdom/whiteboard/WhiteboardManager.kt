@@ -9,12 +9,13 @@ import android.annotation.SuppressLint
 import android.text.TextUtils
 import com.netease.yunxin.app.wisdom.whiteboard.api.WhiteboardApi
 import com.netease.yunxin.app.wisdom.whiteboard.bridge.JsBridge
+import com.netease.yunxin.app.wisdom.whiteboard.config.NEWbPrivateConf
 import com.netease.yunxin.app.wisdom.whiteboard.config.WhiteboardConfig
 import com.netease.yunxin.app.wisdom.whiteboard.model.WhiteboardUser
 import com.netease.yunxin.app.wisdom.whiteboard.view.WhiteboardView
 
 /**
- * Created by hzsunyj on 2021/5/21.
+ * 
  */
 object WhiteboardManager : WhiteboardApi() {
 
@@ -63,6 +64,10 @@ object WhiteboardManager : WhiteboardApi() {
         return config.wbAuth?.nonce
     }
 
+    override fun getPrivateConf(): NEWbPrivateConf? {
+        return config.privateConf
+    }
+
     override fun getCurTime(): Long? {
         return config.wbAuth?.curTime?.toLong()
     }
@@ -88,7 +93,7 @@ object WhiteboardManager : WhiteboardApi() {
     }
 
     /**
-     * 与宿主同生共死
+     * Live with the host
      */
     override fun finish() {
         webView?.destroy()

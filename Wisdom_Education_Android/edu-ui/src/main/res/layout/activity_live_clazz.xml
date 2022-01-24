@@ -68,7 +68,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="@dimen/common_dp_13"
             android:gravity="center"
-            android:text="课程还未开始，请耐心等待哦"
+            android:text="The class does not begin. Please wait for a moment!"
             android:textColor="@color/color_8d94a0" />
     </RelativeLayout>
 

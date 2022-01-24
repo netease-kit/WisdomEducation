@@ -6,7 +6,7 @@
 package com.netease.yunxin.app.wisdom.edu.logic.model
 
 /**
- * Created by hzsunyj on 2021/5/19.
+ * 
  */
 open class NEEduState(var value: Int? = NEEduStateValue.CLOSE, var time: Long? = 0) {
     override fun equals(other: Any?): Boolean {

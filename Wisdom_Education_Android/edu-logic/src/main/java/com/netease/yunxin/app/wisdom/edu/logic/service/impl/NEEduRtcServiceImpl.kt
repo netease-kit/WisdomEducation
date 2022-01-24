@@ -30,7 +30,7 @@ import com.netease.yunxin.app.wisdom.rtc.RtcManager
 import com.netease.yunxin.kit.alog.ALog
 
 /**
- * Created by hzsunyj on 2021/5/20.
+ * 
  */
 internal class NEEduRtcServiceImpl : NEEduRtcService() {
 

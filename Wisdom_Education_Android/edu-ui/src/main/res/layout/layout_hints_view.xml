@@ -26,6 +26,8 @@
             android:text="@string/hints_mute_all"
             android:textColor="@color/color_b4bfd0"
             android:textSize="@dimen/ts_14_dp"
+            android:maxLines="3"
+            android:ellipsize="end"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>

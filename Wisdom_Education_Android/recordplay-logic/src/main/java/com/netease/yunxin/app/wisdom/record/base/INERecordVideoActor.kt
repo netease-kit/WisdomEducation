@@ -11,23 +11,23 @@ package com.netease.yunxin.app.wisdom.record.base
  */
 interface INERecordVideoActor : INERecordActor {
     /**
-     * 设置音频开关
+     * Enable or disable audio
      *
-     * @param audioEnable 是否打开音频
+     * @param audioEnable Enable or disable audio
      */
     fun switchAudio(audioEnable: Boolean)
 
     /**
-     * 设置音量(0.0 ~ 1.0, 0.0为静音，1.0为最大)
+     * Set the volume. Value range: 0.0 to 1.0. A value of 0.0 indicates muted. A value of 1.0 indicates the maximum volume.
      *
      * @param volume
      */
     fun setVolume(volume: Float)
 
     /**
-     * 设置视频开关
+     * Enable or disable video
      *
-     * @param videoEnable 是否打开视频
+     * @param videoEnable Enable or disable video
      */
     fun switchVideo(videoEnable: Boolean)
 }

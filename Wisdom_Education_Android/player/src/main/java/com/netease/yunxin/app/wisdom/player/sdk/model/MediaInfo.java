@@ -8,14 +8,14 @@ package  com.netease.yunxin.app.wisdom.player.sdk.model;
 import com.netease.neliveplayer.sdk.model.NEMediaInfo;
 
 /**
- * 媒体信息类
+ * Media information class
  *
  * @author netease
  */
 
 public class MediaInfo {
     private NEMediaInfo mInner;
-    private long mDuration; // 点播
+    private long mDuration; // VOD
 
     public MediaInfo(NEMediaInfo mInner, long duration) {
         this.mInner = mInner;

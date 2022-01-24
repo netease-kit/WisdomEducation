@@ -134,7 +134,7 @@ open class ActionSheetDialog : BottomSheetDialog {
     }
 
     /**
-     * 是否包含过量的action，ui适配
+     * check whether contain excessive actions，ui adaptive
      */
     var overCapacity: Boolean = false
 
@@ -170,7 +170,7 @@ open class ActionSheetDialog : BottomSheetDialog {
 
         override fun onBindViewHolder(data: ActionItem?) {
             if (isFirstItem) {
-                if (adapter!!.itemCount == 2) { // 只有当前和cancel
+                if (adapter!!.itemCount == 2) { // current action or cancel
                     actionItem!!.setBackgroundResource(R.drawable.white_round_box_13dp_shape_selector)
                     splitLine!!.visibility = View.GONE
                 } else {
@@ -178,7 +178,7 @@ open class ActionSheetDialog : BottomSheetDialog {
                 }
             } else {
                 splitLine!!.visibility = View.VISIBLE
-                if (adapterPosition == adapter!!.itemCount - 2 && !overCapacity) { // 除了cancel的最后一条
+                if (adapterPosition == adapter!!.itemCount - 2 && !overCapacity) {
                     actionItem!!.setBackgroundResource(R.drawable.white_bottom_round_box_13dp_shape_selector)
                 } else {
                     actionItem!!.setBackgroundResource(R.drawable.white_middle_item_selector)

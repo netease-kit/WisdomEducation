@@ -22,7 +22,7 @@
         <TextView
             android:id="@+id/tv_room_id"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/common_dp_20"
             android:layout_marginStart="@dimen/common_dp_24"
             android:layout_marginTop="@dimen/common_dp_24"
             android:gravity="center_vertical|start"
@@ -35,7 +35,7 @@
         <TextView
             android:id="@+id/tv_room_id_value"
             android:layout_width="@dimen/common_dp_82"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/common_dp_20"
             android:layout_marginStart="@dimen/common_dp_104"
             android:layout_marginTop="@dimen/common_dp_24"
             android:ellipsize="end"
@@ -61,7 +61,7 @@
         <TextView
             android:id="@+id/tv_room_name"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/common_dp_20"
             android:layout_marginStart="@dimen/common_dp_24"
             android:layout_marginTop="@dimen/common_dp_56"
             android:gravity="center_vertical|start"
@@ -74,7 +74,7 @@
         <TextView
             android:id="@+id/tv_room_name_value"
             android:layout_width="@dimen/common_dp_156"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/common_dp_20"
             android:layout_marginStart="@dimen/common_dp_104"
             android:layout_marginTop="@dimen/common_dp_56"
             android:gravity="center_vertical|start"
@@ -83,12 +83,12 @@
             android:includeFontPadding="false"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="第 1 节课 - 英文情景对话" />
+            tools:text="Class 1 - Dialogue" />
 
         <TextView
             android:id="@+id/tv_teacher_name"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/common_dp_20"
             android:layout_marginStart="@dimen/common_dp_24"
             android:layout_marginTop="@dimen/common_dp_88"
             android:gravity="center_vertical|start"
@@ -101,7 +101,7 @@
         <TextView
             android:id="@+id/tv_teacher_name_value"
             android:layout_width="@dimen/common_dp_156"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/common_dp_20"
             android:layout_marginStart="@dimen/common_dp_104"
             android:layout_marginTop="@dimen/common_dp_88"
             android:gravity="center_vertical|start"

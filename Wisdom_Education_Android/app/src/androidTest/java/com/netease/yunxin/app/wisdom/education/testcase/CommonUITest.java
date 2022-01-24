@@ -6,22 +6,22 @@ import static com.netease.yunxin.app.wisdom.education.BaseTestUtils.assertViewEx
 import static com.netease.yunxin.app.wisdom.education.BaseTestUtils.viewClick;
 
 /**
- * 通用UI测试工具类
+ * Common UI testing tool class
  */
 @ClassRegister
 public class CommonUITest {
 
     /**
-     * 查看控件是否存在
-     * @param text UI控件文案。需要确保界面上只有一个唯一的text文案的控件。否则不一定能查找到对应控件。
+     * Check whether the control exists
+     * @param text UI control text. Make sure the text of the control is unique. Otherwise, the specified control cannot be found.
      */
     public static void checkComponent(String text) {
         assertViewExist(text);
     }
 
     /**
-     * 点击控件
-     * @param text UI控件文案。需要确保界面上只有一个唯一的text文案的控件。否则不一定能查找到对应控件。
+     * Click control
+     * @param text UI control text. Make sure the text of the control is unique. Otherwise, the specified control cannot be found.
      */
     public static void clickComponent(String text) {
         assertViewExist(text);

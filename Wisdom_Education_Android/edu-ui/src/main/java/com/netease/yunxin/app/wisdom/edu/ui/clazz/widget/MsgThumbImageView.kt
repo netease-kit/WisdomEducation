@@ -23,7 +23,7 @@ class MsgThumbImageView : AppCompatImageView {
     constructor(context: Context?, attrs: AttributeSet?, defStyle: Int) : super(context!!, attrs, defStyle)
 
     /**
-     * *************************** 对外接口 **********************************
+     * *************************** External interfaces **********************************
      */
     fun loadAsResource(resId: Int) {
         Glide.with(context.applicationContext).load(resId).apply(

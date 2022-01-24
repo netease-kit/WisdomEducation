@@ -10,53 +10,53 @@ import com.netease.neliveplayer.sdk.NELivePlayer;
 import com.netease.neliveplayer.sdk.model.NEDynamicLoadingConfig;
 
 /**
- * SDK配置信息类
+ * SDK configuration class
  *
  * @author netease
  */
 
 public class SDKOptions {
     /**
-     * 应用层传入到SDK中的能区分设备的id值，方便播放器通过该值查询到对应播放数据和日志
+     * The device ID passed from the application layer to the SDK. The player can query the playback data and log using the ID
      */
     public String thirdUserId;
 
     /**
-     * 预加载刷新间隔
-     * 单位：ms，默认30分钟，设置 30 * 60 * 100
-     * 涉及的接口 {@link NELivePlayer#addPreloadUrls },{@link NELivePlayer#removePreloadUrls },{@link NELivePlayer#queryPreloadUrls }
+     * Refresh interval for preloading
+     * Unit: milliseconds. The default value is 30 minutes. Set to 30 * 60 * 100
+     * Applicable interfaces {@link NELivePlayer#addPreloadUrls },{@link NELivePlayer#removePreloadUrls },{@link NELivePlayer#queryPreloadUrls }
      */
     public long refreshPreLoadDuration = 30 * 60 * 1000;
 
     /**
-     * 是否对预处理和缓冲进行超时保护
-     * 默认false开启对预处理和缓冲进行超时保护，如果应用层需要自己处理预处理和缓冲的超时逻辑可以设置为true关掉该功能。
+     * Check whether to protect preprocessing and cache due to timeout
+     * The default value is false, and the preprocessing and cache is protected. You can also set the value to true to disable the feature.
      */
     public boolean isCloseTimeOutProtect;
 
     /**
-     * so库动态加载配置信息
+     * The so library dynamic loading configuration
      */
     public NEDynamicLoadingConfig dynamicLoadingConfig;
 
     /**
-     * 数据上报回调
-     * 目前SDK内部会将统计数据上报到网易云统计平台，如果上层注册了该回调，那么SDK不再进行数据上传而是由上层进行网络请求上传数据。
+     * Data upload callback
+     * The SDK report statistics to the CommsEase. If the callback is registerd, the SDK will not resport statistics, instead, the upper layer of the application sends request to report statistics.
      */
     public NELivePlayer.OnDataUploadListener dataUploadListener;
 
     /**
-     * 播放器日志回调
+     * Player log callback
      */
     public NELivePlayer.OnLogListener logListener;
 
     /**
-     * 是否支持H265解码回调
+     * Cheche whether H.265 is supported
      */
     public NELivePlayer.OnSupportDecodeListener supportDecodeListener;
 
     /**
-     * 私有化设置
+     * The private configuration
      */
     public NEPlayerConfig privateConfig;
 }

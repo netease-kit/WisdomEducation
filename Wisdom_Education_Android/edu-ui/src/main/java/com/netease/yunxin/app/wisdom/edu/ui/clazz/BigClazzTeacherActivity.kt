@@ -73,7 +73,7 @@ class BigClazzTeacherActivity : BaseBigClassActivity() {
 
     override fun onStreamChange(member: NEEduMember, updateVideo: Boolean) {
         super.onStreamChange(member, updateVideo)
-        // 刷新底部状态栏
+        // Refreshe the status bar at the bottom
         if (isSelf(member)) {
             binding.bottomView.apply {
                 getVideo().isSelected = member.hasVideo()

@@ -8,13 +8,16 @@ package com.netease.yunxin.app.wisdom.edu.logic.options
 import com.netease.yunxin.app.wisdom.edu.logic.foreground.NEEduForegroundServiceConfig
 
 /**
- * SDK 全局配置
+ * SDK global configuration
  *
- * @property appKey 应用的 AppKey。可以在网易云信控制台中查看。
- * @property authorization 调用服务端接口时，请求头中的校验参数。
- * @property baseUrl 应用服务器地址。私有化配置时需替换为私有化部署地址
- * @property reuseIM 配置是否复用底层NIM-SDK的长连接通道，默认关闭。仅当应用中同时还需独立接入和使用NIM-SDK，才需要开启该配置，其他情况下请忽略该配置。
- * @property foregroundServiceConfig 前台服务配置项
+ * @property appKey The AppKey that you can view in the CommsEase console.
+ * @property authorization The authentication parameter in the request header for server API calls.
+ * @property baseUrl The URL of the app server. The URL must be replaced with the URL of the private server for on-premises deployment
+ * @property reuseIM Specifies whether to reuse the persistent connection channel supported by NIM-SDK. By default, the parameter is disabled. The parameter is enabled only if the application requires separate use of NIM-SDK. Otherwise, the parameter is ignored.
+ * @property foregroundServiceConfig The configuration for foreground services
+ * @property useIMAssetServerAddressConfig  Whether to enable IM privatization. If IM privatization is enabled, the "/assets/server.conf" configuration file is loaded first. If the configuration file fails to be loaded, the privatization disable.
+ * @property useRtcAssetServerAddressConfig Whether to enable Rtc privatization. If IM privatization is enabled, the "/assets/rtc_server.conf" configuration file is loaded first. If the configuration file fails to be loaded, the privatization disable.
+ * @property useWbAssetServerAddressConfig Whether to enable whiteboard privatization. If whiteboard privatization is enabled, the "/assets/wb_server.conf" configuration file is loaded first. If the configuration file fails to be loaded, the privatization disable.
  */
 class NEEduOptions(
     val appKey: String,
@@ -22,4 +25,7 @@ class NEEduOptions(
     val baseUrl: String,
     val reuseIM: Boolean? = false,
     val foregroundServiceConfig: NEEduForegroundServiceConfig? = null,
+    var useIMAssetServerAddressConfig: Boolean? = false,
+    var useRtcAssetServerAddressConfig: Boolean? = false,
+    var useWbAssetServerAddressConfig: Boolean? = false,
 )

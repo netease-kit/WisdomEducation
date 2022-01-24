@@ -10,42 +10,42 @@ import com.netease.yunxin.app.wisdom.base.network.NEResult
 import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduMember
 
 /**
- * 提供可供 App 调用的上台相关方法
+ * Methods for speakers
  *
  */
 abstract class NEEduHandsUpService : INEEduService() {
 
     /**
-     * 获取当前举手中的成员详情
+     * Get the profiles of members who raise a hand
      */
     abstract fun getHandsUpApplyList(): MutableList<NEEduMember>
 
     /**
-     * 获取当前台上成员详情
+     * Get the profiles of members as speaker
      */
     abstract fun getOnStageMemberList(): MutableList<NEEduMember>
 
     /**
-     * 改变成员的举手状态
+     * Change the hand-up state
      */
     abstract fun handsUpStateChange(state: Int, userUuid: String): LiveData<NEResult<Void>>
 
     /**
-     * 学生台上状态发生变化
+     * Hands-up state changes
      */
     abstract fun onHandsUpStateChange(): LiveData<List<NEEduMember>?>
 
     /**
-     * 学生举手状态发生变化 下行
+     * Ppdate Hand-up State
      */
     internal abstract fun updateHandsUpState(member: NEEduMember)
     /**
-     * 变更成员加入
-     * @param increment true 表示增量，false表示全量
+     * Update the member list after members join the room
+     * @param increment true indicates increment，false indicates full load
      */
     internal abstract fun updateMemberJoin(list: MutableList<NEEduMember>, increment: Boolean)
     /**
-     * 变更成员离开
+     * update the member list after members leave the room
      */
     internal abstract fun updateMemberLeave(list: MutableList<NEEduMember>)
 }

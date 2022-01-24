@@ -24,7 +24,7 @@ import com.netease.yunxin.app.wisdom.edu.ui.clazz.widget.TitleView
 import com.netease.yunxin.kit.alog.ALog
 
 /**
- * Created by hzsunyj on 2021/6/17.
+ * 
  */
 abstract class BaseBigClassActivity : BaseNormalClassActivity() {
     private val bigClazzMembersFragment = BigClazzMembersFragment()
@@ -144,7 +144,7 @@ abstract class BaseBigClassActivity : BaseNormalClassActivity() {
 
 
     /**
-     * 学生举手/取消举手
+     * Raise hand/lower hand
      *
      */
     fun switchStuLocalHandsUp() {
@@ -180,7 +180,7 @@ abstract class BaseBigClassActivity : BaseNormalClassActivity() {
 
 
     /**
-     * 老师请TA上台/请TA下台
+     * Teacher unmute/mute a student
      *
      * @param member
      */
@@ -209,7 +209,7 @@ abstract class BaseBigClassActivity : BaseNormalClassActivity() {
     }
 
     /**
-     * 学生主动下讲台
+     * Student leaves as speaker
      *
      */
     fun offStageStudentLocal() {

@@ -19,7 +19,7 @@ import com.netease.yunxin.kit.alog.ALog
 import kotlin.system.exitProcess
 
 /**
- * Created by hzsunyj on 2021/5/27.
+ * 
  */
 class NEEduForegroundService : Service() {
 
@@ -36,7 +36,7 @@ class NEEduForegroundService : Service() {
         }
 
         /**
-         * 屏幕共享意图，用于请求屏幕共享
+         * Screen sharing intent used to request screen sharing
          */
         val neCaptureIntent: Intent
             get() = captureIntent

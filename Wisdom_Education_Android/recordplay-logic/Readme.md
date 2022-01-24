@@ -1,2 +1,2 @@
-## 说明
-- 录制回放所有逻辑module， 不包含任何ui
+## Note
+- Recording playback logci module. No UI is included

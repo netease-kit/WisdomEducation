@@ -30,10 +30,10 @@ internal class NEEduHandsUpServiceImpl : NEEduHandsUpService() {
     }
 
     /**
-     * 更新台上成员列表
+     * Update the member list of speakers
      *
-     * @param list 更新成员
-     * @param increment 是否增量更新
+     * @param list Update the member list
+     * @param increment Check if increment occurs
      */
     override fun updateMemberJoin(list: MutableList<NEEduMember>, increment: Boolean) {
         synchronized(this) {

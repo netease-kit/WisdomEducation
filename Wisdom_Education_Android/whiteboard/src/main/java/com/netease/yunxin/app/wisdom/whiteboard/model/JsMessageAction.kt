@@ -6,7 +6,7 @@
 package com.netease.yunxin.app.wisdom.whiteboard.model
 
 /**
- * Created by hzsunyj on 2021/5/21.
+ * 
  */
 object JsMessageAction {
 

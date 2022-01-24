@@ -5,20 +5,28 @@
 
 <resources>
     <string name="app_name">WisdomEducation</string>
-    <string name="join_class_fail_try_again">join class fail, try again</string>
-    <string name="network_is_not_available">network is not available check later</string>
-    <string name="teacher_over_limit">teacher role over limit</string>
-    <string name="student_over_limit">student role over limit</string>
-    <string name="app_tips">* This product is only used to demonstrate the function of the product, the longest class is 30 minutes, not commercial</string>
-    <string name="clazz_name">%s classroom</string>
-    <string name="open_recordplay_fail_try_again">Internal Server exception</string>
-    <string name="course_playback_file_is_being_transcoded">At the end of the course, file transcoding is required, and the playback is expected to be available 20 minutes later</string>
-    <string name="setting">Setting</string>
-    <string name="open_chat_room">Open chat room</string>
-    <string name="im_reuse">IM reuse</string>
-    <string name="low_latency_live">Low latency live</string>
-    <string name="open_chatroom">After the chat room is closed, the interface does not display the chat room</string>
-    <string name="im_resue_desc">After IM multiplexing is enabled, the HOST application uses the IM channel</string>
-    <string name="low_latency_live_desc">CDN delay 2-5s, low delay 1-2s</string>
+    <string name="join_class_fail_try_again">Failed to join the class, please try again.</string>
+    <string name="network_is_not_available">Network error. Check your network connection and try again.</string>
+    <string name="teacher_over_limit">The number of teachers has reached the upper limit.</string>
+    <string name="student_over_limit">The number of students has reached the upper limit.</string>
+    <string name="app_tips">* This product is used only to demonstrate the basic features. The class duration lasts 30 minutes. Commercial use is not allowed.</string>
+    <string name="clazz_name">%s class</string>
+    <string name="open_recordplay_fail_try_again">Internal Server Error.</string>
+    <string name="course_playback_file_is_being_transcoded">When the class ends, the recording file will be transcoded. and the playback will be available in 20 minutes.</string>
+    <string name="setting">Settings</string>
+    <string name="open_chat_room">Enable Chat Room</string>
+    <string name="im_reuse">IM Reuse</string>
+    <string name="low_latency_live">Low-latency Streaming</string>
+    <string name="open_chatroom">If the chat room is disabled, the chat room interface will not appear</string>
+    <string name="im_resue_desc">If the IM module is reused, the IM channel of the host application is used.</string>
+    <string name="low_latency_live_desc">The CDN mode has 2-5s delay and the low-latency mode has 1-2s delay</string>
     <string name="im_login">IM login</string>
+    <string name="im_account">IM account</string>
+    <string name="im_password">IM password</string>
+    <string name="im_reuse_status_take_effect_after_restart">IM reuse status (take effect after restart):</string>
+    <string name="disabled">Disabled</string>
+    <string name="enabled">Enabled</string>
+    <string name="current_im_account">Current IM account:</string>
+    <string name="login">Login</string>
+    <string name="logout">Logout</string>
 </resources>

@@ -21,7 +21,7 @@ import com.netease.yunxin.app.wisdom.whiteboard.config.WhiteboardConfig
 import com.netease.yunxin.app.wisdom.whiteboard.view.WhiteboardView
 
 /**
- * Created by hzsunyj on 2021/5/21.
+ * 
  */
 internal class NEEduBoardServiceImpl : NEEduBoardService() {
 

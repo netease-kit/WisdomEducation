@@ -18,7 +18,7 @@ import com.netease.yunxin.kit.alog.ALog
 import com.tencent.bugly.crashreport.CrashReport
 
 /**
- * Created by hzsunyj on 4/20/21.
+ * 
  */
 class EduApplication : Application() {
 
@@ -34,24 +34,28 @@ class EduApplication : Application() {
 
         PreferenceUtil.init(this)
         if (PreferenceUtil.reuseIM) {
-            // 以下代码用于演示IM复用
+            // The following block is used for IM reuse demo
             val value = SDKOptions()
             value.appKey = BuildConfig.APP_KEY
             value.disableAwake = true
             NIMClient.config(this, null, value)
             if (NIMUtil.isMainProcess(this)) {
-                // protect async init
+                // Ensure init with main process
                 NIMClient.initSDK()
             }
         }
+        val option = NEEduOptions(
+            BuildConfig.APP_KEY,
+            BuildConfig.AUTHORIZATION,
+            BuildConfig.API_BASE_URL,
+            PreferenceUtil.reuseIM
+        )
+//        option.useIMAssetServerAddressConfig = true // IM privatization
+//        option.useRtcAssetServerAddressConfig = true // Rtc privatization
+//        option.useWbAssetServerAddressConfig = true // whiteboard privatization
         NEEduUiKit.config(
             this,
-            NEEduOptions(
-                BuildConfig.APP_KEY,
-                BuildConfig.AUTHORIZATION,
-                BuildConfig.API_BASE_URL,
-                PreferenceUtil.reuseIM
-            )
+            option
         )
 
         if (NIMUtil.isMainProcess(this)) {

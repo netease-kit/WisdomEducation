@@ -11,7 +11,7 @@ import com.netease.yunxin.app.wisdom.record.NERecordPlayUiKit
 import com.netease.yunxin.app.wisdom.record.NERecordPlayer
 
 /**
- * Created by hzsunyj on 2021/8/27.
+ * 
  */
 internal class NERecordPlayUiKitImpl : NERecordPlayUiKit {
 

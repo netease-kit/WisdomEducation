@@ -1,2 +1,2 @@
-## 说明
-- 与业务逻辑无关的代码放到这个module
+## Note
+- Code files irreleant to the business logic are saved in this module

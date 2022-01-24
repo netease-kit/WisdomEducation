@@ -61,7 +61,7 @@ class BigClazzStudentActivity : BaseBigClassActivity() {
 
     override fun onStreamChange(member: NEEduMember, updateVideo: Boolean) {
         super.onStreamChange(member, updateVideo)
-        // 刷新底部状态栏
+        // Refresh the status bar at the bottom of the screen
         if (isSelf(member)) {
             binding.bottomView.apply {
                 getVideo().isSelected = member.hasVideo()
@@ -99,7 +99,7 @@ class BigClazzStudentActivity : BaseBigClassActivity() {
         members.firstOrNull { isSelf(it) }?.let {
             handleSelf(it)
         }
-        // 清空状态
+        // Reset the state
         members.forEach { member ->
             member.properties?.avHandsUp?.let {
                 if (!member.isOnStage()) {
@@ -128,7 +128,7 @@ class BigClazzStudentActivity : BaseBigClassActivity() {
                         showOffStageDialog()
                     }
                 }
-                //                            getLeaveClazzView()?.visibility = View.VISIBLE // TODO 离开课堂功能
+                //                            getLeaveClazzView()?.visibility = View.VISIBLE // TODO leave class
                 //                            getLeaveClazzView()?.setOnClickListener {
                 //                                onBackPressed()
                 //
@@ -162,7 +162,7 @@ class BigClazzStudentActivity : BaseBigClassActivity() {
         getScreenShareView().visibility = View.GONE
         getScreenShareCoverView().visibility = View.GONE
 
-        // 状态清除: 流/白板/举手状态/白板/屏幕共享
+        // Reset the state: streaming/whiteboard/raise hand/whiteboard/screenshare
         eduManager.getMemberService().getLocalUser()?.apply {
             if (hasSubVideo()) {
                 stopLocalShareScreen()

@@ -48,11 +48,11 @@ import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * @author netease
+ * @author CommsEase
  * <p>
- * 播放器基础扩展类，封装了播放器SDK接口操作的核心流程：
+ * Player basic extension class that wraps the core process of the player SDK APIs
  * <p>
- * case 1: 先安装render view，再启动player
+ * Case 1: Install render view and start the player
  * setup render view ->
  * init player ->
  * async prepare ->
@@ -63,7 +63,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * set player display ->
  * playing...
  * <p>
- * case 2: 先启动player，按需安装render view
+ * Case 2: Start the player and install render view as required
  * init player ->
  * async prepare ->
  * on video size changed ->
@@ -76,15 +76,15 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 abstract class BaseLivePlayer extends VodPlayer {
 
-    /// constant
+    // constant
     private static final String PLAYER_HANDLER_THREAD_TAG = "LIVE_PLAYER";
 
-    /// context
+    // context
     Context context;
 
     private Handler uiHandler;
 
-    /// input
+    // input
     private String videoPath;
 
     private NEMediaDataSource mediaDataSource;
@@ -93,7 +93,7 @@ abstract class BaseLivePlayer extends VodPlayer {
 
     private AutoRetryConfig autoRetryConfig;
 
-    /// player
+    // player
     private List<LivePlayerObserver> observers = new ArrayList<>(1);
 
     private long positionCallbackInternal = 0;
@@ -114,9 +114,9 @@ abstract class BaseLivePlayer extends VodPlayer {
 
     NELivePlayer player;
 
-    private Handler playerHandler; // player专用的异步带looper线程
+    private Handler playerHandler; // async player with looper thread
 
-    private final Object lock = new Object(); // 保护player的锁
+    private final Object lock = new Object(); // The lock to protect the player
 
     private NELivePlayer.OnSubtitleListener subtitleListener;
 
@@ -129,24 +129,24 @@ abstract class BaseLivePlayer extends VodPlayer {
     private NELivePlayer.OnVideoFrameFilterListener videoFrameFilterListener;
 
 
-    /// status
-    AtomicBoolean hasReset = new AtomicBoolean(false); // 是否重置了播放器
+    // status
+    AtomicBoolean hasReset = new AtomicBoolean(false); // Check whether the player is reset
 
-    private STATE currentState = STATE.IDLE; // 当前状态
+    private STATE currentState = STATE.IDLE; // The current state of the player
 
-    private int cause; // 切换到当前状态的原因，例如停止的原因code，错误的错误码，其他状态为0
+    private int cause; // The cause to switch the current state. For example, error code for stops and error messages. O is returned for other states
 
-    private long lastCallBackPosition; // 最后一次回调的实时播放位置
+    private long lastCallBackPosition; // Callback for last playback position
 
-    private long lastCallbackRealTime; // 最后一次回调的实时时间戳
+    private long lastCallbackRealTime; // Real-time timestamp of the last callback
 
-    private long lastCallbackSyncTime; // 最后一次回调的实时时间戳
+    private long lastCallbackSyncTime; // The timestamp of the last callback
 
-    private long lastPlayPosition; // 上一次播放的位置（点播用）
+    private long lastPlayPosition; // last playback position（VOD）
 
-    private int lastAudioTrack = -1;    // 上一次选择的音轨
+    private int lastAudioTrack = -1;    // Last audio tract
 
-    /// video size
+    // video size
     private int videoWidth;
 
     private int videoHeight;
@@ -158,7 +158,7 @@ abstract class BaseLivePlayer extends VodPlayer {
     //video mode
     private VideoScaleMode scaleMode = VideoScaleMode.FIT;
 
-    /// timer/ticker
+    // timer/ticker
     private Timer vodTimer;
 
     private TimerTask vodTimerTask;
@@ -167,7 +167,7 @@ abstract class BaseLivePlayer extends VodPlayer {
 
     private LivePlayer mMasterPlayer;
 
-    /// abstract methods for children
+    // abstract methods for children
     abstract void onChildInit();
 
     abstract void onChildDestroy();
@@ -251,7 +251,7 @@ abstract class BaseLivePlayer extends VodPlayer {
     public void registerPlayerCurrentPositionListener(long interval, NELivePlayer.OnCurrentPositionListener listener,
                                                       boolean register) {
         if (register && (listener == null || interval <= 0)) {
-            return; // 注册时参数无效
+            return; // Invalid parameters for registration
         }
         if (register) {
             positionCallbackInternal = interval;
@@ -270,7 +270,7 @@ abstract class BaseLivePlayer extends VodPlayer {
                                                            NELivePlayer.OnCurrentRealTimeListener listener,
                                                            boolean register) {
         if (register && (listener == null || interval <= 0)) {
-            return; // 注册时参数无效
+            return; // Invalid parameters for registration
         }
         if (register) {
             realTimeCallbackInternal = interval;
@@ -288,7 +288,7 @@ abstract class BaseLivePlayer extends VodPlayer {
                                                            NELivePlayer.OnCurrentSyncTimestampListener listener,
                                                            boolean register) {
         if (register && (listener == null || interval <= 0)) {
-            return; // 注册时参数无效
+            return; // Invalid parameters for registration
         }
         if (register) {
             syncTimeCallbackInternal = interval;
@@ -305,7 +305,7 @@ abstract class BaseLivePlayer extends VodPlayer {
     public void registerPlayerCurrentSyncContentListener(NELivePlayer.OnCurrentSyncContentListener listener,
                                                          boolean register) {
         if (register && (listener == null)) {
-            return; // 注册时参数无效
+            return; // Invalid parameters for registration
         }
         if (register) {
             contentTimeListener = listener;
@@ -320,14 +320,14 @@ abstract class BaseLivePlayer extends VodPlayer {
     @Override
     public void registerPlayerSubtitleListener(NELivePlayer.OnSubtitleListener listener, boolean register) {
         if (register && listener == null) {
-            return; // 注册时参数无效
+            return; // Invalid parameters for registration
         }
         if (register) {
             subtitleListener = listener;
         } else {
             subtitleListener = null;
         }
-        // try bind subtitle listener
+        // try bind the subtitle listener
         setOnSubtitleListener();
     }
 
@@ -380,18 +380,18 @@ abstract class BaseLivePlayer extends VodPlayer {
     }
 
     /*
-     * 异步初始化 or 点播恢复播放：
-     * case 1: 上层构造完 NIMLivePlayer 后，初始化并开始播放。
-     * case 2: 切换视频地址，先reset后，立即异步初始化
-     * case 3: 点播切换分辨率时，切换视频地址，先reset后，立即异步初始化
-     * case 4: 断网时reset，网络恢复时立即异步初始化
-     * case 5: 点播暂停后重新开始播放
+     * Async instantiate the player or resume playback:
+     * Case 1: Construct NIMLivePlayer and instantiate the player to start playback
+     * Case 2: If the source URL is changed, reset the configuration and instantiate the player async
+     * Case 3: If the resolution or source URL is changed, reset the configuration and instantiate the player async
+     * Case 4: Reset if server is disconnected. initialize the player after network connection resumes
+     * Case 5: Resume playback after paused
      */
     @Override
     public void start() {
         synchronized (lock) {
             ALog.i("currentState..." + currentState + "...." + videoPath);
-            // case 5：点播暂停后重新开始
+            // case 5: Resume playback after paused
             if (player != null && currentState == STATE.PAUSED) {
                 ALog.i("player restart...");
                 restart();
@@ -419,20 +419,20 @@ abstract class BaseLivePlayer extends VodPlayer {
                 return;
             }
             ALog.i("player async init...");
-            // 正在播放中，如果要重新初始化，那么要重置
+            // The player is running. If reinitialization is required, the player needs to be reset
             if (player != null && currentState != STATE.IDLE && !hasReset.get()) {
                 ALog.i("reset current player before async init...");
                 resetPlayer();
             }
-            // 工作线程
+            // Working thread
             if (playerHandler == null) {
                 playerHandler = Handlers.sharedInstance().newHandler(PLAYER_HANDLER_THREAD_TAG + hashCode());
             }
             // state
             setCurrentState(STATE.PREPARING, 0);
-            // 子类初始化逻辑
+            // Child initialize logic
             onChildInit();
-            // 异步初始化播放器
+            // The player is async initialized
             playerHandler.post(new Runnable() {
 
                 @Override
@@ -444,10 +444,10 @@ abstract class BaseLivePlayer extends VodPlayer {
     }
 
     private void resetPlayerState() {
-        // 点播，重新seekTo上次的位置
+        // VOD, resumed to the last playback position
         if (lastPlayPosition > 0) {
             player.seekTo(lastPlayPosition);
-            lastPlayPosition = 0; // 复位
+            lastPlayPosition = 0; // Resume to the last playback position
         }
         if (lastAudioTrack != -1) {
             player.setSelectedAudioTrack(lastAudioTrack);
@@ -455,14 +455,14 @@ abstract class BaseLivePlayer extends VodPlayer {
         }
         ALog.i("player start...");
 
-        // 点播，开启ticker timer
+        // VOD, enable ticker timer
         if (player.getDuration() > 0) {
             startVodTimer();
         }
     }
 
     /*
-     * 点播暂停后重新开始
+     * Resume playback after paused
      */
     private void restart() {
         player.start();
@@ -470,7 +470,7 @@ abstract class BaseLivePlayer extends VodPlayer {
         // state
         setCurrentState(STATE.PLAYING, 0);
         final MediaInfo mediaInfo = new MediaInfo(player.getMediaInfo(), player.getDuration());
-        // 点播，开启ticker timer
+        // VOD, enable ticker timer
         if (player.getDuration() > 0) {
             startVodTimer();
         }
@@ -492,7 +492,7 @@ abstract class BaseLivePlayer extends VodPlayer {
 
 
     private void reSetupRenderView() {
-        // try bind surface holder, case: player reset后、切后台切回前台，原来绑定的surfaceView的被置null了，重新初始化时，要重新绑上去
+        // try bind surface holder. If the player is reset and the player is switched from background to the foreground, the original surfaceView is nullified and must be initialized and bound again
         if (renderView != null && renderView.getSurface() != null) {
             setupRenderView(renderView, scaleMode);
         }
@@ -510,8 +510,8 @@ abstract class BaseLivePlayer extends VodPlayer {
         this.renderView = renderView;
         this.scaleMode = videoScaleMode;
         this.renderView.onSetupRenderView();
-        this.renderView.setCallback(surfaceCallback); // 将render view的surface回调告知player
-        setVideoSizeToRenderView(); // 触发render view的显示
+        this.renderView.setCallback(surfaceCallback); // Send notification of the surface callback of render view to player
+        setVideoSizeToRenderView(); // trigger render view display
         setDisplaySurface(renderView.getSurface());
     }
 
@@ -523,7 +523,7 @@ abstract class BaseLivePlayer extends VodPlayer {
             return;
         }
         this.scaleMode = videoScaleMode;
-        setVideoSizeToRenderView(); // 触发render view的显示
+        setVideoSizeToRenderView(); // Trigger render view display
     }
 
     @Override
@@ -542,11 +542,11 @@ abstract class BaseLivePlayer extends VodPlayer {
 
     @Override
     public void pause() {
-        // 点播暂停
+        // Pause playback
         synchronized (lock) {
             if (player != null && player.isPlaying() && player.getDuration() > 0) {
                 player.pause();
-                stopVodTimer(false); // 停止ticker timer
+                stopVodTimer(false); // stop ticker timer
                 ALog.i("player paused");
                 setCurrentState(STATE.PAUSED, CauseCode.CODE_VIDEO_PAUSED_BY_MANUAL);
             }
@@ -556,15 +556,15 @@ abstract class BaseLivePlayer extends VodPlayer {
     @Override
     public void stop() {
         final long timeStart = System.currentTimeMillis();
-        // 工作线程退出
+        // Work thread exits
         if (playerHandler != null) {
             playerHandler.removeCallbacksAndMessages(null);
             Handlers.sharedInstance().removeHandler(PLAYER_HANDLER_THREAD_TAG + hashCode());
             playerHandler = null;
         }
-        // timer销毁
+        // Replease the timer
         stopVodTimer(false);
-        // 销毁播放器
+        // Release the player
         synchronized (lock) {
             mMasterPlayer = null;
             if (renderView != null) {
@@ -577,7 +577,7 @@ abstract class BaseLivePlayer extends VodPlayer {
                 player = null;
             }
         }
-        // 子类销毁
+        // release the child
         onChildDestroy();
         // state
         ALog.i("stop && destroy player! cost=" + (System.currentTimeMillis() - timeStart));
@@ -595,7 +595,7 @@ abstract class BaseLivePlayer extends VodPlayer {
         }
         ALog.i("switching video path to " + newVideoPath);
         videoPath = newVideoPath;
-        // 重置
+        // Reset the player
         resetPlayer();
         start();
     }
@@ -634,12 +634,12 @@ abstract class BaseLivePlayer extends VodPlayer {
     @Override
     public void setMirror(boolean isMirror) {
         synchronized (lock) {
-            //软解使用SDK镜像接口
+            //SDK mirror interfaces as software decoder
             if (player != null && options != null && !options.hardwareDecode) {
                 player.setMirror(isMirror);
                 ALog.i("set mirror,player.setMirror " + isMirror);
             }
-            //硬解只支持TextureView，使用TextureView的setMirror接口
+            //TextureView is supported by hardware decoder. Use setMirror of TextureView
             if (renderView != null && renderView instanceof TextureView && options != null && options.hardwareDecode) {
                 ((TextureView) renderView).setScaleX(isMirror ? -1.0F : 1.0F);
                 ALog.i("set mirror, renderView.setScaleX" + isMirror);
@@ -754,7 +754,7 @@ abstract class BaseLivePlayer extends VodPlayer {
                 ALog.i("switching video path to " + newVideoPath);
                 videoPath = newVideoPath;
                 player.switchContentUrl(newVideoPath);
-                // try bind surface holder, case: player reset后，原来绑定的surfaceView的被置null了，重新初始化时，要重新绑上去
+                // try bind surface holder. If the player is reset, the original surfaceView is nullified and must be initialized and bound again.
                 if (renderView != null && renderView.getSurface() != null) {
                     setDisplaySurface(renderView.getSurface());
                 }
@@ -804,7 +804,7 @@ abstract class BaseLivePlayer extends VodPlayer {
 
                 }
                 player.switchContentUrl(newVideoPath, dataSourceConfig);
-                // try bind surface holder, case: player reset后，原来绑定的surfaceView的被置null了，重新初始化时，要重新绑上去
+                // try bind surface holder. If the player is reset, the original surfaceView is nullified and must be initialized and bound again.
                 if (renderView != null && renderView.getSurface() != null) {
                     setDisplaySurface(renderView.getSurface());
                 }
@@ -911,14 +911,14 @@ abstract class BaseLivePlayer extends VodPlayer {
      */
 
     /*
-     * 初始化播放器并异步prepare
+     * Instantiate the player and async prepare
      */
     private void initPlayer() {
         synchronized (lock) {
             // native player
             if (player == null) {
                 final long timeStart = System.currentTimeMillis();
-                player = NELivePlayer.create(); // 耗时40ms-300ms，如果上次析构底层还未完成，那么可能耗时比较高
+                player = NELivePlayer.create(); // consume 40ms-300ms.
                 ALog.i("create player=" + player + ", cost=" + (System.currentTimeMillis() - timeStart));
             }
             // config player
@@ -945,24 +945,24 @@ abstract class BaseLivePlayer extends VodPlayer {
     }
 
     /*
-     * 配置player
-     * 在lock下操作player
+     * Configure the player
+     * Operate the player in lock
      */
     private void configPlayer() {
         if (player == null) {
             return;
         }
         // config
-        player.setBufferStrategy(options.bufferStrategy.getValue()); // 设置播放缓冲策略
-        player.setBufferSize(options.bufferSize); // 点播设置播放缓冲大小
-        player.setHardwareDecoder(options.hardwareDecode); // 设置解码模式
-        player.setShouldAutoplay(options.isAutoStart); // 是否需要自动播放
+        player.setBufferStrategy(options.bufferStrategy.getValue()); // Set the buffer strategy
+        player.setBufferSize(options.bufferSize); // Set buffer size
+        player.setHardwareDecoder(options.hardwareDecode); // Set decoding mode
+        player.setShouldAutoplay(options.isAutoStart); // Specify whether to enable auto playback
         int timeout = options.playbackTimeout;
         if (timeout <= 0) {
             timeout = 10;
             options.playbackTimeout = 10;
         }
-        player.setPlaybackTimeout(timeout); // 超时重连时间10s
+        player.setPlaybackTimeout(timeout); // 10s for reconnection after timeout
         player.setLoopCount(options.loopCount);
         player.setAccurateSeek(options.isAccurateSeek);
         player.setAutoRetryConfig(autoRetryConfig);
@@ -1021,7 +1021,7 @@ abstract class BaseLivePlayer extends VodPlayer {
                 }
                 player.setDataSource(videoPath, dataSourceConfig);
             } else {
-                player.setDataSource(videoPath); // 如果数据源连接不上，那么需要1分钟才会回调onError, 错误码-1002
+                player.setDataSource(videoPath); //If data source is disconnected, the onError is triggered after 1 minute. Error code -1002
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -1036,14 +1036,14 @@ abstract class BaseLivePlayer extends VodPlayer {
     }
 
     /*
-     * 向render view设置视频帧大小
-     * 前置条件：
-     * 1) Player#onVideoSizeChanged必须回调了，存储了视频帧大小
-     * 2) 已经安装了render view
+     * Set video frame size for render view
+     * Prerequisites:
+     * 1. Player#onVideoSizeChanged is triggered and stores the video frame size
+     * 2) render view is installed
      * <p>
-     * 调用时机：
-     * 1) onVideoSizeChanged回调中
-     * 2) setupRenderView时
+     * Method call occasion:
+     * 1) onVideoSizeChanged is triggered
+     * 2) setupRenderView is called
      */
     private void setVideoSizeToRenderView() {
         if (videoWidth != 0 && videoHeight != 0 && renderView != null) {
@@ -1052,11 +1052,11 @@ abstract class BaseLivePlayer extends VodPlayer {
     }
 
     /*
-     * 安装实时音频数据回调监听器
+     * set up the listener for audio statistics callback
      * <p>
-     * 调用时机：
-     * 1) register时，可能player还未初始化，那么缓存起来，等configPlayer时再注册
-     * 2) configPlayer时，可能player重新初始化，重新注册监听器
+     * Method call occasion:
+     * 1. If the player is not instantiated when the listener is registered, store the listener in the cache and register when configPlayer is called
+     * 2. If configPlayer is called, the player may be instantiated again and the listener must be registered again.
      */
     private int setOnAudioFrameFilterListener() {
         synchronized (lock) {
@@ -1077,11 +1077,11 @@ abstract class BaseLivePlayer extends VodPlayer {
 
 
     /*
-     * 安装实时视频数据回调监听器
+     * Set up the listener for video statistics callback
      * <p>
-     * 调用时机：
-     * 1) register时，可能player还未初始化，那么缓存起来，等configPlayer时再注册
-     * 2) configPlayer时，可能player重新初始化，重新注册监听器
+     * Method call occasion:
+     * 1. If the player is not instantiated when the listener is registered, store the listener in the cache and register when configPlayer is called
+     * 2. If configPlayer is called, the player may be instantiated again and the listener must be registered again.
      */
     private int setOnVideoFrameFilterListener() {
         synchronized (lock) {
@@ -1101,11 +1101,11 @@ abstract class BaseLivePlayer extends VodPlayer {
     }
 
     /*
-     * 安装实时播放位置回调监听器
+     * Set up the listener for playback position callback
      * <p>
-     * 调用时机：
-     * 1) register时，可能player还未初始化，那么缓存起来，等configPlayer时再注册
-     * 2) configPlayer时，可能player重新初始化，重新注册监听器
+     * Method call occasion:
+     * 1. If the player is not instantiated when the listener is registered, store the listener in the cache and register when configPlayer is called
+     * 2. If configPlayer is called, the player may be instantiated again and the listener must be registered again.
      */
     private void setOnCurrentPositionListener() {
         synchronized (lock) {
@@ -1125,11 +1125,11 @@ abstract class BaseLivePlayer extends VodPlayer {
 
 
     /*
-     * 安装实时真实时间戳回调监听器
+     * Set up the listener for real-time timestamp callback
      * <p>
-     * 调用时机：
-     * 1) register时，可能player还未初始化，那么缓存起来，等configPlayer时再注册
-     * 2) configPlayer时，可能player重新初始化，重新注册监听器
+     * method call occasion:
+     * 1. If the player is not instantiated when the listener is registered, store the listener in the cache and register when configPlayer is called
+     * 2. If configPlayer is called, the player may be instantiated again and the listener must be registered again.
      */
     private void setOnCurrentRealTimeListener() {
         synchronized (lock) {
@@ -1148,11 +1148,11 @@ abstract class BaseLivePlayer extends VodPlayer {
     }
 
     /*
-     * 安装实时同步时间戳回调监听器
+     * Set up the listener for current sync timestamp callback
      * <p>
-     * 调用时机：
-     * 1) register时，可能player还未初始化，那么缓存起来，等configPlayer时再注册
-     * 2) configPlayer时，可能player重新初始化，重新注册监听器
+     * method call occasion:
+     * 1. If the player is not instantiated when the listener is registered, store the listener in the cache and register when configPlayer is called
+     * 2. If configPlayer is called, the player may be instantiated again and the listener must be registered again.
      */
     private void setOnCurrentSyncTimeListener() {
         synchronized (lock) {
@@ -1171,11 +1171,11 @@ abstract class BaseLivePlayer extends VodPlayer {
     }
 
     /*
-     * 安装内容信息时间戳回调监听器
+     * Set up the listener for current sync content callback
      * <p>
-     * 调用时机：
-     * 1) register时，可能player还未初始化，那么缓存起来，等configPlayer时再注册
-     * 2) configPlayer时，可能player重新初始化，重新注册监听器
+     * method call occasion:
+     * 1. If the player is not instantiated when the listener is registered, store the listener in the cache and register when configPlayer is called
+     * 2. If configPlayer is called, the player may be instantiated again and the listener must be registered again.
      */
     private void setOnCurrentSyncContentListener() {
         synchronized (lock) {
@@ -1194,11 +1194,11 @@ abstract class BaseLivePlayer extends VodPlayer {
 
 
     /*
-     * 安装字幕回调监听器
+     * Set up the listener for subtitle callback
      * <p>
-     * 调用时机：
-     * 1) register时，可能player还未初始化，那么缓存起来，等configPlayer时再注册
-     * 2) configPlayer时，可能player重新初始化，重新注册监听器
+     * method call occasion:
+     * 1. If the player is not instantiated when the listener is registered, store the listener in the cache and register when configPlayer is called
+     * 2. If configPlayer is called, the player may be instantiated again and the listener must be registered again.
      */
     private void setOnSubtitleListener() {
         synchronized (lock) {
@@ -1216,10 +1216,10 @@ abstract class BaseLivePlayer extends VodPlayer {
     }
 
     /*
-     * 播放器和显示surface的绑定
-     * case 1: surfaceCreated时绑定到播放器
-     * case 2: surfaceDestroyed时解除绑定
-     * case 3: 播放器被reset后重新初始化时，如果surface没有被销毁，那么重新绑定到播放器
+     * Bind the player and surface view
+     * case 1: When surfaceCreated is called, bind the surface view to the player
+     * case 2: When surfaceDestroyed is called, unbind the surface view from the player
+     * case 3: If the player is reset and initialized, and the surface is not released, rebind the surface to the player
      */
     private synchronized void setDisplaySurface(Surface surface) {
         if (player != null) {
@@ -1229,16 +1229,16 @@ abstract class BaseLivePlayer extends VodPlayer {
     }
 
     /*
-     * 重置播放器
-     * 使用场景：
-     * case 1: 断网的时候,主动重置,等网络恢复后再重新初始化来恢复播放
-     * case 2: 切换播放地址时，先重置，存储新地址后再重新初始化
-     * case 3: 播放过程中发生错误/解析视频流错误，重置
-     * case 4: 长期处于后台,回到前台时，主动重置，给予恢复的机会
-     * case 5: 播放结束，重置
+     * Reset the player
+     * Use cases:
+     * case 1: The network is disconnected. Reset the player and resume after the network is reconnected
+     * case 2: The source URL is changed. Initialize the player after the new URL is loaded
+     * case 3: An error occurred during playback
+     * case 4: The player is running in the background for a long time and switched to the foreground
+     * case 5: The playback is completed
      */
     void resetPlayer() {
-        stopVodTimer(false); // 停止定时器
+        stopVodTimer(false); // Stop the timer
         synchronized (lock) {
             if (player != null) {
                 player.reset();
@@ -1251,7 +1251,7 @@ abstract class BaseLivePlayer extends VodPlayer {
     synchronized void setCurrentState(final STATE state, final int causeCode) {
         currentState = state;
         if (causeCode < NEErrorType.NELP_EN_UNKNOWN_ERROR && cause != 0 && cause >= NEErrorType.NELP_EN_UNKNOWN_ERROR) {
-            // 上层定义的错误码，不要覆盖掉已有的播放器底层的错误码
+            // The upper layer error codes cannot be duplicate to the player error codes
             ALog.i(
                     "player error code=" + cause + ", new cause code=" + causeCode + ", never replace error code!");
         } else {
@@ -1290,7 +1290,7 @@ abstract class BaseLivePlayer extends VodPlayer {
     }
 
     /*
-     * 准备阶段超时任务
+     * preparing timeout task
      */
     //    private Runnable preparingTimeoutTask = new Runnable() {
     //        @Override
@@ -1310,13 +1310,13 @@ abstract class BaseLivePlayer extends VodPlayer {
         @Override
         public void onSurfaceCreated(Surface surface) {
             ALog.i("on surface created");
-            setDisplaySurface(surface); // 播放器和显示surface的绑定
+            setDisplaySurface(surface); // Bind the player and surface view
         }
 
         @Override
         public void onSurfaceDestroyed(Surface surface) {
             ALog.i("on surface destroyed");
-            setDisplaySurface(null); // 解除播放器和显示Surface的绑定
+            setDisplaySurface(null); // Unbind the player and the surface view
         }
 
         @Override
@@ -1330,8 +1330,8 @@ abstract class BaseLivePlayer extends VodPlayer {
      */
 
     /*
-     * 获取到视频尺寸or视频尺寸发生变化
-     * 最早回调
+     * Get the video dimension or the dimension changes
+     * Early callback
      */
     private NELivePlayer.OnVideoSizeChangedListener onVideoSizeChangedListener = new NELivePlayer.OnVideoSizeChangedListener() {
 
@@ -1352,7 +1352,7 @@ abstract class BaseLivePlayer extends VodPlayer {
     };
 
     /*
-     * 视频播放器准备好了，可以开始播放了
+     * The player is ready for playback
      */
     private NELivePlayer.OnPreparedListener onPreparedListener = new NELivePlayer.OnPreparedListener() {
 
@@ -1384,7 +1384,7 @@ abstract class BaseLivePlayer extends VodPlayer {
     };
 
     /*
-     * 视频播放结束：点播资源播放完成，直播推流停止时
+     * The playback is completed: The playback of the video source in the VOD system is complete or streaming data in live streaming stops
      */
     private NELivePlayer.OnCompletionListener onCompletionListener = new NELivePlayer.OnCompletionListener() {
 
@@ -1403,17 +1403,17 @@ abstract class BaseLivePlayer extends VodPlayer {
             } catch (Throwable th) {
                 th.printStackTrace();
             }
-//            // reset 这里在播放结束重置了播放器，用户也可以调用release释放播放器
+//            // Reset the player after the playback is complete or release the player by calling release
 //            resetPlayer();
 
-            stopVodTimer(false); // 停止定时器
+            stopVodTimer(false); // Stop the timer
             // state
             setCurrentState(STATE.STOPPED, CauseCode.CODE_VIDEO_STOPPED_AS_ON_COMPLETION);
         }
     };
 
     /*
-     * 播放过程中发生错误
+     * an error occurred while the player is playing
      */
     private NELivePlayer.OnErrorListener onErrorListener = new NELivePlayer.OnErrorListener() {
 
@@ -1443,7 +1443,7 @@ abstract class BaseLivePlayer extends VodPlayer {
     };
 
     /*
-     * 视频状态变化、事件发生
+     * The video status changes or events occurs
      */
     private NELivePlayer.OnInfoListener onInfoListener = new NELivePlayer.OnInfoListener() {
 
@@ -1479,7 +1479,7 @@ abstract class BaseLivePlayer extends VodPlayer {
 
 
                 } else if (what == NEPlayStatusType.NELP_AUDIO_VIDEO_UN_SYNC) {
-                    // [点播专用]
+                    // [VOD only]
                     ALog.i("on player info: audio video un sync");
                     VodPlayerObserver o;
                     for (LivePlayerObserver observer : getObservers()) {
@@ -1490,7 +1490,7 @@ abstract class BaseLivePlayer extends VodPlayer {
                     }
 
                 } else if (what == NEPlayStatusType.NELP_NET_STATE_BAD) {
-                    // [点播专用]
+                    // [VOD only]
                     ALog.i("on player info: network state bad tip");
                     VodPlayerObserver o;
                     for (LivePlayerObserver observer : getObservers()) {
@@ -1516,7 +1516,7 @@ abstract class BaseLivePlayer extends VodPlayer {
     };
 
     /*
-     * 视频缓冲百分比更新
+     * Update video buffering in percentage
      */
     private NELivePlayer.OnBufferingUpdateListener onBufferingUpdateListener = new NELivePlayer.OnBufferingUpdateListener() {
 
@@ -1534,7 +1534,7 @@ abstract class BaseLivePlayer extends VodPlayer {
     };
 
     /*
-     * 拉流http状态信息回调
+     * HTTP response status callback
      */
     private NELivePlayer.OnHttpResponseInfoListener onHttpResponseInfoListener = new NELivePlayer.OnHttpResponseInfoListener() {
 
@@ -1552,7 +1552,7 @@ abstract class BaseLivePlayer extends VodPlayer {
     };
 
     /*
-     * 实时播放位置回调
+     * Current playback position callback
      */
     private NELivePlayer.OnCurrentPositionListener onCurrentPositionListener = new NELivePlayer.OnCurrentPositionListener() {
 
@@ -1584,7 +1584,7 @@ abstract class BaseLivePlayer extends VodPlayer {
     };
 
     /*
-     * 实时真实时间戳回调
+     * Current real time callback
      */
     private NELivePlayer.OnCurrentRealTimeListener onCurrentRealTimeListener = new NELivePlayer.OnCurrentRealTimeListener() {
 
@@ -1616,7 +1616,7 @@ abstract class BaseLivePlayer extends VodPlayer {
     };
 
     /*
-     * 实时同步时间戳回调
+     * Real time sync callback
      */
     private NELivePlayer.OnCurrentSyncTimestampListener onCurrentSyncTimeListener = new NELivePlayer.OnCurrentSyncTimestampListener() {
 
@@ -1648,7 +1648,7 @@ abstract class BaseLivePlayer extends VodPlayer {
     };
 
     /*
-     * [点播专用]点播跳转到指定事件播放回调
+     * [VOD only] specified events callback
      */
     private NELivePlayer.OnSeekCompleteListener onSeekCompleteListener = new NELivePlayer.OnSeekCompleteListener() {
 
@@ -1696,7 +1696,7 @@ abstract class BaseLivePlayer extends VodPlayer {
     };
 
     /*
-     * [点播专用] 点播过程中定时回调当前播放进度
+     * [VOD only] Current playback position callback at a specified rate
      */
     private void onVodTickerTimer() {
         long current = -1;
@@ -1714,7 +1714,7 @@ abstract class BaseLivePlayer extends VodPlayer {
         final long d = duration;
         final long cc = cached;
         if (timerIndex++ % 10 == 0) {
-            // 每10s输出一次log
+            // output log every 10 seconds
             ALog.i("on vod ticker timer, progress=" + c + "/" + d + ", cached=" + cc);
         }
         // notify
@@ -1779,7 +1779,7 @@ abstract class BaseLivePlayer extends VodPlayer {
      */
 
     private List<LivePlayerObserver> getObservers() {
-        // 创建副本，为了使得回调到app后，app如果立即注销观察者，会造成List异常。
+        // Create a duplicate of observer because the list may cause exceptions if the app immediately unregisters the observer.
         List<LivePlayerObserver> copyObservers = new ArrayList<>(observers.size());
         copyObservers.addAll(observers);
         return copyObservers;

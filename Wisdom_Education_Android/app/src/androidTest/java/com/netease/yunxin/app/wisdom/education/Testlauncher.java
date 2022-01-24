@@ -36,9 +36,9 @@ public class Testlauncher {
     @Rule
     public ActivityScenarioRule<MainActivity> activityScenarioRule
             = new ActivityScenarioRule<>(MainActivity.class);
-    // 1. 使用手机本地单机用例测试
+    // 1. Use a mobile phone for local testing
 //    private IIntegrationTest integrationTest = LocalIntegrationTest.getInstance();
-    // 2. 使用服务端用例测试
+    // 2. Use server instance for testing
     private IntegrationTest integrationTest = IntegrationTest.getInstance();
 
     @Before
@@ -49,11 +49,10 @@ public class Testlauncher {
         GlobalEventListener globalEventListener = GlobalEventListener.getInstance();
         globalEventListener.init(instrumentation, uiDevice);
         globalEventListener.usePermissionsWindowHandler(true);
-        integrationTest.setHost("ws://59.111.31.178/websocket");
         integrationTest.setContext(ApplicationProvider.getApplicationContext());
         integrationTest.setRequestInfo("education",  "1.6.0", "zhengjinang/education");
         integrationTest.registerHandle(new UITestParser());
-//        ((LocalIntegrationTest)integrationTest).setFilePath("/sdcard/Download/Education1_6_case.txt"); // 设置手机本地用例测试文件路径
+//        ((LocalIntegrationTest)integrationTest).setFilePath("/sdcard/Download/Education1_6_case.txt"); // Set the path of mobile local testing example file
     }
 
     @Test

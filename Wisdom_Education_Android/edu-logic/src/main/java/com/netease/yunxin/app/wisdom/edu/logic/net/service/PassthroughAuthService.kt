@@ -10,7 +10,7 @@ import com.netease.yunxin.app.wisdom.base.network.NEResult
 import com.netease.yunxin.app.wisdom.edu.logic.net.service.response.NEEduLoginRes
 
 /**
- * Created by hzsunyj on 2021/5/26.
+ * 
  */
 object PassthroughAuthService : AuthService, BaseService {
 

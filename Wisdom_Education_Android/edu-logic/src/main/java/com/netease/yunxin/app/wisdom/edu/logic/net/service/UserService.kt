@@ -18,7 +18,7 @@ import retrofit2.http.Path
 internal interface UserService {
 
     /**
-     * 用户加入房间
+     * Join a room
      */
     @POST("scene/apps/{appKey}/v1/rooms/{roomUuid}/entry")
     fun joinClassroom(
@@ -28,7 +28,7 @@ internal interface UserService {
     ): LiveData<NEResult<NEEduEntryRes>>
 
     /**
-     * 房间成员属性
+     * Member properties
      */
     @PUT("scene/apps/{appKey}/v1/rooms/{roomId}/members/{userUuid}/properties/{key}")
     fun updateProperty(
@@ -40,7 +40,7 @@ internal interface UserService {
     ): LiveData<NEResult<Void>>
 
     /**
-     * 房间成员属性和流集合操作
+     * Member properties and streams operations
      */
     @POST("scene/apps/{appKey}/v1/rooms/{roomId}/users/{userUuid}/info")
     fun updateInfo(

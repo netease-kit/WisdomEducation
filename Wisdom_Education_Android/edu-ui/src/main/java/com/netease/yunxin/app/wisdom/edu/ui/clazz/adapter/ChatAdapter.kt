@@ -25,7 +25,7 @@ import com.netease.yunxin.app.wisdom.rvadapter.BaseViewHolder
 import com.netease.yunxin.app.wisdom.rvadapter.OnItemClickListener
 
 /**
- * Created by hzsunyj on 2021/6/4.
+ * 
  */
 class ChatAdapter(
     val activity: BaseClassActivity,

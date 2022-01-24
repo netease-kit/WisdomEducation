@@ -5,11 +5,11 @@
 
 <resources>
     <string name="you_are_sharing_the_screen">You are sharing the screen</string>
-    <string name="room_name">class name</string>
-    <string name="teacher_name">teacher name</string>
-    <string name="room_id">room id</string>
-    <string name="playback">playback</string>
-    <string name="copy_success">Copy success</string>
-    <string name="teacher_label">(teacher)</string>
-    <string name="student_label">(student)</string>
+    <string name="room_name">Class Name</string>
+    <string name="teacher_name">Teacher</string>
+    <string name="room_id">Room ID</string>
+    <string name="playback">Playback</string>
+    <string name="copy_success">Copied</string>
+    <string name="teacher_label">(Teacher)</string>
+    <string name="student_label">(Student)</string>
 </resources>

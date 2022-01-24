@@ -11,7 +11,7 @@ import com.netease.yunxin.app.wisdom.player.sdk.model.VideoScaleMode;
 
 
 /**
- * 渲染View公共接口
+ * Render View public interface
  * <p>
  *
  * @author netease

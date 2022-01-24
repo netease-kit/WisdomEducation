@@ -27,7 +27,7 @@ import com.netease.yunxin.app.wisdom.edu.logic.service.*
 import com.netease.yunxin.app.wisdom.im.IMManager
 
 /**
- * 提供各种业务服务
+ * Provide business services
  */
 interface NEEduManager {
 
@@ -35,14 +35,14 @@ interface NEEduManager {
 
         internal lateinit var context: Application
 
-        internal lateinit var eduOptions: NEEduOptions
+        lateinit var eduOptions: NEEduOptions
 
         internal lateinit var instance: NEEduManager
 
         internal lateinit var classOptions: NEEduClassOptions
 
         /**
-         * sdk inner version code
+         * SDK inner version code
          */
         private const val VERSION_CODE = 71
 
@@ -58,7 +58,10 @@ interface NEEduManager {
             this.eduOptions = eduOptions
             BaseRepository.appKey = eduOptions.appKey
             BaseService.baseUrl = eduOptions.baseUrl
-            IMManager.config(context, eduOptions.appKey, eduOptions.reuseIM ?: false)
+            IMManager.config(
+                context, eduOptions.appKey, eduOptions.reuseIM ?: false,
+                eduOptions.useIMAssetServerAddressConfig ?: false
+            )
             if (NIMUtil.isMainProcess(context)) {
                 NEEduActivityManger.init(context)
                 PreferenceUtil.init(context)
@@ -117,7 +120,7 @@ interface NEEduManager {
     fun isSelf(userUuid: String): Boolean
 
     /**
-     * streams和properties都是不可靠的
+     * streams and properties are not reliable
      */
     fun getEntryMember(): NEEduEntryMember
 
@@ -127,34 +130,34 @@ interface NEEduManager {
      */
     fun destroy()
 
-    /**课堂管理*/
+    /**Class management*/
     fun getRoomService(): NEEduRoomService
 
-    /**用户列表*/
+    /**Member list*/
     fun getMemberService(): NEEduMemberService
 
-    /**音视频*/
+    /**Audio & Video Call service*/
     fun getRtcService(): NEEduRtcService
 
-    /**消息聊天*/
+    /**IM service*/
     fun getIMService(): NEEduIMService
 
-    /**屏幕分享*/
+    /**Share screen service*/
     fun getShareScreenService(): NEEduShareScreenService
 
-    /**白板通用控制*/
+    /**Whiteboard service*/
     fun getBoardService(): NEEduBoardService
 
-    /**举手上台*/
+    /**Raising hand*/
     fun getHandsUpService(): NEEduHandsUpService
 
     /**
-     * 进入教室
+     * Join the class
      */
     fun enterClass(neEduClassOptions: NEEduClassOptions): LiveData<NEResult<NEEduEntryRes>>
 
     /**
-     * 同步快照
+     * Sync snapshot
      */
     fun syncSnapshot()
 

@@ -6,7 +6,7 @@
 package com.netease.yunxin.app.wisdom.edu.logic.model
 
 /**
- * Created by hzsunyj on 2021/6/1.
+ * 
  */
 enum class NEEduHttpMethod(val method: String) {
     PUT("put"),

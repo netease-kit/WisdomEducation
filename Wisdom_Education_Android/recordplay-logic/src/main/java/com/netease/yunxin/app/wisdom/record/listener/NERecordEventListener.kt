@@ -13,14 +13,14 @@ import com.netease.yunxin.app.wisdom.record.model.NERecordEvent
  */
 interface NERecordEventListener {
     /**
-     * 事件执行结束回调
+     * The callback is triggered if the event is executed
      *
-     * @param event 事件
+     * @param event The event
      */
     fun onEventFinish(event: NERecordEvent)
 
     /**
-     * 事件执行回调
+     * Event callback
      *
      * @param event
      */

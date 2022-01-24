@@ -285,7 +285,7 @@ open class BaseAdapter<T> @JvmOverloads constructor(
     }
 
     /**
-     * 用于保存需要设置点击事件的 item
+     * Save items for clickable events
      */
     private val childClickViewIds = LinkedHashSet<Int>()
 
@@ -294,7 +294,7 @@ open class BaseAdapter<T> @JvmOverloads constructor(
     }
 
     /**
-     * 设置需要点击事件的子view
+     * Ser child view of the click event
      * @param viewIds IntArray
      */
     fun addChildClickViewIds(@IdRes vararg viewIds: Int) {
@@ -308,7 +308,7 @@ open class BaseAdapter<T> @JvmOverloads constructor(
     }
 
     /**
-     * 绑定 item 点击事件
+     * Bind the clickable item
      * @param viewHolder VH
      */
     fun bindViewClickListener(viewHolder: RecyclerView.ViewHolder, viewType: Int) {

@@ -11,9 +11,9 @@ object ScreenUtil {
     private const val RATIO = 0.85
     var screenWidth = 0
     var screenHeight = 0
-    var screenMin // 宽高中，小的一边
+    var screenMin // The height of the aspect ratio
             = 0
-    var screenMax // 宽高中，较大的值
+    var screenMax // The width of the aspect ratio
             = 0
     var density = 0f
     var scaleDensity = 0f

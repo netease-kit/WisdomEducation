@@ -13,36 +13,36 @@ import com.netease.yunxin.app.wisdom.whiteboard.config.WhiteboardConfig
 import com.netease.yunxin.app.wisdom.whiteboard.view.WhiteboardView
 
 /**
- * 提供可供 App 调用的白板相关方法
+ * Methods for whiteboard
  *
  */
 abstract class NEEduBoardService : INEEduService() {
     /**
-     * 白板授权
+     * Grant whiteboard permissions
      *
-     * @param userId 用户id
-     * @param grant 是否授予/取消权限
+     * @param userId User ID
+     * @param grant Specify whether to grant or revoke permissions
      *
      */
     abstract fun grantPermission(userId: String, grant: Boolean): LiveData<NEResult<Void>>
 
     /**
-     * 初始化白板
+     * Instantiate whiteboard
      *
-     * @param webView 白板webView控件
-     * @param config 白板配置参数
+     * @param webView webView control of the whiteboard
+     * @param config Whiteboard configuration parameters
      */
     abstract fun initBoard(webView: WhiteboardView, config: WhiteboardConfig)
 
     /**
-     * 设置是否允许绘制
+     * Specify whether to allow drawing on whiteboard
      *
-     * @param enable 是否允许绘制
+     * @param enable Specify whether to enable drawing on whiteboard
      */
     abstract fun setEnableDraw(enable: Boolean)
 
     /**
-     * 白板权限变化通知
+     * Notification upon whiteboard permissions change
      */
     abstract fun onPermissionGranted(): LiveData<NEEduMember>
 

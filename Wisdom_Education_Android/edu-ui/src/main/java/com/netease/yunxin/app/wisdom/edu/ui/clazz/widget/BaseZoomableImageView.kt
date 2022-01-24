@@ -22,7 +22,7 @@ import com.netease.yunxin.kit.alog.ALog
 abstract class BaseZoomableImageView : View {
     // This is the base transformation which is used to show the image
     // initially.  The current computation for this shows the image in
-    // it's entirety, letterboxing as needed.  One could chose to
+    // it's entirety, letterboxing as needed.  One could choose to
     // show the image as cropped instead.
     //
     // This matrix is recomputed when we go from the thumbnail image to
@@ -158,7 +158,7 @@ abstract class BaseZoomableImageView : View {
     @SuppressLint("NewApi")
     fun setImageBitmap(bitmap: Bitmap?, fitScreen: Boolean? = true) {
 
-        //版本过低或者长度大于最大纹理限制，不采用硬件加速
+        //The version is too old or the length exceeds the maximum texture limit. hardware decoding is not supported。
         if (Build.VERSION.SDK_INT >= ENABLE_LAYER_TYPE_HARDWARE) {
             if (bitmap != null && (bitmap.height > SampleSizeUtil.getTextureSize()
                         || bitmap.width > SampleSizeUtil.getTextureSize())
@@ -317,7 +317,7 @@ abstract class BaseZoomableImageView : View {
 
     /**
      * Setup the base matrix so that the image is centered and scaled properly.
-     * 根据Bitmap和Rect，设置初始的显示矩阵Matrix
+     * Set the initial display matrix based on Bitmap and Rect
      *
      * @param bitmap
      * @param matrix
@@ -366,7 +366,7 @@ abstract class BaseZoomableImageView : View {
         var max = fw.coerceAtLeast(fh) * 16
 
 
-        //设置放大的下限
+        //Set the minimum zoom
         if (max < 1f) {
             max = 1f
         }
@@ -425,7 +425,7 @@ abstract class BaseZoomableImageView : View {
         val fw = mThisWidth.toFloat() / mBitmap!!.width.toFloat()
         var needAdjust = false
         if (adjustLongImageEnable) {
-            //长>>>宽 比如长微博 横向撑满屏幕，上下滑动浏览全文
+            //If height is greater than width, the screen is in landscape mode.
             if (mBitmap!!.height.toFloat() / mBitmap!!.width.toFloat() > MAX_IMAGE_RATIO_LARGE) {
                 needAdjust = true
                 scale = fw
@@ -573,13 +573,13 @@ abstract class BaseZoomableImageView : View {
     protected fun isScrollOver(distanceX: Float): Boolean {
         try {
             if (mDisplayMatrix != null) {
-                val mX = getValue(mDisplayMatrix, Matrix.MTRANS_X) //图片的左边离屏宽度
+                val mX = getValue(mDisplayMatrix, Matrix.MTRANS_X) //The offset between the left side of an image and the screen
                 val width = width - mX
-                //width 代表 屏幕宽度+左边离屏宽度
-                //mBitmap.getWidth() * getValue(mDisplayMatrix, Matrix.MSCALE_X) 代表 当前图片显示宽度
-                //width == mBitmap.getWidth() * getValue(mDisplayMatrix, Matrix.MSCALE_X) 意味着图片右边离屏宽度 == 0，已经滑到最右边
-                if (mX == 0f && distanceX <= 0 //到达图片的最左边继续往左边滑
-                    || (width == mBitmap!!.width //到达图片的最右边继续往右边滑
+                //width represents the screen width plus the left offset
+                //mBitmap.getWidth() * getValue(mDisplayMatrix, Matrix.MSCALE_X) represents current display width of the image
+                //width == mBitmap.getWidth() * getValue(mDisplayMatrix, Matrix.MSCALE_X) indicates that the right offset == 0，and the image reaches the far right
+                if (mX == 0f && distanceX <= 0 //Reach the far left of the image and continues swiping
+                    || (width == mBitmap!!.width //Reach the far right of the image and continue swiping
                             * getValue(mDisplayMatrix, Matrix.MSCALE_X) && distanceX >= 0)
                 ) {
                     ALog.d("ScrollOver")
@@ -605,7 +605,7 @@ abstract class BaseZoomableImageView : View {
         const val sAnimationDelay = 500
         const val ENABLE_LAYER_TYPE_HARDWARE = Build.VERSION_CODES.ICE_CREAM_SANDWICH
 
-        // 横屏时特殊处理,但高大于宽的2倍时，就以宽充满
+        // Special handling for landscape mode. If the height is twice the length of wdth, the image is padded in width
         private const val MAX_IMAGE_RATIO_WIDTH_LARGE_LANDSCAPE = 2f
         private const val MAX_IMAGE_RATIO_LARGE = 5f
 

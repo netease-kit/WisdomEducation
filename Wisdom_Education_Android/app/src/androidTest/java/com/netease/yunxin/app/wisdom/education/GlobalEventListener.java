@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 /**
- * toast监测和权限弹窗自动允许
+ * Monitor toasts and aotomatically allow to grant permissions
  */
 public class GlobalEventListener {
     private static final String TAG = "GlobalEventListener";
@@ -28,10 +28,10 @@ public class GlobalEventListener {
     private final HashSet<IGlobalEventChecker> toastCheckerSet;
 
     final private String packages = "com\\.lbe\\.security\\.miui|com\\.huawei\\.systemmanager|com\\.smartisanos\\.systemui|^.*coloros.*$|^.*android.*$|com\\.miui\\.home|^.*xiaomi.*$|android|^.*meitu.*$";
-    final private String allowButton = "允许|同意|始终允许|确认|总是允许|确定|仅使用时允许";
+    final private String allowButton = "允许|同意|始终允许|确认|总是允许|确定|仅使用时允许|仅在使用中允许";
 
     /**
-     * 权限弹窗自动允许
+     * Automatically allow to grant pop-up permissions
      */
     private boolean permissionsWindowPermit = false;
 
@@ -64,11 +64,11 @@ public class GlobalEventListener {
                     public void onAccessibilityEvent(AccessibilityEvent event) {
                         try {
                             final int eventType = event.getEventType();
-                            //处理权限框
+                            // handle pop-ups for permissions
                             if (eventType == AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED && permissionsWindowPermit) {
 
 
-                                //package 符合
+                                //package matches
                                 final String packageName = event.getPackageName().toString();
                                 if (!Pattern.matches(packages, packageName)) {
                                     return;
@@ -79,16 +79,16 @@ public class GlobalEventListener {
                                 UiObject2 obj = uiDevice.findObject(permissionsSelector);
                                 if (obj!= null) {
 
-                                    //截图日志
+                                    //snapshot log
 //                                    LogUtils.getInstance().infoScreenshot(new RectCanvasHandler(obj.getVisibleBounds()));
                                     obj.click();
 
                                 }
 
                             } else if (eventType == AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED) {
-                                //判断是否是通知事件
+                                //Check whether it is a notification event
                                 Parcelable parcelable = event.getParcelableData();
-                                //如果不是下拉通知栏消息，则为其它通知信息，包括Toast
+                                //If it is not the head-up notifications, it belongs to other types, such as toast
                                 if (!(parcelable instanceof Notification)) {
                                     List <CharSequence> messageList = event.getText();
                                     for (CharSequence toastMessage : messageList) {
@@ -111,16 +111,16 @@ public class GlobalEventListener {
     }
 
     /**
-     * 注册toast监测
-     * @param toastChecker toast监测器
+     * Register the toast observer
+     * @param toastChecker The toast observer
      */
     public void registerToastChecker(IGlobalEventChecker toastChecker) {
         toastCheckerSet.add(toastChecker);
     }
 
     /**
-     * 移除toast监测
-     * @param toastChecker toast监测器
+     * Remove the toast observer
+     * @param toastChecker The toast observer
      */
     public void removeToastChecker(IGlobalEventChecker toastChecker) {
         if (!toastCheckerSet.isEmpty()) {
@@ -129,7 +129,7 @@ public class GlobalEventListener {
     }
 
     /**
-     * 是否开启权限自动允许
+     * Specify whether to automatically allow to grant permissions
      * @param permit
      */
     public void usePermissionsWindowHandler(boolean permit) {

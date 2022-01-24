@@ -6,7 +6,7 @@
 package com.netease.yunxin.app.wisdom.edu.logic.service
 
 /**
- * 业务的基类，用于业务功能的事件监听
+ * Business basic class used to listen for events
  */
 abstract class INEEduService {
 

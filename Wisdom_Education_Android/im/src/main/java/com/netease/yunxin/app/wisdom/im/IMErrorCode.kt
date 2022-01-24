@@ -9,7 +9,7 @@ import com.netease.nimlib.sdk.StatusCode
 import com.netease.nimlib.sdk.chatroom.model.ChatRoomKickOutEvent
 
 /**
- * Created by hzsunyj on 2021/6/4.
+ * 
  */
 enum class IMErrorCode(val code: Int, val msg: String) {
 

@@ -8,19 +8,19 @@ package  com.netease.yunxin.app.wisdom.player.sdk.constant;
 import com.netease.neliveplayer.sdk.constant.NEPreloadStatusType;
 
 /**
- * 预调度结果状态.
+ * The preload status
  */
 public class PreloadStatusType {
     /**
-     * 等待预调度
+     * Wait for preload
      */
     int WAIT = NEPreloadStatusType.WAIT;
     /**
-     * 正在预调度
+     * Running the preload
      */
     int RUNNING = NEPreloadStatusType.RUNNING;
     /**
-     * 已经完成预调度
+     * The preload is complete
      */
     int COMPLETE = NEPreloadStatusType.COMPLETE;
 }

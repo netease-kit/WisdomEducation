@@ -67,7 +67,7 @@ object NERecordWhiteboardManager : NERecordWhiteboardApi() {
     override fun seek(time: Long) {
         jsBridge.jsSeekTo(time)
         if (playState != NERecordPlayState.PAUSED && playState != NERecordPlayState.PREPARED)
-            jsBridge.jsPlay() // continue play
+            jsBridge.jsPlay() // Continue playing
     }
 
     override fun stop() {
@@ -103,7 +103,7 @@ object NERecordWhiteboardManager : NERecordWhiteboardApi() {
 //    }
 
     /**
-     * 与宿主同生共死
+     * live with the class instance
      */
     override fun finish() {
         webView?.destroy()
@@ -115,7 +115,7 @@ object NERecordWhiteboardManager : NERecordWhiteboardApi() {
     }
 
     override fun updateState(@NERecordPlayState playState: Int) {
-        // 校正开始时间
+        // sync time
         config.startTime?.let {
             if (playState == NERecordPlayState.PREPARED) {
                 setTimeRange(config.startTime, null)

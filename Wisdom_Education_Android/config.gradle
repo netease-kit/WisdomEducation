@@ -48,7 +48,7 @@ deps.neliveplayer = "com.netease.nimlib:neliveplayer:2.9.0"
 deps.gslb = "com.netease:gslb:1.1.0"
 
 deps.test_rules = "androidx.test:rules:1.4.1-alpha03"
-deps.integrationtest = "com.netease.yunxin.kit:integrationtest:1.0.1-SNAPSHOT"
+deps.integrationtest = "com.netease.yunxin.kit:integrationtest:+"
 
 ext.deps = deps
 

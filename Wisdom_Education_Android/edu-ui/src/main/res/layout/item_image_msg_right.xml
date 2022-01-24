@@ -21,7 +21,7 @@
         android:textSize="@dimen/ts_12_dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="朱迪斯(学生)" />
+        tools:text="Adam(Student)" />
 
     <com.netease.yunxin.app.wisdom.edu.ui.clazz.widget.MsgThumbImageView
         android:id="@+id/iv_message_item_thumb_thumbnail"

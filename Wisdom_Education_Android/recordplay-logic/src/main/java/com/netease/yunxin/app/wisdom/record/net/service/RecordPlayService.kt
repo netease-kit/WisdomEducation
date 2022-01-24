@@ -12,12 +12,12 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 
 /**
- * Created by hzsunyj on 2021/8/27.
+ * 
  */
 
 internal interface RecordPlayService {
     /**
-     * 录制回放
+     * Recording playback
      */
     @GET("scene/apps/{appKey}/v1/rooms/{roomUuid}/{rtcCid}/record/playback")
     fun recordPlayback(

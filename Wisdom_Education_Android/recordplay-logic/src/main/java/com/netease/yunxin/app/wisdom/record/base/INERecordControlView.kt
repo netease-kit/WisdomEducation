@@ -10,44 +10,44 @@ package com.netease.yunxin.app.wisdom.record.base
  */
 interface INERecordControlView {
     /**
-     * 初始化视图
+     * instantiate the view
      *
      */
     fun initViews()
 
     /**
-     * 开始播放
+     * Start playing
      *
      */
     fun start()
 
     /**
-     * 暂停播放
+     * Pause the player
      *
      */
     fun pause()
 
     /**
-     * 更新进度
+     * Update the progress
      *
      * @param percent
      */
     fun setProgress(percent: Float)
 
     /**
-     * 停止播放
+     * Stop playing
      *
      */
     fun stop()
 
     /**
-     * 静音
+     * Mute
      *
      */
     fun switchAudio(audioEnable: Boolean)
 
     /**
-     * 设置音量
+     * Set the volume
      *
      */
     fun setVolume(volume: Float)
