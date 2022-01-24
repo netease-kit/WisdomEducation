@@ -3,7 +3,7 @@
  * Use of this source code is governed by a MIT license that can be found in the LICENSE file
  */
 import EventEmit from 'events';
-import Chatroom from '@/lib/chatroom/NIM_Web_Chatroom_v8.2.5'
+import Chatroom from '@/lib/chatroom/NIM_Web_Chatroom_v8.6.0'
 
 interface InitOptions {
   nim: any;

@@ -192,7 +192,7 @@ const Join: FC = observer(() => {
                     <div>
                       <Input
                         className="joinForm-input"
-                        placeholder="请输入id"
+                        placeholder="请输入id(可选)"
                       />
                     </div>
                   </Form.Item>
@@ -200,7 +200,7 @@ const Join: FC = observer(() => {
                     <div>
                       <Input
                         className="joinForm-input"
-                        placeholder="请输入token"
+                        placeholder="请输入token(可选)"
                       />
                     </div>
                   </Form.Item>

@@ -7,7 +7,10 @@ import * as WebRTC2 from './sdk/NIM_Web_NERTC_v4.5.500.js';
 
 import { EnhancedEventEmitter } from '../event';
 import logger from '../logger';
-import { ShareListItem } from '@/config'
+import { ShareListItem } from '@/config';
+import rtc_server_conf from './rtc_server_conf.json';
+const needPrivate = process.env.REACT_APP_SDK_RTC_PRIVATE;
+needPrivate === "true" && logger.log("web-RTC私有化配置", rtc_server_conf);
 
 
 // 测试要求加版本信息提示
@@ -248,7 +251,8 @@ export class NeWebrtc extends EnhancedEventEmitter {
           recordAudio: false,
           recordVideo: false,
           recordType: 0,
-        }
+        },
+        neRtcServerAddresses: needPrivate === "true" ? rtc_server_conf : {}, // 私有化配置
       })
       logger.log('join() successed', options)
       // reporter.send({
@@ -298,17 +302,18 @@ export class NeWebrtc extends EnhancedEventEmitter {
   }
 
   async open(type: string, deviceId?: string): Promise<void> {
-    logger.log('open()', type)
+    logger.log('open()', type, deviceId, this._pubConf)
     if (!this._localStream) {
       return
     }
     try {
+      type === 'video' && (deviceId = deviceId || this._pubConf.cameraId)
       await this._localStream.open({
         type,
         deviceId
       })
       if (type === 'video') {
-        this._pubConf.cameraId = deviceId
+        deviceId && (this._pubConf.cameraId = deviceId)
         // const videoStream = this._localStream.mediaHelper.videoStream
         this.emit('play-local-stream', {
           uid: this._localStream.streamID,
@@ -324,7 +329,7 @@ export class NeWebrtc extends EnhancedEventEmitter {
           stream: this._localStream,
         })
       } else if (type === 'audio') {
-        this._pubConf.microphoneId = deviceId
+        deviceId && (this._pubConf.microphoneId = deviceId)
         this.emit('play-local-stream', {
           uid: this._localStream.streamID,
           mediaType: 'audio',
@@ -599,7 +604,6 @@ export class NeWebrtc extends EnhancedEventEmitter {
   }
 
   async getMicrophones(): Promise<void> {
-    logger.log('getMicrophones()')
     try {
       const microphones = await WebRTC2.getMicrophones()
       logger.log('getMicrophones() successed:', microphones)
@@ -611,7 +615,6 @@ export class NeWebrtc extends EnhancedEventEmitter {
   }
 
   async getCameras(): Promise<void> {
-    logger.log('getCameras()')
     try {
       const cameras = await WebRTC2.getCameras()
       logger.log('getCameras() successed:', cameras)
@@ -623,7 +626,6 @@ export class NeWebrtc extends EnhancedEventEmitter {
   }
 
   async getSpeakers(): Promise<void> {
-    logger.log('getSpeakers()')
     try {
       const speakers = await WebRTC2.getSpeakers()
       logger.log('getSpeakers() successed:', speakers)
@@ -635,12 +637,24 @@ export class NeWebrtc extends EnhancedEventEmitter {
   }
 
   //设置mic采集音量 0-100
-  setCaptureVolume(volume: number): void {
+  setMicrophoneCaptureVolume(volume: number): void {
     this._localStream.setCaptureVolume(volume)
   }
+  
   //获取mic的采集音量 0-1
-  getAudioLevel(): void {
-    return this._localStream && this._localStream.getAudioLevel()
+  getAudioLevel(): number {
+    const result =  this._localStream && this._localStream.getAudioLevel()*100
+    logger.log("getAudioLevel ", result)
+    return result
+  }
+
+  // 设置播放音量 0-100
+  setAudioVolume(volume: number): void {
+    this._mapRemoteStreams.forEach(stream => {
+      if(stream){
+        stream.setAudioVolume(volume)
+      }
+    })
   }
 
   // 获取网络相关数据
@@ -731,5 +745,9 @@ export class NeWebrtc extends EnhancedEventEmitter {
     } catch (error) {
       logger.log('destroy() error', error);
     }
+  }
+
+  async enableAudioVolumeIndication(enable: boolean, interval: number):Promise<void> {
+    console.log("")
   }
 }

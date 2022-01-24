@@ -216,7 +216,16 @@ export class RoomStore extends EnhancedEventEmitter {
   networkQuality: Array<any> = [];
 
   @observable
-  _deviceChangedCount = 0;
+  _deviceChangedCount = 0; // 设备插拔标识
+
+  @observable
+  _reselectDevice = false; // 设备设置变更标识 
+
+  @observable
+  incrementIng = false; // 标识是否有正在请求的sequence或snapshot接口
+
+  @observable
+  cachedSequenceData: Array<any> = [];
 
   constructor(appStore: AppStore) {
     super();
@@ -351,7 +360,7 @@ export class RoomStore extends EnhancedEventEmitter {
           teacher.role === RoleTypes.host,
       };
     }
-    logger.log("teacherData", result, this.memberFullList, this.memberList);
+    logger.log("teacherData", result);
 
     return result;
   }
@@ -399,10 +408,8 @@ export class RoomStore extends EnhancedEventEmitter {
       []
     );
     logger.log(
-      "studentData",
+      "studentData&stream",
       student,
-      this.memberFullList,
-      this.memberList,
       this.tempStreams
     );
     return student;
@@ -434,7 +441,7 @@ export class RoomStore extends EnhancedEventEmitter {
       },
       []
     );
-    logger.log("screenData", screen, this.memberFullList, this.tempStreams);
+    logger.log("screenData&stream", screen, this.tempStreams);
     return screen;
   }
 
@@ -448,6 +455,11 @@ export class RoomStore extends EnhancedEventEmitter {
   @computed
   get deviceChangedCount(): number {
     return this._deviceChangedCount;
+  }
+
+  @computed
+  get reselectDevice(): boolean {
+    return this._reselectDevice;
   }
 
   /**
@@ -493,7 +505,7 @@ export class RoomStore extends EnhancedEventEmitter {
       });
       throw Error(error?.code);
     }
-    logger.log("会议信息", this.appStore.roomInfo);
+    logger.log("当前房间数据", JSON.stringify(this.appStore.roomInfo));
     const { roomUuid, roomName, sceneType } = this.appStore.roomInfo;
     const { userUuid, userName, role, imKey, imToken } = this.localUserInfo;
     this.isLiveStuJoin = Number(sceneType) === RoomTypes.bigClasLive && role !== RoleTypes.host
@@ -517,7 +529,7 @@ export class RoomStore extends EnhancedEventEmitter {
         runInAction(() => {
           this._joined = false;
         });
-        throw Error('房间不匹配');
+        throw Error('1017');
       }
       if (!this.isLiveStuJoin) {
         this._entryData = await entryRoom({
@@ -532,7 +544,7 @@ export class RoomStore extends EnhancedEventEmitter {
       runInAction(() => {
         this._joined = false;
       });
-      throw Error(error?.code);
+      throw Error(error?.message);
     }
     // 每次加入房间重新实例化webRtc 否则在第二次登录进来，会导致共享有问题
     // if (!this._webRtcInstance) {
@@ -616,7 +628,26 @@ export class RoomStore extends EnhancedEventEmitter {
       });
       this._webRtcInstance.on("device-change", () => {
         debounce(() => {
-          this._deviceChangedCount++;
+          this.getDeviceListData()
+            .then(
+              async({
+                microphones = [],
+                cameras = [],
+                speakers = [],
+                speakerIdSelect = "",
+                microphoneSelect = "",
+                cameraSelect = "",
+              }) => {
+                const cameraItem = cameras?.find((item) => item.deviceId === cameraSelect)
+                // 使用摄像头被拔出时，自动切换
+                if (cameraSelect && !cameraItem && cameras[0]?.deviceId) {
+                  await this.selectVideo(cameras[0]?.deviceId)
+                }
+                this._deviceChangedCount++;
+                console.log("this._deviceChangedCount ",this._deviceChangedCount)     
+              }
+            )
+          
         }, 1200)
       })
       this._webRtcInstance.on("peer-online", (_data: any) => {
@@ -805,6 +836,12 @@ export class RoomStore extends EnhancedEventEmitter {
     }
   }
 
+  /**
+   * @description: 切换扬声器
+   * @param {string} deivceId
+   * @return {*}
+   */
+  @action
   public async selectSpeakers(sinkId: string): Promise<void> {
     try {
       const changeSpeaker = await this._webRtcInstance?.selectSpeakers(sinkId);
@@ -822,6 +859,31 @@ export class RoomStore extends EnhancedEventEmitter {
   public async selectAudio(deivceId: string): Promise<void> {
     await this._webRtcInstance?.selectAudio(deivceId);
     return;
+  }
+
+  public async setMicrophoneCaptureVolume(volume: number): Promise<void> {
+    try {
+      await this._webRtcInstance?.setMicrophoneCaptureVolume(volume)
+    } catch (error) {
+      logger.log("setMicrophoneCaptureVolume failed", error);
+    }
+  }
+
+  public async setAudioVolume(volume: number): Promise<void> {
+    try {
+      await this._webRtcInstance?.setAudioVolume(volume)
+    } catch (error) {
+      logger.log("setAudioVolume failed", error);
+    }
+  }
+
+  public async getAudioLevel(): Promise<any> {
+    try {
+      const result = await this._webRtcInstance?.getAudioLevel();
+      return result
+    } catch (error) {
+      logger.log("setAudioVolume failed", error);
+    }
   }
 
   /**
@@ -856,10 +918,13 @@ export class RoomStore extends EnhancedEventEmitter {
 
   @action
   public async nimNotify(_data, needGetSnapShot = true): Promise<void> {
-    logger.log("服务器通知消息", _data);
-    logger.log("当前房间数据", this.roomInfo, needGetSnapShot);
     const { data: {roomUuid}, sequence, type } = _data.body;
-    if (roomUuid === this.roomInfo.roomUuid || type === "R"){
+    if (roomUuid !== this.roomInfo.roomUuid) {
+      logger.log(`服务器通知消息与房间不符，通知为${roomUuid}，当前为${this.roomInfo.roomUuid}`)
+      return
+    }
+    if (roomUuid === this.roomInfo.roomUuid && type === "R"){
+      // logger.log("服务器通知消息", _data.body);
       if (sequence <= this._snapSequence) {
         // 丢弃消息
         console.log("异常数据 丢弃 ",{sequence, _snapSequence:this._snapSequence})
@@ -867,28 +932,28 @@ export class RoomStore extends EnhancedEventEmitter {
       } else if (sequence - this._snapSequence === 1) {
         // 连续数据，直接进行合并
         console.log("连续数据 合并 ",{sequence, _snapSequence:this._snapSequence})
-        this.dealSequenceData(_data.body, needGetSnapShot)
-        this._snapSequence++;
+        _data.body.needGetSnapShot = needGetSnapShot;
+        this.cachedSequenceData.push(_data.body)
       } else if (sequence - this._snapSequence > 10) {
         // 数据差超过10次，获取全量最新数据
         console.log("/snapshot sequence差大于10 ",{sequence, _snapSequence:this._snapSequence})
         await this.getMemberList();
-      } else if(sequence - this._snapSequence <= 10) {
+        return
+      } else if(sequence - this._snapSequence <= 10 && !this.incrementIng) {
+        this.incrementIng = true
         // 数据差在10次以内，获取该sequence之后的所有数据
         console.log("/sequence sequence差<=10",{sequence, _snapSequence:this._snapSequence})
         await getSequence({
           roomUuid,
           nextId: this._snapSequence + 1
         }).then(async (res) => {
-          // 增量的状态 必须依次更新上去
-          for (const item of res) {
-            if (item.sequence === this._snapSequence + 1){
-              await this.dealSequenceData(item, needGetSnapShot);
-              this._snapSequence++;
-            }
+          this.incrementIng = false
+          if (res.length > 0) {
+            this.cachedSequenceData = [...this.cachedSequenceData, ...res]
           }
         })
       }
+      this.dealCachedData()
     }
   }
 
@@ -908,9 +973,22 @@ export class RoomStore extends EnhancedEventEmitter {
     }
   }
 
+  @action 
+  public async dealCachedData() {
+    this.cachedSequenceData.sort()
+    while(this.cachedSequenceData.length) {
+      const item = this.cachedSequenceData.shift()
+      const {needGetSnapShot, sequence} = item
+      if (sequence === this._snapSequence + 1) {
+        logger.log("当前处理的通知消息", JSON.stringify(item));
+        this._snapSequence++
+        await this.dealSequenceData(item, needGetSnapShot)
+      }
+    }
+  }
+
   @action
   public async dealSequenceData(_data, needGetSnapShot = true): Promise<void> {
-    logger.log("当前处理的通知消息", _data);
     const { cmd, data, timestamp } = _data;
     const { states, properties, roomUuid } = data;
     switch (cmd) {
@@ -948,8 +1026,10 @@ export class RoomStore extends EnhancedEventEmitter {
       }
       case NIMNotifyTypes.RoomMemberJoin: {
         const {operatorMember: {rtcUid}, members} = data
-        this.updateMemberList(rtcUid, "add");
-        this.memberFullList = [...this.memberFullList, ...members];
+        this.updateMemberList(rtcUid, "add")
+        const flag = this.memberFullList.some((item) => item.rtcUid == rtcUid);
+        flag && (console.log("somebody exists joined again"))
+        !flag  && (this.memberFullList = [...this.memberFullList, ...members])
         break;
       }
       case NIMNotifyTypes.RoomMemberLeave: {
@@ -1456,14 +1536,10 @@ export class RoomStore extends EnhancedEventEmitter {
             streamType: "video",
             value: 1,
           }));
+        setTimeout(async()=>{
+          await this._webRtcInstance?.open("video")
+        }, 0)
       }
-
-      // await this.tempStreams[operatedUser?.rtcUid]?.videoStream?.unmuteVideo().catch(() => {
-      isBySelf &&
-        (await this._webRtcInstance?.open("video").catch(() => {
-          // this.closeCamera(userUuid, sendControl, isBySelf);
-        }));
-      // await this.resetAudio();
     }
   }
 
@@ -1709,10 +1785,12 @@ export class RoomStore extends EnhancedEventEmitter {
      * http://jira.netease.com/browse/YYTX-3640
      * 解决房间关闭后请求传参为空导致的鉴权异常
      */
-    if(!this.roomInfo?.roomUuid) return
+    if(!this.roomInfo?.roomUuid || this.incrementIng) return
+    this.incrementIng = true;
     getSnapShot(this.roomInfo.roomUuid).then(
       ({ sequence, snapshot: { members = [], room = {} }, timestamp = 0 }) => {
         runInAction(() => {
+          this.incrementIng = false;
           this._snapRoomInfo = Object.assign({}, this._snapRoomInfo, room);
           this.memberFullList = [...members];
           this._snapSequence = sequence;
@@ -1980,5 +2058,17 @@ export class RoomStore extends EnhancedEventEmitter {
   @action
   public removeChatRoomInstance(): void {
     this._chatRoom = null;
+  }
+
+  @action
+  public setReselectDevice(value: boolean): void {
+    this._reselectDevice = value;
+  }
+
+  @action 
+  public enableVolumeIndicationInElectron(enable: boolean, interval: number ):void {
+    if (isElectron) {
+      this._webRtcInstance?.enableAudioVolumeIndication(enable, interval)
+    }
   }
 }

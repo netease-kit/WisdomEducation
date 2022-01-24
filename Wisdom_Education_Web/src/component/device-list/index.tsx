@@ -43,7 +43,8 @@ const DeviceList: React.FC = observer(() => {
     roomInfo: { sceneType },
     hasOtherScreen,
     deviceChangedCount,
-    joinFinish
+    joinFinish,
+    reselectDevice
   } = roomStore;
 
   const handleAudioClick = () => {
@@ -295,17 +296,23 @@ const DeviceList: React.FC = observer(() => {
         ({
           microphones = [],
           cameras = [],
-          speakers = []
+          speakers = [],
+          cameraSelect = "",
+          microphoneSelect = "",
+          speakerIdSelect = "",
         }) => {
           setOriginCameras(cameras);
           setOriginMicrophones(microphones);
           setOriginSpeakers(speakers);
-          setMicroLabel(microphones[0]?.label);
-          setSpeakLabel(speakers[0]?.label);
-          setCameraLabel(cameras[0]?.label);          
+          const cameraItem = cameras.find((item) => item.deviceId === cameraSelect)
+          const microItem = microphones.find((item) => item.deviceId === microphoneSelect)
+          const speakerItem = speakers.find((item) => item.deviceId === speakerIdSelect)
+          setCameraLabel(cameraItem?.label)
+          setMicroLabel(microItem?.label)
+          setSpeakLabel(speakerItem?.label)
         }
       )
-  }, [joinFinish])
+  }, [joinFinish, reselectDevice])
 
   useEffect(() => {
     if(!joined || !joinFinish) return
@@ -338,6 +345,11 @@ const DeviceList: React.FC = observer(() => {
             (microLabel && microItem?.label !== microLabel)
           ) {
             message.push("音频输入设备");
+            // 麦克风移出default变更时，需要手动重连一下
+            if ((microLabel && microItem?.label !== microLabel)) {
+              const tempMicro = speakerIdSelect || speakers[0]?.deviceId
+              tempMicro && ( roomStore.selectAudio(tempMicro))
+            }
           }
           if (
             speakers.length > originSpeakers.length || 
@@ -354,6 +366,9 @@ const DeviceList: React.FC = observer(() => {
           setOriginCameras(cameras);
           setOriginMicrophones(microphones);
           setOriginSpeakers(speakers);
+          setCameraLabel(cameraItem?.label)
+          setMicroLabel(microItem?.label)
+          setSpeakLabel(speakerItem?.label)
         }
       )    
   }, [deviceChangedCount]);

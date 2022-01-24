@@ -484,6 +484,36 @@ const VideoPlayer: React.FC<VideoPlayerProps> = observer(
       userStats?.RecvResolutionHeight,
     ]);
 
+    /* electron-sdk 关闭视频需要清空画布 */
+    useEffect(() => {
+      if (!isElectron || !roomStore.client || hasScreen || hasVideo) return 
+      try {
+        let res;
+        if (isLocal) {
+          logger.log("ele-setupLocalVideoCanvas null");
+          res = roomStore.client.setupLocalVideoCanvas({
+            view: null,
+            mode: 0,
+          });
+        } else {
+          if (rtcUid) {
+            logger.log("ele-setupRemoteVideoCanvas null", rtcUid);
+            res = roomStore.client.setupRemoteVideoCanvas(rtcUid, {
+              view: null,
+              mode: 0,
+            });
+          }
+        }
+        if (res !== 0) {
+          (isLocal || rtcUid) && (logger.error("ele画布清空失败", res));
+        } else {
+          logger.log("le画布清空成功", res);
+        }
+      } catch(error) {
+        logger.error("ele画布清空失败", error);
+      }
+    }, [hasVideo])
+
     useEffect(() => {
       if (audioStream) {
         playAudio();

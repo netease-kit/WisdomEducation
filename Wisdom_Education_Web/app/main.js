@@ -18,6 +18,7 @@ function createWindow() {
       preload: path.join(__dirname, "./preload.js"),
       title: '智慧云课堂'
     },
+    backgroundColor: '#EEF1FB'
   });
 
   // and load the index.html of the app.

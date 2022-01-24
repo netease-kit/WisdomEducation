@@ -8,7 +8,7 @@ import { observer } from 'mobx-react';
 import { useRoomStore } from '@/hooks/store';
 import { useHistory } from 'react-router-dom';
 import './index.less';
-import { DeviceCheck, getDefaultDevices } from 'kit-devicecheck-web';
+// import { DeviceCheck, getDefaultDevices } from 'kit-devicecheck-web';
 
 
 
@@ -21,16 +21,16 @@ const DeviceCheckPage: React.FC = observer(() => {
 
 
   useEffect(() => {
-    getDefaultDevices().then((res: any) => {
-      setCameraId(res.cameraId)
-      setMicrophoneId(res.microphoneId)
-      setSpeakerId(res.speakerId)
-    })
+    // getDefaultDevices().then((res: any) => {
+    //   setCameraId(res.cameraId)
+    //   setMicrophoneId(res.microphoneId)
+    //   setSpeakerId(res.speakerId)
+    // })
   }, [])
 
   return (
     <div className="deivce-check-page">
-      <DeviceCheck
+      {/* <DeviceCheck
         cameraId={cameraId}
         microphoneId={microphoneId}
         speakerId={speakerId}
@@ -41,7 +41,7 @@ const DeviceCheckPage: React.FC = observer(() => {
         onOk={() => {
           history.push('/')
         }}
-      />
+      /> */}
     </div>
   )
 });
