@@ -50,9 +50,9 @@ const JoinSetting: React.FC = observer(() => {
         <Form.Item valuePropName="checked" name="chatroom" label={intl.get('开启聊天室')}>
           <Checkbox />
         </Form.Item>
-        <Form.Item valuePropName="checked" name="nertsLive" label={intl.get('使用低延时直播')}>
+        {/* <Form.Item valuePropName="checked" name="nertsLive" label={intl.get('使用低延时直播')}>
           <Checkbox />
-        </Form.Item>
+        </Form.Item> */}
         {/* <Form.Item label={intl.get('切换语言')}>
           <Radio.Group
             options={langOptions}
