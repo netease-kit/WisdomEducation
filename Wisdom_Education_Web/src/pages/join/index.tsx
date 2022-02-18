@@ -16,43 +16,43 @@ import { useRoomStore } from "@/hooks/store";
 import { GlobalStorage } from "@/utils";
 import Icon from "@/component/icon";
 import JoinSetting from '@/component/setting';
-
-const courseOptions = [
-  {
-    label: "一对一教学",
-    value: RoomTypes.oneToOne,
-    path: "/classroom/one-to-one",
-  },
-  {
-    label: "多人小班课",
-    value: RoomTypes.smallClass,
-    path: "/classroom/small-class",
-  },
-  {
-    label: "互动大班课",
-    value: RoomTypes.bigClass,
-    path: "/classroom/big-class",
-  },
-  {
-    label: "直播大班课",
-    value: RoomTypes.bigClasLive,
-    path: '/classroom/big-class-live',
-  }
-];
-const roleOptions = [
-  {
-    label: "老师",
-    value: RoleTypes.host,
-  },
-  {
-    label: "学生",
-    value: RoleTypes.broadcaster,
-  },
-];
+import intl from 'react-intl-universal';
 
 const roomUuidReg = new RegExp(/^\d{1,10}$/);
-
 const Join: FC = observer(() => {
+  const courseOptions = [
+    {
+      label: intl.get('一对一教学'),
+      value: RoomTypes.oneToOne,
+      path: "/classroom/one-to-one",
+    },
+    {
+      label: intl.get('多人小班课'),
+      value: RoomTypes.smallClass,
+      path: "/classroom/small-class",
+    },
+    {
+      label: intl.get('互动大班课'),
+      value: RoomTypes.bigClass,
+      path: "/classroom/big-class",
+    },
+    {
+      label: intl.get('直播大班课'),
+      value: RoomTypes.bigClasLive,
+      path: '/classroom/big-class-live',
+    }
+  ];
+  const roleOptions = [
+    {
+      label: intl.get('老师'),
+      value: RoleTypes.host,
+    },
+    {
+      label: intl.get('学生'),
+      value: RoleTypes.broadcaster,
+    },
+  ];
+  
   const [disabled, setDisabled] = useState(true);
   const [form] = Form.useForm();
   const roomStore = useRoomStore();
@@ -99,7 +99,7 @@ const Join: FC = observer(() => {
       ...values,
       roomUuid,
       // roomUuid: `${roomUuid}${values.sceneType}`,
-      roomName: `${values.userName}的课堂`,
+      roomName: `${values.userName}${intl.get("的课堂")}`,
       role:
         values.sceneType === RoomTypes.bigClass &&
         values.role === RoleTypes.broadcaster
@@ -147,20 +147,20 @@ const Join: FC = observer(() => {
       <div className="wrapper-join">
         <div className="wrapper-joinText">
           <div className="joinText-header">
-            欢迎使用
+            {intl.get('欢迎使用')}
             <br />
-            智慧云课堂
+            {intl.get('智慧云课堂')}
           </div>
           <div className="joinText-desc">
-            网易云信在线教育场景方案助您快速搭建专属在线课堂，
+            {intl.get('网易云信在线教育场景方案助您快速搭建专属在线课堂，')}
             <br />
-            支持一对一、小班课、大班课多种教育场景。
+            {intl.get('支持一对一、小班课、大班课多种教育场景。')}
             <br />
             <br />
-            基于新一代音视频通话2.0产品，为您提供超低延时、高清稳定的音视频体验。
+            {intl.get('基于新一代音视频通话2.0产品，为您提供超低延时、高清稳定的音视频体验。')}
           </div>
           <div className="joinText-download">
-            安装包
+            {intl.get('安装包')}
             <a href="https://www.pgyer.com/AvhN">
               <img className="imgAndroid" src={android} alt="android" />
             </a>
@@ -174,9 +174,9 @@ const Join: FC = observer(() => {
           <div className="wrapper-joinForm-content">
             <div className="joinForm-title-outer">
               <img src={logo} alt="" className="joinForm-book" />
-              <div className="joinForm-title">智慧云课堂</div>
+              <div className="joinForm-title">{intl.get('智慧云课堂')}</div>
             </div>
-            <div className="joinForm-desc">若课堂不存在则会创建课堂</div>
+            <div className="joinForm-desc">{intl.get('若课堂不存在则会创建课堂')}</div>
             <Form
               className="joinForm-form"
               form={form}
@@ -192,7 +192,7 @@ const Join: FC = observer(() => {
                     <div>
                       <Input
                         className="joinForm-input"
-                        placeholder="请输入id(可选)"
+                        placeholder={intl.get('请输入id(可选)')}
                       />
                     </div>
                   </Form.Item>
@@ -200,7 +200,7 @@ const Join: FC = observer(() => {
                     <div>
                       <Input
                         className="joinForm-input"
-                        placeholder="请输入token(可选)"
+                        placeholder={intl.get('请输入token(可选)')}
                       />
                     </div>
                   </Form.Item>
@@ -218,7 +218,7 @@ const Join: FC = observer(() => {
                 <div>
                   <Input
                     className="joinForm-input"
-                    placeholder="请输入课堂号"
+                    placeholder={intl.get('请输入课堂号')}
                     autoComplete="off"
                     maxLength={10}
                     value={roomNum}
@@ -229,7 +229,7 @@ const Join: FC = observer(() => {
               <Form.Item name="userName">
                 <Input
                   className="joinForm-input"
-                  placeholder="请输入昵称"
+                  placeholder={intl.get('请输入昵称')}
                   maxLength={20}
                   autoComplete="off"
                 />
@@ -237,7 +237,7 @@ const Join: FC = observer(() => {
               <Form.Item name="sceneType">
                 <Select
                   className="courseType"
-                  placeholder="请输入课堂类型"
+                  placeholder={intl.get('请输入课堂类型')}
                   options={courseOptions}
                   dropdownClassName="select"
                 />
@@ -257,7 +257,7 @@ const Join: FC = observer(() => {
                   htmlType="submit"
                   className={disabled ? "joinForm-btn active" : "joinForm-btn"}
                 >
-                  加入课堂
+                  {intl.get('加入课堂')}
                 </Button>
               </Form.Item>
               {recordUrl && isElectron && <Form.Item>
@@ -265,19 +265,19 @@ const Join: FC = observer(() => {
                   onClick={() => history.push(`${recordUrl}`)}
                   className="joinForm-btn record-btn"
                 >
-                  查看回放
+                  {intl.get('查看回放')}
                 </Button>
               </Form.Item>}
             </Form>
             <p className="tips-message">
-              *本产品仅用于演示产品功能，课堂最长30分钟，不可商用
+              *{intl.get('本产品仅用于演示产品功能，课堂最长30分钟，不可商用')}
             </p>
           </div>
         </div>
       </div>
       <Modal
         visible={showSetting}
-        title="设置"
+        title={intl.get('设置')}
         centered
         footer={null}
         onCancel={() => setShowSetting(false)}

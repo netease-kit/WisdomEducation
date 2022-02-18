@@ -10,6 +10,7 @@ import logger from '@/lib/logger';
 import { history, debounce } from '@/utils';
 import './index.less';
 import DeviceCheckLib from './libComponent';
+import intl from 'react-intl-universal';
 
 interface DeviceCheckComOptions {
   onOk?: () => void
@@ -75,13 +76,13 @@ const DeviceCheckCom: React.FC<DeviceCheckComOptions> = ({
           setSpeakerId(speakerIdSelect || speakers[0]?.devicedId)
           // 设备全部拔出时显示内容优化
           if (microphones.length === 0) {
-            setMicrophoneId("请选择")
+            setMicrophoneId(intl.get("请选择"))
           }
           if (speakers.length === 0) {
-            setSpeakerId("请选择")
+            setSpeakerId(intl.get("请选择"))
           }
           if (cameras.length === 0) {
-            setCameraId("请选择")
+            setCameraId(intl.get("请选择"))
           }         
         }
       )
@@ -93,7 +94,7 @@ const DeviceCheckCom: React.FC<DeviceCheckComOptions> = ({
       cameraId={cameraId}
       microphoneId={microphoneId}
       speakerId={speakerId}
-      okText="完成"
+      okText={intl.get('完成')}
       onCameraChange={(deviceId: string) => setDevice(deviceId, "camera")}
       onMicrophoneChange={(deviceId: string) => setDevice(deviceId, "microphone")}
       onSpeakerChange={(deviceId: string) => setDevice(deviceId, "speaker")}

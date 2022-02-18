@@ -4,6 +4,7 @@
  */
 import EventEmit from 'events';
 import Chatroom from '@/lib/chatroom/NIM_Web_Chatroom_v8.6.0'
+import intl from 'react-intl-universal';
 
 interface InitOptions {
   nim: any;
@@ -210,7 +211,7 @@ class ChatroomHelper extends EventEmit {
   }): Message {
     if (!this.chatroom || !this.isConnect) {
       console.error(this.chatroom, this.isConnect);
-      throw Error('请先初始化聊天室实例并成功登录后再调用该方法');
+      throw Error(intl.get('请先初始化聊天室实例并成功登录后再调用该方法'));
     }
     let finalOpt: any;
     if (opt.resend) {
@@ -233,11 +234,10 @@ class ChatroomHelper extends EventEmit {
     done: (err: any, msg?: Message) => void;
   }): Message {
     if (!this.chatroom || !this.isConnect) {
-      throw Error('请先初始化聊天室实例并成功登录后再调用该方法');
+      throw Error(intl.get('请先初始化聊天室实例并成功登录后再调用该方法'));
     }
     let finalOpt: any;
     if (opt.resend) {
-      // sdk bug: 此处sdk文档上没写需要这些参数，应该是sdk bug
       finalOpt = { ...opt, flow: 'out', status: 'fail' };
     } else {
       finalOpt = opt;

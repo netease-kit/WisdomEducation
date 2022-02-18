@@ -13,20 +13,21 @@ import MemberList from '@/component/member-list';
 import './index.less';
 import eleIpc from '@/lib/ele-ipc';
 import logger from '@/lib/logger';
+import internal from 'stream';
+import intl from 'react-intl-universal';
 
 let startInterval;
 
 const Footer: React.FC = observer(() => {
   const [modalVisible, setModalVisible] = useState(false);
   const [finishVisible, setFinishVisible] = useState(false);
-  const [leavemodalVisible, setLeaveModalVisible] = useState(false);
   const [roomStep, setRoomStep] = useState<StepTypes>(0);
   const [roomPause, setRoomPause] = useState<PauseTypes>(0);
   const [isHost, setIsHost] = useState<boolean>(false);
   const startTime = useRef(0);
   const history = useHistory();
   const roomStore = useRoomStore();
-  const { snapRoomInfo: { states: { step, pause } = {} }, roomInfo, classDuration } = roomStore;
+  const { snapRoomInfo: { states: { step, pause } = {}, rtcCid }, roomInfo, classDuration } = roomStore;
   const userInfo = roomStore?.localUserInfo || {};
   const [isEleClose, setIsEleClose] = useState(false);
 
@@ -46,13 +47,9 @@ const Footer: React.FC = observer(() => {
     }
   }
 
-  const handleStartModal = async () => {
+  const handleStartModal = async (e?) => {
     setModalVisible(true);
-  }
-
-  const handleLeaveModal = async () => {
-    setModalVisible(true);
-    setLeaveModalVisible(true);
+    e && e.nativeEvent.stopImmediatePropagation();
   }
 
   useEffect(() => {
@@ -142,44 +139,48 @@ const Footer: React.FC = observer(() => {
       time += `${minute < 10 ? `0${minute}` : `${minute}`} : ${second < 10 ? `0${second}` : second})`;
       roomStore.setPrevToNowTime(time);
     }, 1000);
-    await roomStore.setRoomState('正在上课');
+    await roomStore.setRoomState(intl.get('正在上课'));
   }
 
   const classTimeStop = async () => {
     // roomStore.setPrevToNowTime('');
     clearInterval(startInterval);
     // roomStore.setPrevToNowTime('');
-    roomStore.setRoomState('课程结束');
+    roomStore.setRoomState(intl.get('课程结束'));
 
   }
 
   const pauseClass = async () => {
     clearInterval(startInterval);
-    roomStore.setRoomState('课程暂停');
+    roomStore.setRoomState(intl.get('课程暂停'));
   }
 
 
   const handleModalOk = async () => {
     const { roomUuid } = roomInfo;
-    if (isHost && !leavemodalVisible) {
+    if (isHost) {
+      setModalVisible(false);
       switch (true) {
         case roomStep === StepTypes.init && !isEleClose:
           await roomStore.startClassRoom();
           setRoomStep(StepTypes.isStart)
-          setModalVisible(false);
           break;
         case roomStep === StepTypes.isStart || isEleClose:
-          setModalVisible(false);
-          await roomStore.endClassRoom();
-          await classTimeStop();
-          await roomStore.leave();
-          // history.push(`/endCourse?roomUuid=${roomUuid}`);
+          try {
+            await roomStore.endClassRoom();
+          } catch (e) {
+            console.log("endClass failed", e)
+          } finally {
+            await classTimeStop();
+            history.push(
+              `/endCourse?roomUuid=${roomUuid}&rtcCid=${rtcCid}`
+            );
+            await roomStore.leave();
+          }
           break;
         case roomStep === StepTypes.isEnd:
-          setModalVisible(false);
           break;
         default:
-          setModalVisible(false);
           await roomStore.endClassRoom();
           await classTimeStop();
           await roomStore.leave();
@@ -223,7 +224,6 @@ const Footer: React.FC = observer(() => {
 
   const handleModalCancel = () => {
     setModalVisible(false);
-    setLeaveModalVisible(false);
     setIsEleClose(false);
   }
 
@@ -284,40 +284,40 @@ const Footer: React.FC = observer(() => {
         <Button type={btnType} onClick={handleStartModal}>
           {
             !isHost ?
-              '离开课堂' :
-              roomStep === StepTypes.init ? '开始上课' : '结束课堂'
+              intl.get('离开课堂') :
+              roomStep === StepTypes.init ? intl.get('开始上课') : intl.get('结束课堂')
           }
         </Button>
         <Modal visible={modalVisible} centered
           onOk={handleModalOk}
           onCancel={handleModalCancel}
-          okText="确认"
-          cancelText="取消"
+          okText={intl.get('确认')}
+          cancelText={intl.get('取消')}
           wrapClassName="modal"
         >
           <p className="title">
             {
-              !isHost || leavemodalVisible ?
-                '确认离开' :
-                roomStep === StepTypes.init && !isEleClose ? '确认开始上课' : '结束课堂'
+              !isHost ?
+                intl.get('确认离开') :
+                roomStep === StepTypes.init && !isEleClose ? intl.get('确认开始上课') : intl.get('结束课堂')
             }
           </p>
           <p className="desc">
             {
-              !isHost ? '离开教室后将暂停学习，需要等待您再次进入课堂后方可继续上课？' :
-                (roomStep === StepTypes.init && !isEleClose ? '开课后教学内容将同步至学生端，并正式开始课堂录制' : '结束课堂后老师和学生均会跳转课堂结束画面，支持查看课程回放')
+              !isHost ? intl.get('离开教室后将暂停学习，需要等待您再次进入课堂后方可继续上课？') :
+                (roomStep === StepTypes.init && !isEleClose ? intl.get('开课后教学内容将同步至学生端，并正式开始课堂录制') : intl.get('结束课堂后老师和学生均会跳转课堂结束画面，支持查看课程回放'))
             }
           </p>
         </Modal>
         <Modal visible={finishVisible} centered
           onOk={handleFinishModalOk}
           onCancel={handleFinishModalCancel}
-          okText="确认"
-          cancelText="取消"
+          okText={intl.get('确认')}
+          cancelText={intl.get('取消')}
           wrapClassName="modal"
         >
-          <p className="title">下讲台</p>
-          <p className="desc">下讲台后，你的视频画面将不再显示在屏幕上，不能继续与老师语音交流。</p>
+          <p className="title">{intl.get('下讲台')}</p>
+          <p className="desc">{intl.get('下讲台后，你的视频画面将不再显示在屏幕上，不能继续与老师语音交流。')}</p>
         </Modal>
       </div>
     </div>

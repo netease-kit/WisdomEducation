@@ -1,4 +1,4 @@
-const { contextBridge, ipcRenderer, remote, app } = require('electron');
+const { contextBridge, ipcRenderer, remote, app, desktopCapturer } = require('electron');
 const path = require('path');
 
 window.addEventListener('DOMContentLoaded', () => {
@@ -9,5 +9,7 @@ window.addEventListener('DOMContentLoaded', () => {
 window.NERtcSDK = require('nertc-electron-sdk').default;
 window.platform = process.platform;
 window.ipcRenderer = ipcRenderer;
-window.eleRemote = remote;
+window.eleRemote = {
+  desktopCapturer
+}
 window.eleProcess = process;

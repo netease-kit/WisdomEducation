@@ -1,6 +1,6 @@
 {
   "name": "app-wisdon-education-web",
-  "version": "1.9.2",
+  "version": "1.9.3",
   "homepage": "./",
   "private": true,
   "main": "./build/app/main.js",
@@ -22,9 +22,10 @@
     "less": "^4.1.1",
     "mobx": "^6.3.0",
     "mobx-react": "^7.1.0",
-    "nertc-electron-sdk": "4.1.114-rc-944",
+    "nertc-electron-sdk": "4.4.8-rc-946",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "react-intl-universal": "^2.4.8",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.3",
     "styled-components": "^5.3.0",
@@ -95,6 +96,7 @@
     "mac": {
       "icon": "build/icon.png",
       "entitlements": "entitlements.mac.plist",
+      "entitlementsInherit": "entitlements.mac.plist",
       "hardenedRuntime": true,
       "identity": null,
       "extendInfo": {
@@ -123,7 +125,7 @@
     "cache-loader": "^4.1.0",
     "cross-env": "^7.0.3",
     "customize-cra": "^1.0.0",
-    "electron": "11.4.3",
+    "electron": "14.2.5",
     "electron-builder": "22.11.7",
     "electron-rebuild": "^2.3.5",
     "esbuild-loader": "^2.13.1",

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { Select, Button, Slider, Progress } from 'antd'
 import { useRoomStore } from '@/hooks/store';
 import logger from '@/lib/logger';
+import intl from 'react-intl-universal';
 
 const styles = require('./index.module.less');
 
@@ -276,10 +277,10 @@ const DeviceCheck: React.FC<IProps> = ({
     <div className={styles.deviceCheckWrapper}>
       {header}
       <div className={styles.deviceCheckRow}>
-        <span className={styles.deviceCheckLabelText}>摄像头：</span>
+        <span className={styles.deviceCheckLabelText}>{intl.get('摄像头')}:</span>
         <Select
           className={styles.deviceCheckSelect}
-          placeholder='请选择'
+          placeholder={intl.get('请选择')}
           disabled={testMic || testSpeaker}
           value={cameraId}
           onChange={(value) => {
@@ -293,12 +294,12 @@ const DeviceCheck: React.FC<IProps> = ({
         { needVideoPic && <div className={styles.deviceCheckVideoContainer} ref={videoRef}></div> }
       </div>
       <div className={styles.deviceCheckRow}>
-        <span className={styles.deviceCheckLabelText}>麦克风：</span>
+        <span className={styles.deviceCheckLabelText}>{intl.get('麦克风')}:</span>
         <div>
           <div className={styles.deviceCheckTL}>
             <Select
               className={styles.deviceCheckSelect}
-              placeholder='请选择'
+              placeholder={intl.get('请选择')}
               disabled={testMic || testSpeaker}
               value={microphoneId}
               onChange={(value) => {
@@ -316,11 +317,11 @@ const DeviceCheck: React.FC<IProps> = ({
               shape="round"
               type="default"
             >
-              {testMic ? '停止检测' : '检测麦克风'}
+              {testMic ? intl.get('停止检测') : intl.get('检测麦克风')}
             </Button>
           </div>
           <div className={styles.deviceCheckInlineLabel}>
-            <span className={styles.deviceCheckInlineLabelText}>输入级别</span>
+            <span className={styles.deviceCheckInlineLabelText}>{intl.get('输入级别')}</span>
             <Progress
               className={styles.deviceCheckSlider}
               percent={audioLevel}
@@ -328,7 +329,7 @@ const DeviceCheck: React.FC<IProps> = ({
             />
           </div>
           <div className={styles.deviceCheckInlineLabel}>
-            <span className={styles.deviceCheckInlineLabelText}>输入音量</span>
+            <span className={styles.deviceCheckInlineLabelText}>{intl.get('输入音量')}</span>
             <Slider
               className={styles.deviceCheckSlider}
               min={0}
@@ -344,12 +345,12 @@ const DeviceCheck: React.FC<IProps> = ({
         </div>
       </div>
       <div className={styles.deviceCheckRow}>
-        <span className={styles.deviceCheckLabelText}>扬声器：</span>
+        <span className={styles.deviceCheckLabelText}>{intl.get('扬声器')}:</span>
         <div>
           <div className={styles.deviceCheckTL}>
             <Select
               className={styles.deviceCheckSelect}
-              placeholder='请选择'
+              placeholder={intl.get('请选择')}
               disabled={testMic || testSpeaker}
               value={speakerId}
               onChange={(value) => {
@@ -367,11 +368,11 @@ const DeviceCheck: React.FC<IProps> = ({
               shape="round"
               type="default"
             >
-              {testSpeaker ? '停止检测' : '检测扬声器'}
+              {testSpeaker ? intl.get('停止检测') : intl.get('检测扬声器')}
             </Button>
           </div>
           <div className={styles.deviceCheckInlineLabel}>
-            <span className={styles.deviceCheckInlineLabelText}>输出级别</span>
+            <span className={styles.deviceCheckInlineLabelText}>{intl.get('输出级别')}</span>
             <Progress
               className={styles.deviceCheckSlider}
               percent={speakerLevel}
@@ -379,7 +380,7 @@ const DeviceCheck: React.FC<IProps> = ({
             />
           </div>
           <div className={styles.deviceCheckInlineLabel}>
-            <span className={styles.deviceCheckInlineLabelText}>输出音量</span>
+            <span className={styles.deviceCheckInlineLabelText}>{intl.get('输出音量')}</span>
             <Slider
               className={styles.deviceCheckSlider}
               min={0}

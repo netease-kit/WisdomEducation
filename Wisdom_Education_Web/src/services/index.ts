@@ -14,6 +14,7 @@ import { AppStore } from "@/store";
 import { defaultStore } from "@/index";
 import { isElectron } from "@/config";
 import sessionStorage from "@/utils/sessionStorage";
+import intl from 'react-intl-universal';
 
 export const baseUrl = process.env.REACT_APP_SDK_DOMAIN;
 
@@ -24,7 +25,7 @@ sessionStorage.setItem("edu-deviceId", deviceId);
 const defaultHeaders = {
   "Content-Type": "application/json",
   Authorization: Authorization,
-  versionCode: 92,
+  versionCode: 93,
   clientType: isElectron ? "electron" : "web",
   deviceId,
 };
@@ -53,29 +54,29 @@ req.interceptors.response.use(
       // }
       switch (code) {
         case 400:
-          message.error("参数错误");
+          message.error(intl.get("参数错误"));
           break;
         case 401:
-          message.error("鉴权失败");
+          message.error(intl.get("鉴权失败"));
           defaultStore.roomStore.leave();
           history.push("/");
           break;
         case 415:
-          message.error("内部异常");
+          message.error(intl.get("内部异常"));
           break;
         case 1003:
-          message.error("指定角色未定义");
+          message.error(intl.get("指定角色未定义"));
           break;
         case 1004:
-          message.error('房间不存在');
+          message.error(intl.get('房间不存在'));
           defaultStore.roomStore.leave();
           history.push("/");
           break;
         case 1016:
-          message.error("用户已在房间中");
+          message.error(intl.get("用户已在房间中"));
           break;
         case 1017:
-          message.error("创建房间时房间已经存在且房间类型冲突");
+          message.error(intl.get("创建房间时房间已经存在且房间类型冲突"));
           break;
         default:
           break;

@@ -17,9 +17,7 @@ import { useUIStore, useRoomStore } from '@/hooks/store';
 import logger from '@/lib/logger';
 import { RoleTypes } from '@/config';
 import { useHistory } from 'react-router-dom';
-
-
-
+import intl from 'react-intl-universal';
 
 interface IProps {
   nim: any;
@@ -99,7 +97,7 @@ const Chatroom: React.FC<IProps> = ({
                       return;
                     }
                     const members = obj.members.map((item) => {
-                      if (!item.nick.includes('老师')) {
+                      if (!item.nick.includes(intl.get('老师'))) {
                         if (localUserInfo.userUuid === item.account) {
                           return {
                             userName: item.nick,
@@ -155,16 +153,16 @@ const Chatroom: React.FC<IProps> = ({
       });
 
       chatroomHelper.on('chat-onkicked', async (reason) => {
-        let msg = reason || '该账号被踢出房间'
+        let msg = reason || intl.get('该账号被踢出房间')
         if (reason === 'samePlatformKick') {
-          msg = '该账号在其他地方重复登录'
+          msg = intl.get('该账号在其他地方重复登录')
 
           const userInfo = roomStore?.localUserInfo || {};
           if (userInfo.role === RoleTypes.host) {
             await roomStore.endClassRoom();
           }
         } else if (reason === 'managerKick') {
-          msg = '被管理员踢出房间'
+          msg = intl.get('被管理员踢出房间')
         }
 
         //被踢出，需要回到首页
@@ -202,14 +200,14 @@ const Chatroom: React.FC<IProps> = ({
         }消息失败: `,
         err,
       );
-      uiStore.showToast(`发送聊天室${msg.type === 'text'
-        ? '文本'
+      uiStore.showToast(`${intl.get("发送聊天室")}${msg.type === 'text'
+        ? intl.get('文本')
         : msg.type === 'image'
-          ? '图片'
+          ? intl.get('图片')
           : msg.type === 'file'
-            ? '文件'
-            : '未知'
-      }消息失败`, 'error')
+            ? intl.get('文件')
+            : intl.get('未知')
+      }${intl.get("消息失败")}`, 'error')
       dispatch({ type: 'updateMessage', payload: { ...msg, status: 'fail' } });
       return;
     }
@@ -238,7 +236,7 @@ const Chatroom: React.FC<IProps> = ({
       });
       // 超时重置发送按钮
       const timeout = setTimeout(() => {
-        message.error('上传超时，请重试');
+        message.error(intl.get('上传超时，请重试'));
         setProgress(type);
       }, 30000);
       chatroomHelper.sendFile({
@@ -249,8 +247,8 @@ const Chatroom: React.FC<IProps> = ({
         },
         uploaddone: (err) => {
           if (err) {
-            const errMsg = `上传${type === 'image' ? '图片' : type === 'file' ? '文件' : '未知'
-            }失败`;
+            const errMsg = `${intl.get("上传")}${type === 'image' ? intl.get('图片') : type === 'file' ? intl.get('文件') : intl.get('未知')
+            }${intl.get("失败")}`;
             message.error(errMsg);
             console.log(errMsg, err);
           }

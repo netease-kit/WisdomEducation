@@ -17,6 +17,7 @@ import { RoleTypes, RoomTypes, HandsUpTypes, isElectron } from "@/config";
 import { Popover, Button, Modal } from "antd";
 import logger from "@/lib/logger";
 import { setInterval } from "timers";
+import intl from 'react-intl-universal';
 
 interface VideoPlayerProps {
   showUserControl?: boolean;
@@ -84,40 +85,40 @@ const VideoPlayer: React.FC<VideoPlayerProps> = observer(
       logger.log("操作本人", isBySelf);
       if (hasAudio) {
         await roomStore.closeAudio(userUuid, true, isBySelf);
-        await uiStore.showToast("操作成功");
+        await uiStore.showToast(intl.get("操作成功"));
       } else {
         await roomStore.openAudio(userUuid, true, isBySelf);
-        await uiStore.showToast("操作成功");
+        await uiStore.showToast(intl.get("操作成功"));
       }
     };
 
     const handleVideo = async () => {
       if (hasVideo) {
         await roomStore.closeCamera(userUuid, true, isBySelf);
-        await uiStore.showToast("操作成功");
+        await uiStore.showToast(intl.get("操作成功"));
       } else {
         await roomStore.openCamera(userUuid, true, isBySelf);
-        await uiStore.showToast("操作成功");
+        await uiStore.showToast(intl.get("操作成功"));
       }
     };
 
     const handleSetWbEnableDraw = async (userUuid: string, value: number) => {
       if (roomStore.classStep !== 1) {
-        await uiStore.showToast("请先开始上课");
+        await uiStore.showToast(intl.get("请先开始上课"));
         return;
       }
       roomStore.setWbEnableDraw(userUuid, value);
-      await uiStore.showToast("操作成功");
+      await uiStore.showToast(intl.get("操作成功"));
     };
 
     const handleSetAllowScreen = async (userUuid: string, value: number) => {
       if (roomStore.classStep !== 1) {
-        await uiStore.showToast("请先开始上课");
+        await uiStore.showToast(intl.get("请先开始上课"));
         return;
       }
       // if(value === 0) await roomStore.changeSubVideoStream(userUuid, value);
       await roomStore.setAllowScreenShare(userUuid, value);
-      await uiStore.showToast("操作成功");
+      await uiStore.showToast(intl.get("操作成功"));
     };
 
     const handleModalOk = async (userUuid: string, value: HandsUpTypes) => {
@@ -134,7 +135,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = observer(
           // await roomStore.changeMemberStreamProperties(userUuid, 0, 0, 0)
           break;
       }
-      await uiStore.showToast("操作成功");
+      await uiStore.showToast(intl.get("操作成功"));
       setModalVisible(false);
     };
 
@@ -155,7 +156,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = observer(
                 onClick={() => handleSetWbEnableDraw(userUuid, 0)}
                 type="text"
               >
-                取消白板权限
+                {intl.get('取消白板权限')}
               </Button>
             </li>
           ) : (
@@ -164,7 +165,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = observer(
                 onClick={() => handleSetWbEnableDraw(userUuid, 1)}
                 type="text"
               >
-                授予白板权限
+                {intl.get('授予白板权限')}
               </Button>
             </li>
           )}
@@ -174,7 +175,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = observer(
                 onClick={() => handleSetAllowScreen(userUuid, 0)}
                 type="text"
               >
-                取消共享权限
+                {intl.get('取消共享权限')}
               </Button>
             </li>
           ) : (
@@ -183,7 +184,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = observer(
                 onClick={() => handleSetAllowScreen(userUuid, 1)}
                 type="text"
               >
-                授予共享权限
+                {intl.get('授予共享权限')}
               </Button>
             </li>
           )}
@@ -196,7 +197,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = observer(
                 }
                 type="text"
               >
-                  请他下台
+                {intl.get('请他下台')}
               </Button>
             </li>
           )}
@@ -547,7 +548,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = observer(
             {userName ? (
               <div className="username">
                 {userName}
-                {`${role === RoleTypes.host ? "（老师）" : "（学生）"}`}
+                {`${role === RoleTypes.host ? `（${intl.get("老师")}）` : `（${intl.get("学生")}）`}`}
               </div>
             ) : (
               <div />
@@ -590,7 +591,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = observer(
                   <i className="contrl-audio-close" />
                 )}
               </Button>
-              <p>{hasAudio ? "静音" : "解除静音"}</p>
+              <p>{hasAudio ? intl.get("静音") : intl.get("解除静音")}</p>
             </div>
             <div className="menu-item">
               <Button
@@ -604,7 +605,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = observer(
                   <i className="contrl-video-close" />
                 )}
               </Button>
-              <p>{hasVideo ? "关闭视频" : "开启视频"}</p>
+              <p>{hasVideo ? intl.get("关闭视频") : intl.get("开启视频")}</p>
             </div>
             {showMoreBtn && (
               <div className="menu-item">
@@ -626,7 +627,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = observer(
                     <i className="control-more-btn">···</i>
                   </Button>
                 </Popover>
-                <p>更多</p>
+                <p>{intl.get('更多')}</p>
               </div>
             )}
             <Modal
@@ -634,13 +635,13 @@ const VideoPlayer: React.FC<VideoPlayerProps> = observer(
               centered
               onOk={() => handleModalOk(userUuid, HandsUpTypes.teacherOff)}
               onCancel={handleModalCancel}
-              okText="确认"
-              cancelText="取消"
+              okText={intl.get('确认')}
+              cancelText={intl.get('取消')}
               wrapClassName="modal"
             >
-              <p className="title">请他下台</p>
+              <p className="title">{intl.get('请他下台')}</p>
               <p className="desc">
-                结束该学生的上台动作，同时收回他的屏幕共享、白板权限
+                {intl.get('结束该学生的上台动作，同时收回他的屏幕共享、白板权限')}
               </p>
             </Modal>
           </div>
