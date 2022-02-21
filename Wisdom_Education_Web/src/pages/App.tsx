@@ -4,12 +4,13 @@
  */
 import React from 'react';
 import './App.less';
+import intl from 'react-intl-universal';
 
 function App() {
   return (
     <div className="App">
       <header className="App-header">
-        首页
+        {intl.get('首页')}
       </header>
     </div>
   );

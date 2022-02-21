@@ -44,6 +44,7 @@ import {
   ShareListItem,
   RoomWithSceneTypes
 } from "@/config";
+import intl from 'react-intl-universal';
 
 interface JoinOptions {
   roomName: string;
@@ -167,7 +168,7 @@ export class RoomStore extends EnhancedEventEmitter {
   prevToNowTime = "";
 
   @observable
-  roomState = "课堂未开始";
+  roomState = intl.get("课程未开始");
 
   @observable
   isLiveStuJoin = false;
@@ -472,7 +473,7 @@ export class RoomStore extends EnhancedEventEmitter {
     // TODO
     // 获取信息
     // const localUserInfo = await login(joinOptions.userUuid);
-    this.setRoomState("课程未开始");
+    this.setRoomState(intl.get("课程未开始"));
     runInAction(() => {
       this.setClassDuration(0)
       this.setPrevToNowTime("");
@@ -515,11 +516,11 @@ export class RoomStore extends EnhancedEventEmitter {
       const { chatroom } = joinSettingInfo;
       const resource = { chatroom, live: Number(sceneType) === RoomTypes.bigClasLive };
       if (!this.isLiveStuJoin) {
-        await createRoom(roomUuid, `${userName}的课堂`, Number(sceneType), resource).catch(
+        await createRoom(roomUuid, `${userName}${intl.get("的课堂")}`, Number(sceneType), resource).catch(
           (data) => {
             if (data?.code !== 409) {
               logger.error("创建异常", data);
-              throw Error(data?.msg || "创建异常");
+              throw Error(data?.msg || intl.get("创建异常"));
             }
           }
         );
@@ -736,12 +737,12 @@ export class RoomStore extends EnhancedEventEmitter {
 
       this._webRtcInstance.on("beOccupied", (_data: any) => {
         logger.log("检测到获取设备权限时，设备被占用");
-        this.appStore.uiStore.showToast("获取麦克风或摄像头权限时，设备被占用。")
+        this.appStore.uiStore.showToast(intl.get("获取麦克风或摄像头权限时，设备被占用。"))
       })
 
       this._webRtcInstance.on("video-occupied", (_data: any) => {
         logger.log("视频开启异常");
-        this.appStore.uiStore.showToast("视频输入设备异常，请重新进行设备选择和检测！");
+        this.appStore.uiStore.showToast(intl.get("视频输入设备异常，请重新进行设备选择和检测！"));
       })
 
       const mediaStatus =
@@ -910,8 +911,8 @@ export class RoomStore extends EnhancedEventEmitter {
       value,
     }).catch((err) => {
       if(err.code === 1012) {
-        this.appStore.uiStore.showToast("上台人数超过限制");
-        throw Error("上台人数超过限制");
+        this.appStore.uiStore.showToast(intl.get("上台人数超过限制"));
+        throw Error(intl.get("上台人数超过限制"));
       }
     });
   }
@@ -1095,12 +1096,12 @@ export class RoomStore extends EnhancedEventEmitter {
               if (item?.drawable === 1) {
                 runInAction(() => {
                   this._localWbDrawEnable = true;
-                  this.appStore.uiStore.showToast("老师授予了你白板权限");
+                  this.appStore.uiStore.showToast(intl.get("老师授予了你白板权限"));
                 });
               } else if (item?.drawable === 0) {
                 runInAction(() => {
                   this._localWbDrawEnable = false;
-                  this.appStore.uiStore.showToast("老师取消了你白板权限");
+                  this.appStore.uiStore.showToast(intl.get("老师取消了你白板权限"));
                 });
               }
               break;
@@ -1108,36 +1109,36 @@ export class RoomStore extends EnhancedEventEmitter {
               if (item?.value === 1) {
                 if (item?.audio === 1) {
                   this.openAudio(userUuid, true, true);
-                  this.appStore.uiStore.showToast("老师开启了你的麦克风");
+                  this.appStore.uiStore.showToast(intl.get("老师开启了你的麦克风"));
                 }
                 if (item?.video === 1) {
                   this.openCamera(userUuid, true, true);
-                  this.appStore.uiStore.showToast("老师开启了你的摄像头");
+                  this.appStore.uiStore.showToast(intl.get("老师开启了你的摄像头"));
                 }
                 if (item?.audio === 0) {
                   this.closeAudio(userUuid, true, true);
-                  this.appStore.uiStore.showToast("老师关闭了你的麦克风");
+                  this.appStore.uiStore.showToast(intl.get("老师关闭了你的麦克风"));
                 }
                 if (item?.video === 0) {
                   this.closeCamera(userUuid, true, true);
-                  this.appStore.uiStore.showToast("老师关闭了你的摄像头");
+                  this.appStore.uiStore.showToast(intl.get("老师关闭了你的摄像头"));
                 }
               } else if (item.value === 0) {
                 if (item?.audio === 0) {
                   this.closeAudio(userUuid, false, false);
-                  this.appStore.uiStore.showToast("老师关闭了你的麦克风");
+                  this.appStore.uiStore.showToast(intl.get("老师关闭了你的麦克风"));
                 }
                 if (item?.video === 0) {
                   this.closeCamera(userUuid, true, false);
-                  this.appStore.uiStore.showToast("老师关闭了你的摄像头");
+                  this.appStore.uiStore.showToast(intl.get("老师关闭了你的摄像头"));
                 }
               }
               break;
             case "screenShare":
               if (item?.value === 1) {
-                this.appStore.uiStore.showToast("老师授予了你屏幕共享权限");
+                this.appStore.uiStore.showToast(intl.get("老师授予了你屏幕共享权限"));
               } else if (item.value === 0) {
-                this.appStore.uiStore.showToast("老师取消了你屏幕共享权限");
+                this.appStore.uiStore.showToast(intl.get("老师取消了你屏幕共享权限"));
                 if (this.screenData.length > 0) {
                   this.stopScreen(false)
                 }
@@ -1145,7 +1146,7 @@ export class RoomStore extends EnhancedEventEmitter {
               break;
             case "avHandsUp":
               if (item?.value === HandsUpTypes.teacherAgree) {
-                this.appStore.uiStore.showToast("举手申请通过");
+                this.appStore.uiStore.showToast(intl.get("举手申请通过"));
                 await changeMemberStream({
                   roomUuid: this.roomInfo.roomUuid,
                   userUuid: userUuid,
@@ -1167,7 +1168,7 @@ export class RoomStore extends EnhancedEventEmitter {
                 }, 3000);
               }
               if (item?.value === HandsUpTypes.teacherOff) {
-                this.appStore.uiStore.showToast("老师结束了你的上台操作");
+                this.appStore.uiStore.showToast(intl.get("老师结束了你的上台操作"));
                 this._webRtcInstance?.unpublish();
                 if (this._localWbDrawEnable) {
                   this._localWbDrawEnable = false;
@@ -1315,7 +1316,6 @@ export class RoomStore extends EnhancedEventEmitter {
       this._webRtcInstance?.destroy();
       this._webRtcInstance = null;
       this.appStore.whiteBoardStore.destroy();
-
     }
     // this.classDuration = 0;
     this.setFinishBtnShow(false);
@@ -1847,7 +1847,7 @@ export class RoomStore extends EnhancedEventEmitter {
             ) {
               this.closeAudio(this.localUserInfo.userUuid);
               fromNotify &&
-                this.appStore.uiStore.showToast("老师执行了全体静音");
+                this.appStore.uiStore.showToast(intl.get("老师执行了全体静音"));
             }
             if (!this._snapRoomInfo.states?.muteAudio) {
               this._snapRoomInfo.states.muteAudio = this._snapRoomInfo.states.muteAudio || {}
@@ -1862,7 +1862,7 @@ export class RoomStore extends EnhancedEventEmitter {
               const { roomUuid, rtcCid } = this.snapRoomInfo;
               if (operatorRoomUuid === roomUuid) {
                 this.leave();
-                this.setRoomState("课程结束");
+                this.setRoomState(intl.get("课程结束"));
                 history.push(
                   `/endCourse?roomUuid=${roomUuid}&rtcCid=${rtcCid}`
                 );
@@ -1876,9 +1876,9 @@ export class RoomStore extends EnhancedEventEmitter {
           case "muteChat":
             if (this.localData?.role !== RoleTypes.host) {
               if (item.value === 1) {
-                fromNotify && this.appStore.uiStore.showToast("聊天室已全体禁言");
+                fromNotify && this.appStore.uiStore.showToast(intl.get("聊天室已全体禁言"));
               } else {
-                fromNotify && this.appStore.uiStore.showToast("聊天室已取消禁言");
+                fromNotify && this.appStore.uiStore.showToast(intl.get("聊天室已取消禁言"));
               }
               if (!this._snapRoomInfo.states?.muteChat) {
                 this._snapRoomInfo.states.muteChat = this._snapRoomInfo.states.muteChat || {}

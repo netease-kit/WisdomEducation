@@ -13,9 +13,9 @@ import Header from '@/component/header';
 import Footer from '@/component/footer';
 import { RoleTypes } from '@/config';
 import logger from '@/lib/logger';
+import intl from 'react-intl-universal';
+
 // const { Header, Footer } = Layout;
-
-
 const RoomControl: React.FC = observer(({ children }) => {
   const appStore = useAppStore();
   const roomStore = useRoomStore();
@@ -25,7 +25,7 @@ const RoomControl: React.FC = observer(({ children }) => {
   const { loading } = uiStore;
 
   const listenCloseTab = (e) => {
-    (e || window.event).returnValue = "确定离开当前页面吗？";
+    (e || window.event).returnValue = intl.get('确定离开当前页面吗？');
   }
 
   useEffect(() => {
@@ -43,30 +43,30 @@ const RoomControl: React.FC = observer(({ children }) => {
     if (!roomStore.joined) {
       uiStore.setLoading(true);
       roomStore.join(joinParams).then(() => {
-        uiStore.showToast('加入房间成功');
+        uiStore.showToast(intl.get('加入房间成功'));
       }).catch((err) => {
         console.error('加入房间失败', err);
         const userInfo = GlobalStorage.read('user');
         switch (Number(err?.message)) {
           case 1002:
             if (userInfo && userInfo.role === RoleTypes.host) {
-              uiStore.showToast('老师数量超过限制');
+              uiStore.showToast(intl.get('老师数量超过限制'));
             } else {
-              uiStore.showToast('学生数量超过限制');
+              uiStore.showToast(intl.get('学生数量超过限制'));
             }
             break;
           case 400:
-            uiStore.showToast('参数错误');
+            uiStore.showToast(intl.get('参数错误'));
             break;
           case 401:
             break;
           case 1017:
-            uiStore.showToast("创建房间时房间已经存在且房间类型冲突");
+            uiStore.showToast(intl.get("创建房间时房间已经存在且房间类型冲突"));
             break;
           case 1004:
             break;  
           default:
-            uiStore.showToast(err?.message || '加入房间失败');
+            uiStore.showToast(err?.message || intl.get('加入房间失败'));
             break;
         }
         setTimeout(() => {

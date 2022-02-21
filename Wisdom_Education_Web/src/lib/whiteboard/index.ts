@@ -8,6 +8,8 @@ import ToolCollection from 'ToolCollection';
 import { EnhancedEventEmitter } from '../event';
 import logger from '../logger';
 import wb_server_conf from "./wb_server_conf.json";
+import intl from 'react-intl-universal';
+
 const needPrivate = process.env.REACT_APP_SDK_WB_PRIVATE;
 needPrivate === "true" && logger.log("WB私有化配置", wb_server_conf);
 
@@ -139,26 +141,26 @@ export class NeWhiteBoard extends EnhancedEventEmitter {
             items: [
               {
                 tool: 'prevPage',
-                hint: '上一页'
+                hint: intl.get('上一页')
               },
               {
                 tool: 'prevAnim',
-                hint: '上一步'
+                hint: intl.get('上一步')
               },
               {
                 tool: 'pageInfo'
               },
               {
                 tool: 'nextAnim',
-                hint: '下一步'
+                hint: intl.get('下一步')
               },
               {
                 tool: 'nextPage',
-                hint: '下一页'
+                hint: intl.get('下一页')
               },
               {
                 tool: 'preview',
-                hint: '预览',
+                hint: intl.get('预览'),
                 previewSliderPosition: 'right'
               }
             ]
@@ -170,26 +172,26 @@ export class NeWhiteBoard extends EnhancedEventEmitter {
             items: [
               {
                 tool: 'firstPage',
-                hint: '第一页'
+                hint: intl.get('第一页')
               },
               {
                 tool: 'prevPage',
-                hint: '上一页'
+                hint: intl.get('上一页')
               },
               {
                 tool: 'pageInfo'
               },
               {
                 tool: 'nextPage',
-                hint: '下一页'
+                hint: intl.get('下一页')
               },
               {
                 tool: 'lastPage',
-                hint: '最后一页'
+                hint: intl.get('最后一页')
               },
               {
                 tool: 'preview',
-                hint: '预览',
+                hint: intl.get('预览'),
                 previewSliderPosition: 'right'
               }
             ]

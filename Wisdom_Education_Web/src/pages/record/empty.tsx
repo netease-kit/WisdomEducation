@@ -8,12 +8,13 @@ import copy from 'copy-to-clipboard';
 import { Link } from 'react-router-dom';
 import { isElectron } from '@/config';
 import './index.less';
+import intl from 'react-intl-universal';
 
 const Empty: React.FC = () => {
 
   const copyToClip = () => {
     copy( window.location.href);
-    message.success('复制成功')
+    message.success(intl.get('复制成功'))
   }
 
   return (
@@ -22,11 +23,11 @@ const Empty: React.FC = () => {
         <div className="process">
           <span></span>
         </div>
-        <h1 className="title">课程结束后，需进行文件转码，预计20分钟后可观看回放</h1>
-        {!isElectron && <div className="desc">您可以收藏回放地址，晚点再来查看哦</div>}
+        <h1 className="title">{intl.get('课程结束后，需进行文件转码，预计20分钟后可观看回放')}</h1>
+        {!isElectron && <div className="desc">{intl.get('您可以收藏回放地址，晚点再来查看哦')}</div>}
         <div className={`btn-wrap ${isElectron && 'for-ele'}`}>
-          {!isElectron && <Button type="ghost" className="playback" onClick={copyToClip}>复制回放地址</Button>}
-          <Button type="ghost"><Link to="/">返回</Link></Button>
+          {!isElectron && <Button type="ghost" className="playback" onClick={copyToClip}>{intl.get('复制回放地址')}</Button>}
+          <Button type="ghost"><Link to="/">{intl.get('返回')}</Link></Button>
         </div>
       </div>
     </div>

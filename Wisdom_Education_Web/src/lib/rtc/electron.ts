@@ -113,7 +113,7 @@ export class NeElertc extends EnhancedEventEmitter {
   };
   private localStatsOpen: LocalStatsOpen = {};
   private remoteStatsOpen: RemoteStatsOpen = {};
-  private _screen: any;
+  // private _screen: any;
   private _windowsList: ShareListItem[] = [];
   private _localStream = null;
   private _localVolumeLevel: any;
@@ -170,9 +170,9 @@ export class NeElertc extends EnhancedEventEmitter {
     return this._nertcEngine;
   }
 
-  get screen(): any {
-    return this._screen;
-  }
+  // get screen(): any {
+  //   return this._screen;
+  // }
 
   get windowsList(): ShareListItem[] {
     return this._windowsList;
@@ -635,7 +635,8 @@ export class NeElertc extends EnhancedEventEmitter {
     record_video_enabled: false,
     record_type: 0,
   }): Promise<void> {
-    const res = await this._nertcEngine.setParameters(options);
+    // setParameters参数为JSON形式字符串
+    const res = await this._nertcEngine.setParameters(JSON.stringify(options));
   }
 
   /**
@@ -673,9 +674,9 @@ export class NeElertc extends EnhancedEventEmitter {
     }
   }
 
-  private async getShareRect(): Promise<ScreenRectRegion> {
-    return await eleRemote.screen.getAllDisplays()[0].bounds;
-  }
+  // private async getShareRect(): Promise<ScreenRectRegion> {
+  //   return await eleRemote.screen.getAllDisplays()[0].bounds;
+  // }
 
   private _onJoinChannel() {
     logger.log("_onJoinChannel", this);
@@ -809,8 +810,8 @@ export class NeElertc extends EnhancedEventEmitter {
   }
 
   private async _onWindowCreate(event, data) {
-    logger.log("_onWindowCreate", eleRemote, data);
-    this._screen = eleRemote?.screen;
+    // logger.log("_onWindowCreate", eleRemote, data);
+    // this._screen = eleRemote?.screen;
     // this._windowsList = data.windowsList;
   }
 

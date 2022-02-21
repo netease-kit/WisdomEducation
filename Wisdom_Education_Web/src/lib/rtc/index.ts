@@ -294,7 +294,7 @@ export class NeWebrtc extends EnhancedEventEmitter {
     try{
       await this._client?.leave()
       this._client = null;
-      WebRTC2.destroy();
+      WebRTC2.destroy(); 
     }catch(e: any){
       logger.log('leave failed:', e)
       throw new Error(e);
@@ -737,7 +737,7 @@ export class NeWebrtc extends EnhancedEventEmitter {
     // this._localStream.destroy();
     try {
       this._localStream = null
-      this._client.destroy();
+      this._client?.destroy();
       this._client = null;
       WebRTC2.destroy();
       this._mapRemoteStreams.clear()

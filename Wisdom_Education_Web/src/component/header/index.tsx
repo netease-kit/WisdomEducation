@@ -16,6 +16,7 @@ import { LeftOutlined } from '@ant-design/icons';
 import { history, debounce } from '@/utils';
 import DeviceCheck from '@/component/device-check';
 import { RoleTypes, RoomTypes } from "@/config";
+import intl from 'react-intl-universal';
 
 interface HeaderShowProps {
   isHave?: boolean;
@@ -71,22 +72,22 @@ const Header: React.FC<HeaderShowProps> = observer((props) => {
 
   const handleCopyClick = () => {
     copy(roomUuid);
-    uiStore.showToast("复制成功")
+    uiStore.showToast(intl.get("复制成功"))
   }
 
   const content =
     <div className="head-infoCard">
       <div className="info-num">
-        <span className="title">课堂号</span>
+        <span className="title">{intl.get('课堂号')}</span>
         {roomUuid?.length > 0 && <span className="desc">{roomUuid}</span>}
         <img src={copyImg} alt="" className="copyImg" onClick={handleCopyClick}/>
       </div>
       <div className="info-name">
-        <span className="title">课堂名称</span>
+        <span className="title">{intl.get('课堂名称')}</span>
         <span className="desc">{roomName}</span>
       </div>
       <div className="info-role">
-        <span className="title">老师</span>
+        <span className="title">{intl.get('老师')}</span>
         <span className="desc">{hostName}</span>
       </div>
     </div>
@@ -125,7 +126,7 @@ const Header: React.FC<HeaderShowProps> = observer((props) => {
           </div>
       }
       <Modal
-        title="设备设置"
+        title={intl.get('设备设置')}
         wrapClassName="settingModal"
         visible={showDeviceModal}
         centered

@@ -14,6 +14,8 @@ import { getQueryString } from '@/utils/index';
 import Empty from './empty';
 import './index.less';
 import { isElectron } from '@/config';
+import intl from 'react-intl-universal';
+
 export interface IEvent {
   userId: string
   action: 'show' | 'hide' | 'showScreen' | 'remove',
@@ -67,7 +69,7 @@ const Record: React.FC = observer(() => {
 
   return (
     <div className="record-wrap">
-      <Header title="课程回放" isHave={true} hasBack={true} backMsg="返回登录页" backUrl="/" />
+      <Header title={intl.get('课程回放')} isHave={true} hasBack={true} backMsg={intl.get('返回登录页')} backUrl="/" />
       {uiStore.loading ? <div className="room-loading"><Spin className="room-loading-spin" /></div> : null}
       {
         isValid ? (

@@ -16,6 +16,7 @@ import './big-class-live-stu.less';
 import { Layout } from 'antd';
 import logger from '@/lib/logger';
 import { RoleTypes, StepTypes, PauseTypes, HandsUpTypes } from '@/config';
+import intl from 'react-intl-universal';
 
 const { Header, Footer, Sider, Content } = Layout;
 
@@ -43,7 +44,7 @@ const BigClassLiveStu: React.FC = observer(() => {
           width: videoRef.current.clientWidth,
           height: videoRef.current.clientHeight,
           techOrder: ['html5','flvjs'],
-          errMsg7: '拉流超时',
+          errMsg7: intl.get('拉流超时'),
           streamTimeoutTime: 30 * 1000,
           controlBar: {
             playToggle: !nertsLive, // 低延时页面不显示暂停按钮

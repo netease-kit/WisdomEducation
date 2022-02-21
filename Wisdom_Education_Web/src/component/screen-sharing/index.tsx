@@ -4,11 +4,12 @@
  */
 import React from 'react';
 import './index.less';
+import intl from 'react-intl-universal';
 
 const ScreenSharing: React.FC = () => {
   return (
     <div className="screen-sharing">
-      <span>您正在进行屏幕共享</span>
+      <span>{intl.get('您正在进行屏幕共享')}</span>
     </div>
   )
 }

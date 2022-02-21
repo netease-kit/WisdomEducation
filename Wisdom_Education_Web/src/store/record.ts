@@ -8,6 +8,7 @@ import logger from '@/lib/logger';
 import { IEvent, ITrack } from '@/pages/record/index';
 import { getRecordInfo } from '@/services/api';
 import { SceneTypes, RoleTypes } from '@/config';
+import intl from 'react-intl-universal';
 
 interface IpStore {
   videoTracks: Array<ITrack>
@@ -117,7 +118,7 @@ export class RecordStore {
           id: item.roomUid, // ?
           userId: item.roomUid,
           name: item.userName || item.roomUid, // ?
-          role: item.role || '未知身份',
+          role: item.role || intl.get('未知身份'),
           url: item.url,
           type: 'whiteboard',
           start: record.startTime,
@@ -128,8 +129,8 @@ export class RecordStore {
           videoTracks.unshift({
             id: item.roomUid, // ?
             userId: item.roomUid,
-            name: `${item.userName}(老师)` || item.roomUid, // ?
-            role: item.role || '未知身份',
+            name: `${item.userName}(${intl.get("老师")})` || item.roomUid, // ?
+            role: item.role || intl.get('未知身份'),
             url: item.url,
             type: 'video',
             start: record.startTime,
@@ -141,8 +142,8 @@ export class RecordStore {
           videoTracks.push({
             id: item.roomUid, // ?
             userId: item.roomUid,
-            name: `${item.userName}(学生)` || item.roomUid, // ?
-            role: item.role || '未知身份',
+            name: `${item.userName}(${intl.get("学生")})` || item.roomUid, // ?
+            role: item.role || intl.get('未知身份'),
             url: item.url,
             type: 'video',
             start: item.timestamp, // 学生视频开始时间以系统生成时间为准
@@ -156,7 +157,7 @@ export class RecordStore {
           id: item.roomUid, // ?
           userId: item.roomUid,
           name: item.userName || item.roomUid, // ?
-          role: item.role || '未知身份',
+          role: item.role || intl.get('未知身份'),
           url: item.url,
           type: 'screen',
           start: item.timestamp,

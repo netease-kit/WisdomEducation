@@ -10,7 +10,7 @@ import { Message, MessageType, Progress } from './chatroomHelper';
 import Icon from '@/component/icon';
 import { useUIStore } from '@/hooks/store';
 import moment from 'moment';
-
+import intl from 'react-intl-universal';
 
 
 import './index.less';
@@ -60,7 +60,7 @@ const Chatroom: React.FC<IProps> = ({
     if (e.shiftKey) {
       setCurText(curText + '\n');
     } else if (!finalCurText) {
-      uiStore.showToast('无法发送空消息')
+      uiStore.showToast(intl.get('无法发送空消息'))
     } else if (finalCurText && !e.shiftKey) {
       onSend(finalCurText, 'text');
       setCurText('');
@@ -73,7 +73,7 @@ const Chatroom: React.FC<IProps> = ({
   ): boolean | Promise<void | Blob | File> => {
     const isLt100M = file.size / 1024 / 1024 < 100;
     if (!isLt100M) {
-      message.error('图片或文件大小最大支持100M');
+      message.error(intl.get('图片或文件大小最大支持100M'));
     }
     return isLt100M;
   };
@@ -142,7 +142,7 @@ const Chatroom: React.FC<IProps> = ({
         <Input.TextArea
           style={{ resize: 'none' }}
           disabled={!canSendMsg}
-          placeholder={canSendMsg ? '请输入信息，并按enter键发送' : '聊天室已禁言'}
+          placeholder={canSendMsg ? intl.get("请输入信息，并按enter键发送") : intl.get("聊天室已禁言")}
           bordered={false}
           value={curText}
           onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {

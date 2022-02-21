@@ -16,6 +16,7 @@ import {
   isElectron,
   ShareListItem,
 } from "@/config";
+import intl from 'react-intl-universal';
 
 const DeviceList: React.FC = observer(() => {
   const [deviceList, setDeviceList] = useState<DeviceProps["data"]>([]);
@@ -75,7 +76,7 @@ const DeviceList: React.FC = observer(() => {
 
   const handleShareClick = async () => {
     if (roomStore.classStep !== 1) {
-      await uiStore.showToast("请先开始上课");
+      await uiStore.showToast(intl.get("请先开始上课"));
       return;
     }
     switch (localData?.hasScreen) {
@@ -89,7 +90,7 @@ const DeviceList: React.FC = observer(() => {
         break;
       case false:
         if (hasOtherScreen) {
-          await uiStore.showToast("已有人在共享，您无法共享");
+          await uiStore.showToast(intl.get("已有人在共享，您无法共享"));
           return;
         }
         if (!isElectron) {
@@ -199,7 +200,7 @@ const DeviceList: React.FC = observer(() => {
             }
             const data: DeviceProps["data"] = [
               {
-                title: "请选择扬声器",
+                title: intl.get('请选择扬声器'),
                 type: "speaker",
                 list: speakers?.map((item) => ({
                   label: item.label,
@@ -218,7 +219,7 @@ const DeviceList: React.FC = observer(() => {
                       setSpeakLabel(label);
                       setSpeakerId(value);
                       setListType(null);
-                      uiStore.showToast(`当前选择 ${label}`);
+                      uiStore.showToast(`${intl.get("当前选择")} ${label}`);
                     })
                     .catch((e) => {
                       logger.log("切换扬声器失败", e);
@@ -226,7 +227,7 @@ const DeviceList: React.FC = observer(() => {
                 },
               },
               {
-                title: "请选择麦克风",
+                title: intl.get('请选择麦克风'),
                 type: "microphone",
                 list: microphones?.map((item) => ({
                   label: item.label,
@@ -247,7 +248,7 @@ const DeviceList: React.FC = observer(() => {
                       setMicroLabel(label);
                       setMicrophoneId(value);
                       setListType(null);
-                      uiStore.showToast(`当前选择 ${label}`);
+                      uiStore.showToast(`${intl.get("当前选择")} ${label}`);
                     })
                     .catch((e) => {
                       logger.log("切换麦克风失败", e);
@@ -255,7 +256,7 @@ const DeviceList: React.FC = observer(() => {
                 },
               },
               {
-                title: "请选择摄像头",
+                title: intl.get('请选择摄像头'),
                 type: "camera",
                 list: cameras?.map((item) => ({
                   label: item.label,
@@ -274,7 +275,7 @@ const DeviceList: React.FC = observer(() => {
                       setCameraLabel(label);
                       setCameraId(value);
                       setListType(null);
-                      uiStore.showToast(`当前选择 ${label}`);
+                      uiStore.showToast(`${intl.get("当前选择")} ${label}`);
                     })
                     .catch((e) => {
                       logger.log("切换摄像头失败", e);
@@ -337,14 +338,14 @@ const DeviceList: React.FC = observer(() => {
             (cameraSelect && !cameraItem) || 
             (cameraLabel && cameraItem?.label !== cameraLabel)
           ) {
-            message.push("视频输入设备");
+            message.push(intl.get("视频输入设备"));
           }
           if (
             (microphones.length > originMicrophones.length) || 
             (microphoneSelect && !microItem) || 
             (microLabel && microItem?.label !== microLabel)
           ) {
-            message.push("音频输入设备");
+            message.push(intl.get("音频输入设备"));
             // 麦克风移出default变更时，需要手动重连一下
             if ((microLabel && microItem?.label !== microLabel)) {
               const tempMicro = speakerIdSelect || speakers[0]?.deviceId
@@ -356,10 +357,10 @@ const DeviceList: React.FC = observer(() => {
             (speakerIdSelect && !speakerItem) || 
             (speakLabel && speakerItem?.label !== speakLabel)
           ) {
-            message.push("音频输出设备");
+            message.push(intl.get("音频输出设备"));
           }
           if (message.length > 0) {
-            uiStore.showToast(message.join("、") + "异常，请重新进行设备选择和检测！");
+            uiStore.showToast(message.join("、") + intl.get("异常，请重新进行设备选择和检测！"));
             logger.log("检测到有设备插拔：",message);
           }
           setListType(null);
@@ -400,7 +401,7 @@ const DeviceList: React.FC = observer(() => {
                 }
               />
               <p className={localData?.hasAudio ? "gray" : "red"}>
-                {localData?.hasAudio ? "静音" : "解除静音"}
+                {localData?.hasAudio ? intl.get("静音") : intl.get("解除静音")}
               </p>
             </div>
             <div className="list-arrows">
@@ -437,7 +438,7 @@ const DeviceList: React.FC = observer(() => {
                 }
               />
               <p className={localData?.hasVideo ? "gray" : "red"}>
-                {localData?.hasVideo ? "关闭视频" : "开启视频"}
+                {localData?.hasVideo ? intl.get("关闭视频") : intl.get("开启视频")}
               </p>
             </div>
             <div className="list-arrows">
@@ -477,7 +478,7 @@ const DeviceList: React.FC = observer(() => {
               }
             />
             <p className={!localData?.hasScreen ? "gray" : "red"}>
-              {!localData?.hasScreen ? "共享屏幕" : "停止共享"}
+              {!localData?.hasScreen ? intl.get("共享屏幕") : intl.get("停止共享")}
             </p>
           </div>
         </div>
@@ -492,8 +493,8 @@ const DeviceList: React.FC = observer(() => {
         centered
         onOk={handleShareModalClick}
         onCancel={() => setShareSelectVisible(false)}
-        okText="确认"
-        cancelText="取消"
+        okText={intl.get('确认')}
+        cancelText={intl.get('取消')}
         wrapClassName="modal share-modal"
         width={720}
       >

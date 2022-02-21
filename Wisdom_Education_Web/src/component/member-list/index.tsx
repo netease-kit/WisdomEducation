@@ -11,6 +11,7 @@ import { HandsUpTypes, RoleTypes, RoomTypes, UserComponentData } from '@/config'
 import { useRoomStore, useUIStore } from '@/hooks/store';
 import { Message } from '../chatroom/chatroomHelper';
 import ChatRoom from '@/component/chatroom';
+import intl from 'react-intl-universal';
 
 const MemberList = observer(() => {
   const [handSpeakVisible, setHandSpeakVisible] = useState(false);
@@ -61,20 +62,20 @@ const MemberList = observer(() => {
   const handleAudioClick = async (item) => {
     if (item.hasAudio) {
       await roomStore.closeAudio(item.userUuid, true, isBySelf(item.userUuid));
-      await uiStore.showToast("操作成功");
+      await uiStore.showToast(intl.get("操作成功"));
     } else {
       await roomStore.openAudio(item.userUuid, true, isBySelf(item.userUuid));
-      await uiStore.showToast("操作成功");
+      await uiStore.showToast(intl.get("操作成功"));
     }
   }
 
   const handleVideoClick = async (item) => {
     if (item.hasVideo) {
       await roomStore.closeCamera(item.userUuid, true, isBySelf(item.userUuid));
-      await uiStore.showToast("操作成功");
+      await uiStore.showToast(intl.get("操作成功"));
     } else {
       await roomStore.openCamera(item.userUuid, true, isBySelf(item.userUuid));
-      await uiStore.showToast("操作成功");
+      await uiStore.showToast(intl.get("操作成功"));
     }
   }
 
@@ -126,7 +127,7 @@ const MemberList = observer(() => {
     try {
       const res = await roomStore.handsUpAction(userUuid, value)
       console.log('res', res);
-      await uiStore.showToast("操作成功");
+      await uiStore.showToast(intl.get("操作成功"));
       switch (value) {
         case HandsUpTypes.teacherAgree:
           // await roomStore.changeMemberStreamProperties(userUuid, 1, 1, 1)
@@ -167,35 +168,35 @@ const MemberList = observer(() => {
 
   const handleSetWbEnableDraw = async (userUuid: string, value: number) => {
     if (roomStore.classStep !== 1) {
-      await uiStore.showToast("请先开始上课");
+      await uiStore.showToast(intl.get("请先开始上课"));
       return;
     }
     roomStore.setWbEnableDraw(userUuid, value);
-    await uiStore.showToast("操作成功");
+    await uiStore.showToast(intl.get("操作成功"));
   }
 
   const handleSetAllowScreen = async (userUuid: string, value: number) => {
     if (roomStore.classStep !== 1) {
-      await uiStore.showToast("请先开始上课");
+      await uiStore.showToast(intl.get("请先开始上课"));
       return;
     }
     if (value === 0) await roomStore.changeSubVideoStream(userUuid, value);
     await roomStore.setAllowScreenShare(userUuid, value);
-    await uiStore.showToast("操作成功");
+    await uiStore.showToast(intl.get("操作成功"));
   }
 
   const MoreContent = useCallback((item) => {
     return (
       <ul onClick={() => setMoreVisible(false)}>
         {item.wbDrawEnable ?
-          <li><Button onClick={() => handleSetWbEnableDraw(item.userUuid, 0)} type="text">取消白板权限</Button></li> :
-          <li><Button onClick={() => handleSetWbEnableDraw(item.userUuid, 1)} type="text">授予白板权限</Button></li>}
+          <li><Button onClick={() => handleSetWbEnableDraw(item.userUuid, 0)} type="text">{intl.get('取消白板权限')}</Button></li> :
+          <li><Button onClick={() => handleSetWbEnableDraw(item.userUuid, 1)} type="text">{intl.get('授予白板权限')}</Button></li>}
         {item.canScreenShare ?
-          <li><Button onClick={() => handleSetAllowScreen(item.userUuid, 0)} type="text">取消共享权限</Button></li> :
-          <li><Button onClick={() => handleSetAllowScreen(item.userUuid, 1)} type="text">授予共享权限</Button></li>}
+          <li><Button onClick={() => handleSetAllowScreen(item.userUuid, 0)} type="text">{intl.get('取消共享权限')}</Button></li> :
+          <li><Button onClick={() => handleSetAllowScreen(item.userUuid, 1)} type="text">{intl.get('授予共享权限')}</Button></li>}
         {
           RoomTypes.bigClass === Number(roomStore?.roomInfo?.sceneType) && item.avHandsUp === HandsUpTypes.teacherAgree &&
-          <li><Button onClick={() => handsUpAction(item.userUuid, HandsUpTypes.teacherOff)} type="text">请他下台</Button></li>
+          <li><Button onClick={() => handsUpAction(item.userUuid, HandsUpTypes.teacherOff)} type="text">{intl.get('请他下台')}</Button></li>
         }
       </ul>
     );
@@ -221,19 +222,19 @@ const MemberList = observer(() => {
   )
 
   const handleMsg = useCallback(() => {
-    let result = '举手';
+    let result = intl.get('举手');
     roomStore.setFinishBtnShow(false);
     if (userInfo?.role === RoleTypes.host) {
-      result = '举手申请';
+      result = intl.get('举手申请');
       roomStore.setFinishBtnShow(false);
     } else {
       switch (userInfo?.avHandsUp) {
         case HandsUpTypes.studentHandsup:
-          result = '举手中';
+          result = intl.get('举手中');
           roomStore.setFinishBtnShow(false);
           break;
         case HandsUpTypes.teacherAgree:
-          result = '下讲台';
+          result = intl.get('下讲台');
           roomStore.setFinishBtnShow(true);
           break;
         default:
@@ -273,8 +274,8 @@ const MemberList = observer(() => {
       <>
         {inputVisible ?
           <div className="search">
-            <Input placeholder="请输入关键词搜索" onChange={handleChangeSearch} allowClear />
-            <Button onClick={handleSearchMember} >搜索</Button>
+            <Input placeholder={intl.get('请输入关键词搜索')} onChange={handleChangeSearch} allowClear />
+            <Button onClick={handleSearchMember} >{intl.get('搜索')}</Button>
           </div> : null
         }
         <ul>
@@ -395,10 +396,10 @@ const MemberList = observer(() => {
 
   const memberTabs = () => (
     <Tabs defaultActiveKey="online" onChange={handleTabsChange}>
-      {[RoomTypes.bigClass].includes(Number(roomInfo.sceneType)) && <Tabs.TabPane tab={`连线成员 (${onlineMemberLength})`} key="online">
+      {[RoomTypes.bigClass].includes(Number(roomInfo.sceneType)) && <Tabs.TabPane tab={`${intl.get("连线成员")} (${onlineMemberLength})`} key="online">
         {/* {memberTabs} */}
       </Tabs.TabPane>}
-      <Tabs.TabPane tab={`全部成员 (${studentData?.length})`} key="all">
+      <Tabs.TabPane tab={`${intl.get("全部成员")} (${studentData?.length})`} key="all">
         {/* {memberTabs} */}
       </Tabs.TabPane>
     </Tabs>
@@ -413,7 +414,7 @@ const MemberList = observer(() => {
   })?.length
 
   const content = () => (
-    <div className="mute-desc">全体静音为默认关闭所有成员的麦克风，但成员依旧能主动开启</div>
+    <div className="mute-desc">{intl.get('全体静音为默认关闭所有成员的麦克风，但成员依旧能主动开启')}</div>
   )
   const popoverListener = () => {
     if (moreVisible) {
@@ -445,7 +446,7 @@ const MemberList = observer(() => {
             type="text"
             icon={<img src={require('@/assets/imgs/member.png').default} alt="member" />}
           />
-          <p className="gray">课堂成员</p>
+          <p className="gray">{intl.get('课堂成员')}</p>
         </div>
       </div>
       {Number(roomInfo.sceneType) === RoomTypes.bigClass && (userInfo.role === RoleTypes.host || roomStore.classStep === 1) &&
@@ -473,11 +474,11 @@ const MemberList = observer(() => {
           {
             !chatVisible && messageCount > 0 && <span className="circle message-count"></span>
           }
-          <p className="gray">聊天室</p>
+          <p className="gray">{intl.get('聊天室')}</p>
         </div>
       </div>}
       <Modal
-        title={Number(roomInfo.sceneType) === RoomTypes.bigClass ? memberTabs() : `课堂成员 (${studentData?.length || bigLivememberFullList?.length})`}
+        title={Number(roomInfo.sceneType) === RoomTypes.bigClass ? memberTabs() : `${intl.get("课堂成员")} (${studentData?.length || bigLivememberFullList?.length})`}
         wrapClassName="memberModal"
         visible={handleMemberVisible}
         onCancel={handleMemberCancel}
@@ -495,11 +496,11 @@ const MemberList = observer(() => {
               onMouseEnter={() => setMuteAllBtnHover(true)}
               onMouseLeave={() => setMuteAllBtnHover(false)}
               onClick={handleMuteAll}
-            >全体静音</Button>
+            >{intl.get('全体静音')}</Button>
             <Tooltip title={content} overlayClassName="mute-tooltip" placement="topLeft">
               <img src={require('@/assets/imgs/info5.png').default} alt="info" className="infoImg" />
             </Tooltip></>}
-            <Checkbox onChange={onBanChange}>聊天室全体禁言</Checkbox>
+            <Checkbox onChange={onBanChange}>{intl.get('聊天室全体禁言')}</Checkbox>
           </div>
         }
       >
@@ -519,8 +520,8 @@ const MemberList = observer(() => {
               item?.avHandsUp === HandsUpTypes.studentHandsup && <li key={item.userUuid}>
                 <span>{item.userName}</span>
                 <div>
-                  <Button onClick={() => handsUpAction(item.userUuid, HandsUpTypes.teacherAgree)} >同意</Button>
-                  <Button onClick={() => handsUpAction(item.userUuid, HandsUpTypes.teacherReject)} >拒绝</Button>
+                  <Button onClick={() => handsUpAction(item.userUuid, HandsUpTypes.teacherAgree)} >{intl.get('同意')}</Button>
+                  <Button onClick={() => handsUpAction(item.userUuid, HandsUpTypes.teacherReject)} >{intl.get('拒绝')}</Button>
                 </div>
               </li>
             ))
@@ -530,23 +531,23 @@ const MemberList = observer(() => {
       <Modal visible={handsVisible} centered
         onOk={handleHandsModalOk}
         onCancel={handleHandsModalCancel}
-        okText="确认"
-        cancelText="取消"
+        okText={intl.get('确认')}
+        cancelText={intl.get('取消')}
         wrapClassName="modal"
       >
         <p className="title">
-          {userInfo?.avHandsUp === HandsUpTypes.teacherAgree && '下讲台'}
-          {userInfo?.avHandsUp === HandsUpTypes.studentHandsup && '取消举手'}
-          {(!userInfo?.avHandsUp || [HandsUpTypes.init, HandsUpTypes.studentCancel, HandsUpTypes.teacherOff, HandsUpTypes.teacherReject].includes(userInfo?.avHandsUp)) && '举手申请'}
+          {userInfo?.avHandsUp === HandsUpTypes.teacherAgree && intl.get('下讲台')}
+          {userInfo?.avHandsUp === HandsUpTypes.studentHandsup && intl.get('取消举手')}
+          {(!userInfo?.avHandsUp || [HandsUpTypes.init, HandsUpTypes.studentCancel, HandsUpTypes.teacherOff, HandsUpTypes.teacherReject].includes(userInfo?.avHandsUp)) && intl.get('举手申请')}
         </p>
         <p className="desc">
-          {userInfo?.avHandsUp === HandsUpTypes.teacherAgree && '下讲台后，你的视频画面将不再显示在屏幕上，不能继续与老师语音交流。'}
-          {userInfo?.avHandsUp === HandsUpTypes.studentHandsup && '是否确认取消举手？'}
-          {(!userInfo?.avHandsUp || [HandsUpTypes.init, HandsUpTypes.studentCancel, HandsUpTypes.teacherOff, HandsUpTypes.teacherReject].includes(userInfo?.avHandsUp)) && '申请上台与老师沟通，通过后你的视频画面将出现在屏幕上并能与老师语音'}
+          {userInfo?.avHandsUp === HandsUpTypes.teacherAgree && intl.get('下讲台后，你的视频画面将不再显示在屏幕上，不能继续与老师语音交流。')}
+          {userInfo?.avHandsUp === HandsUpTypes.studentHandsup && intl.get('是否确认取消举手？')}
+          {(!userInfo?.avHandsUp || [HandsUpTypes.init, HandsUpTypes.studentCancel, HandsUpTypes.teacherOff, HandsUpTypes.teacherReject].includes(userInfo?.avHandsUp)) && intl.get('申请上台与老师沟通，通过后你的视频画面将出现在屏幕上并能与老师语音')}
         </p>
       </Modal>
       <Modal
-        title="聊天室"
+        title={intl.get('聊天室')}
         wrapClassName="chatModal"
         visible={chatVisible}
         onCancel={handleChatCancel}
@@ -560,7 +561,7 @@ const MemberList = observer(() => {
             nim={nim?.nim}
             appKey={localUserInfo?.imKey}
             account={localUserInfo?.userUuid}
-            nickName={`${localUserInfo?.userName}${localUserInfo?.role === RoleTypes.host ? '（老师）' : '（学生）'}`}
+            nickName={`${localUserInfo?.userName}${localUserInfo?.role === RoleTypes.host ? `（${intl.get("老师")}）` : `（${intl.get("学生")}）`}`}
             chatroomId={snapRoomInfo?.properties?.chatRoom?.chatRoomId.toString()}
             token={localUserInfo?.imToken}
             canSendMsg={userInfo.role === RoleTypes.host ? true : !(snapRoomInfo?.states?.muteChat?.value === 1)}
@@ -579,8 +580,8 @@ const MemberList = observer(() => {
         wrapClassName="reject-modal"
         footer={null}
       >
-        <p className="title">举手申请被拒绝</p>
-        <p className="desc">您的举手申请被拒绝，请稍后再尝试。</p>
+        <p className="title">{intl.get('举手申请被拒绝')}</p>
+        <p className="desc">{intl.get('您的举手申请被拒绝，请稍后再尝试。')}</p>
       </Modal>
     </div>
   )
