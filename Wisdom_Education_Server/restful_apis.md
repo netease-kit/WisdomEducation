@@ -99,10 +99,10 @@
 | roomName	| 必选| 	房间名称| 
 | configId	| 必选	| 房间配置模版id| 
 | properties	| 可选	| 房间初始化时可选的一些房间属性, 可携带的属性需要参考配置模版.| 
-| config.resource.live	| 可选: 默认false	| 房间是否打开直播| 
-| config.resource.rtc	|可选: 默认true| 房间是否打开rtc房间| 
-| config.resource.chatroom| 可选: 默认true| 房间是否打开聊天时| 
-| config.resource.whiteboard| 可选: 默认true| 房间是否打开白板| 
+| config.resource.live	| 可选: 默认以模版中的设置为准 | 房间是否打开直播| 
+| config.resource.rtc	|可选: 默认以模版中的设置为准 | 房间是否打开rtc房间| 
+| config.resource.chatroom| 可选: 默认以模版中的设置为准 | 房间是否打开聊天时| 
+| config.resource.whiteboard| 可选: 默认以模版中的设置为准 | 房间是否打开白板| 
 
 - Sample
 ```json
