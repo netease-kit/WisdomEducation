@@ -39,6 +39,8 @@ static NSString *cellID = @"NEEduVideoCellID";
 @property (nonatomic, strong) NEEduMembersVC *membersVC;
 @property (nonatomic, strong) NEEduLessonStateView *lessonStateView;
 @property (nonatomic, strong) NEEduMenuItem *chatItem;
+/// 是否推流
+@property (nonatomic, assign) BOOL isPushStream;
 
 // 子类实现
 - (void)initMenuItems;

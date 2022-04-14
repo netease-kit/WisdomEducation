@@ -418,6 +418,9 @@ static NSString *kLastUserToken = @"lastUserToken";
     BOOL showChatroom = [[[NSUserDefaults standardUserDefaults] objectForKey:showChatroomKey] boolValue];
     NERoomConfig *config = [[NERoomConfig alloc] init];
     config.resource.chatroom = showChatroom;
+    // 推流需要开启直播
+    BOOL isPushStream = [[NSUserDefaults.standardUserDefaults objectForKey:pushStreamKey] boolValue];
+    config.resource.live = isPushStream;
     switch (room.sceneType) {
         case NEEduSceneType1V1: {
             room.configId = 5;
@@ -516,7 +519,8 @@ static NSString *kLastUserToken = @"lastUserToken";
 }
 
 - (void)pushViewController {
-    UIViewController *roomVC;
+    NEEduClassRoomVC *roomVC;
+    BOOL isPushStream = [[NSUserDefaults.standardUserDefaults objectForKey:pushStreamKey] boolValue];
     if (self.lessonType == NEEduSceneType1V1) {
         //1v1
         if (self.role == NEEduRoleTypeTeacher) {
@@ -541,9 +545,11 @@ static NSString *kLastUserToken = @"lastUserToken";
             roomVC = [[NEEduBigClassStudentVC alloc] init];
         }
     }
-    roomVC.modalPresentationStyle = UIModalPresentationFullScreen;
-    [self presentViewController:roomVC animated:YES completion:nil];
-    
+    if (roomVC) {
+        roomVC.isPushStream = isPushStream;
+        roomVC.modalPresentationStyle = UIModalPresentationFullScreen;
+        [self presentViewController:roomVC animated:YES completion:nil];
+    }
 }
 
 #pragma mark - UITableViewDataSource
