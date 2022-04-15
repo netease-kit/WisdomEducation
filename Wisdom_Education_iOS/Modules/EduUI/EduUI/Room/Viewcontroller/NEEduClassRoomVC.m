@@ -21,6 +21,7 @@
 #import "UIImage+NE.h"
 #import "NEEduNavigationViewController.h"
 #import <SDWebImage/SDWebImage.h>
+
 @interface NEEduClassRoomVC ()<NEEduRoomViewMaskViewDelegate,NMCWhiteboardManagerDelegate,NEScreenShareHostDelegate,NEEduVideoServiceDelegate,NEEduIMChatDelegate,NEEduMessageServiceDelegate,NEEduRoomServiceDelegate>
 
 /// 自己是否在共享
@@ -34,12 +35,12 @@
 @property (nonatomic, assign) BOOL netReachable;
 @property (nonatomic, strong) UILabel *shareScreenMask;
 
+
 @end
 
 static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
 
 @implementation NEEduClassRoomVC
-
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     [[UIDevice currentDevice] setValue:[NSNumber numberWithInteger:UIInterfaceOrientationLandscapeRight] forKey:@"orientation"];
@@ -90,8 +91,84 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
         [strongSelf addChatroom];
         // update menue
         [strongSelf updateMenueItemWithProfile:profile];
+        // 推流
+        if (strongSelf.pushStreamIfNeed) {
+            [strongSelf setupPushStream];
+        }
     }];
 }
+#pragma mark -----------------------------  推流业务  -----------------------------
+- (BOOL)pushStreamIfNeed {
+    if (![[NEEduManager shared].localUser.role isEqualToString:NEEduRoleHost] ||
+        !self.isPushStream) {
+        return NO;
+    }
+    return YES;
+}
+- (void)setupPushStream {
+    // 加入房间后创建推流任务
+    //先初始化推流任务
+    NERtcLiveStreamTaskInfo *info = [[NERtcLiveStreamTaskInfo alloc] init];
+    //taskID 可选字母、数字，下划线，不超过64位
+    info.taskID = [NSString stringWithFormat:@"%ld", NEEduManager.shared.localUser.rtcUid];
+    // 设置推互动直播推流地址，一个推流任务对应一个推流房间
+    info.streamURL = self.room.properties.live.pushUrl;
+    // 设置是否进行互动直播录制，请注意与音视频通话录制区分。
+    info.serverRecordEnabled = NO;
+    // 设置推音视频流还是纯音频流
+    
+    info.lsMode = kNERtcLsModeVideo;
+    
+    CGFloat width = UIScreen.mainScreen.bounds.size.width;
+    CGFloat heihgt = UIScreen.mainScreen.bounds.size.height;
+    //设置整体布局
+    NERtcLiveStreamLayout *layout = [[NERtcLiveStreamLayout alloc] init];
+    layout.width = width;      //整体布局宽度
+    layout.height = heihgt;  //整体布局高度
+    layout.backgroundColor = (0 & 0xff) << 16 | (0 & 0xff) << 8 | (0 & 0xff);
+    info.layout = layout;
+    // 设置直播成员布局
+    NERtcLiveStreamUserTranscoding *user1 = [[NERtcLiveStreamUserTranscoding alloc] init];
+    user1.uid = [NEEduManager shared].localUser.rtcUid;
+    user1.audioPush = true;        // 推流是否发布user1的音频
+    user1.videoPush = true; // 推流是否发布user1的视频
+    if (user1.videoPush) {
+        // 如果发布视频，需要设置一下视频布局参数
+        user1.x = width - 40 - 120; // user1 的视频布局x偏移，相对整体布局的左上角
+        if (@available(iOS 11.0, *)) {
+            user1.y = self.view.safeAreaLayoutGuide.layoutFrame.origin.y + 50;
+        } else {
+            // Fallback on earlier versions
+            user1.y = 50;
+        } // user1 的视频布局y偏移，相对整体布局的左上角
+        user1.width = 120; // user1 的视频布局宽度
+        user1.height = 90; //user1 的视频布局高度
+        user1.adaption = kNERtcLsModeVideoScaleCropFill;
+    }
+    layout.users = @[user1];
+    //配置背景占位图片，可以不配置。
+    //        NERtcLiveStreamImageInfo *imageInfo = [[NERtcLiveStreamImageInfo alloc] init];
+    //        imageInfo.url = url;
+    //        imageInfo.x = 0;
+    //        imageInfo.y = 0;
+    //        imageInfo.width = 720;
+    //        imageInfo.height = 1280;
+    //        layout.bgImage = imageInfo;
+    //调用 addLiveStreamTask 接口添加推流任务
+    int ret = [[NERtcEngine sharedEngine] addLiveStreamTask:info
+                                                 compeltion:^(NSString * _Nonnull taskId, kNERtcLiveStreamError errorCode) {
+        
+        NSString *toast = !errorCode ? @"添加成功" : [NSString stringWithFormat:@"添加失败 errorcode = %d",errorCode];
+        NSLog(@"%@", toast);
+    }];
+    
+    if (ret != 0) {
+        NSLog(@"调用添加推流任务失败");
+    } else {
+        NSLog(@"推流任务成功");
+    }
+}
+
 
 - (void)addChatroom {
     if (self.room.properties.chatRoom && [NEEduManager shared].roomService.room.sceneType != NEEduSceneType1V1) {

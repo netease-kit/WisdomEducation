@@ -10,6 +10,8 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface NEEduLiveInfo : NSObject
+/// 任务Id  taskId
+@property (nonatomic, copy) NSString *cid;
 @property (nonatomic, strong) NSString *pushUrl;
 @property (nonatomic, strong) NSString *pullHttpUrl;
 
