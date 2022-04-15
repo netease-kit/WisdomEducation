@@ -32,7 +32,7 @@ import com.netease.yunxin.app.wisdom.rtc.RtcManager
 import com.netease.yunxin.kit.alog.ALog
 
 /**
- * 
+ *
  */
 internal object NEEduManagerImpl : NEEduManager {
 
@@ -129,7 +129,7 @@ internal object NEEduManagerImpl : NEEduManager {
     private fun initRtcAndLoginIM(initLD: MediatorLiveData<NEResult<Boolean>>) {
         val mergeLD: MediatorLiveData<Boolean> = MediatorLiveData()
         var rtcServerAddresses: NERtcServerAddresses? = null // rtc private Server Addresses
-        if(NEEduManager.eduOptions.useRtcAssetServerAddressConfig == true) {
+        if (NEEduManager.eduOptions.useRtcAssetServerAddressConfig == true) {
             rtcServerAddresses = NEEduPrivatizationConfig.getRtcServerAddresses(NEEduManager.context)
         }
         val rtcLD = rtcManager.initEngine(
@@ -275,7 +275,13 @@ internal object NEEduManagerImpl : NEEduManager {
     }
 
     private fun joinRtc() {
-        rtcManager.join(getEntryMember().rtcToken, getRoom().roomUuid, getEntryMember().rtcUid)
+        rtcManager.join(
+            getEntryMember().rtcToken,
+            getRoom().roomUuid,
+            getEntryMember().rtcUid,
+            // pushUrl设为null时不旁路推流
+            if (getEntryMember().isHandsUp()) getRoom().pushUrl() else null
+        )
     }
 
     override fun destroy() {
