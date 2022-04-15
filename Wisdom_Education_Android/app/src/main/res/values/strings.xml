@@ -17,9 +17,11 @@
     <string name="open_chat_room">Enable Chat Room</string>
     <string name="im_reuse">IM Reuse</string>
     <string name="low_latency_live">Low-latency Streaming</string>
+    <string name="teacher_live">Teacher live</string>
     <string name="open_chatroom">If the chat room is disabled, the chat room interface will not appear</string>
     <string name="im_resue_desc">If the IM module is reused, the IM channel of the host application is used.</string>
     <string name="low_latency_live_desc">The CDN mode has 2-5s delay and the low-latency mode has 1-2s delay</string>
+    <string name="teacher_live_desc">Support teacher to add live task</string>
     <string name="im_login">IM login</string>
     <string name="im_account">IM account</string>
     <string name="im_password">IM password</string>

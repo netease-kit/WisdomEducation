@@ -38,6 +38,12 @@ class SettingFragment : Fragment(R.layout.setting_fragment) {
                 PreferenceUtil.lowLatencyLive = isChecked
             }
         }
+        binding.toggleTeacherLive.apply {
+            isChecked = PreferenceUtil.enableHostLive
+            setOnCheckedChangeListener { _, isChecked ->
+                PreferenceUtil.enableHostLive = isChecked
+            }
+        }
     }
 
     private var onClickListener = View.OnClickListener { v ->
