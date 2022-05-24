@@ -99,7 +99,7 @@
       "entitlements": "entitlements.mac.plist",
       "entitlementsInherit": "entitlements.mac.plist",
       "hardenedRuntime": true,
-      "identity": "569GNZ5392",
+      "identity": "",
       "extendInfo": {
         "NSMicrophoneUsageDescription": "Allow to access the microphone",
         "NSCameraUsageDescription": "Allow to access the camera"
