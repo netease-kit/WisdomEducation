@@ -36,7 +36,7 @@ const isProd = process.env.REACT_APP_ENV === 'production'
 
 const sourceMap = () => config => {
   // TODO: Please use 'source-map' in production environment
-  // TODO: 建议上发布环境用 'source-map'
+  // TODO: 'source-map' is recommended for the production environment
   // config.devtool = 'source-map'
   config.devtool = isProd ? false : 'source-map'
   return config;
@@ -122,7 +122,7 @@ module.exports = {
         environmentHash: {
           root: process.cwd(),
           directories: [],
-          files: ['package.json', 'package-lock.json', 'yarn.lock', '.env', '.env.local', 'env.local', '.env.development', '.env.production'],
+          files: ['package.json', 'package-lock.json', 'yarn.lock', '.env', '.env.local', 'env.local', '.env.development', '.env.production', 'src/config.js'],
         }
       })
     ),

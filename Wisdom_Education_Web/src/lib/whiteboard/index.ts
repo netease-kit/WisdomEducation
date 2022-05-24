@@ -11,7 +11,7 @@ import wb_server_conf from "./wb_server_conf.json";
 import intl from 'react-intl-universal';
 
 const needPrivate = process.env.REACT_APP_SDK_WB_PRIVATE;
-needPrivate === "true" && logger.log("WB私有化配置", wb_server_conf);
+needPrivate === "true" && logger.log("WB on-premises deployment configuration", wb_server_conf);
 
 export interface WhiteBoardInitOptions {
   appKey: string;
@@ -61,7 +61,7 @@ export class NeWhiteBoard extends EnhancedEventEmitter {
   }
 
   /**
-   * @description: 白板初始化
+   * @description: Whiteboard initialization
    * @param {WhiteBoardInitOptions} options
    * @return {*}
    */
@@ -71,25 +71,25 @@ export class NeWhiteBoard extends EnhancedEventEmitter {
     }
     this._whiteboard = await WhiteBoard.getInstance({
       appKey: options.appKey,
-      nickname: options.nickname,   //非必须
+      nickname: options.nickname,   //Optional
       uid: options.uid,
       container: options.container,
       platform: 'web',
       record: false,
-      privateConf: needPrivate === "true" ? wb_server_conf : {}, // 私有化配置
+      privateConf: needPrivate === "true" ? wb_server_conf : {}, // On-premises deployment configuration
       getAuthInfo: async () => ({
-        checksum: options.checksum,       //sha1(appsecret + nonce + curTime)
-        nonce: options.nonce,             //随机长度小于128位的字符串
-        curTime: options.curTime,         //当前UTC时间戳，从1970年1月1日0点0分0秒开始到现在的秒数
+        checksum: options.checksum,       //SHA1(appsecret + nonce + curTime)
+        nonce: options.nonce,             //A string in a random length less than 128 characters
+        curTime: options.curTime,         //The current timestamp in UTC represent the number of seconds since January 1, 1970, 00:00:00
       })
     });
     this._container = options.container;
-    logger.log('初始化白板完成');
+    logger.log('Whiteboard initialization is completed');
     return this._whiteboard;
   }
 
   /**
-   * @description: 白板加入
+   * @description: Join a whiteboard
    * @param {WhiteJoinRoomOtions} options
    * @return {*}
    */
@@ -104,13 +104,13 @@ export class NeWhiteBoard extends EnhancedEventEmitter {
           WhiteBoard.hideToast();
         }
       }).then((drawPlugin) => {
-        logger.log('白板加入成功');
+        logger.log('Joined a whiteboard');
         this._drawPlugin = drawPlugin;
         // @ts-ignore
         window.drawPlugin = drawPlugin
         resolve()
       }).catch((err) => {
-        logger.error('加入白板失败', err, options.channel);
+        logger.error('Failed to join a whiteboard', err, options.channel);
         reject(err);
       })
     })
@@ -123,7 +123,7 @@ export class NeWhiteBoard extends EnhancedEventEmitter {
     }
     this._toolCollection = ToolCollection.getInstance({
       /**
-      * 工具栏容器。应该和白板容器一致
+      * Toolbar container, consistent with the whiteboard container
       */
       container: dom || this._container,
       handler: this._drawPlugin,
@@ -202,7 +202,7 @@ export class NeWhiteBoard extends EnhancedEventEmitter {
   }
 
   /**
-   * @description: 设置白板权限
+   * @description: Set whiteboard permissions
    * @param {boolean} enable
    * @param {WhiteBoardSetEnableOtions} options
    * @return {*}
@@ -230,12 +230,12 @@ export class NeWhiteBoard extends EnhancedEventEmitter {
       },
       ...options,
     });
-    logger.log('设置白板权限成功', enable, options)
+    logger.log('Whiteboard permissions enabled', enable, options)
     return;
   }
 
   /**
-   * @description: 动态设置渲染的dom
+   * @description: Dynamically applied rendering DOM
    * @param {HTMLElement} dom
    * @return {*}
    */
@@ -244,12 +244,12 @@ export class NeWhiteBoard extends EnhancedEventEmitter {
       throw new Error('not init before');
     }
     await this._drawPlugin.setContainer(dom);
-    logger.debug('设置白板dom成功')
+    logger.debug('Set the whiteboard DOM')
     return;
   }
 
   /**
-   * @description: 获取白板流
+   * @description: Get the whiteboard stream
    * @param {*}
    * @return {*}
    */
@@ -257,13 +257,13 @@ export class NeWhiteBoard extends EnhancedEventEmitter {
     if (this.drawPlugin) {
       const stream = this.drawPlugin.getStream()
       const tracks = stream.getVideoTracks()
-      logger.log('白板辅流获取', tracks);
+      logger.log('Get the whiteboard substream', tracks);
       return tracks[0]
     }
   }
 
   /**
-   * @description: 更新白板流
+   * @description: Update the whiteboard stream
    * @param {opt}
    * @return {*}
    */
@@ -272,13 +272,13 @@ export class NeWhiteBoard extends EnhancedEventEmitter {
     keepDPI?: boolean
   }): Promise<void> {
     if (this.drawPlugin) {
-      logger.log('更新白板辅流', opt);
+      logger.log('Update the whiteboard stream', opt);
       this.drawPlugin.getStream(opt)
     }
   }
 
   /**
-   * @description: 白板销毁
+   * @description: Destroy a whiteboard
    * @param {*}
    * @return {*}
    */

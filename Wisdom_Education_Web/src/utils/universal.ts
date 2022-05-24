@@ -14,7 +14,8 @@ export const SUPPORT_LOCALES = [
     value: 'en-US'
   }
 ]
-export const setLocales = async (locale) => {
+
+export const initLocales = async (locale=currentLocale()) => {
   const locales = {
     'zh-CN': zhCN,
     'en-US': enUS
@@ -27,4 +28,9 @@ export const setLocales = async (locale) => {
     console.log("cc ",intl.get("智慧云课堂"))
     return true
   }
+}
+
+export const currentLocale = () => {
+  const locale = localStorage.getItem("lang")
+  return locale || DEFAULT_LOCCALE
 }

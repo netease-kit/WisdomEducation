@@ -88,7 +88,7 @@ const Join: FC = observer(() => {
 
     /**
      * http://jira.netease.com/browse/YYTX-3445
-     * roomUuid应该为纯数字
+     * roomUuid must be digits only
      */
     const roomUuid = (values.roomUuid || '').match(/\d+/g).join('')
     if (roomUuid.length === 0) {
@@ -134,7 +134,7 @@ const Join: FC = observer(() => {
 
   useEffect(() => {
     /**
-     * 进入join页面后，先清空之前的房间状态
+     * After you land the join page, clear the state of the previous room
      * http://jira.netease.com/browse/YYTX-3439
      */
     roomStore.leave()
@@ -187,7 +187,7 @@ const Join: FC = observer(() => {
                 <>
                   <Form.Item
                     name="uuid"
-                    // rules={[{ required: true, message: '课堂号格式错误', pattern: roomUuidReg }]}
+                    // rules={[{ required: true, message: 'Invalid class ID format', pattern: roomUuidReg }]}
                   >
                     <div>
                       <Input
@@ -209,7 +209,7 @@ const Join: FC = observer(() => {
               {/* <Form.Item name="roomName">
                 <Input
                   className="joinForm-input"
-                  placeholder="请输入课堂名称"
+                  placeholder="Enter class name"
                   maxLength={20}
                   autoComplete="off"
                 />

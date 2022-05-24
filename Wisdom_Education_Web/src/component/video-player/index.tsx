@@ -82,7 +82,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = observer(
     );
 
     const handleAudio = async () => {
-      logger.log("操作本人", isBySelf);
+      logger.log("Operated by the current user", isBySelf);
       if (hasAudio) {
         await roomStore.closeAudio(userUuid, true, isBySelf);
         await uiStore.showToast(intl.get("操作成功"));
@@ -259,7 +259,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = observer(
         (((CaptureResolutionWidth || RecvResolutionWidth) > 0 && hasScreen) ||
           hasVideo)
       ) {
-        logger.log("play成功", userName, playDOM, playDOM.current);
+        logger.log("playback success", userName, playDOM, playDOM.current);
         setReloadTime(0);
         clearTimeout(timer);
         const scale = hasScreen
@@ -283,33 +283,33 @@ const VideoPlayer: React.FC<VideoPlayerProps> = observer(
           },
           mediaType: hasScreen ? "screen" : "video",
         };
-        logger.debug('屏幕共享', hasScreen);
-        logger.debug('配置', modeOptions);
-        logger.debug('传入宽高值', CaptureResolutionWidth, CaptureResolutionHeight, RecvResolutionWidth, RecvResolutionHeight)
+        logger.debug('Screen sharing', hasScreen);
+        logger.debug('Configure', modeOptions);
+        logger.debug('Pass the aspect ratio', CaptureResolutionWidth, CaptureResolutionHeight, RecvResolutionWidth, RecvResolutionHeight)
         try {
           if (isLocal) {
             logger.log(
-              "localplay后设置远端视图",
+              "Set the remote view",
               playDOM.current,
               modeOptions,
               basicStream
             );
-            // setTimeout(async() => {
-            // param.audio = false;
-            await basicStream
-              .play(playDOM.current, videoParams)
-              .catch((error) => {
-                logger.error("play失败1", error);
-              });
             await basicStream.setLocalRenderMode(
               modeOptions.options,
               modeOptions.mediaType
             );
-            // }, 2000);
+            setTimeout(async() => {
+              // param.audio = false;
+              await basicStream
+                .play(playDOM.current, videoParams)
+                .catch((error) => {
+                  logger.error("playback failure 1", error);
+                });
+            }, 2000);
           } else {
             // setTimeout(async () => {
             logger.log(
-              "play后设置远端视图",
+              "Set the remote view after playback",
               playDOM.current,
               modeOptions,
               basicStream
@@ -317,7 +317,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = observer(
             await basicStream
               .play(playDOM.current, videoParams)
               .catch((error) => {
-                logger.error("play失败2", error);
+                logger.error("playback failure 2", error);
               });
             await basicStream.setRemoteRenderMode(
               modeOptions.options,
@@ -326,18 +326,18 @@ const VideoPlayer: React.FC<VideoPlayerProps> = observer(
             // }, 2000);
           }
           logger.log(
-            "当前播放状态",
+            "Current playback state",
             rtcUid,
             await basicStream.isPlaying("video")
           );
         } catch (error) {
-          logger.error("play失败4", error);
+          logger.error("play failure 4", error);
         }
       } else if (reloadTime < 10) {
         setReloadTime(reloadTime + 1);
         logger.error(
-          "play失败-重新渲染",
-          `${reloadTime}次`,
+          "play failure-rerendering",
+          `${reloadTime}`,
           playDOM?.current?.clientWidth,
           CaptureResolutionWidth,
           RecvResolutionWidth
@@ -396,12 +396,12 @@ const VideoPlayer: React.FC<VideoPlayerProps> = observer(
             }
           }
           if (res !== 0) {
-            logger.error("播放失败", res);
+            logger.error("playback failure", res);
           } else {
-            logger.log("播放成功", res);
+            logger.log("playback success", res);
           }
         } catch (error) {
-          logger.error("ele播放失败", error);
+          logger.error("ele playback failure", error);
         }
       }
     };
@@ -485,7 +485,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = observer(
       userStats?.RecvResolutionHeight,
     ]);
 
-    /* electron-sdk 关闭视频需要清空画布 */
+    /* electron-sdk clear the canvas before turning off the camera */
     useEffect(() => {
       if (!isElectron || !roomStore.client || hasScreen || hasVideo) return 
       try {
@@ -506,12 +506,12 @@ const VideoPlayer: React.FC<VideoPlayerProps> = observer(
           }
         }
         if (res !== 0) {
-          (isLocal || rtcUid) && (logger.error("ele画布清空失败", res));
+          (isLocal || rtcUid) && (logger.error("Failed to clear the Electron canvas", res));
         } else {
-          logger.log("le画布清空成功", res);
+          logger.log("Electron canvas cleared", res);
         }
       } catch(error) {
-        logger.error("ele画布清空失败", error);
+        logger.error("Failed to clear the Electron canvas", error);
       }
     }, [hasVideo])
 

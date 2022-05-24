@@ -25,17 +25,17 @@ export class RecordStore {
   @observable
   _store: IpStore = { videoTracks: [], wbTracks: [], events: [], record: [], screenTracks: [], sceneType: SceneTypes.ONE_TO_ONE };
   /**
-   * uid到name，video, event的查询方法
-   * 传递给Replay时，uname要拼接到video tracks，wb tracks中,
+   * Query method using uid, name，video, and event
+   * To pass in Replay, uname must be concatenated with video tracks and wb tracks.
    */
   @observable
   uidToMember: Map<string, any> = new Map();
 
-  // 转码是否生成
+  // Check if transcoding is completed
   @observable
   isValid = true;
 
-  // 回放进度条初始化的位置
+  // The initial position for playback progress
   @observable
   seekToTime = 0;
 
@@ -50,7 +50,7 @@ export class RecordStore {
   }
 
   /**
-   * @description: 初始化
+   * @description: Initialization
    * @param {string | number} roomUuid
    * @param {string | number} rtcCid
    * @return {*}
@@ -75,13 +75,13 @@ export class RecordStore {
       uiStore.setLoading(false)
 
     } catch (error) {
-      logger.error('初始化错误', error)
+      logger.error('An error occurred while initializing', error)
       uiStore.setLoading(false)
     }
   }
 
   /**
-  * @description: 将数据转换成组件需要的数据
+  * @description: Convert data to a format required by the component
   * @param {object} data
   * @return {*}
   */
@@ -146,7 +146,7 @@ export class RecordStore {
             role: item.role || intl.get('未知身份'),
             url: item.url,
             type: 'video',
-            start: item.timestamp, // 学生视频开始时间以系统生成时间为准
+            start: item.timestamp, // Start time on student clients must be calibrated with the system time
             subStream: item.subStream,
             end: userLeaveEvent ? userLeaveEvent.timestamp : record.stopTime,
             // end: item.timestamp + (item.duration || 1) * 1000

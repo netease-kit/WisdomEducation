@@ -45,7 +45,7 @@ const RoomControl: React.FC = observer(({ children }) => {
       roomStore.join(joinParams).then(() => {
         uiStore.showToast(intl.get('加入房间成功'));
       }).catch((err) => {
-        console.error('加入房间失败', err);
+        console.error('failed to join the room', err);
         const userInfo = GlobalStorage.read('user');
         switch (Number(err?.message)) {
           case 1002:
@@ -73,7 +73,7 @@ const RoomControl: React.FC = observer(({ children }) => {
           roomStore.leave()
           history.push('/');
         }, 1500);
-        // uiStore.showToast(`${err?.message || '加入房间失败'}`, 'error');
+        // uiStore.showToast(`${err?.message || 'Failed to join the room'}`, 'error');
       }).finally(() => {
         uiStore.setLoading(false);
       });

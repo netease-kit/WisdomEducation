@@ -134,7 +134,7 @@ class ChatroomHelper extends EventEmit {
       chatroomId,
       done: (err: any, obj: any) => {
         if (err) {
-          console.log('获取聊天室地址失败: ', err);
+          console.log('Failed to get the URL of the chat room: ', err);
           return;
         }
         this.chatroom = Chatroom.getInstance({
@@ -146,12 +146,12 @@ class ChatroomHelper extends EventEmit {
           chatroomAddresses: obj.address,
           commonUpload: true,
           onconnect: () => {
-            console.log('聊天室登录成功');
+            console.log('Login succeeded');
             this.isConnect = true;
             this.account = account;
           },
           ondisconnect: (err) => {
-            console.log('聊天室断开链接，错误原因', err)
+            console.log('Chat room disconnected. Reason ', err)
             if (err && err.code === 'kicked') {
               if (err.reason === 'samePlatformKick' || err.reason === 'managerKick') {
                 this.emit('chat-onkicked', err.reason)
@@ -161,11 +161,11 @@ class ChatroomHelper extends EventEmit {
             }
           },
           onerror: (err: any) => {
-            console.log('聊天室发生错误: ', err);
+            console.log('An error occurred: ', err);
             this.resetState();
           },
           onmsgs: (msgs: Message[]) => {
-            console.log('聊天室收到消息', msgs);
+            console.log('Chat room received messages', msgs);
             this.parseMsgs(msgs);
             this.emit('chat-onmsgs', msgs);
           },
@@ -193,9 +193,9 @@ class ChatroomHelper extends EventEmit {
       this.chatroom.destroy({
         done: (err: any) => {
           if (err) {
-            console.log('聊天室实例清除失败', err);
+            console.log('Failed to destroy the chat room instance', err);
           } else {
-            console.log('聊天室实例被清除');
+            console.log('The chat room instance was destroyed');
           }
         },
       });
