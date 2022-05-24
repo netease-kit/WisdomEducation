@@ -113,7 +113,7 @@
     ```
     cd Wisdom_Educaiton_Web
     npm install               // 安装依赖
-    npm run start:ele         // 开发环境
+    npm run start-ele         // 开发环境
     npm run start:ele-pro     // 线上环境
     ```
 4. 构建项目。
