@@ -299,6 +299,7 @@ extension NERecordViewController:NEEduRecordPlayerDelegate {
     public func onResetPlayer(player: NEEduRecordPlayerProtocol) {
         screenShareView.isHidden = true
         recordList = self.playerManager?.playingRecordItems
+        print("onResetPlayer:recordList:\(recordList)");
         collectionView?.reloadData()
     }
     
@@ -333,6 +334,7 @@ extension NERecordViewController:NEEduRecordPlayerDelegate {
     
     public func userEnter(item: RecordItem) {
         recordList = playerManager?.playingRecordItems
+        print("recordList:\(recordList)")
         self.collectionView?.reloadData()
     }
     
@@ -368,7 +370,6 @@ extension NERecordViewController: UICollectionViewDelegate,UICollectionViewDataS
             guard let view = playerItem?.view else {
                 return cell
             }
-            
             view.frame = CGRect.init(x: 0, y: 0, width: 200, height: 150)
             cell.videoView.addSubview(view)
         }else {

@@ -42,6 +42,7 @@
 - (void)login:(NSString *)userID token:(NSString *)token success:(void(^)(NEEduUser *user))success failure:(void(^)(NSError *error))failure {
     [HttpManager loginWithUserId:userID token:token analysisClass:[NEEduUser class] success:^(NEEduUser * _Nonnull objModel) {
         self.imKey = objModel.imKey;
+//        NEEduManager.shared.configRead = YES;
         [self.rtcService setupAppkey:objModel.rtcKey isConfigRead:self.configRead];
         
         [self.imService addIMDelegate];
@@ -89,6 +90,8 @@
         if (objModel.userUuid && objModel.userToken) {
             [HttpManager addHeaderFromDictionary:@{@"user":objModel.userUuid,@"token":objModel.userToken}];
         }
+        // 读取文件开关
+//        NEEduManager.shared.configRead = YES;
         [self.rtcService setupAppkey:objModel.rtcKey isConfigRead:self.configRead];
         [self.imService setupAppkey:objModel.imKey];
         [self.imService addIMDelegate];

@@ -18,6 +18,7 @@ object PreferenceUtil {
     private const val KEY_RECORD_PLAY_RTCID = "KEY_RECORD_PLAY_RTCID"
     private const val KEY_OPEN_CHATROOM = "KEY_OPEN_CHATROOM"
     private const val LOW_LATENCY_LIVE = "LOW_LATENCY_LIVE"
+    private const val KEY_ENABLE_HOST_LIVE = "KEY_ENABLE_HOST_LIVE"
     private var sharedPreferences: SharedPreferences? = null
     fun init(context: Context) {
         if (sharedPreferences != null) return
@@ -137,4 +138,11 @@ object PreferenceUtil {
             put(LOW_LATENCY_LIVE, enable)
         }
 
+    var enableHostLive: Boolean
+        get() {
+            return get(KEY_ENABLE_HOST_LIVE, false)
+        }
+        set(enable) {
+            put(KEY_ENABLE_HOST_LIVE, enable)
+        }
 }

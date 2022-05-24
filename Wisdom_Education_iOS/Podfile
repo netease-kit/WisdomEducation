@@ -1,4 +1,7 @@
 # Uncomment the next line to define a global platform for your project
+
+source 'https://cdn.cocoapods.org/'
+
 ENV['SWIFT_VERSION'] = '5'
 platform :ios, '10.0'
 

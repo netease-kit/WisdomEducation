@@ -17,9 +17,11 @@
     <string name="open_chat_room">开启聊天室</string>
     <string name="im_reuse">IM复用</string>
     <string name="low_latency_live">使用低延时直播</string>
+    <string name="teacher_live">老师端推流</string>
     <string name="open_chatroom">关闭聊天室后，界面不展示聊天室</string>
     <string name="im_resue_desc">开启IM复用后，将采用宿主应用的IM通道</string>
     <string name="low_latency_live_desc">CDN延时 2-5s, 低延时 1-2s</string>
+    <string name="teacher_live_desc">一对一、多人小班课、互动大班课老师推流</string>
     <string name="im_login">IM登录</string>
     <string name="im_account">IM账号</string>
     <string name="im_password">IM密码</string>

@@ -7,11 +7,17 @@ package com.netease.yunxin.app.wisdom.rtc
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.graphics.Rect
 import android.media.projection.MediaProjection
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
+import com.netease.lava.nertc.impl.RtcCode
 import com.netease.lava.nertc.sdk.*
+import com.netease.lava.nertc.sdk.live.AddLiveTaskCallback
+import com.netease.lava.nertc.sdk.live.NERtcLiveStreamLayout
+import com.netease.lava.nertc.sdk.live.NERtcLiveStreamTaskInfo
+import com.netease.lava.nertc.sdk.live.NERtcLiveStreamUserTranscoding
 import com.netease.lava.nertc.sdk.stats.*
 import com.netease.lava.nertc.sdk.video.*
 import com.netease.yunxin.app.wisdom.base.util.ToastUtil
@@ -82,8 +88,105 @@ object RtcManager : NERtcCallbackEx, NERtcStatsObserver {
         return initLD
     }
 
-    fun join(rtcToken: String?, channelName: String, rtcUid: Long) {
+    // 添加推流任务的异步callback
+    var addLiveTaskCallback: AddLiveTaskCallback = AddLiveTaskCallback { taskId, errCode ->
+        if (errCode == RtcCode.LiveCode.OK) {
+            ALog.i(TAG, "添加推流任务成功 : taskId $taskId")
+        } else {
+            ALog.i(TAG, "添加推流任务失败 : taskId $taskId , errCode : $errCode")
+        }
+    }
+
+    fun join(rtcToken: String?, channelName: String, rtcUid: Long, pushUrl: String?) {
         engine.joinChannel(rtcToken, channelName, rtcUid)
+        pushUrl?.let {
+            // 加入房间前设置直播模式
+            // 0 - COMMUNICATION（通信模式），  1 - LIVE_BROADCASTING（直播模式）
+
+            // 加入房间前设置直播模式
+            // 0 - COMMUNICATION（通信模式），  1 - LIVE_BROADCASTING（直播模式）
+            NERtcEx.getInstance().setChannelProfile(1)
+
+            val enableVideo = true
+
+            // 加入房间后添加推流任务。
+            // 初始化推流任务
+
+            // 加入房间后添加推流任务。
+            // 初始化推流任务
+            val liveTask1 = NERtcLiveStreamTaskInfo()
+            //taskID 可选字母、数字，下划线，不超过64位
+            //taskID 可选字母、数字，下划线，不超过64位
+            liveTask1.taskId = java.lang.String.valueOf(Math.abs(pushUrl.hashCode()))
+            // 设置推互动直播推流地址，一个推流任务对应一个推流房间
+            // 设置推互动直播推流地址，一个推流任务对应一个推流房间
+            liveTask1.url = pushUrl
+            // 设置是否进行互动直播录制，请注意与音视频通话录制区分。
+            // 设置是否进行互动直播录制，请注意与音视频通话录制区分。
+            liveTask1.serverRecordEnabled = false
+            // 设置推音视频流还是纯音频流
+            // 设置推音视频流还是纯音频流
+            liveTask1.liveMode =
+                if (enableVideo) NERtcLiveStreamTaskInfo.NERtcLiveStreamMode.kNERtcLsModeVideo else NERtcLiveStreamTaskInfo.NERtcLiveStreamMode.kNERtcLsModeAudio
+
+            //设置整体布局
+
+            //设置整体布局
+            val layout = NERtcLiveStreamLayout()
+            layout.userTranscodingList = ArrayList()
+            layout.width = 720 //整体布局宽度
+
+            layout.height = 1280 //整体布局高度
+
+            layout.backgroundColor = Color.parseColor("#3399ff") // 整体背景色
+
+            liveTask1.layout = layout
+
+            // 设置直播成员布局
+
+            // 设置直播成员布局
+            val user1 = NERtcLiveStreamUserTranscoding()
+            user1.uid = rtcUid // 用户id
+
+            user1.audioPush = true // 推流是否发布user1 的音频
+
+            user1.videoPush = enableVideo // 推流是否发布user1的视频
+
+            if (user1.videoPush) { // 如果发布视频，需要设置一下视频布局参数
+                // user1 视频的缩放模式， 详情参考NERtcLiveStreamUserTranscoding 的API 文档
+                user1.adaption = NERtcLiveStreamUserTranscoding.NERtcLiveStreamVideoScaleMode.kNERtcLsModeVideoScaleCropFill
+                user1.x = 10 // user1 的视频布局x偏移，相对整体布局的左上角
+                user1.y = 10 // user1 的视频布局y偏移，相对整体布局的左上角
+                user1.width = 180 // user1 的视频布局宽度
+                user1.height = 320 //user1 的视频布局高度
+            }
+
+            layout.userTranscodingList.add(user1)
+
+//        // 设置第n位直播成员布局
+//
+//        // 设置第n位直播成员布局
+//        val usern = NERtcLiveStreamUserTranscoding()
+//        usern.uid = uidn
+//        usern.audioPush = true
+//        usern.videoPush = enableVideo
+//        if (usern.videoPush) {
+//            usern.adaption = NERtcLiveStreamUserTranscoding.NERtcLiveStreamVideoScaleMode.kNERtcLsModeVideoScaleCropFill
+//            usern.x = user1.x + user1.width + 10
+//            usern.y = user1.y + user1.height + 10
+//            usern.width = 320
+//            usern.height = 640
+//        }
+//        layout.userTranscodingList.add(usern)
+
+            // 调用 addLiveStreamTask 接口添加推流任务
+
+            // 调用 addLiveStreamTask 接口添加推流任务
+            val ret = NERtcEx.getInstance().addLiveStreamTask(liveTask1, addLiveTaskCallback)
+            if (ret != 0) {
+                ALog.w("调用添加推流任务接口执行失败 ， ret : $ret")
+            }
+        }
     }
 
     fun leave() {

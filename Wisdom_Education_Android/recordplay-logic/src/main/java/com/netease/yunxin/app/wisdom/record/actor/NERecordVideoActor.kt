@@ -227,7 +227,17 @@ class NERecordVideoActor : INERecordVideoActor {
         }
 
         override fun onFirstAudioRendered() {
-
+            ALog.i(tag, "The first frame of audio has been parsed")
+            if (recordItem.type == NERecordItem.TYPE_AUDIO) {
+                if (seekOnFirstRender) {
+                    seek(NERecordPlayer.instance.getCurrentPosition())
+                    if (NERecordPlayer.instance.getState() == NERecordPlayState.PAUSED) pauseAfterSeek = true
+                    seekOnFirstRender = false
+                } else {
+                    pause()
+                    updateState(NERecordPlayState.PREPARED)
+                }
+            }
         }
 
         override fun onBufferingStart() {

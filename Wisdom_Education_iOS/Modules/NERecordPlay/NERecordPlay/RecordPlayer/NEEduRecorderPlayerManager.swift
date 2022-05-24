@@ -74,9 +74,7 @@ public class NEEduRecorderPlayerManager: NSObject, NEEduRecordPlayerProtocol, NE
         self.playerList = createVideoPlayer(recordList: recordList)
         // 创建白板播放器
         self.wbPlayer = createWBPlayer(wbUrlList: wbUrlList)
-
     }
-    
     /// 对元数据分类处理
     /// - Parameter data: 元数据
     func handleData(data:RecordData) {
@@ -84,7 +82,7 @@ public class NEEduRecorderPlayerManager: NSObject, NEEduRecordPlayerProtocol, NE
             if item.type == .gz {
                 wbUrlList.append(item.url)
             }else {
-                if item.type == .mp4 {
+                if item.type == .mp4 || item.type == .aac{
                     if item.subStream {
                         subStreamList.append(item)
                     }else {
@@ -119,14 +117,15 @@ public class NEEduRecorderPlayerManager: NSObject, NEEduRecordPlayerProtocol, NE
         for recordItem in recordList {
             do {
                 let player = try NEEduRecordPlayer(url: recordItem.url)
-                player.autoPlay = self.autoPlay;
                 player.startOffSet = Double(recordItem.timestamp - data.record.startTime) / 1000
                 player.delegate = self
+                player.autoPlay = self.autoPlay;
                 itemList.append(player)
                 playerDic[recordItem.url] = player
                 //统计刚进入回放就需要播放的播放器
 //                let offset = (recordItem.timestamp - data.record.startTime)/1000
                 if showVideoView(record: recordItem) {
+//                    player.autoPlay = self.autoPlay;
                     if recordItem.isTeacher() {
                         playingPlayers.insert(player, at: 0)
                         playingRecordItems.insert(recordItem, at: 0)
@@ -135,6 +134,7 @@ public class NEEduRecorderPlayerManager: NSObject, NEEduRecordPlayerProtocol, NE
                         playingRecordItems.append(recordItem)
                     }
                 }else {
+//                    player.autoPlay = false;
                     preparePlayPlayers.append(player)
                 }
             } catch  {
@@ -161,7 +161,7 @@ public class NEEduRecorderPlayerManager: NSObject, NEEduRecordPlayerProtocol, NE
         return false;
     }
     
-    func resetPlayers(recordList:[RecordItem]) {
+    func resetPlayers(recordList:[RecordItem], seekToZero: Bool) {
         var players = [NEEduRecordPlayer]()
         var items = [RecordItem]()
         for item in recordList {
@@ -171,8 +171,10 @@ public class NEEduRecorderPlayerManager: NSObject, NEEduRecordPlayerProtocol, NE
             }
             player.pause()
             player.startOffSet = Double(item.timestamp - data.record.startTime) / 1000
-            player.seekTo(time: 0)
-            if Int((item.timestamp - data.record.startTime)/1000) == 0 {
+            if seekToZero {
+                player.seekTo(time: 0)
+            }
+            if showVideoView(record: item) {
                 if item.isTeacher() {
                     players.insert(player, at: 0)
                     items.insert(item, at: 0)
@@ -181,18 +183,49 @@ public class NEEduRecorderPlayerManager: NSObject, NEEduRecordPlayerProtocol, NE
                     items.append(item)
                 }
             }else {
-                print("时间:\(Int((item.timestamp - data.record.startTime)/1000))")
+//                preparePlayPlayers.append(player)
             }
         }
         playingPlayers = players
         playingRecordItems = items
         // 初始化辅流播放器
         self.subPlayer?.pause()
-//        subPlayer = createSubStreamPlayer()
         print("resetPlayers\(playingPlayers.count) playingRecordItems:\(playingRecordItems.count)")
         self.delegate?.onResetPlayer(player: self)
     }
     
+    /*
+     func createVideoPlayer(recordList:[RecordItem]) -> [NEEduRecordPlayer] {
+         var itemList = [NEEduRecordPlayer]()
+         for recordItem in recordList {
+             do {
+                 let player = try NEEduRecordPlayer(url: recordItem.url)
+                 player.startOffSet = Double(recordItem.timestamp - data.record.startTime) / 1000
+                 player.delegate = self
+                 itemList.append(player)
+                 playerDic[recordItem.url] = player
+                 //统计刚进入回放就需要播放的播放器
+ //                let offset = (recordItem.timestamp - data.record.startTime)/1000
+                 if showVideoView(record: recordItem) {
+                     player.autoPlay = self.autoPlay;
+                     if recordItem.isTeacher() {
+                         playingPlayers.insert(player, at: 0)
+                         playingRecordItems.insert(recordItem, at: 0)
+                     }else {
+                         playingPlayers.append(player)
+                         playingRecordItems.append(recordItem)
+                     }
+                 }else {
+                     player.autoPlay = false;
+                     preparePlayPlayers.append(player)
+                 }
+             } catch  {
+                 print("error: initPlayer:\(error)")
+             }
+         }
+         return itemList
+     }
+     */
   
     /// 创建白板播放器
     /// - Returns: 播放器
@@ -241,7 +274,6 @@ public class NEEduRecorderPlayerManager: NSObject, NEEduRecordPlayerProtocol, NE
         }
     }
 
-
 // MARK: - NEEduRecordPlayProtocol
     public func prepareToPlay() {
         for item in playingPlayers {
@@ -280,11 +312,10 @@ public class NEEduRecorderPlayerManager: NSObject, NEEduRecordPlayerProtocol, NE
             handleSeekToRightEvent(fromTime: currentTime, toTime: time)
         }else {
             //left
-            resetPlayers(recordList: data.recordItemList)
-            
+            resetPlayers(recordList: data.recordItemList,seekToZero: false)
             for item in playingPlayers {
-                item.play()
                 item.seekTo(time: time)
+                item.play()
             }
             wbPlayer?.seekTo(time: time)
             wbPlayer?.play()
@@ -378,20 +409,44 @@ public class NEEduRecorderPlayerManager: NSObject, NEEduRecordPlayerProtocol, NE
     }
 
     public func onFirstVideoDisplay(player: NEEduRecordPlayerProtocol) {
-        if let playerItem = player as? NEEduRecordPlayer, playerItem.url == subPlayer?.url {
-            print("onFirstVideoDisplay1：\(playerItem.url)")
-            //辅流第一帧
-            if playerItem.seekToTime > 0 {
-                playerItem.pause();
-                playerItem.seekTo(time: playerItem.seekToTime)
-                playerItem.play()
-                playerItem.seekToTime = 0
-                print("onFirstVideoDisplay2")
+        if let playerItem = player as? NEEduRecordPlayer {
+            if playerItem.url == subPlayer?.url {
+                print("onFirstVideoDisplay1：\(playerItem.url)")
+                //辅流第一帧
+                if playerItem.seekToTime > 0 {
+                    playerItem.pause();
+                    playerItem.seekTo(time: playerItem.seekToTime)
+                    playerItem.play()
+                    playerItem.seekToTime = 0
+                    print("onFirstVideoDisplay2")
+                }
+            }else {
+//                主流播放器第一帧
+                if playingPlayers.contains(where: { player in
+                    return player.url == playerItem.url
+                }) {
+                    
+                }else {
+                    print("onFirstVideoDisplay3:\(playerItem.url)加载第一帧完成并暂停")
+                    playerItem.pause()
+                    
+                }
             }
-        }else {
-            //主流播放器第一帧
-            print("onFirstVideoDisplay3")
         }
+//        if let playerItem = player as? NEEduRecordPlayer, playerItem.url == subPlayer?.url {
+//            print("onFirstVideoDisplay1：\(playerItem.url)")
+//            //辅流第一帧
+//            if playerItem.seekToTime > 0 {
+//                playerItem.pause();
+//                playerItem.seekTo(time: playerItem.seekToTime)
+//                playerItem.play()
+//                playerItem.seekToTime = 0
+//                print("onFirstVideoDisplay2")
+//            }
+//        }else {
+//            //主流播放器第一帧
+//            print("onFirstVideoDisplay3")
+//        }
         
     }
     
@@ -417,9 +472,9 @@ public class NEEduRecorderPlayerManager: NSObject, NEEduRecordPlayerProtocol, NE
     public func onFinished(player: Any) {
         //所有播放器播放完成才更新
         if let playerItem = player as? NEEduWBPlayer, playerItem.asTimeline {
-            resetPlayers(recordList: data.recordItemList)
+            print("播放完成 白板播放器：\(playerItem.asTimeline)")
+            resetPlayers(recordList: data.recordItemList,seekToZero: true)
             delegate?.onFinished(player: self)
-            print("11播放完成 \(playerItem.asTimeline)")
         }
     }
     
@@ -478,16 +533,11 @@ public class NEEduRecorderPlayerManager: NSObject, NEEduRecordPlayerProtocol, NE
      10:成员下台（大班课）
      */
     func handleEvent(event: Event, to:Double) {
+        
         switch event.type {
         case 1:
-            if data.sceneType == "EDU.BIG" {
-                return
-            }
             userEnter(event: event,to: to)
         case 2:
-//            if data.sceneType == "EDU.BIG" {
-//                return
-//            }
             userLeave(event: event)
         case 7:
             startShareSceen(event: event, to:to)
@@ -507,15 +557,18 @@ public class NEEduRecorderPlayerManager: NSObject, NEEduRecordPlayerProtocol, NE
         guard let recordItem = record else {
             return
         }
+        
+        // 大班课忽略学生的进出
+        if data.sceneType == "EDU.BIG", !recordItem.isTeacher() {
+            return
+        }
+        
         guard let player = playerDic[recordItem.url]  else {
             return
         }
+        print("事件用户进入时间偏移：\(to) url:\(recordItem.url) userName:\(recordItem.userName)")
+        player.seekTo(time: to)
         player.play()
-        let offset = to - player.startOffSet
-        print("用户进入时间偏移：\(offset)")
-        if offset > 0 {
-            player.seekTo(time: offset)
-        }
         if playingRecordItems.contains(where: { item in
             return item.url == recordItem.url
         }) { return }
@@ -535,19 +588,34 @@ public class NEEduRecorderPlayerManager: NSObject, NEEduRecordPlayerProtocol, NE
         guard let recordItem = record else {
             return
         }
+        
+        // 大班课忽略学生的进出
+        if data.sceneType == "EDU.BIG", !recordItem.isTeacher() {
+            return
+        }
+        
         guard let player = playerDic[recordItem.url]  else {
             return
         }
-        if player.state == .playing || player.state == .finished {
-            player.pause()
-            for (index,item) in playingRecordItems.enumerated() {
-                if item.url == recordItem.url {
-                    playingRecordItems.remove(at: index)
-                    playingPlayers.remove(at: index)
-                }
+        print("事件用户离开 userName:\(recordItem.userName) state:\(player.state)")
+        player.pause()
+        for (index,item) in playingRecordItems.enumerated() {
+            if item.url == recordItem.url {
+                playingRecordItems.remove(at: index)
+                playingPlayers.remove(at: index)
             }
-            delegate?.userLeave(item: recordItem)
         }
+        delegate?.userLeave(item: recordItem)
+//        if player.state == .playing || player.state == .finished {
+//            player.pause()
+//            for (index,item) in playingRecordItems.enumerated() {
+//                if item.url == recordItem.url {
+//                    playingRecordItems.remove(at: index)
+//                    playingPlayers.remove(at: index)
+//                }
+//            }
+//            delegate?.userLeave(item: recordItem)
+//        }
         
     }
     
