@@ -25,15 +25,15 @@ sessionStorage.setItem("edu-deviceId", deviceId);
 const defaultHeaders = {
   "Content-Type": "application/json",
   Authorization: Authorization,
-  versionCode: 93,
+  versionCode: 94,
   clientType: isElectron ? "electron" : "web",
   deviceId,
 };
 
-// axios的实例及拦截器配置
+// axios instance and blocker configuration
 const req = axios.create({
   baseURL: `https://${baseUrl}/scene/apps/${process.env.REACT_APP_SDK_APPKEY}/`,
-  timeout: 30000, // 超时时间
+  timeout: 30000, // Timeout duration
   responseType: "json", // default
   headers: defaultHeaders,
   validateStatus: (status) => status >= 200 && status < 500,
@@ -41,13 +41,13 @@ const req = axios.create({
 
 req.interceptors.response.use(
   (res) => {
-    // 相应拦截
+    // corresponding blocking
     const { status } = res;
     if (/^2\d{2}/.test(status.toString())) {
       // TODO
       const { data } = res;
       const code = parseInt(data.code, 10);
-      // if (code === -200) { // 登录失效，跳转至登录
+      // if (code === -200) { // Login failed, redirect to the login page
       //   const { dispatch } = store;
       //   dispatch(routerRedux.push(`/login${window.location.search}`));
       //   return Promise.reject(res);
@@ -75,15 +75,12 @@ req.interceptors.response.use(
         case 1016:
           message.error(intl.get("用户已在房间中"));
           break;
-        case 1017:
-          message.error(intl.get("创建房间时房间已经存在且房间类型冲突"));
-          break;
         default:
           break;
       }
       if (code !== 0) {
         return Promise.reject(res?.data);
-      } // 成功 code === 0
+      } // success code === 0
       if (checkType(res?.data?.data, "array")) {
         return Promise.resolve(data?.data);
       }
@@ -97,9 +94,9 @@ req.interceptors.response.use(
     return Promise.reject(res?.data);
   },
   (error) => {
-    logger.error("请求失败", error);
+    logger.error("Request failed", error);
     if (axios.isCancel(error)) {
-      // 取消请求的情况下，终端Promise调用链
+      // If a request was cancelled, the client promise call link
       return Promise.reject(error);
     }
     return Promise.reject(error);

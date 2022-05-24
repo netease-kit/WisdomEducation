@@ -47,8 +47,8 @@ const BigClassLiveStu: React.FC = observer(() => {
           errMsg7: intl.get('拉流超时'),
           streamTimeoutTime: 30 * 1000,
           controlBar: {
-            playToggle: !nertsLive, // 低延时页面不显示暂停按钮
-            progressControl: !nertsLive //低延时页面上不显示进度条
+            playToggle: !nertsLive, // The low-latency streaming page does not display the Pause button
+            progressControl: !nertsLive //The low-latency streaming page does not display the progress bar
           }
         }, () => {
           let retryCount = 0
@@ -57,7 +57,7 @@ const BigClassLiveStu: React.FC = observer(() => {
 
           myPlay.onError(function(err){
             if (retryCount >= 5) {
-              console.error('播放器重试次数超过5次，不再重试')
+              console.error('The number of retries exceeds 5, No retry attempts will be made')
             } else {
               clearTimeout(retryTimer)
               retryTimer = setTimeout(() => {
@@ -69,7 +69,7 @@ const BigClassLiveStu: React.FC = observer(() => {
 
           function setDataSource() {
             /**
-             * _acc2opus-RTS后缀是由于阿里低延时的一些问题，导致需要这样设置才行
+             * _acc2opus-RTS suffix
              */
             const supportLowDelay = true
             if (nertsLive && supportLowDelay) {
@@ -105,7 +105,7 @@ const BigClassLiveStu: React.FC = observer(() => {
         })
       }
     } catch (error) {
-      logger.debug('渲染直播失败', error)
+      logger.debug('Failed to rendering the live stream', error)
     }
     return () => {
       myPlay && myPlay.release();

@@ -20,7 +20,7 @@ import DeviceCheck from '@/pages/deviceCheck';
 import { Provider } from 'mobx-react';
 import { AppStore } from '@/store';
 import { history } from '@/utils';
-import { setLocales, DEFAULT_LOCCALE } from '@/utils/universal';
+import { initLocales } from '@/utils/universal';
 
 import {
   HashRouter as Router,
@@ -29,8 +29,7 @@ import {
 } from "react-router-dom";
 
 export const defaultStore = new AppStore()
-const lang = localStorage.getItem('lang') || DEFAULT_LOCCALE
-setLocales(lang)
+initLocales()
 
 ReactDOM.render(
   // <React.StrictMode>

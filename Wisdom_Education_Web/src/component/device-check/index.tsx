@@ -47,7 +47,7 @@ const DeviceCheckCom: React.FC<DeviceCheckComOptions> = ({
 
   const audioVolumeChange = async (volume) => {
     if (typeof volume !== "number") return
-    // todo 没有result返回
+    // todo, get back if no result is returned
     const result = await roomStore.setAudioVolume(volume)
     logger.log("audioVolumeChange  ",result)
   }
@@ -74,7 +74,7 @@ const DeviceCheckCom: React.FC<DeviceCheckComOptions> = ({
           setCameraId(cameraSelect || cameras[0]?.devicedId)
           setMicrophoneId(microphoneSelect || microphones[0]?.devicedId)
           setSpeakerId(speakerIdSelect || speakers[0]?.devicedId)
-          // 设备全部拔出时显示内容优化
+          // Optimize the display after all devices are unplugged
           if (microphones.length === 0) {
             setMicrophoneId(intl.get("请选择"))
           }

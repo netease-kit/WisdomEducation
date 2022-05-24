@@ -5,6 +5,7 @@
 import React, { useState, useCallback, useEffect, useMemo, useRef, Fragment } from 'react';
 import { observer } from 'mobx-react';
 import { Button, Tooltip, Modal, Checkbox, Tabs, Input, message } from 'antd';
+import VirtualList from 'rc-virtual-list'
 import './index.less';
 import logger from '@/lib/logger';
 import { HandsUpTypes, RoleTypes, RoomTypes, UserComponentData } from '@/config';
@@ -156,14 +157,14 @@ const MemberList = observer(() => {
   const handleMuteAll = () => {
     if (isMemberMuteAll) {
       roomStore.muteAllStudent();
-      logger.log("全体静音")
+      logger.log("All muted")
     }
   }
 
   const onBanChange = (e) => {
     const value = Number(e.target.checked);
     roomStore.muteChatroom(value);
-    logger.log("全体禁言", value);
+    logger.log("All muted", value);
   }
 
   const handleSetWbEnableDraw = async (userUuid: string, value: number) => {
@@ -211,12 +212,11 @@ const MemberList = observer(() => {
       const arr = Number(localUserInfo?.sceneType) === RoomTypes.bigClasLive ? bigLivememberFullList : studentData;
       if (!searchValue) {
         setAllMember(arr)
-        logger.log('搜索信息', searchValue, arr, Number(localUserInfo?.sceneType))
       } else {
         const newArray = arr.filter((item) => item?.userName.includes(searchValue));
         setAllMember(newArray)
       }
-      logger.log('搜索信息', searchValue, arr, Number(localUserInfo?.sceneType))
+      logger.log('Search info', searchValue, arr, Number(localUserInfo?.sceneType))
     },
     [searchValue, studentData, localUserInfo, bigLivememberFullList],
   )
@@ -251,7 +251,7 @@ const MemberList = observer(() => {
   }, [studentData, bigLivememberFullList]);
 
   useEffect(() => {
-    // 临时的一个方案，不然modal内的聊天室无法先获取消息
+    // 
     if (nim?.nim && snapRoomInfo?.properties?.chatRoom?.chatRoomId) {
       setChatVisible(true);
       Promise.resolve().then(() => {
@@ -286,9 +286,9 @@ const MemberList = observer(() => {
                 <span>{item.userName}</span>
                 <div className="buttons">
                   {item.wbDrawEnable && <img src={require('@/assets/imgs/whiteBoard.png').default} alt="whiteBoard" />}
-                  {/*白板授权状态*/}
+                  {/*Whiteboard permissions state*/}
                   {item.canScreenShare && <img src={require('@/assets/imgs/screenShare.png').default} alt="screenShare" />}
-                  {/*屏幕共享状态*/}
+                  {/*Screen sharing permissions state*/}
                 </div>
                 <div className="icons">
                   <Button
@@ -322,9 +322,9 @@ const MemberList = observer(() => {
                   <span>{item.userName}</span>
                   <div className="buttons">
                     {item.wbDrawEnable && <img src={require('@/assets/imgs/whiteBoard.png').default} alt="whiteBoard" />}
-                    {/*白板授权状态*/}
+                    {/*Whiteboard permissions state*/}
                     {item.canScreenShare && <img src={require('@/assets/imgs/screenShare.png').default} alt="screenShare" />}
-                    {/*屏幕共享状态*/}
+                    {/*Screen sharing permission state*/}
                   </div>
                   <div className="icons">
                     <Button
@@ -352,42 +352,15 @@ const MemberList = observer(() => {
           }
           {
             ([RoomTypes.bigClass, RoomTypes.bigClasLive].includes(Number(roomInfo.sceneType)) && inputVisible) &&
-            allMember.map((item) => (
-              // <li key={item.rtcUid}>
-              //   <span>{item.userName}</span>
-              //   <div className="buttons">
-              //     {item.wbDrawEnable && <img src={require('@/assets/imgs/whiteBoard.png').default} alt="whiteBoard" />}
-              //     {/*白板授权状态*/}
-              //     {item.canScreenShare && <img src={require('@/assets/imgs/screenShare.png').default} alt="screenShare" />}
-              //     {/*屏幕共享状态*/}
-              //   </div>
-              //   <div className="icons">
-              //     <Button
-              //       type="text"
-              //       onClick={() => handleAudioClick(item)}
-              //       icon={item.hasAudio ? <img src={require('@/assets/imgs/audioOpen.png').default} alt="audioOpen" /> : <img src={require('@/assets/imgs/audioClose.png').default} alt="audioClose" />}
-              //     />
-              //     <Button
-              //       type="text"
-              //       onClick={() => handleVideoClick(item)}
-              //       icon={item.hasVideo ? <img src={require('@/assets/imgs/videoOpen.png').default} alt="videoOpen" /> : <img src={require('@/assets/imgs/videoClose.png').default} alt="videoClose" />}
-              //     />
-              //     {userInfo.role === RoleTypes.host &&
-              //       <Tooltip placement="bottomRight" title={MoreContent(item)} overlayClassName="tooltip" trigger="click">
-              //         <Button
-              //           type="text"
-              //           icon={<div className="more">···</div>}
-              //         />
-              //       </Tooltip>
-              //     }
-              //   </div>
-              // </li>
-              <Fragment key={item.userUuid}>
-                <li className="all-member">
-                  <span>{item.userName}</span>
-                </li>
-              </Fragment>
-            ))
+            <VirtualList
+              data={allMember}
+              height={288}
+              itemHeight={54}
+              itemKey="userUuid" 
+              component="ul" 
+            >
+              {item=> <li className='all-member'><span>{item.userName}</span></li>}
+            </VirtualList>
           }
         </ul>
       </>
@@ -431,7 +404,7 @@ const MemberList = observer(() => {
 
   useEffect( () => {
     if (userInfo.role === RoleTypes.host && memberAllLength > 0 && memberAllLength > lastMemNum) {
-      message.info('有新的举手申请')
+      message.info(intl.get('有新的举手申请'))
       setLastMemNum(memberAllLength)
     }
   }, [memberAllLength, userInfo.role])
@@ -485,7 +458,7 @@ const MemberList = observer(() => {
         centered
         footer={
           userInfo.role === RoleTypes.host && <div className="footers">
-            {/* <Button type="primary" onClick={handleMuteAll}>全体静音</Button> */}
+            {/* <Button type="primary" onClick={handleMuteAll}>Mute all</Button> */}
             {userInfo.role === RoleTypes.host && RoomTypes.bigClasLive !== Number(roomStore?.roomInfo?.sceneType) && <><Button
               type="text"
               className={`member-mute-all ${muteAllBtnHover ? 'active-mute' : ''}`}
@@ -507,7 +480,7 @@ const MemberList = observer(() => {
         {memberContent()}
       </Modal>
       <Modal
-        title={`举手申请 (${memberAllLength})`}
+        title={`${intl.get('举手申请')} (${memberAllLength})`}
         wrapClassName="handsModal"
         visible={handleHandsVisible}
         onCancel={handleHandsCancel}

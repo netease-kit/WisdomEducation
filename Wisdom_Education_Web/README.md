@@ -34,6 +34,7 @@
 
 - 安全环境：https 环境或者本地连接 localhost/127.0.0.1 环境。
 - 浏览器：Chrome 74 及以上版本、Safari 12 及以上版本。
+- Node：推荐v14.16.0，建议使用nvm进行node版本管理。
 
 ## 示例项目结构
 
@@ -112,7 +113,7 @@
     ```
     cd Wisdom_Educaiton_Web
     npm install               // 安装依赖
-    npm run start:ele         // 开发环境
+    npm run start-ele         // 开发环境
     npm run start:ele-pro     // 线上环境
     ```
 4. 构建项目。

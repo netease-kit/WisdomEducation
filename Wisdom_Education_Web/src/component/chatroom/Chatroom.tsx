@@ -88,7 +88,7 @@ const Chatroom: React.FC<IProps> = ({
 
   return (
     <div className='chatroomWrapper chat-board'>
-      {/* <div className='chatroomTitle'>消息</div> */}
+      {/* <div className='chatroomTitle'>Message</div> */}
       <div ref={contentRef} className='chatroomContent'>
         {messages.map((item, index, array) => (
           <React.Fragment  key={item.idClient}>

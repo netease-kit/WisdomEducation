@@ -6,7 +6,7 @@ import rtc_server_conf from './rtc_server_conf.json';
 // @ts-ignore
 const { NERtcSDK, ipcRenderer, eleRemote, platform } = window;
 const needPrivate = process.env.REACT_APP_SDK_RTC_PRIVATE;
-needPrivate === "true" && logger.log("eleactron-RTC私有化配置", rtc_server_conf);
+needPrivate === "true" && logger.log("eleactron-RTC on-premises deployment configuration", rtc_server_conf);
 ipcRenderer && ipcRenderer.send("hasRender");
 ipcRenderer &&
   ipcRenderer.on("onWindowRender", (event, data) => {
@@ -48,7 +48,7 @@ interface JoinOptions {
 }
 
 type VideoLayers = {
-  layer_type: 1 | 2; // 1主2辅
+  layer_type: 1 | 2; // 1: mainstream; 2: substream
   width: number;
   height: number;
   capture_frame_rate: number;
@@ -136,11 +136,11 @@ export class NeElertc extends EnhancedEventEmitter {
     }
     const res = this._nertcEngine.initialize({
       app_key: this._appKey,
-      log_file_max_size_KBytes: 0, // 设置日志文件的大小上限，单位为 KB。如果设置为 0，则默认为 20 M
+      log_file_max_size_KBytes: 0, // Set the upper limit of the log file size in KB. If the value is set to 0, the size is 20MB by default
       // @ts-ignore
       log_dir_path: window.electronLogPath,
       log_level: 3,
-      server_config: needPrivate === "true" ? server_config : {} // 私有化配置
+      server_config: needPrivate === "true" ? server_config : {} // On-premises deployment configuration
     });
     if (res !== 0) {
       logger.error("initialize fail", this._appKey);
@@ -148,7 +148,7 @@ export class NeElertc extends EnhancedEventEmitter {
     } else {
       logger.log("initialize success", this._appKey);
     }
-    logger.log("当前g2-ele版本", this._nertcEngine.getVersion());
+    logger.log("Current G2-Electron version", this._nertcEngine.getVersion());
     this.initEvent();
     // @ts-ignore
     window._nertcEngine = this._nertcEngine;
@@ -184,33 +184,33 @@ export class NeElertc extends EnhancedEventEmitter {
 
   public initEvent(): void {
     logger.log("addEleRtcListener");
-    // 本端加入房间
+    // Revoked when a local client joins a room
     this._nertcEngine.on("onJoinChannel", this._onJoinChannel.bind(this));
-    // 本端离开房间，释放资源
+    // Revoked when a local client leaves a room, releasing resources
     this._nertcEngine.on("onLeaveChannel", this._onLeaveChannel.bind(this));
-    // 远端用户加入房间
+    // Revoked when a remote client joins a room
     this._nertcEngine.on("onUserJoined", this._onUserJoined.bind(this));
-    // 远端用户离开房间
+    // Revoked when a remote client leaves a room
     this._nertcEngine.on("onUserLeft", this._onUserLeft.bind(this));
-    // 远端用户开启音频的事件
+    // Revoked when a remote client turns on the microphone
     this._nertcEngine.on("onUserAudioStart", this._onUserAudioStart.bind(this));
-    // 远端用户停用音频回调
+    // Revoked when a remote client turns off the microphone
     this._nertcEngine.on("onUserAudioStop", this._onUserAudioStop.bind(this));
-    // 远端用户开启视频回调
+    // Revoked when a remote user turns on the camera
     this._nertcEngine.on("onUserVideoStart", this._onUserVideoStart.bind(this));
-    // 远端用户停用视频回调
+    // Revoked when a remote user turns off the camera
     this._nertcEngine.on("onUserVideoStop", this._onUserVideoStop.bind(this));
-    // 监听上下行网络质量
+    // Monitor upstream and downstream network quality
     this._nertcEngine.on("onNetworkQuality", this._onNetworkQuality.bind(this));
-    // 服务器连接断开
+    // Revoked when the client gets disconnected from server
     this._nertcEngine.on("onDisconnect", this._onDisconnect.bind(this));
-    // 网络状态改变
+    // Revoked when the network state changes
     this._nertcEngine.on(
       "onConnectionStateChange",
       this._onConnectionStateChange.bind(this)
     );
     window.navigator.mediaDevices.ondevicechange = (() => {
-      logger.log('监听到设备变化')
+      logger.log('Device changes detected')
       this.emit('device-change')
     })
     this._nertcEngine.on(
@@ -231,9 +231,9 @@ export class NeElertc extends EnhancedEventEmitter {
     );
     ipcRenderer.on("onWindowCreate", this._onWindowCreate.bind(this));
     ipcRenderer.send("hasJoinClass");
-    // 通话统计回调
+    // Call statistics callback
     // this._nertcEngine.on('onRtcStats', this._onRtcStats.bind(this));
-    // 提示频道内本地用户瞬时音量的回调
+    // Callback for the local instantaneous volume in the channel
     this._nertcEngine.on(
       "onLocalAudioVolumeIndication",
       this._onLocalAudioVolumeIndication.bind(this)
@@ -241,7 +241,7 @@ export class NeElertc extends EnhancedEventEmitter {
   }
 
   /**
-   * @description: 开启设备
+   * @description: Enable a device
    * @param {MediaType} type
    * @param {string} deviceId
    * @return {*}
@@ -322,7 +322,7 @@ export class NeElertc extends EnhancedEventEmitter {
     }
   }
   /**
-   * @description: 关闭设备
+   * @description: Disable a device
    * @param {MediaType} type
    * @return {*}
    */
@@ -401,7 +401,7 @@ export class NeElertc extends EnhancedEventEmitter {
   }
 
   /**
-   * @description: 切换扬声器
+   * @description: Switch a speaker
    * @param {string} deviceId
    * @return {*}
    */
@@ -416,7 +416,7 @@ export class NeElertc extends EnhancedEventEmitter {
   }
 
   /**
-   * @description: 切换音频输入设备
+   * @description: Switch an audio input device
    * @param {string} deviceId
    * @return {*}
    */
@@ -426,7 +426,7 @@ export class NeElertc extends EnhancedEventEmitter {
   }
 
   /**
-   * @description: 切换视频设备
+   * @description: Switch a video device
    * @param {string} deviceId
    * @return {*}
    */
@@ -436,7 +436,7 @@ export class NeElertc extends EnhancedEventEmitter {
   }
 
   /**
-   * @description: 获取麦克风
+   * @description: Get a microphone
    * @param {*}
    * @return {*}
    */
@@ -452,7 +452,7 @@ export class NeElertc extends EnhancedEventEmitter {
   }
 
   /**
-   * @description: 获取摄像头
+   * @description: Get a camera
    * @param {*}
    * @return {*}
    */
@@ -469,7 +469,7 @@ export class NeElertc extends EnhancedEventEmitter {
   }
 
   /**
-   * @description: 获取扬声器
+   * @description: Get a speaker
    * @param {*}
    * @return {*}
    */
@@ -484,20 +484,20 @@ export class NeElertc extends EnhancedEventEmitter {
     return result;
   }
   
-  // 调节录音音量 0-400
+  // Adjust the recording volume 0-400
   setMicrophoneCaptureVolume(volume: number): void {
     const result = this._nertcEngine.adjustRecordingSignalVolume(volume/100*400)
     console.log("adjustRecordingSignalVolume ", volume/100*400, result)
     return result
   }
 
-  //获取当前音频采集设备音量 0-255
+  //Get the current audio capture volume 0-255
   getAudioLevel(): number {
     logger.log("getAudioLevel ", this._localVolumeLevel)
     return this._localVolumeLevel
   }
 
-  // 设置播放音量 0-400
+  // Set the playback volume 0-400
   setAudioVolume(volume: number): void {
     const result = this._nertcEngine.adjustPlaybackSignalVolume(volume/100*400)
     return result
@@ -505,7 +505,7 @@ export class NeElertc extends EnhancedEventEmitter {
   
 
   public async publish(): Promise<void> {
-    //TODO
+    //
     this.open("video");
   }
 
@@ -514,7 +514,7 @@ export class NeElertc extends EnhancedEventEmitter {
   }
 
   /**
-   * @description: 加入房间
+   * @description: Join a room
    * @param {JoinOptions} options
    * @return {*}
    */
@@ -525,15 +525,15 @@ export class NeElertc extends EnhancedEventEmitter {
       const speakers = await this.getSpeakers();
       const videos = await this.getCameras();
       if (!mics.length) {
-        // throw { msg: '获取到的麦克风列表为空' };
+        // throw { msg: 'The list of microphones is empty' };
       }
       if (!speakers.length) {
-        // throw { msg: '获取到的扬声器列表为空' };
+        // throw { msg: 'The list of speakers is empty' };
       }
       if (!videos.length) {
-        // throw { msg: '获取到的摄像头列表为空' };
+        // throw { msg: 'The list of cameras is empty' };
       }
-      // 初始化设备id
+      // Initialize the device ID
       this._pubConf.microphoneId =
         mics.find((item) => item.isDefault)?.deviceId ||
         this._nertcEngine.getRecordDevice();
@@ -549,6 +549,7 @@ export class NeElertc extends EnhancedEventEmitter {
       // options.video ? this.open('video', this._pubConf.cameraId) : this.close('video');
       await this.setVideoProfile();
       await this.setParameters();
+      this.setLocalVideoMirrorMode();
       const joinRes = this._nertcEngine.joinChannel(
         options.token,
         options.channelName,
@@ -570,7 +571,7 @@ export class NeElertc extends EnhancedEventEmitter {
     // const screenDisplay = pcUtil
     //   .enumerateDisplay()
     //   .map((item: string, index: number) => ({
-    //     title: `屏幕${index + 1}`,
+    //     title: `Screen${index + 1}`,
     //     id: parseInt(item, 10),
     //   }));
     // const windowDisplay = pcUtil.enumerateWindows() || [];
@@ -635,12 +636,49 @@ export class NeElertc extends EnhancedEventEmitter {
     record_video_enabled: false,
     record_type: 0,
   }): Promise<void> {
-    // setParameters参数为JSON形式字符串
+    // setParameters is represented in JSON format
     const res = await this._nertcEngine.setParameters(JSON.stringify(options));
   }
 
   /**
-   * @description: 离开频道
+   * Set local video mirror mode
+   * @param mode 0|1|2 
+   */
+  public async setLocalVideoMirrorMode(mode=2) {
+    const res = await this._nertcEngine.setLocalVideoMirrorMode(mode)
+  }
+
+  /**
+   * Room Type: call or live streaming
+   * @param type 'rtc'|'live'
+   */
+  async setClientChannelProfile(type='live') {
+    const profile = type === 'live' ? 1 : 0 // call:0;streaming:1
+    const res = await this._nertcEngine?.setChannelProfile(profile);
+    if (res === 0) {
+      logger.log('setClientChannelProfile success');
+      return
+    }
+    logger.error('setClientChannelProfile fail:', res);
+  }
+
+  /**
+   * Add streaming task
+   * @param tasks task
+   * @returns 
+   */
+  addPlugFlowTask(tasks) {
+    const res = this._nertcEngine?.addLiveStreamTask(tasks);
+    if (res === 0) {
+      logger.log('addPlugFlowTask success');
+      return
+    }
+    logger.error('addPlugFlowTask fail:', res);
+  }
+
+
+  /**
+   * @description: leave a channel
    * @param {*}
    * @return {*}
    */
@@ -659,7 +697,7 @@ export class NeElertc extends EnhancedEventEmitter {
   }
 
   /**
-   * @description: 销毁
+   * @description: Destroy the instance
    * @param {*}
    * @return {*}
    */
@@ -670,7 +708,7 @@ export class NeElertc extends EnhancedEventEmitter {
       this._nertcEngine = null;
       window.navigator.mediaDevices.ondevicechange = null;
     } catch (error) {
-      logger.error("destroy fail: ", error);
+      logger.error("Destroying failed: ", error);
     }
   }
 

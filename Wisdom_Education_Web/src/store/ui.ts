@@ -27,7 +27,7 @@ export class UIStore extends EnhancedEventEmitter {
   }
 
   /**
-   * @description: message提示
+   * @description: message tip
    * @param {string} msg
    * @param {*} type
    * @param {*} delay
@@ -38,7 +38,7 @@ export class UIStore extends EnhancedEventEmitter {
   }
 
   /**
-   * @description: 设置页面loading是否展示
+   * @description: Specify whether the loading page is displayed
    * @param {boolean} enable
    * @return {*}
    */

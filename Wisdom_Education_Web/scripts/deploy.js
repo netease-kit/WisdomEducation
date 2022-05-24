@@ -8,7 +8,7 @@
  */
 
 /**
- * 打包静态资源到静态资源服务器
+ * Pack static resources to the server where static resources are stored 
  */
  const fs = require('fs-extra')
  const path = require('path')

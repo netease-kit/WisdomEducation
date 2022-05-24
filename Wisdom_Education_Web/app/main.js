@@ -64,7 +64,7 @@ app.whenReady().then(() => {
         shareStatus: systemPreferences.getMediaAccessStatus('screen')
       })
     } catch (error) {
-      console.error('触发异常', error);
+      console.error('Exception thrown', error);
     }
     // event.sender.send('onWindowCreate', {})
   })
@@ -74,7 +74,7 @@ app.whenReady().then(() => {
         logPath: app.getPath('logs')
       })
     } catch (error) {
-      console.error('触发异常', error);
+      console.error('Exception thrown', error);
     }
   })
 });
