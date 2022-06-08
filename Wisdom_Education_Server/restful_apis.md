@@ -49,11 +49,11 @@
 
 | 参数名称| 	是否必选| 	描述|
 |----|----|----|
-| userUuid	| 必选	| 用户唯一ID|
-| userToken	| 必选	| 用户令牌|
-| imKey	| 必选	| IM 应用标识符: 一般等同于AppKey|
-| imToken	| 必选	| IM 应用中用户token: 一般等同于userToken|
-| rtcKey	| 必选	| RTC 应用标识符: 一般等同于AppKey|
+| userToken	| 否	| 用户令牌  |
+| imToken	| 否	| imToken，复用Im账号时使用 |
+| assertNotExist	| 否	| 是否断言该账号不存在，若true时并且账号已经存在则报错 |
+| updateOnConflict	| 否	| 当账号存在时是否更新 |
+
 
 - Sample
 ```json
