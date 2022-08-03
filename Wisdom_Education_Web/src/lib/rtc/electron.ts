@@ -550,6 +550,9 @@ export class NeElertc extends EnhancedEventEmitter {
       await this.setVideoProfile();
       await this.setParameters();
       this.setLocalVideoMirrorMode();
+      // 修复互动大班课学生加入后未关音频的问题
+      const result = await this._nertcEngine.enableLocalAudio(options.audio)
+      console.log("-------静音", !options.audio, result)
       const joinRes = this._nertcEngine.joinChannel(
         options.token,
         options.channelName,

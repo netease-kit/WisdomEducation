@@ -173,3 +173,18 @@ export const getQueryString = (name) => {
 export function trimStr(str: string): string {
   return str.replace(/(^\s*)|(\s*$)/g,"");
 }
+
+const p0 = (n: number) => n < 10 ? '0' + n : '' + n
+export const getTime = (n: number, showHour = false): [string, number] => {
+  n = ~~(n / 1000)
+  const second = n % 60;
+  n -= second;
+  n = ~~(n / 60) // 有多少分钟
+  const minute = (n % 60)// 
+  const hour = ~~(n / 60)
+
+  if (hour === 0 && showHour === false) {
+    return [`${p0(minute)}:${p0(second)}`, hour]
+  }
+  return [`${hour}:${p0(minute)}:${p0(second)}`, hour]
+}
