@@ -685,7 +685,7 @@ export class RoomStore extends EnhancedEventEmitter {
         runInAction(() => {
           this.updateStream(_data.uid, _data.mediaType, _data.stream);
           const item = this.memberFullList.find(item=>item.rtcUid === _data.uid)
-          this._updateStudentData(item.userUuid, "update", item)
+          item?.userUuid && this._updateStudentData(item.userUuid, "update", item)
         });
       });
       this._webRtcInstance.on("stream-removed", (_data: any) => {
@@ -715,7 +715,7 @@ export class RoomStore extends EnhancedEventEmitter {
         runInAction(() => {
           this.updateStream(_data.uid, _data.mediaType, _data.stream);
           const item = this.memberFullList.find(item=>item.rtcUid === _data.uid)
-          item && this._updateStudentData(item.userUuid, "update", item)
+          item?.userUuid && this._updateStudentData(item.userUuid, "update", item)
         });
       });
 
