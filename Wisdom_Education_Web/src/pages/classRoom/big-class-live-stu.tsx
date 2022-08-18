@@ -75,8 +75,8 @@ const BigClassLiveStu: React.FC = observer(() => {
             if (nertsLive && supportLowDelay) {
               myPlay.setDataSource([
                 {
-                  type: 'rts',
-                  src: live?.pullRtsUrl + '_acc2opus-RTS',
+                  type: 'nertc',
+                  src: live?.pullRtsUrl,
                 },
                 // {
                 //   type: "application/x-mpegURL",
