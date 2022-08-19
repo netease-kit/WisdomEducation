@@ -11,7 +11,7 @@
 NS_ASSUME_NONNULL_BEGIN
 static NSString *showChatroomKey = @"showChatroomKey";
 static NSString *useFastLiveKey = @"useFastLiveKey";
-
+static NSString *pushStreamKey = @"pushStreamKey";
 @interface NESettingTableViewController : UITableViewController
 
 @end

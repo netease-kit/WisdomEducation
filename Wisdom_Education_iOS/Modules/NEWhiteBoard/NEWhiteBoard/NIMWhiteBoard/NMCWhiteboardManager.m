@@ -13,6 +13,8 @@
 
 
 NSString * const NMCWhiteboardURL = @"https://yiyong-xedu-v2-static.netease.im/whiteboard-webview/g2/webview.html";
+// 白板私有化测试地址
+//NSString * const NMCWhiteboardURL = @"https://yunxinent-demo.netease.im/xedu/webview/g2/webview_vconsole.html";
 
 
 @interface NMCWhiteboardManager()<WKNavigationDelegate,WKUIDelegate>

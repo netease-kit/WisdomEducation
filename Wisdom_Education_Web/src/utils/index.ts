@@ -24,8 +24,7 @@ export const encode = (s: string): Int32Array | string => {
 };
 
 /**
- * 数据均保存到sessionStorage.wisState, 防止调用clear时，将其他地方sessionStorage的数据也删除
- */
+ * all data must be stored to sessionStorage.wisState to prevent the data in sessionStorage from deleting when calling the clear method */
 export class CustomStorage {
 
   private storage: Storage;
@@ -74,9 +73,9 @@ export const GlobalStorage = new CustomStorage();
 (window as any).GlobalStorage = GlobalStorage;
 
 /**
- * 解析输入的文件大小
- * @param size 文件大小，单位b
- * @param level 递归等级，对应fileSizeMap
+ * Parse the file size
+ * @param size file size in bytes
+ * @param level incursive level for fileSizeMap
  */
 export const parseFileSize = (size: number, level = 0): string => {
   const fileSizeMap: { [key: number]: string } = {
@@ -118,7 +117,7 @@ export const matchExt = (extname: string): string => {
 
 
 /**
- * @description: 防抖
+ * @description: debounce
  * @param {any} fn
  * @param {*} ms
  * @return {*}
@@ -135,24 +134,24 @@ export const matchExt = (extname: string): string => {
 // }
 
 let timeout: any;
-export function debounce(fn, wait = 2000) { // 防抖
+export function debounce(fn, wait = 2000) { // debounce function
   if(timeout !== null) clearTimeout((timeout as any));timeout = null;
   timeout = setTimeout(fn, wait) as any
 }
 
 /**
- * @description: 判断类型
+ * @description: check types
  * @param {any} val
  * @param {*} type
  * @return {*}
  */
-export function checkType(val: any, type?: string): boolean|string { // 检测类型
+export function checkType(val: any, type?: string): boolean|string { // check types
   if (type) return Object.prototype.toString.call(val).slice(8, -1).toLowerCase() === type.toLowerCase();
   return Object.prototype.toString.call(val).slice(8, -1).toLowerCase();
 }
 
 /**
- * @description: 获取URL参数
+ * @description: Get URL parameters
  * @param {any} val
  * @param {*} type
  * @return {*}
@@ -167,10 +166,25 @@ export const getQueryString = (name) => {
 };
 
 /**
- * @description: 去除首尾空格
+ * @description: remove spaces at the beginning and the end of a string
  * @param {string} str
  * @return {string}
  */
 export function trimStr(str: string): string {
   return str.replace(/(^\s*)|(\s*$)/g,"");
+}
+
+const p0 = (n: number) => n < 10 ? '0' + n : '' + n
+export const getTime = (n: number, showHour = false): [string, number] => {
+  n = ~~(n / 1000)
+  const second = n % 60;
+  n -= second;
+  n = ~~(n / 60) // 有多少分钟
+  const minute = (n % 60)// 
+  const hour = ~~(n / 60)
+
+  if (hour === 0 && showHour === false) {
+    return [`${p0(minute)}:${p0(second)}`, hour]
+  }
+  return [`${hour}:${p0(minute)}:${p0(second)}`, hour]
 }

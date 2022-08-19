@@ -217,16 +217,19 @@ export class RoomStore extends EnhancedEventEmitter {
   networkQuality: Array<any> = [];
 
   @observable
-  _deviceChangedCount = 0; // 设备插拔标识
+  _deviceChangedCount = 0; // identifier for plugging or unplugging devices
 
   @observable
-  _reselectDevice = false; // 设备设置变更标识 
+  _reselectDevice = false; // Identifier for device settings changes
 
   @observable
-  incrementIng = false; // 标识是否有正在请求的sequence或snapshot接口
+  incrementIng = false; // Check if the device has the requested sequence or snapshot interface
 
   @observable
   cachedSequenceData: Array<any> = [];
+
+  @observable
+  _studentData: Array<UserComponentData> = [];
 
   constructor(appStore: AppStore) {
     super();
@@ -368,52 +371,12 @@ export class RoomStore extends EnhancedEventEmitter {
 
   @computed
   get studentData(): Array<UserComponentData> {
-    const student = this.memberFullList.reduce(
-      (arr: Array<UserComponentData>, item) => {
-        if (
-          item.role === RoleTypes.broadcaster ||
-          item.role === RoleTypes.audience
-        ) {
-          const { userUuid } = this.localUserInfo;
-          const studentInfo = {
-            userName: item.userName,
-            userUuid: item.userUuid,
-            role: item.role,
-            rtcUid: item.rtcUid,
-            hasAudio: item?.streams?.audio?.value === 1,
-            hasVideo: item?.streams?.video?.value === 1,
-            hasScreen: false,
-            audioStream: this.tempStreams[item?.rtcUid]?.audioStream,
-            basicStream: this.tempStreams[item?.rtcUid]?.videoStream,
-            isLocal: this.localUserInfo.userUuid === item.userUuid,
-            showUserControl:
-              this.localUserInfo.userUuid === item.userUuid ||
-              this.localUserInfo.role === RoleTypes.host,
-            showMoreBtn: this.localUserInfo.role === RoleTypes.host,
-            canScreenShare:
-              item?.properties?.screenShare?.value === 1 ||
-              item.role === RoleTypes.host,
-            wbDrawEnable:
-              item?.properties?.whiteboard?.drawable === 1 ||
-              item.role === RoleTypes.host,
-            avHandsUp: item?.properties?.avHandsUp?.value,
-          };
-          if (userUuid === item.userUuid) {
-            arr.unshift(studentInfo);
-          } else {
-            arr.push(studentInfo);
-          }
-        }
-        return arr;
-      },
-      []
-    );
     logger.log(
       "studentData&stream",
-      student,
+      this._studentData,
       this.tempStreams
     );
-    return student;
+    return [...this._studentData]
   }
 
   @computed
@@ -463,15 +426,42 @@ export class RoomStore extends EnhancedEventEmitter {
     return this._reselectDevice;
   }
 
+  private _createMember(member: any): UserComponentData {
+    return  {
+      userName: member.userName,
+      userUuid: member.userUuid,
+      role: member.role,
+      rtcUid: member.rtcUid,
+      hasAudio: member?.streams?.audio?.value === 1,
+      hasVideo: member?.streams?.video?.value === 1,
+      hasScreen: false,
+      audioStream: this.tempStreams[member?.rtcUid]?.audioStream,
+      basicStream: this.tempStreams[member?.rtcUid]?.videoStream,
+      isLocal: this.localUserInfo.userUuid === member.userUuid,
+      showUserControl:
+        this.localUserInfo.userUuid === member.userUuid ||
+        this.localUserInfo.role === RoleTypes.host,
+      showMoreBtn: this.localUserInfo.role === RoleTypes.host,
+      canScreenShare:
+        member?.properties?.screenShare?.value === 1 ||
+        member.role === RoleTypes.host,
+      wbDrawEnable:
+        member?.properties?.whiteboard?.drawable === 1 ||
+        member.role === RoleTypes.host,
+      avHandsUp: member?.properties?.avHandsUp?.value,
+      isStudent: [RoleTypes.broadcaster, RoleTypes.audience].includes(member.role)
+    }
+  }
+
   /**
-   * @description: 加入房间
+   * @description: join a room
    * @param {*}
    * @return {*}
    */
   @action
   async join(joinOptions: JoinOptions): Promise<void> {
     // TODO
-    // 获取信息
+    // Get info
     // const localUserInfo = await login(joinOptions.userUuid);
     this.setRoomState(intl.get("课程未开始"));
     runInAction(() => {
@@ -495,7 +485,7 @@ export class RoomStore extends EnhancedEventEmitter {
         ...localUserInfo,
       };
       GlobalStorage.save("user", this.localUserInfo);
-      logger.log("获取个人信息", this.localUserInfo);
+      logger.log("Get the user profile", this.localUserInfo);
       // throw Error('400');
       if (!this.appStore.roomInfo.roomUuid) {
         this.appStore.setRoomInfo(joinOptions);
@@ -506,21 +496,22 @@ export class RoomStore extends EnhancedEventEmitter {
       });
       throw Error(error?.code);
     }
-    logger.log("当前房间数据", JSON.stringify(this.appStore.roomInfo));
+    logger.log("Current room data", JSON.stringify(this.appStore.roomInfo));
     const { roomUuid, roomName, sceneType } = this.appStore.roomInfo;
     const { userUuid, userName, role, imKey, imToken } = this.localUserInfo;
     this.isLiveStuJoin = Number(sceneType) === RoomTypes.bigClasLive && role !== RoleTypes.host
     this.isLiveTeaJoin = Number(sceneType) === RoomTypes.bigClasLive && role === RoleTypes.host
+    const joinSettingInfo = JSON.parse(localStorage.getItem('room-setting') || '{}');
+    const { chatroom, teaPlugFlow } = joinSettingInfo;
     try {
-      const joinSettingInfo = JSON.parse(localStorage.getItem('room-setting') || '{}');
-      const { chatroom } = joinSettingInfo;
-      const resource = { chatroom, live: Number(sceneType) === RoomTypes.bigClasLive };
+      const resource = { chatroom, live: Number(sceneType) === RoomTypes.bigClasLive || (teaPlugFlow && role === RoleTypes.host)};
       if (!this.isLiveStuJoin) {
         await createRoom(roomUuid, `${userName}${intl.get("的课堂")}`, Number(sceneType), resource).catch(
           (data) => {
             if (data?.code !== 409) {
-              logger.error("创建异常", data);
-              throw Error(data?.msg || intl.get("创建异常"));
+              logger.error("An error occurred while creating a room", data);
+              if (data?.code === 1017) throw Error('1017')
+              else throw Error(data?.msg || intl.get("创建异常"));
             }
           }
         );
@@ -541,13 +532,13 @@ export class RoomStore extends EnhancedEventEmitter {
         });
       }
     } catch (error: any) {
-      console.error("创建或加入会议异常", error);
+      console.error("An error occurred while creating or joining a meeting", error);
       runInAction(() => {
         this._joined = false;
       });
-      throw Error(error?.message);
+      throw Error(error?.message|| error?.msg);
     }
-    // 每次加入房间重新实例化webRtc 否则在第二次登录进来，会导致共享有问题
+    // 
     // if (!this._webRtcInstance) {
 
     // }
@@ -558,7 +549,7 @@ export class RoomStore extends EnhancedEventEmitter {
         imAccid: userUuid,
         imToken,
       });
-      logger.log("im初始化", this._nimInstance);
+      logger.log("IM initialization", this._nimInstance);
     }
 
     if (!this.isLiveStuJoin) {
@@ -571,7 +562,11 @@ export class RoomStore extends EnhancedEventEmitter {
       // @ts-ignore
       window._webRtcInstance = this._webRtcInstance;
       logger.log("isElectron", isElectron);
-      logger.log("rtc初始化", this._webRtcInstance, this.client);
+      logger.log("RTC initialization", this._webRtcInstance, this.client);
+
+      if (!!teaPlugFlow && role === RoleTypes.host) {
+        this._webRtcInstance.setClientChannelProfile('live')
+      }
 
       this._nimInstance.on("controlNotify", (_data: any) =>
         this.nimNotify(_data)
@@ -592,28 +587,28 @@ export class RoomStore extends EnhancedEventEmitter {
         }
       });
 
-      // IM登录
-      // 增加监听
+      // IM login
+      // Add a listener
       this._webRtcInstance.on("client-banned", (_data: any) => {
-        logger.log(`${_data.uid} 被踢出房间`);
+        logger.log(`${_data.uid} was removed from the room`);
       });
       this._webRtcInstance.on("error", (error: any) => {
-        logger.log("webrtc异常", error);
+        logger.log("webrtc exception", error);
       });
       this._webRtcInstance.on("active-speaker", (_data: any) => {
-      // logger.log('正在说话', _data);
+      // logger.log('Speaking', _data);
       });
       this._webRtcInstance.on("stream-removed", (_data: any) => {
         this.updateStream(_data.uid, _data.mediaType, _data.stream);
       });
       this._webRtcInstance.on("network-quality", (_data: NetStatusItem[]) => {
-      // logger.log('网络状态', _data);
+      // logger.log('Network status', _data);
         runInAction(() => {
           this.networkQuality = _data;
         });
       });
       this._webRtcInstance.on("connection-state-change", (_data: any) => {
-        logger.log("网络状态变更", _data);
+        logger.log("Network status changes", _data);
         if (isElectron) {
           if ([1, 2, 3].includes(_data.reason)) {
             this.channelClosed = true;
@@ -640,7 +635,7 @@ export class RoomStore extends EnhancedEventEmitter {
                 cameraSelect = "",
               }) => {
                 const cameraItem = cameras?.find((item) => item.deviceId === cameraSelect)
-                // 使用摄像头被拔出时，自动切换
+                // Automatically switch to a camera if the current camera is unplugged
                 if (cameraSelect && !cameraItem && cameras[0]?.deviceId) {
                   await this.selectVideo(cameras[0]?.deviceId)
                 }
@@ -652,7 +647,7 @@ export class RoomStore extends EnhancedEventEmitter {
         }, 1200)
       })
       this._webRtcInstance.on("peer-online", (_data: any) => {
-        logger.log("成员加入", _data);
+        logger.log("A member joins a room", _data);
         runInAction(() => {
           this.updateMemberList(_data.uid, "add");
           // this.getMemberList().then(() => {
@@ -661,7 +656,7 @@ export class RoomStore extends EnhancedEventEmitter {
         });
       });
       this._webRtcInstance.on("peer-leave", (_data: any) => {
-        logger.log("成员离开", _data);
+        logger.log("A member leaves a room", _data);
         runInAction(() => {
           // this.updateMemberList(_data.uid, "remove");
           // this.getMemberList().then(() => {
@@ -670,7 +665,7 @@ export class RoomStore extends EnhancedEventEmitter {
         });
       });
       this._webRtcInstance.on("stopScreenSharing", async (_data: any) => {
-        logger.log("检测到停止屏幕共享");
+        logger.log("Stopping screen sharing is detected");
         if (isElectron) {
           this.stopScreen();
         } else if (!isElectron) {
@@ -685,18 +680,20 @@ export class RoomStore extends EnhancedEventEmitter {
         }
       });
       this._webRtcInstance.on("stream-subscribed", (_data: any) => {
-        logger.log("订阅别人的流成功的通知", _data);
+        logger.log("Notification when subscribing to streams from others succeeds", _data);
         this.updateStream(_data.uid, _data.mediaType, null);
         runInAction(() => {
           this.updateStream(_data.uid, _data.mediaType, _data.stream);
+          const item = this.memberFullList.find(item=>item.rtcUid === _data.uid)
+          item?.userUuid && this._updateStudentData(item.userUuid, "update", item)
         });
       });
       this._webRtcInstance.on("stream-removed", (_data: any) => {
-        logger.log("收到别人停止发布的消息", _data);
+        logger.log("Received the stream that was unpublished from the peer", _data);
       // this.updateStream(_data.uid, _data.mediaType, null);
       });
       this._webRtcInstance.on("channelClosed", (_data: any) => {
-        logger.log("RTC房间被关闭", _data);
+        logger.log("The RTC room is closed", _data);
         runInAction(() => {
           this.channelClosed = true;
         });
@@ -712,43 +709,45 @@ export class RoomStore extends EnhancedEventEmitter {
       // this.updateStream(_data.uid, _data.mediaType, null);
       });
       this._webRtcInstance.on("play-local-stream", (_data: any) => {
-        logger.log("本地"+_data.mediaType+"流获取", _data);
+        logger.log("Local "+_data.mediaType+" stream obtained", _data);
         this.updateStream(_data.uid, _data.mediaType, null);
         this.updateMemberList(_data.uid, "add");
         runInAction(() => {
           this.updateStream(_data.uid, _data.mediaType, _data.stream);
+          const item = this.memberFullList.find(item=>item.rtcUid === _data.uid)
+          item?.userUuid && this._updateStudentData(item.userUuid, "update", item)
         });
       });
 
       // this._webRtcInstance.on("audioTrackEnded", (_data: any) => {
-      //   logger.log("检测到音频轨道结束。造成的原因可能是设备被拔出（或禁用）。");
-      //   this.appStore.uiStore.showToast("音频设备异常，请重新进行设备选择和检测！");
+      //   logger.log("The audio track ended. The device may be unplugged or disabled");
+      //   this.appStore.uiStore.showToast("Audio device exception. Reselect and detect the device");
       // });
 
       // this._webRtcInstance.on("videoTrackEnded", (_data: any) => {
-      //   logger.log("检测到视频轨道结束。造成的原因可能是设备被拔出（或禁用）。");
-      //   this.appStore.uiStore.showToast("视频输入设备异常，请重新进行设备选择和检测！");
+      //   logger.log("The video track ended. The device may be unplugged or disabled");
+      //   this.appStore.uiStore.showToast("Video device exception. Reselect and detect the device");
       // });
 
       this._webRtcInstance.on("accessDenied", (_data: any) => {
-        logger.log("检测到设备权限被拒绝");
-        // this.appStore.uiStore.showToast("获取设备权限被拒绝");
+        logger.log("Request to get device permissions was declined");
+        // this.appStore.uiStore.showToast("Failed to get device permissions");
       })
 
       this._webRtcInstance.on("beOccupied", (_data: any) => {
-        logger.log("检测到获取设备权限时，设备被占用");
+        logger.log("The device is occupied when requesting device permissions");
         this.appStore.uiStore.showToast(intl.get("获取麦克风或摄像头权限时，设备被占用。"))
       })
 
       this._webRtcInstance.on("video-occupied", (_data: any) => {
-        logger.log("视频开启异常");
+        logger.log("Video open exception");
         this.appStore.uiStore.showToast(intl.get("视频输入设备异常，请重新进行设备选择和检测！"));
       })
 
       const mediaStatus =
       RoomTypes.bigClass !== Number(this.appStore.roomInfo.sceneType) ||
       RoleTypes.host === this.localUserInfo.role;
-      // RTC加入
+      // RTC join a room
       await this._webRtcInstance.join({
         channelName: roomUuid,
         uid: rtcUid,
@@ -784,7 +783,7 @@ export class RoomStore extends EnhancedEventEmitter {
   }
 
   /**
-   * @description: 设置白板状态
+   * @description: Set the whiteboard status
    * @param {boolean} value
    * @return {*}
    */
@@ -794,7 +793,7 @@ export class RoomStore extends EnhancedEventEmitter {
   }
 
   /**
-   * @description: 设置白板辅流
+   * @description: Set the whiteboard substream
    * @param {string} type
    * @param {any} stream
    * @return {*}
@@ -838,7 +837,7 @@ export class RoomStore extends EnhancedEventEmitter {
   }
 
   /**
-   * @description: 切换扬声器
+   * @description: switch the speaker
    * @param {string} deivceId
    * @return {*}
    */
@@ -853,7 +852,7 @@ export class RoomStore extends EnhancedEventEmitter {
   }
 
   /**
-   * @description: 切换麦克风
+   * @description: switch the microphone
    * @param {string} deivceId
    * @return {*}
    */
@@ -888,7 +887,7 @@ export class RoomStore extends EnhancedEventEmitter {
   }
 
   /**
-   * @description: 切换摄像头
+   * @description: switch the camera
    * @param {string} deivceId
    * @return {*}
    */
@@ -921,29 +920,29 @@ export class RoomStore extends EnhancedEventEmitter {
   public async nimNotify(_data, needGetSnapShot = true): Promise<void> {
     const { data: {roomUuid}, sequence, type } = _data.body;
     if (roomUuid !== this.roomInfo.roomUuid) {
-      logger.log(`服务器通知消息与房间不符，通知为${roomUuid}，当前为${this.roomInfo.roomUuid}`)
+      logger.log(`The room id of the notification messages from the server does not match. Notification room ID ${roomUuid}, current room ID ${this.roomInfo.roomUuid}`)
       return
     }
     if (roomUuid === this.roomInfo.roomUuid && type === "R"){
-      // logger.log("服务器通知消息", _data.body);
+      // logger.log("Notification message from the server", _data.body);
       if (sequence <= this._snapSequence) {
-        // 丢弃消息
-        console.log("异常数据 丢弃 ",{sequence, _snapSequence:this._snapSequence})
+        // drop messages
+        console.log("Invalid data, drop ",{sequence, _snapSequence:this._snapSequence})
         return
       } else if (sequence - this._snapSequence === 1) {
-        // 连续数据，直接进行合并
-        console.log("连续数据 合并 ",{sequence, _snapSequence:this._snapSequence})
+        // merge continuous data 
+        console.log("Continuous data, merge ",{sequence, _snapSequence:this._snapSequence})
         _data.body.needGetSnapShot = needGetSnapShot;
         this.cachedSequenceData.push(_data.body)
       } else if (sequence - this._snapSequence > 10) {
-        // 数据差超过10次，获取全量最新数据
-        console.log("/snapshot sequence差大于10 ",{sequence, _snapSequence:this._snapSequence})
+        // If the data difference exceeds 10 times, get all newest data
+        console.log("/snapshot sequence greater than 10 ",{sequence, _snapSequence:this._snapSequence})
         await this.getMemberList();
         return
       } else if(sequence - this._snapSequence <= 10 && !this.incrementIng) {
         this.incrementIng = true
-        // 数据差在10次以内，获取该sequence之后的所有数据
-        console.log("/sequence sequence差<=10",{sequence, _snapSequence:this._snapSequence})
+        // If the data difference is less than 10 times, get all data after sequence
+        console.log("/sequence sequence difference <=10",{sequence, _snapSequence:this._snapSequence})
         await getSequence({
           roomUuid,
           nextId: this._snapSequence + 1
@@ -976,13 +975,12 @@ export class RoomStore extends EnhancedEventEmitter {
 
   @action 
   public async dealCachedData() {
-    this.cachedSequenceData.sort()
     while(this.cachedSequenceData.length) {
       const item = this.cachedSequenceData.shift()
       const {needGetSnapShot, sequence} = item
       if (sequence === this._snapSequence + 1) {
-        logger.log("当前处理的通知消息", JSON.stringify(item));
         this._snapSequence++
+        logger.log("Current notification message", JSON.stringify(item), this._snapSequence);
         await this.dealSequenceData(item, needGetSnapShot)
       }
     }
@@ -1026,23 +1024,28 @@ export class RoomStore extends EnhancedEventEmitter {
         break;
       }
       case NIMNotifyTypes.RoomMemberJoin: {
-        const {operatorMember: {rtcUid}, members} = data
+        const {operatorMember: {rtcUid, userUuid}, members} = data
         this.updateMemberList(rtcUid, "add")
         const flag = this.memberFullList.some((item) => item.rtcUid == rtcUid);
-        flag && (console.log("somebody exists joined again"))
-        !flag  && (this.memberFullList = [...this.memberFullList, ...members])
+        if (flag) {
+          console.log("somebody exists joined again")
+        } else {
+          this.memberFullList = [...this.memberFullList, ...members]
+          this._updateStudentData(userUuid, 'add', members[0])
+        }
         break;
       }
       case NIMNotifyTypes.RoomMemberLeave: {
-        const {operatorMember: {rtcUid}} = data
+        const {operatorMember: {rtcUid, userUuid}} = data
         this.updateMemberList(rtcUid, "remove").then(() => {
           this.syncMember();
+          this._updateStudentData(userUuid, 'delete')
         });
         // this.syncMember();
         // const { members } = data;
         // for (const ele of members) {
         //   if (ele.userUuid === this.localData.userUuid) {
-        //     this.appStore.uiStore.showToast('该账号在其他设备登录', 'error')
+        //     this.appStore.uiStore.showToast('The account was logged in on other devices', 'error')
         //     this.leave();
         //     history.push(`/`);
         //   }
@@ -1050,7 +1053,7 @@ export class RoomStore extends EnhancedEventEmitter {
         break;
       }
       case NIMNotifyTypes.StreamChange: {
-        logger.log("成员流变更");
+        logger.log("Member stream changes");
         const { streams, member } = data;
         this.updateMemberStream(member.userUuid, streams);
         break;
@@ -1070,7 +1073,7 @@ export class RoomStore extends EnhancedEventEmitter {
   }
 
   /**
-   * @description: 属性变更
+   * @description: Properties change
    * @param {object} properties
    * @param {string} userUuid
    * @return {*}
@@ -1084,6 +1087,7 @@ export class RoomStore extends EnhancedEventEmitter {
       if (item.userUuid === userUuid) {
         if (properties) item.properties = Object.assign({}, item.properties, properties)
         else delete item.properties
+        this._updateStudentData(userUuid, "update", item)
       }
     })
     if (!properties) return
@@ -1190,7 +1194,7 @@ export class RoomStore extends EnhancedEventEmitter {
   }
 
   /**
-   * @description: 成员流变更
+   * @description: Member stream changes
    * @param {string} userUuid
    * @param {Streams} streams
    * @return {*}
@@ -1204,6 +1208,7 @@ export class RoomStore extends EnhancedEventEmitter {
     this.memberFullList.some((item) => {
       if (item.userUuid === userUuid) {
         item.streams = Object.assign({}, item.streams, streams);
+        this._updateStudentData(userUuid, "update", item)
         for (const key in streams) {
           if (Object.prototype.hasOwnProperty.call(streams, key)) {
             const item = streams[key];
@@ -1224,7 +1229,7 @@ export class RoomStore extends EnhancedEventEmitter {
                 break;
               case "subVideo":
                 if (this.localData?.userUuid === item.userUuid) {
-                  logger.log("触发了subvideo", item.value);
+                  logger.log("subvideo triggered", item.value);
                   if (item.value === 1) {
                     this.startScreen(false);
                   } else {
@@ -1240,7 +1245,7 @@ export class RoomStore extends EnhancedEventEmitter {
         return true;
       }
     });
-    logger.log("流变更执行完成", this.memberFullList);
+    logger.log("Stream change complete", this.memberFullList);
   }
 
   // @action
@@ -1263,7 +1268,7 @@ export class RoomStore extends EnhancedEventEmitter {
             console.log("this.localData.userUuid", this.localData?.userUuid);
             console.log("titem.userUuid", item.userUuid);
             if (this.localData?.userUuid === item.userUuid) {
-              logger.log("触发了subvideo", item.value);
+              logger.log("subvideo triggered", item.value);
               this.tempStreams[item.rtcUid]?.screenStream &&
                 this.stopScreen(false);
             } else {
@@ -1281,14 +1286,15 @@ export class RoomStore extends EnhancedEventEmitter {
           default:
             break;
         }
+        this._updateStudentData(userUuid, "update", item)
         return true;
       }
     });
-    logger.log("流删除执行完成", this.memberFullList);
+    logger.log("Deleting stream operation completed", this.memberFullList);
   }
 
   /**
-   * @description: 设置课堂时间
+   * @description: Set the class duration
    * @param {number} time
    * @return {*}
    */
@@ -1298,13 +1304,13 @@ export class RoomStore extends EnhancedEventEmitter {
   }
 
   /**
-   * @description: 离开房间
+   * @description: leave a room
    * @param {*}
    * @return {*}
    */
   @action
   async leave(): Promise<void> {
-    logger.log("执行leave");
+    logger.log("Perform the leave operation");
     // TODO
     runInAction(() => {
       this._joined = false;
@@ -1327,7 +1333,7 @@ export class RoomStore extends EnhancedEventEmitter {
   }
 
   /**
-   * @description: 设置屏幕共享权限
+   * @description: Set screen sharing permissions
    * @param {string} userUuid
    * @param {number} value
    * @return {*}
@@ -1353,7 +1359,7 @@ export class RoomStore extends EnhancedEventEmitter {
   }
 
   /**
-   * @description: 开启屏幕共享
+   * @description: Start screen sharing
    * @param {boolean} sendControl
    * @return {*}
    */
@@ -1376,16 +1382,16 @@ export class RoomStore extends EnhancedEventEmitter {
         sendControl &&
           (await this.changeSubVideoStream(this.localUserInfo.userUuid, 1));
       }
-      logger.log("共享开启成功");
+      logger.log("Screen sharing started");
     } catch (error) {
-      logger.error("共享开启异常", error);
+      logger.error("An error occurred while sharing screen", error);
       await this.stopScreen(sendControl);
       throw error;
     }
   }
 
   /**
-   * @description: 停止屏幕共享
+   * @description: Stop screen sharing
    * @param {boolean} sendControl
    * @return {*}
    */
@@ -1393,7 +1399,7 @@ export class RoomStore extends EnhancedEventEmitter {
     logger.log("stopScreen-sendControl", sendControl);
     try {
       await this._webRtcInstance?.close("screen");
-      logger.log("共享关闭成功");
+      logger.log("Screen sharing stopped");
       sendControl &&
         (await this.changeSubVideoStream(
           this.localUserInfo.userUuid,
@@ -1402,10 +1408,10 @@ export class RoomStore extends EnhancedEventEmitter {
           // await this.resetAudio();
         }));
     } catch (error) {
-      logger.log("共享关闭异常-msg", error);
+      logger.log("An error occurred while stopping screen sharing-msg", error);
       throw error;
     }
-    // 不知道什么原因，会关闭屏幕共享会出现对端听不到的情况，暂时先使用当前成员信息做一次处理
+    //
   }
 
   // private async resetAudio() {
@@ -1418,7 +1424,7 @@ export class RoomStore extends EnhancedEventEmitter {
   // }
 
   /**
-   * @description: 改变subvideo
+   * @description: Change subvideo
    * @param {string} userUuid
    * @param {number} value
    * @return {*}
@@ -1444,7 +1450,7 @@ export class RoomStore extends EnhancedEventEmitter {
   }
 
   /**
-   * @description: 静音全部学生
+   * @description: Mute all students
    * @param {*}
    * @return {*}
    */
@@ -1458,7 +1464,7 @@ export class RoomStore extends EnhancedEventEmitter {
   }
 
   /**
-   * @description: 静音全部学生
+   * @description: Mute all students
    * @param {*}
    * @return {*}
    */
@@ -1472,7 +1478,7 @@ export class RoomStore extends EnhancedEventEmitter {
   }
 
   /**
-   * @description: 查找当前数据中是否包含备操作人
+   * @description: Check if the target user is included in the data
    * @param {string} userUuid
    * @return {*}
    */
@@ -1481,7 +1487,7 @@ export class RoomStore extends EnhancedEventEmitter {
   }
 
   /**
-   * @description: 设置开启权限
+   * @description: Set permissions
    * @param {string} userUuid
    * @param {number} value
    * @param {number} audio
@@ -1505,7 +1511,7 @@ export class RoomStore extends EnhancedEventEmitter {
   }
 
   /**
-   * @description: 开启视频
+   * @description: Turn on the camera
    * @param {string} userUuid
    * @param {boolean} sendControl
    * @return {*}
@@ -1515,7 +1521,7 @@ export class RoomStore extends EnhancedEventEmitter {
     sendControl = true,
     isBySelf = true
   ): Promise<void> {
-    logger.log("视频开关-open", userUuid, sendControl, isBySelf);
+    logger.log("Camera-open", userUuid, sendControl, isBySelf);
     // TODO
     const operatedUser = this.findMember(userUuid);
     if (operatedUser) {
@@ -1544,7 +1550,7 @@ export class RoomStore extends EnhancedEventEmitter {
   }
 
   /**
-   * @description: 关闭视频
+   * @description: Turn off the camera
    * @param {string} userUuid
    * @param {boolean} sendControl
    * @return {*}
@@ -1554,7 +1560,7 @@ export class RoomStore extends EnhancedEventEmitter {
     sendControl = true,
     isBySelf = true
   ): Promise<void> {
-    logger.log("视频开关-close", userUuid, sendControl, isBySelf);
+    logger.log("Camera-close", userUuid, sendControl, isBySelf);
     // TODO
     const operatedUser = this.findMember(userUuid);
     if (operatedUser) {
@@ -1586,7 +1592,7 @@ export class RoomStore extends EnhancedEventEmitter {
   }
 
   /**
-   * @description: 开启音频
+   * @description: Turn on the microphone
    * @param {string} userUuid
    * @param {boolean} sendControl
    * @return {*}
@@ -1626,7 +1632,7 @@ export class RoomStore extends EnhancedEventEmitter {
   }
 
   /**
-   * @description: 关闭音频
+   * @description: Turn off the microphone
    * @param {string} userUuid
    * @param {boolean} sendControl
    * @return {*}
@@ -1683,7 +1689,7 @@ export class RoomStore extends EnhancedEventEmitter {
   // }
 
   /**
-   * @description: 开始上课
+   * @description: Start streaming
    * @param {*}
    * @return {*}
    */
@@ -1697,7 +1703,7 @@ export class RoomStore extends EnhancedEventEmitter {
   }
 
   /**
-   * @description: 结束上课
+   * @description: End streaming
    * @param {*}
    * @return {*}
    */
@@ -1711,7 +1717,7 @@ export class RoomStore extends EnhancedEventEmitter {
   }
 
   /**
-   * @description: 暂停课堂
+   * @description: Pause streaming
    * @param {*}
    * @return {*}
    */
@@ -1726,7 +1732,7 @@ export class RoomStore extends EnhancedEventEmitter {
   }
 
   /**
-   * @description: 取消暂停课堂
+   * @description: Resume streaming
    * @param {*}
    * @return {*}
    */
@@ -1739,7 +1745,7 @@ export class RoomStore extends EnhancedEventEmitter {
   }
 
   /**
-   * @description: 设置白板权限
+   * @description: Set the whiteboard permissions
    * @param {string} userUuid
    * @param {number} value
    * @return {*}
@@ -1768,7 +1774,7 @@ export class RoomStore extends EnhancedEventEmitter {
   }
 
   /**
-   * @description: 获取房间快照
+   * @description: Get a room snapshot
    * @param {*}
    * @return {*}
    */
@@ -1781,10 +1787,6 @@ export class RoomStore extends EnhancedEventEmitter {
     //   logger.log('memberFullList', this.memberFullList, members);
     // })
 
-    /**
-     * http://jira.netease.com/browse/YYTX-3640
-     * 解决房间关闭后请求传参为空导致的鉴权异常
-     */
     if(!this.roomInfo?.roomUuid || this.incrementIng) return
     this.incrementIng = true;
     getSnapShot(this.roomInfo.roomUuid).then(
@@ -1794,13 +1796,23 @@ export class RoomStore extends EnhancedEventEmitter {
           this._snapRoomInfo = Object.assign({}, this._snapRoomInfo, room);
           this.memberFullList = [...members];
           this._snapSequence = sequence;
-          console.log("更新_snapSequence ", this._snapSequence);
+          console.log("Update _snapSequence ", this._snapSequence);
           (window as any).memberFullList = this.memberFullList;
           const { states, roomUuid } = room;
           this.stateUpdateByChange(states, timestamp, roomUuid, false);
+          const tempStudentList: Array<UserComponentData> = []
           for (const item of this.memberFullList) {
             this.updateMemberList(item.rtcUid, "add");
+            const _member = this._createMember(item)
+            if(_member.isStudent) {
+              if (_member.userUuid === this.localUserInfo.userUuid){
+                tempStudentList.unshift(_member)
+              } else {
+                tempStudentList.push(_member)
+              }
+            }
           }
+          this._studentData = tempStudentList
           logger.log("memberFullList", this.memberFullList, members);
         });
       }
@@ -1808,7 +1820,7 @@ export class RoomStore extends EnhancedEventEmitter {
   }
 
   /**
-   * @description: 设置成员信息
+   * @description: Set the member info
    * @param {SnapShotResponseMembers} data
    * @return {*}
    */
@@ -1818,7 +1830,7 @@ export class RoomStore extends EnhancedEventEmitter {
   }
 
   /**
-   * @description: 房间状态变更
+   * @description: Room state updated
    * @param {any} states
    * @param {number} time
    * @return {*}
@@ -1893,15 +1905,87 @@ export class RoomStore extends EnhancedEventEmitter {
     }
   }
 
+  startPushStream() {
+    const { member: {rtcUid}, room: {properties: { live = {} } = {}  }} = this._entryData;
+    let task = {}
+    if (!isElectron) {
+      task = {
+        taskId: live?.cid,
+        streamUrl: live?.pushUrl,
+        record: false,
+        config: {
+          singleVideoNoTrans: false
+        },
+        layout: {
+          canvas: {
+            width: 1280,
+            height: 720,
+            color: 0, // background color: black
+          },
+          users:[{
+            uid: rtcUid,
+            x: 1070, 
+            y: 10, // Y coordicate offset of user1 view with respect to the top left corner of the canvas layout
+            width: 200, 
+            height: 150, 
+            adaption: 1, // Adaptive
+            pushVideo: true,
+            pushAudio: true
+          }]
+        }
+      }
+    } else {
+      task = {
+        task_id: live?.cid,
+        stream_url: live?.pushUrl,
+        server_record_enabled: true, // Enable Server Recording
+        ls_mode: 0, // ive stream type: Video streaming
+        config: {
+          audio_codec_profile: 0,
+          channels: 1,
+          sample_rate: 1,
+          audio_bitrate: 120,
+          single_video_passthrough: false
+        },
+        layout: {
+          width: 1280,
+          height: 720,
+          background_color: 0, // black
+          user_count: 1,
+          bg_image: {
+            url: " ",
+            x: 0,
+            y: 0,
+            width: 200,
+            height: 150
+          },
+          users:[{
+            uid: rtcUid,
+            x: 1070,
+            y: 10,
+            width: 200,
+            height: 150,
+            adaption: 1,
+            video_push: true,
+            audio_push: true,
+            z_order: 100
+          }]
+        }
+      }
+    }
+    logger.log("plugFlowTask", task)
+    this?._webRtcInstance?.addPlugFlowTask(task)
+  }
+
   /**
-   * @description: 保持数据同步
+   * @description: Keep the data synced
    * @param {*}
    * @return {*}
    */
   @action
   public syncMember(): void {
     runInAction(() => {
-      logger.log("查看syncMember", this.memberFullList, this.memberList);
+      logger.log("View syncMember", this.memberFullList, this.memberList);
       for (let i = 0; i < this.memberFullList.length; i++) {
         const item = this.memberFullList[i];
         if (!this.memberList.includes(Number(item.rtcUid))) {
@@ -1913,7 +1997,7 @@ export class RoomStore extends EnhancedEventEmitter {
   }
 
   /**
-   * @description: 重置
+   * @description: Reset
    * @param {*}
    * @return {*}
    */
@@ -1923,6 +2007,7 @@ export class RoomStore extends EnhancedEventEmitter {
     runInAction(() => {
       this.memberList = [];
       this.memberFullList = [];
+      this._studentData = [];
       this._tempStreams = {};
       this._snapRoomInfo = {
         states: {
@@ -1945,7 +2030,7 @@ export class RoomStore extends EnhancedEventEmitter {
   }
 
   /**
-   * @description: 移除时间监听
+   * @description: Remove the event listener
    * @param {*}
    * @return {*}
    */
@@ -1979,7 +2064,7 @@ export class RoomStore extends EnhancedEventEmitter {
   }
 
   /**
-   * @description: 更新memberList
+   * @description: Update memberList
    * @param {number} uid
    * @return {*}
    */
@@ -2005,7 +2090,32 @@ export class RoomStore extends EnhancedEventEmitter {
   }
 
   /**
-   * @description: 缓存流信息
+   * update studentData
+   * @param uid 
+   * @param type 
+   * @param memberItem 
+   */
+  private async _updateStudentData(uid: string, type: "add" | "delete" | "update", memberItem=null): Promise<void> {
+    const index = this._studentData.findIndex((item) => item.userUuid === uid);
+    if (type === "delete") {
+      if (index > -1) {
+        this._studentData.splice(index, 1)
+      }
+    } else {
+      const _member = this._createMember(memberItem)
+      if (!_member.isStudent) return
+      if (type === "add") {
+        this._studentData.push(_member)
+      } else if (type === "update") {
+        if (index > -1) {
+          this._studentData.splice(index, 1, _member)
+        }
+      }
+    }
+  }
+
+  /**
+   * @description: cache stream info
    * @param {number} uid
    * @param {any} stream
    * @return {*}
@@ -2037,11 +2147,11 @@ export class RoomStore extends EnhancedEventEmitter {
       default:
         break;
     }
-    logger.log("stream更新", this._tempStreams);
+    logger.log("stream update", this._tempStreams);
   }
 
   /**
-   * @description: 外部获取聊天室实例，暂时兼容
+   * @description: Set a chat room instance
    * @param {any} data
    * @return {*}
    */
@@ -2051,7 +2161,7 @@ export class RoomStore extends EnhancedEventEmitter {
   }
 
   /**
-   * @description: 清除聊天室实例
+   * @description: Destroy a chat room instance
    * @param {*}
    * @return {*}
    */

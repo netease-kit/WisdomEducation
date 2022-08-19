@@ -85,7 +85,7 @@ public class NEEduRecordPlayer: NEEduRecordPlayerProtocol {
     
     public func seekTo(time: Double) {
         let interval = time - startOffSet < 0 ? 0 : time - startOffSet
-        print("timeto1:\(interval)")
+        print("用户进入时间偏移1：timeto1:\(interval) url:\(self.url)")
         player.setCurrentPlaybackTime(interval)
     }
     

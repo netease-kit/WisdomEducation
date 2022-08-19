@@ -9,7 +9,7 @@ import Header from '@/component/header';
 import { useRecordStore, useUIStore, useRoomStore } from '@/hooks/store';
 import { useLocation } from "react-router-dom";
 import { observer } from 'mobx-react';
-import Replay from '@/component/web-record';
+import Replay from '@/component/web-record/Replay';
 import { getQueryString } from '@/utils/index';
 import Empty from './empty';
 import './index.less';
@@ -20,6 +20,7 @@ export interface IEvent {
   userId: string
   action: 'show' | 'hide' | 'showScreen' | 'remove',
   timestamp: number,
+  type?: number,
   payload?: any
 }
 

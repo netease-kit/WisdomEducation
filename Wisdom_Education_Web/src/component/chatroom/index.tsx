@@ -93,7 +93,7 @@ const Chatroom: React.FC<IProps> = ({
                   limit: 200,
                   done: (error, obj) => {
                     if (error) {
-                      logger.error('获取聊天室成员失败', error);
+                      logger.error('Failed to get members in the chat room', error);
                       return;
                     }
                     const members = obj.members.map((item) => {
@@ -128,7 +128,7 @@ const Chatroom: React.FC<IProps> = ({
                     //   }
                     // })
                     roomStore.setBigLiveMemberFullList(members);
-                    logger.debug('聊天室成员', obj.members, members)
+                    logger.debug('Members', obj.members, members)
                   }
                 })
               }
@@ -138,12 +138,12 @@ const Chatroom: React.FC<IProps> = ({
                 const res: {
                   [key: string]: any
                 } = {};
-                // 保持格式统一
+                // Keep a unified format
                 const data = JSON.parse(item.content);
                 res.body = data.data;
                 roomStore.nimNotify(res, false)
               } catch (err) {
-                logger.error('解析自定义消息失败', err)
+                logger.error('Failed to parse custom messages', err)
               }
               break;
             default:
@@ -165,7 +165,7 @@ const Chatroom: React.FC<IProps> = ({
           msg = intl.get('被管理员踢出房间')
         }
 
-        //被踢出，需要回到首页
+        //Removed from the chat room and redirected to the home page
         roomStore.leave()
         history.push('/');
         uiStore.showToast(msg);
@@ -190,14 +190,14 @@ const Chatroom: React.FC<IProps> = ({
   const doneHandler = (err: any, msg: Message) => {
     if (err) {
       console.log(
-        `发送聊天室${msg.type === 'text'
-          ? '文本'
+        `Sending ${msg.type === 'text'
+          ? 'text'
           : msg.type === 'image'
-            ? '图片'
+            ? 'image'
             : msg.type === 'file'
-              ? '文件'
-              : '未知'
-        }消息失败: `,
+              ? 'file'
+              : 'unknown'
+        } messages to the chat room failed: `,
         err,
       );
       uiStore.showToast(`${intl.get("发送聊天室")}${msg.type === 'text'
@@ -234,7 +234,7 @@ const Chatroom: React.FC<IProps> = ({
         percentageText: '-',
         loaded: '-',
       });
-      // 超时重置发送按钮
+      // Reset the send button after timeout
       const timeout = setTimeout(() => {
         message.error(intl.get('上传超时，请重试'));
         setProgress(type);

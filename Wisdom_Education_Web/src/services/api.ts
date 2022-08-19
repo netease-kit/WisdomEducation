@@ -171,8 +171,8 @@ export interface DeleteMemberPropertiesOptions {
 }
 
 const propertyKey = {
-  'whiteboard': 'drawable', // 白板开启
-  'screenShare': 'value', // 屏幕共享
+  'whiteboard': 'drawable', // Enable whiteboard
+  'screenShare': 'value', // Screen sharing
   'streamAV': 'value',
   'avHandsUp': 'value',
 }
@@ -205,7 +205,7 @@ export interface Resources {
 
 
 /**
- * @description: 登录请求
+ * @description: login request
  * @param {string} userUuid
  * @return {*}
  */
@@ -225,7 +225,7 @@ export async function anonymousLogin(): Promise<LoginResponse>  {
 }
 
 /**
- * @description: 创建房间
+ * @description: Create a room
  * @param {string} roomUuid
  * @return {*}
  */
@@ -253,7 +253,7 @@ export async function createRoom(roomUuid: string|number, roomName: string, room
 }
 
 /**
- * @description: 获取房间信息
+ * @description: Get the room info
  * @param {string} roomUuid
  * @return {*}
  */
@@ -268,7 +268,7 @@ export async function getRoomInfo(roomUuid: string|number): Promise<any> {
 }
 
 /**
- * @description: 加入房间
+ * @description: Join a room
  * @param {EntryRoomOptions} options
  * @return {*}
  */
@@ -333,7 +333,7 @@ export async function getSequence(options):Promise<Array<SequenceListResponse>> 
 }
 
 /**
- * @description: 更新流信息
+ * @description: Update the stream info
  * @param {ChangeMemberStreamOptions} options
  * @return {*}
  */
@@ -373,13 +373,13 @@ export async function deleteMemberStream(options: DeleteMemberStreamOptions): Pr
 // }
 
 /**
- * @description: 修改成员房间属性
+ * @description: Edit the profile of a member
  * @param {ChangeMemberPropertiesOptions} options
  * @return {*}
  */
 export async function changeMemberProperties(options: ChangeMemberPropertiesOptions): Promise<any> {
   const key = propertyKey[options.propertyType];
-  if (!key) throw new Error(`修改房间参数，请求参数异常, ${options.propertyType}`);
+  if (!key) throw new Error(`Invalid request parameter, ${options.propertyType}`);
   const param = {
     [key]: options.value,
     audio: options.audio,
@@ -402,7 +402,7 @@ export async function changeMemberProperties(options: ChangeMemberPropertiesOpti
 }
 
 /**
- * @description: 修改房间属性
+ * @description: Edit the room profile
  * @param {ChangeRoomStateOptions} options
  * @return {*}
  */
@@ -420,7 +420,7 @@ export async function changeRoomState(options: ChangeRoomStateOptions): Promise<
 }
 
 /**
- * @description: 删除房间属性
+ * @description: Delete a room attribute
  * @param {DeleteRoomStateOptions} options
  * @return {*}
  */
@@ -435,7 +435,7 @@ export async function deleteRoomState(options: DeleteRoomStateOptions): Promise<
 }
 
 /**
- * @description: 删除成员属性
+ * @description: Delete a member property
  * @param {DeleteMemberPropertiesOptions} options
  * @return {*}
  */
@@ -450,7 +450,7 @@ export async function deleteMemberProperties(options: DeleteMemberPropertiesOpti
 }
 
 /**
- * @description: 获取回放信息
+ * @description: Get playback info
  * @param {string} roomUuid
  * @return {*}
  */

@@ -10,11 +10,11 @@ import logger from '../logger';
 import { ShareListItem } from '@/config';
 import rtc_server_conf from './rtc_server_conf.json';
 const needPrivate = process.env.REACT_APP_SDK_RTC_PRIVATE;
-needPrivate === "true" && logger.log("web-RTC私有化配置", rtc_server_conf);
+needPrivate === "true" && logger.log("web-RTC on-premises deployment configuration", rtc_server_conf);
 
 
-// 测试要求加版本信息提示
-logger.log('当前g2版本：4.5.500');
+// Version information required for testing
+logger.log('Current G2 version: 4.5.500');
 export class NeWebrtc extends EnhancedEventEmitter {
   private readonly _appkey: string|undefined;
   private _client: any;
@@ -61,25 +61,25 @@ export class NeWebrtc extends EnhancedEventEmitter {
 
   private initEvents(): void{
     /*this._client.on('active-speaker', (_data: any) => {
-      logger.log('当前在讲话的人: ', _data.uid)
+      logger.log('Current speaker: ', _data.uid)
     })*/
 
     // this._client.on('sync-finish', () => {
-    logger.log('登录同步信息完成')
+    logger.log('Login sync is complete')
     //   this.emit('@syncFinish')
     // })
 
     this._client.on('channel-closed', () => {
-      logger.log('房间被关闭')
+      logger.log('The room was closed')
       this._localStream = null
       this._mapRemoteStreams.clear()
       this.emit('channelClosed')
     })
 
     this._client.on('client-banned', (_data: any) => {
-      logger.log(`${_data.uid} 被提出房间`)
+      logger.log(`${_data.uid} was removed from the room`)
       if (_data.uid == this._localStream.streamID) {
-        logger.log('自己被移除')
+        logger.log('You were removed')
         this._localStream = null
         this._mapRemoteStreams.clear()
         this.emit('client-banned')
@@ -92,7 +92,7 @@ export class NeWebrtc extends EnhancedEventEmitter {
     })
 
     this._client.on('aexception', (_data: any) => {
-      logger.log('===== exception事件:  %s', JSON.stringify(_data, null, ''))
+      logger.log('===== exception event:  %s', JSON.stringify(_data, null, ''))
     })
 
     this._client.on('active-speaker', (_data: any) => {
@@ -116,7 +116,7 @@ export class NeWebrtc extends EnhancedEventEmitter {
     })
 
     /*this._client.on('network-quality', (_data: any) => {
-      logger.log('房间里所有成员的网络状况:', _data)
+      logger.log('Network status of all members in the room:', _data)
     })*/
 
     this._client.on('connection-state-change', (_data: any) => {
@@ -124,22 +124,22 @@ export class NeWebrtc extends EnhancedEventEmitter {
     })
 
     window.navigator.mediaDevices.ondevicechange = (() => {
-      logger.log('监听到设备变化')
+      logger.log('Device changes monitored')
       this.emit('device-change')
     })
 
     this._client.on('peer-online', (_data: any) => {
-      logger.log(`${_data.uid} 加入房间`)
+      logger.log(`${_data.uid} joins the room`)
       this.emit('peer-online', _data)
     })
 
     this._client.on('peer-leave', (_data: any) => {
-      logger.log(`${_data.uid} 离开房间`)
+      logger.log(`${_data.uid} leaves the room`)
       this.emit('peer-leave', _data)
     })
 
     this._client.on('stream-added', (_data: any) => {
-      logger.log('收到别人的发布消息:', _data)
+      logger.log('receive messages:', _data)
       const uid = _data.stream.streamID
       this._mapRemoteStreams.set(uid, _data.stream)
       this.subscribe(_data.stream)
@@ -150,7 +150,7 @@ export class NeWebrtc extends EnhancedEventEmitter {
     })
 
     this._client.on('stream-removed', (_data: any) => {
-      logger.log('收到别人停止发布的消息:', _data);
+      logger.log('Received the stream that was unpublished from the peer:', _data);
       const uid = _data.stream.streamID
       this.emit('stream-removed', {
         uid,
@@ -168,7 +168,7 @@ export class NeWebrtc extends EnhancedEventEmitter {
     })
 
     this._client.on('stream-subscribed', (_data: any) => {
-      logger.log('订阅别人的流成功的通知:', _data)
+      logger.log('Notification for success of subcription to streams from others:', _data)
       const uid = _data.stream.streamID
       const stream = _data.stream
       logger.log('uid: %s', uid)
@@ -178,7 +178,7 @@ export class NeWebrtc extends EnhancedEventEmitter {
       switch (_data.mediaType) {
         case 'audio':
           stream.play().then().catch((e: any)=>{
-            logger.log('播放对方的声音失败:', e)
+            logger.log('Failed to play the audio stream sent from the peer:', e)
           })
           // audioStream = stream;
           break;
@@ -217,7 +217,7 @@ export class NeWebrtc extends EnhancedEventEmitter {
     })
 
     this._client.on('stopScreenSharing', (_data: any) => {
-      logger.log('屏幕共享被关闭')
+      logger.log('Screen sharing is disabled')
       this.emit('stopScreenSharing', _data)
     })
 
@@ -252,7 +252,7 @@ export class NeWebrtc extends EnhancedEventEmitter {
           recordVideo: false,
           recordType: 0,
         },
-        neRtcServerAddresses: needPrivate === "true" ? rtc_server_conf : {}, // 私有化配置
+        neRtcServerAddresses: needPrivate === "true" ? rtc_server_conf : {}, // On-premises deployment configuration
       })
       logger.log('join() successed', options)
       // reporter.send({
@@ -387,7 +387,7 @@ export class NeWebrtc extends EnhancedEventEmitter {
   }
 
   /**
-   * @description: 白板流切换
+   * @description: switch the whiteboard stream
    * @param {string} type
    * @param {any} stream
    * @return {*}
@@ -396,7 +396,7 @@ export class NeWebrtc extends EnhancedEventEmitter {
     if (!this._localStream) {
       throw new Error("this._localStream is not defined");
     }
-    logger.log('白板辅流设置', type, track);
+    logger.log('Whiteboard substream settings', type, track);
     switch (type) {
       case 'open':
         await this._localStream.open({
@@ -426,7 +426,7 @@ export class NeWebrtc extends EnhancedEventEmitter {
     try {
       await this.close('video');
       await this._localStream.setVideoProfile({
-        // 调整视频帧率与分辨率
+        // Adjust the video frame rate and resolution
         resolution,
         frameRate,
       });
@@ -455,7 +455,7 @@ export class NeWebrtc extends EnhancedEventEmitter {
       this._bindStreamEvents()
     }
     try{
-      await this._localStream.setVideoProfile({ // 调整视频帧率与分辨率
+      await this._localStream.setVideoProfile({ // Adjust the video frame rate and resolution
         resolution: WebRTC2.VIDEO_QUALITY_480p,
         frameRate: WebRTC2.CHAT_VIDEO_FRAME_RATE_15
       })
@@ -582,7 +582,7 @@ export class NeWebrtc extends EnhancedEventEmitter {
   }
 
   /**
-   * @description: 选择麦克风
+   * @description: Select the microphone
    * @param {string} deviceId
    * @return {*}
    */
@@ -593,7 +593,7 @@ export class NeWebrtc extends EnhancedEventEmitter {
   }
 
   /**
-   * @description: 选择摄像头
+   * @description: Select the camera
    * @param {string} deviceId
    * @return {*}
    */
@@ -636,19 +636,19 @@ export class NeWebrtc extends EnhancedEventEmitter {
     }
   }
 
-  //设置mic采集音量 0-100
+  //Set the capture volume of the microphone 0-100
   setMicrophoneCaptureVolume(volume: number): void {
     this._localStream.setCaptureVolume(volume)
   }
   
-  //获取mic的采集音量 0-1
+  //Get the capture volume of the microphone 0-1
   getAudioLevel(): number {
     const result =  this._localStream && this._localStream.getAudioLevel()*100
     logger.log("getAudioLevel ", result)
     return result
   }
 
-  // 设置播放音量 0-100
+  // Set the playback volume 0-100
   setAudioVolume(volume: number): void {
     this._mapRemoteStreams.forEach(stream => {
       if(stream){
@@ -657,22 +657,22 @@ export class NeWebrtc extends EnhancedEventEmitter {
     })
   }
 
-  // 获取网络相关数据
+  // Get the network-related data
   async getTransportStats(): Promise<any> {
     try {
       const data = await this._client.getTransportStats();
-      logger.log('获取网络相关数据', data);
+      logger.log('Get the network-related data', data);
       return data;
     } catch (e: any) {
       logger.log('getTransportStats() failed:', e);
       throw new Error(e);
     }
   }
-  // 获取当前会话数据
+  // Get the data of thecurrent session
   async getSessionStats(): Promise<any> {
     try {
       const data = await this._client.getSessionStats();
-      logger.log('获取当前会话数据', data);
+      logger.log('Get the data of the current session', data);
       return data;
     } catch (e: any) {
       logger.log('getSessionStats() fail:', e);
@@ -680,7 +680,7 @@ export class NeWebrtc extends EnhancedEventEmitter {
     }
   }
 
-  // 获取当前音频流数据
+  // Get the current audio stream data
   async getLocalAudioStats(): Promise<any> {
     try {
       const data = await this._client.getLocalAudioStats();
@@ -696,7 +696,7 @@ export class NeWebrtc extends EnhancedEventEmitter {
     return []
   }
 
-  // 获取远端音频流数据
+  // Get the stats of the remote audio stream
   async getRemoteAudioStats(): Promise<any> {
     try {
       const data = await this._client.getRemoteAudioStats();
@@ -708,7 +708,7 @@ export class NeWebrtc extends EnhancedEventEmitter {
     }
   }
 
-  // 获取当前视频流数据
+  // Get the stats of the current video stream
   async getLocalVideoStats(): Promise<any> {
     try {
       const data = await this._client.getLocalVideoStats();
@@ -720,7 +720,7 @@ export class NeWebrtc extends EnhancedEventEmitter {
     }
   }
 
-  // 获取远端视频流数据
+  // Get the stats of a remote video stream
   async getRemoteVideoStats(): Promise<any> {
     try {
       const data = await this._client.getRemoteVideoStats();
@@ -728,6 +728,36 @@ export class NeWebrtc extends EnhancedEventEmitter {
       return data;
     } catch (e: any) {
       logger.log('getRemoteVideoStats() fail:', e);
+      throw new Error(e);
+    }
+  }
+
+  /**
+   * Room Type: call or live streaming
+   * @param type 'rtc'|'live'
+   */
+  async setClientChannelProfile(type='live') {
+    try {
+      const data = await this._client?.setChannelProfile({mode: type});
+      logger.log('setClientChannelProfile success', data);
+      return data;
+    } catch (e: any) {
+      logger.log('setClientChannelProfile() fail:', e);
+      throw new Error(e);
+    }
+  }
+
+  /**
+   * Add streaming task
+   * @param tasks task
+   */
+  async addPlugFlowTask(tasks) {
+    try {
+      const data = await this._client?.addTasks({rtmpTasks: [tasks]});
+      logger.log('addPlugFlowTask success', data);
+      return data;
+    } catch (e: any) {
+      logger.log('addPlugFlowTask() fail:', e);
       throw new Error(e);
     }
   }

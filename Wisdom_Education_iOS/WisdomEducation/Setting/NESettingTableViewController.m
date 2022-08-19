@@ -14,6 +14,7 @@
 @property (weak, nonatomic) IBOutlet UISwitch *useChatroom;
 @property (weak, nonatomic) IBOutlet UISwitch *useFastLive;
 @property (weak, nonatomic) IBOutlet UILabel *versionLabel;
+@property (weak, nonatomic) IBOutlet UISwitch *pushStream;
 
 @end
 
@@ -25,8 +26,10 @@
     self.tableView.tableFooterView = [UIView new];
     BOOL useChatroom = [[[NSUserDefaults standardUserDefaults] objectForKey:showChatroomKey] boolValue];
     BOOL useFastLive = [[[NSUserDefaults standardUserDefaults] objectForKey:useFastLiveKey] boolValue];
+    BOOL pushStream =  [[[NSUserDefaults standardUserDefaults] objectForKey:pushStreamKey] boolValue];
     [self.useChatroom setOn:useChatroom];
     [self.useFastLive setOn:useFastLive];
+    [self.pushStream setOn:pushStream];
     self.versionLabel.text = [NSString stringWithFormat:@"版本:%@ (%@)",[NEAppInfo appVersion],[NEAppInfo buildVersion]];
 }
 - (void)viewWillAppear:(BOOL)animated {
@@ -42,6 +45,10 @@
 - (IBAction)userFastLive:(UISwitch *)sender {
     [[NSUserDefaults standardUserDefaults] setObject:@(sender.isOn) forKey:useFastLiveKey];
 }
+- (IBAction)pushStream:(UISwitch *)sender {
+    [[NSUserDefaults standardUserDefaults] setObject:@(sender.isOn) forKey:pushStreamKey];
+}
+
 #pragma mark - Table view data source
 
 //- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {

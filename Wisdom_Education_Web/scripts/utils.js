@@ -10,17 +10,17 @@ const fs = require('fs')
 
 
 var copyDir=function(src, dst){
-  const paths = fs.readdirSync(src); //同步读取当前目录
+  const paths = fs.readdirSync(src); //Read the current directory
   paths.forEach(function(path){
     const _src=src+'/'+path;
     const _dst=dst+'/'+path;
-    fs.stat(_src,function(err,stats){  //stats  该对象 包含文件属性
+    fs.stat(_src,function(err,stats){  //stats  The object contains the file attributes
       if(err)throw err;
-      if(stats.isFile()){ //如果是个文件则拷贝
-        const  readable=fs.createReadStream(_src);//创建读取流
-        const  writable=fs.createWriteStream(_dst);//创建写入流
+      if(stats.isFile()){ //If it is a file, copy the file
+        const  readable=fs.createReadStream(_src);//Create a read stream
+        const  writable=fs.createWriteStream(_dst);//Create a write stream
         readable.pipe(writable);
-      }else if(stats.isDirectory()){ //是目录则 递归
+      }else if(stats.isDirectory()){ //If it is a directory, run the recursive implementation
         checkDirectory(_src,_dst,copyDir);
       }
     });

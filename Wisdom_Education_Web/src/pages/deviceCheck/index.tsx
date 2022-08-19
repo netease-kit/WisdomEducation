@@ -34,7 +34,7 @@ const DeviceCheckPage: React.FC = observer(() => {
         cameraId={cameraId}
         microphoneId={microphoneId}
         speakerId={speakerId}
-        okText="检测完成，回到首页"
+        okText="Detection completed. Go back to the home page"
         onCameraChange={(deviceId: string) => setCameraId(deviceId)}
         onMicrophoneChange={(deviceId: string) => setMicrophoneId(deviceId)}
         onSpeakerChange={(deviceId: string) => setSpeakerId(deviceId)}

@@ -1,6 +1,6 @@
 {
   "name": "app-wisdon-education-web",
-  "version": "1.9.3",
+  "version": "1.9.5",
   "homepage": "./",
   "private": true,
   "main": "./build/app/main.js",
@@ -23,6 +23,7 @@
     "mobx": "^6.3.0",
     "mobx-react": "^7.1.0",
     "nertc-electron-sdk": "4.4.8-rc-946",
+    "rc-virtual-list": "^3.4.8",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-intl-universal": "^2.4.8",
@@ -39,10 +40,10 @@
     "start": "cross-env HTTPS=true REACT_APP_PLATFORM=web PORT=3001 react-app-rewired start",
     "start:pro": "cross-env HTTPS=true REACT_APP_PLATFORM=web PORT=3001 dotenv -e .env.production react-app-rewired start",
     "start:client": "cross-env MODE=local electron ./app/main.js",
-    "start:ele": "concurrently \"cross-env REACT_APP_PLATFORM=electron HTTPS=true PORT=3001 react-app-rewired start\"  \"wait-on https://localhost:3001/ && npm run start:client\"",
+    "start-ele": "concurrently \"cross-env REACT_APP_PLATFORM=electron HTTPS=true PORT=3001 react-app-rewired start\"  \"wait-on https://localhost:3001/ && npm run start:client\"",
     "start:ele-pro": "concurrently \"cross-env REACT_APP_PLATFORM=electron HTTPS=true PORT=3001 dotenv -e .env.production react-app-rewired start\"  \"wait-on https://localhost:3001/ && npm run start:client\"",
     "build:dev": "cross-env NODE_ENV=development dotenv -e .env.development react-app-rewired build",
-    "build": "dotenv -e .env.production react-app-rewired build",
+    "build": "cross-env REACT_APP_PLATFORM=web dotenv -e .env.production react-app-rewired build",
     "build:dev-ele": "cross-env REACT_APP_PLATFORM=electron NODE_ENV=development dotenv -e .env.development react-app-rewired build",
     "build:ele": "cross-env REACT_APP_PLATFORM=electron dotenv -e .env.production react-app-rewired build",
     "cp-ele": "node scripts/copy-app.js",
@@ -100,8 +101,8 @@
       "hardenedRuntime": true,
       "identity": null,
       "extendInfo": {
-        "NSMicrophoneUsageDescription": "请允许本程序访问您的麦克风",
-        "NSCameraUsageDescription": "请允许本程序访问您的摄像头"
+        "NSMicrophoneUsageDescription": "Allow to access the microphone",
+        "NSCameraUsageDescription": "Allow to access the camera"
       },
       "artifactName": "WisdomEducation-${version}.${ext}"
     },
@@ -126,7 +127,7 @@
     "cross-env": "^7.0.3",
     "customize-cra": "^1.0.0",
     "electron": "14.2.5",
-    "electron-builder": "22.11.7",
+    "electron-builder": "23.0.2",
     "electron-rebuild": "^2.3.5",
     "esbuild-loader": "^2.13.1",
     "eslint": "^7.26.0",

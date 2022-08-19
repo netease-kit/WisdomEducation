@@ -21,7 +21,7 @@
 
 - (void)setupAppkey:(NSString *)appKey isConfigRead:(BOOL)isConfigRead {
     /// 进入房间前 设置场景
-    [[NERtcEngine sharedEngine] setChannelProfile:kNERtcChannelProfileCommunication];
+    [[NERtcEngine sharedEngine] setChannelProfile:kNERtcChannelProfileLiveBroadcasting];
     // 设置视频发送配置(帧率/分辨率)
     NERtcVideoEncodeConfiguration *config = [[NERtcVideoEncodeConfiguration alloc] init];
     config.width = 320;
