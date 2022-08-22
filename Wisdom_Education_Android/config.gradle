@@ -44,7 +44,7 @@ deps.alog = "com.netease.yunxin.kit:alog:0.0.3-SNAPSHOT"
 deps.bugly = "com.tencent.bugly:crashreport:3.3.9"
 
 // record
-deps.neliveplayer = "com.netease.nimlib:neliveplayer:2.9.0"
+deps.neliveplayer = "com.netease.nimlib:neliveplayer:3.2.1"
 deps.gslb = "com.netease:gslb:1.1.0"
 
 deps.test_rules = "androidx.test:rules:1.4.1-alpha03"
