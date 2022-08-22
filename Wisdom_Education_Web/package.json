@@ -1,6 +1,6 @@
 {
   "name": "app-wisdon-education-web",
-  "version": "1.9.4",
+  "version": "1.10.0",
   "homepage": "./",
   "private": true,
   "main": "./build/app/main.js",
@@ -43,7 +43,7 @@
     "start-ele": "concurrently \"cross-env REACT_APP_PLATFORM=electron HTTPS=true PORT=3001 react-app-rewired start\"  \"wait-on https://localhost:3001/ && npm run start:client\"",
     "start:ele-pro": "concurrently \"cross-env REACT_APP_PLATFORM=electron HTTPS=true PORT=3001 dotenv -e .env.production react-app-rewired start\"  \"wait-on https://localhost:3001/ && npm run start:client\"",
     "build:dev": "cross-env NODE_ENV=development dotenv -e .env.development react-app-rewired build",
-    "build": "dotenv -e .env.production react-app-rewired build",
+    "build": "cross-env REACT_APP_PLATFORM=web dotenv -e .env.production react-app-rewired build",
     "build:dev-ele": "cross-env REACT_APP_PLATFORM=electron NODE_ENV=development dotenv -e .env.development react-app-rewired build",
     "build:ele": "cross-env REACT_APP_PLATFORM=electron dotenv -e .env.production react-app-rewired build",
     "cp-ele": "node scripts/copy-app.js",

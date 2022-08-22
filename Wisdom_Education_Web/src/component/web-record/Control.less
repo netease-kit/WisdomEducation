@@ -1,0 +1,103 @@
+.player-container {
+    display: block;
+    position: relative;
+    height: 30px;
+    background: rgba(113, 113, 113, 0.23);
+    user-select: none;
+    display: flex;
+    padding: 0 10px 0 5px;
+
+    .player-play-icon-wrapper {
+        cursor: pointer;
+        position: relative;
+        width: 20px;
+        height: 20px;
+        padding: 5px;
+
+        .player-play-icon {
+            display:inline-block;
+            height:inherit;
+            width:inherit;
+            background-size:cover;
+        }
+    }
+
+    .player-speed {
+        position: relative;
+        padding: 5px;
+        height: 20px;
+        font-size: 14px;
+        font-family: sans-serif;
+        cursor: pointer;
+
+        .player-speed-text {
+            text-align: center;
+        }
+
+        .player-speed-options {
+            position: absolute;
+            bottom: 27px;
+            background: rgba(0,0,0,.8);
+            padding: 0 10px;
+            color: white;
+            text-align: center;
+
+            .option {
+                margin: 10px 0;
+            }
+        }
+    }
+
+    .player-duration {
+        height:20px;
+        font-size:14px;
+        font-family:sans-serif;
+        padding: 5px;
+    }
+
+    .player-timeline {
+        flex: 1;
+        height: 6px;
+        cursor: pointer;
+        background: rgba(0,0,0,0.12);
+        margin: 12px;
+        position: relative;
+    }
+
+    .player-timeline-label {
+        position: absolute;
+        height: 20px;
+        background: white;
+        border-radius: 3px;
+        bottom: 10px;
+        padding: 4px 6px;
+        transform: translateX(-50%);
+    }
+
+    .player-timeline-bg {
+        position: absolute;
+        height: 20px;
+        background: 'white';
+        width: 2px;
+        bottom: -5px;
+        pointer-events: none;
+    }
+
+    .player-timeline-blueline {
+        position: absolute;
+        background: rgba(24, 121, 226, 0.7);
+        height: inherit;
+        pointer-events: none;
+    }
+
+    .player-timeline-slider {
+        position: absolute;
+        top: -5px;
+        bottom: -5px;
+        background: white;
+        box-sizing: content-box;
+        padding:0 4px;
+        width: 4px;
+        transform:translateX(-6px);
+    }
+}
