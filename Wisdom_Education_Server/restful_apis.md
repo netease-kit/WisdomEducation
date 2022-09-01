@@ -49,10 +49,11 @@
 
 | 参数名称| 	是否必选| 	描述|
 |----|----|----|
-| userToken	| 否| 用户令牌 |
-| imToken	| 否 | imToken，复用Im账号时使用 |
-| assertNotExist	| 否 | 是否断言该账号不存在，若true时并且账号已经存在则报错 |
-| updateOnConflict	| 否 | 当账号存在时是否更新 |
+| userToken	| 否	| 用户令牌  |
+| imToken	| 否	| imToken，复用Im账号时使用 |
+| assertNotExist	| 否	| 是否断言该账号不存在，若true时并且账号已经存在则报错 |
+| updateOnConflict	| 否	| 当账号存在时是否更新 |
+
 
 - Sample
 ```json
