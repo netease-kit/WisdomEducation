@@ -20,8 +20,9 @@ const WhiteBoard:React.FC = observer(() => {
     if (joinFinish && wbRef.current) {
       const { localUserInfo: { role }, roomInfo: { sceneType } } = roomStore;
       const enbaleDraw = role === RoleTypes.host || Number(sceneType) === RoomTypes.oneToOne;
+      const enableUploadMedia = Number(sceneType) !== RoomTypes.bigClasLive;
       whiteBoardStore.setContainer(wbRef.current);
-      whiteBoardStore.setToolCollection(wbRef.current)
+      whiteBoardStore.setToolCollection(wbRef.current, enableUploadMedia)
       roomStore.setLocalWbDrawEnable(enbaleDraw);
       whiteBoardStore.setEnableDraw(enbaleDraw);
       whiteBoardStore.setWbSetFinish(true);

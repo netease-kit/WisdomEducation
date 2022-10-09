@@ -5,6 +5,8 @@
 import EventEmit from 'events';
 import Chatroom from '@/lib/chatroom/NIM_Web_Chatroom_v8.6.0'
 import intl from 'react-intl-universal';
+import nim_server_conf from '../../lib/im/nim_server_conf.json';
+const needPrivate = process.env.REACT_APP_SDK_IM_PRIVATE;
 
 interface InitOptions {
   nim: any;
@@ -145,6 +147,7 @@ class ChatroomHelper extends EventEmit {
           chatroomNick,
           chatroomAddresses: obj.address,
           commonUpload: true,
+          privateConf: needPrivate === "true" ? nim_server_conf : {}, // On-premises deployment configuration
           onconnect: () => {
             console.log('Login succeeded');
             this.isConnect = true;

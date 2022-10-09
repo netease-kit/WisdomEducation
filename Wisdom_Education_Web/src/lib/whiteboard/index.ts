@@ -12,7 +12,7 @@ import intl from 'react-intl-universal';
 
 const needPrivate = process.env.REACT_APP_SDK_WB_PRIVATE;
 needPrivate === "true" && logger.log("WB on-premises deployment configuration", wb_server_conf);
-
+const transcodeId = process.env.REACT_APP_SDK_WB_TRANSCODEID
 export interface WhiteBoardInitOptions {
   appKey: string;
   // account: string;
@@ -116,7 +116,7 @@ export class NeWhiteBoard extends EnhancedEventEmitter {
     })
   }
 
-  public async setToolCollection(dom?: HTMLElement): Promise<void> {
+  public async setToolCollection(dom?: HTMLElement, enableUploadMedia=true): Promise<void> {
     if (!this._drawPlugin) {
       logger.log('')
       throw new Error('not init before');
@@ -129,6 +129,18 @@ export class NeWhiteBoard extends EnhancedEventEmitter {
       handler: this._drawPlugin,
       options: {
         platform: 'web'
+      }
+    })
+    await this._toolCollection.addOrSetTool({
+      position: 'left',
+      insertAfterTool: 'image',
+      item: {
+        tool: 'uploadCenter',
+        hint: '上传文档',
+        supportPptToH5: true,
+        supportDocToPic: true,
+        supportUploadMedia: enableUploadMedia,
+        supportTransMedia: enableUploadMedia
       }
     })
     this._toolCollection.show();
@@ -213,6 +225,11 @@ export class NeWhiteBoard extends EnhancedEventEmitter {
       throw new Error('not init before');
     }
     await this._drawPlugin.enableDraw(enable);
+    // set transcoding template
+    this._drawPlugin.setAppConfig({
+      presetId: transcodeId,
+      cacheUploadDocs: false
+    })
     await this._toolCollection.setVisibility({
       bottomRight: {
         visible: enable
@@ -222,7 +239,7 @@ export class NeWhiteBoard extends EnhancedEventEmitter {
       },
       left: {
         visible: enable,
-        exclude: enable ? ['image', 'exportImage', 'opacity'] : []
+        // exclude: enable ? ['image', 'exportImage', 'opacity'] : []
       },
       bottomLeft: {
         visible: true,
