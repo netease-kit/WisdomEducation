@@ -49,6 +49,9 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
+    implementation deps.appcompat
+    implementation deps.ktx_fragment
+
     api deps.gson
     api deps.converter_gson
 }
