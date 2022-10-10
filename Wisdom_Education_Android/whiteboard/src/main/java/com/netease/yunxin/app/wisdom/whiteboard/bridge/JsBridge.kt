@@ -5,10 +5,13 @@
 
 package com.netease.yunxin.app.wisdom.whiteboard.bridge
 
+import android.net.Uri
 import android.os.Handler
 import android.os.Looper
 import android.os.Message
+import android.text.TextUtils
 import android.webkit.JavascriptInterface
+import android.webkit.ValueCallback
 import android.webkit.WebView
 import com.google.gson.Gson
 import com.netease.yunxin.app.wisdom.whiteboard.api.WhiteboardApi
@@ -31,6 +34,17 @@ class JsBridge(private val whiteboardApi: WhiteboardApi) : Handler(Looper.getMai
     private var loginSuccess = false
 
     private var enableDraw = false
+
+    private var fileValueCallback: ValueCallback<Array<Uri>>? = null
+
+    private var presetId: String? = null
+
+    /**
+     * 音视频转码presetId, 详见 @see <a href="https://doc.yunxin.163.com/vod/docs/Dc5NDE5NjM?platform=server">创建视频转码模板</a>
+     */
+    fun setPresetId(presetId: String?) {
+        this.presetId = presetId
+    }
 
     @JavascriptInterface
     fun NativeFunction(content: String) {
@@ -127,6 +141,9 @@ class JsBridge(private val whiteboardApi: WhiteboardApi) : Handler(Looper.getMai
         }
         evaluateJavascriptJsDirectCallToolCollection(enableDraw)
         evaluateJavascriptJsDirectCallEnable("enableDraw", enableDraw)
+        if (!TextUtils.isEmpty(presetId)) {
+            evaluateJavascriptJsDirectCallSetAppConfig(presetId!!)
+        }
     }
 
     fun isEnableDraw(): Boolean {
@@ -135,7 +152,7 @@ class JsBridge(private val whiteboardApi: WhiteboardApi) : Handler(Looper.getMai
 
     private fun evaluateJavascriptJsDirectCallSetContainerOptions() {
         val params =
-            "[{\"position\":\"bottomRight\",\"items\":[{\"tool\":\"select\",\"hint\":\"Select\"},{\"tool\":\"pen\",\"hint\":\"Brush\",\"stack\":\"horizontal\"},{\"tool\":\"shape\",\"hint\":\"Shape\",\"stack\":\"horizontal\"},{\"tool\":\"multiInOne\",\"hint\":\"More\",\"subItems\":[{\"tool\":\"element-eraser\"},{\"tool\":\"clear\"},{\"tool\":\"undo\"},{\"tool\":\"redo\"}]}]},{\"position\":\"topRight\",\"items\":[{\"tool\":\"multiInOne\",\"hint\":\"More\",\"subItems\":[{\"tool\":\"fitToContent\"},{\"tool\":\"fitToDoc\"},{\"tool\":\"pan\"},{\"tool\":\"zoomIn\"},{\"tool\":\"zoomOut\"},{\"tool\":\"visionLock\"}]},{\"tool\":\"zoomLevel\"}]},{\"position\":\"topLeft\",\"items\":[{\"tool\":\"pageBoardInfo\"},{\"tool\":\"preview\",\"hint\":\"Preview\",\"previewSliderPosition\":\"right\"}]}]"
+            "[{\"position\":\"bottomRight\",\"items\":[{\"tool\":\"select\",\"hint\":\"Select\"},{\"tool\":\"pen\",\"hint\":\"Brush\",\"stack\":\"horizontal\"},{\"tool\":\"shape\",\"hint\":\"Shape\",\"stack\":\"horizontal\"},{\"tool\":\"multiInOne\",\"hint\":\"More\",\"subItems\":[{\"tool\":\"element-eraser\"},{\"tool\":\"clear\"},{\"tool\":\"undo\"},{\"tool\":\"redo\"},{\"tool\":\"uploadCenter\",\"hint\":\"上传资源\",\"supportPptToH5\":true,\"supportDocToPic\":true,\"supportUploadMedia\":true,\"supportTransMedia\":true}]}]},{\"position\":\"topRight\",\"items\":[{\"tool\":\"multiInOne\",\"hint\":\"More\",\"subItems\":[{\"tool\":\"fitToContent\"},{\"tool\":\"fitToDoc\"},{\"tool\":\"pan\"},{\"tool\":\"zoomIn\"},{\"tool\":\"zoomOut\"},{\"tool\":\"visionLock\"},{\"tool\":\"uploadLog\"}]},{\"tool\":\"zoomLevel\"}]},{\"position\":\"topLeft\",\"items\":[{\"tool\":\"pageBoardInfo\"},{\"tool\":\"preview\",\"hint\":\"Preview\",\"previewSliderPosition\":\"right\"}]}]"
         evaluateJavascript(
             "javascript:WebJSBridge({\"action\":\"jsDirectCall\",\"param\":{\"target\":\"toolCollection\",\"action\":\"setContainerOptions\",\"params\":[" +
                     params + "]}})")
@@ -153,6 +170,13 @@ class JsBridge(private val whiteboardApi: WhiteboardApi) : Handler(Looper.getMai
         //String params1 = "{\"target\": {\"drawPlugin\" ，\"funcName\": \"zoomTo\",\"arg1\": 0.55}";
         evaluateJavascript(
             "javascript:WebJSBridge({\"action\":\"jsDirectCall\",\"param\":{\"target\":\"toolCollection\",\"action\":\"setVisibility\",\"params\":[" +
+                    params + "]}})")
+    }
+
+    private fun evaluateJavascriptJsDirectCallSetAppConfig(presetId: String) {
+        val params = "{\"presetId\": $presetId}"
+        evaluateJavascript(
+            "javascript:WebJSBridge({\"action\":\"jsDirectCall\",\"param\":{\"target\":\"drawPlugin\",\"action\":\"setAppConfig\",\"params\":[" +
                     params + "]}})")
     }
 
@@ -176,6 +200,19 @@ class JsBridge(private val whiteboardApi: WhiteboardApi) : Handler(Looper.getMai
         whiteboardApi.getChecksum()?.apply { param.put("checksum", this) }
         jsParam.put("param", param)
         runJs(jsParam.toString())
+    }
+
+    @Synchronized
+    fun transferFile(uri: Uri?) {
+        if (fileValueCallback == null) {
+            return
+        }
+        fileValueCallback?.onReceiveValue(uri?.let { arrayOf(it) })
+    }
+
+    @Synchronized
+    fun setFileValueCallback(callback: ValueCallback<Array<Uri>>) {
+        fileValueCallback = callback
     }
 
 }
