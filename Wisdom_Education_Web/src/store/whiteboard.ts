@@ -111,15 +111,16 @@ export class WhiteBoardStore {
   /**
    * @description: Set the toolbar DOM
    * @param {HTMLElement} dom
+   * @param {boolean} enableUploadMedia
    * @return {*}
    */
   @action
-  public async setToolCollection(dom?: HTMLElement): Promise<void> {
+  public async setToolCollection(dom?: HTMLElement, enableUploadMedia?: boolean): Promise<void> {
     if (!this.drawPlugin) {
       logger.log('You have not logged on to the whiteboard');
       return;
     }
-    await this.whiteboard.setToolCollection(dom);
+    await this.whiteboard.setToolCollection(dom, enableUploadMedia);
     this.toolCollection = this.whiteboard.toolCollection;
     logger.log('Set the whiteboard toolbar');
   }
