@@ -102,6 +102,7 @@
 | config.resource.rtc	|可选: 默认以模版中的设置为准 | 房间是否打开rtc房间| 
 | config.resource.chatroom| 可选: 默认以模版中的设置为准 | 房间是否打开聊天时| 
 | config.resource.whiteboard| 可选: 默认以模版中的设置为准 | 房间是否打开白板| 
+| liveStreamName| 可选 | 只有在云信appKey开通了直播2.0时才有效，用于指定自定义流名，具体咨询商务经理| 
 
 - Sample
 ```json
