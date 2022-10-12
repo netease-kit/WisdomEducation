@@ -1477,9 +1477,10 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
     WhiteboardItem *fitToContent = [[WhiteboardItem alloc] initWithName:WhiteboardItemNameFitToConent];
     WhiteboardItem *fitToDoc = [[WhiteboardItem alloc] initWithName:WhiteboardItemNameFitToDoc];
     WhiteboardItem *pan = [[WhiteboardItem alloc] initWithName:WhiteboardItemNamePan];
+    WhiteboardItem *uploadDoc = [[WhiteboardItem alloc] initWithName:WhiteboardItemNameUpload];
     WhiteboardItem *visionLock = [[WhiteboardItem alloc] initWithName:WhiteboardItemNameVisionLock];
 
-    moreItem.subItems = @[eraserItem,clearItem,undoItem,redoItem];
+    moreItem.subItems = @[eraserItem,clearItem,undoItem,redoItem, uploadDoc];
     tool.items = @[selectionItem,penItem,shapeItem,moreItem];
     tool.position = WhiteboardPositionBottomRight;
     
@@ -1497,6 +1498,7 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
     
     [[NMCWhiteboardManager sharedManager] setupWhiteboardTools:@[toolTopRight,tool,topLeftTool]];
     [[NMCWhiteboardManager sharedManager] callEnableDraw:self.whiteboardWritable];
+    [[NMCWhiteboardManager sharedManager] setAppConfigWithPresetId:@(104868090)];
     [[NMCWhiteboardManager sharedManager] hiddenTools:!self.whiteboardWritable];
 }
 

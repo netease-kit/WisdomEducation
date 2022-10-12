@@ -24,31 +24,40 @@ NSString * WhiteboardPositionTopLeft = @"topLeft";
     if (self) {
         self.tool = [self nameFromItemName:name];
         self.stack = @"horizontal";
+        self.supportPptToH5 = YES;
+        self.supportDocToPic = YES;
+        self.supportUploadMedia = NO;
+        self.supportTransMedia = YES;
     }
     return self;
 }
 - (NSString *)nameFromItemName:(WhiteboardItemName)itemName {
     NSString *name = @"";
     switch (itemName) {
-        case WhiteboardItemNameSelection:
+        case WhiteboardItemNameSelection: {
             name = @"select";
             self.hint = @"选择";
+        }
             break;
-        case WhiteboardItemNamePen:
+        case WhiteboardItemNamePen: {
             name = @"pen";
             self.hint = @"画笔";
+        }
             break;
-        case WhiteboardItemNameShape:
+        case WhiteboardItemNameShape: {
             name = @"shape";
             self.hint = @"图形";
+        }
             break;
-        case WhiteboardItemNameEraser:
+        case WhiteboardItemNameEraser: {
             name = @"element-eraser";
             self.hint = @"橡皮擦";
+        }
             break;
-        case WhiteboardItemNameClear:
+        case WhiteboardItemNameClear: {
             name = @"clear";
             self.hint = @"清除";
+        }
             break;
         case WhiteboardItemNameUndo:
             name = @"undo";
@@ -62,42 +71,60 @@ NSString * WhiteboardPositionTopLeft = @"topLeft";
             name = @"zoomIn";
             self.hint = @"缩小";
             break;
-        case WhiteboardItemNameZoomOut:
+        case WhiteboardItemNameZoomOut: {
             name = @"zoomOut";
             self.hint = @"放大";
+        }
             break;
-        case WhiteboardItemNameMore:
+        case WhiteboardItemNameMore: {
             name = @"multiInOne";
             self.hint = @"更多";
+        }
             break;
-        case WhiteboardItemNameZoomLevel:
+        case WhiteboardItemNameZoomLevel: {
             name = @"zoomLevel";
             self.hint = @"zoomLevel";
+        }
             break;
-        case WhiteboardItemNameFitToConent:
+        case WhiteboardItemNameFitToConent: {
             name = @"fitToContent";
             self.hint = @"fitToContent";
+        }
             break;
-        case WhiteboardItemNameFitToDoc:
+        case WhiteboardItemNameFitToDoc: {
             name = @"fitToDoc";
             self.hint = @"fitToDoc";
+        }
             break;
-        case WhiteboardItemNamePan:
+        case WhiteboardItemNamePan: {
             name = @"pan";
             self.hint = @"pan";
+        }
             break;
-        case WhiteboardItemNameVisionLock:
+        case WhiteboardItemNameVisionLock: {
             name = @"visionLock";
             self.hint = @"visionLock";
+        }
             break;
-        case WhiteboardItemNamePageBoardInfo:
+        case WhiteboardItemNamePageBoardInfo: {
             name = @"pageBoardInfo";
             self.hint = @"pageBoardInfo";
+        }
             break;
-        case WhiteboardItemNamePreview:
+        case WhiteboardItemNamePreview: {
             name = @"preview";
             self.hint = @"preview";
             self.previewSliderPosition = @"right";
+        }
+            break;
+        case WhiteboardItemNameUpload: {
+            name = @"uploadCenter";
+            self.hint = @"上传资源";
+        }
+            break;
+        case WhiteboardItemNameLog: {
+            name = @"uploadLog";
+        }
             break;
         default:
             break;
