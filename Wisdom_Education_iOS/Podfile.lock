@@ -1,0 +1,109 @@
+PODS:
+  - AFNetworking (4.0.1):
+    - AFNetworking/NSURLSession (= 4.0.1)
+    - AFNetworking/Reachability (= 4.0.1)
+    - AFNetworking/Security (= 4.0.1)
+    - AFNetworking/Serialization (= 4.0.1)
+    - AFNetworking/UIKit (= 4.0.1)
+  - AFNetworking/NSURLSession (4.0.1):
+    - AFNetworking/Reachability
+    - AFNetworking/Security
+    - AFNetworking/Serialization
+  - AFNetworking/Reachability (4.0.1)
+  - AFNetworking/Security (4.0.1)
+  - AFNetworking/Serialization (4.0.1)
+  - AFNetworking/UIKit (4.0.1):
+    - AFNetworking/NSURLSession
+  - Alamofire (5.4.4)
+  - EduLogic (0.0.1):
+    - AFNetworking (~> 4.0.1)
+    - NERtcSDK (= 4.4.7)
+    - NIMSDK_LITE (= 8.7.1)
+    - YXAlog_iOS (= 1.0.6)
+    - YYModel (= 1.0.4)
+  - EduUI (0.0.1):
+    - EduLogic (~> 0.0.1)
+    - MJRefresh (~> 3.7.2)
+    - NELivePlayer/LivePlayer (= 3.2.1)
+    - NEScreenShareHost (~> 0.1.0)
+    - NEWhiteBoard (~> 0.0.1)
+    - SDWebImage (~> 5.11.1)
+  - MJRefresh (3.7.5)
+  - NEDyldYuv (0.0.1)
+  - NELivePlayer/LivePlayer (3.2.1)
+  - NERecordPlay (0.0.1):
+    - Alamofire (~> 5.4.3)
+    - NELivePlayer/LivePlayer (= 3.2.1)
+    - NEWhiteBoard (~> 0.0.1)
+  - NERecordPlayUI (0.0.1):
+    - NERecordPlay (~> 0.0.1)
+  - NERtcSDK (4.4.7)
+  - NEScreenShareBroadcaster (0.1.0):
+    - NEDyldYuv (= 0.0.1)
+  - NEScreenShareHost (0.1.0)
+  - NEWhiteBoard (0.0.1):
+    - YYModel (= 1.0.4)
+  - NIMSDK_LITE (8.7.1)
+  - SDWebImage (5.11.1):
+    - SDWebImage/Core (= 5.11.1)
+  - SDWebImage/Core (5.11.1)
+  - YXAlog_iOS (1.0.6)
+  - YYModel (1.0.4)
+
+DEPENDENCIES:
+  - EduLogic (from `Modules/EduLogic/EduLogic.podspec`)
+  - EduUI (from `Modules/EduUI/EduUI.podspec`)
+  - NERecordPlay (from `Modules/NERecordPlay/NERecordPlay.podspec`)
+  - NERecordPlayUI (from `Modules/NERecordPlayUI/NERecordPlayUI.podspec`)
+  - NEScreenShareBroadcaster (~> 0.1.0)
+  - NEWhiteBoard (from `Modules/NEWhiteBoard/NEWhiteBoard.podspec`)
+
+SPEC REPOS:
+  trunk:
+    - AFNetworking
+    - Alamofire
+    - MJRefresh
+    - NEDyldYuv
+    - NELivePlayer
+    - NERtcSDK
+    - NEScreenShareBroadcaster
+    - NEScreenShareHost
+    - NIMSDK_LITE
+    - SDWebImage
+    - YXAlog_iOS
+    - YYModel
+
+EXTERNAL SOURCES:
+  EduLogic:
+    :path: Modules/EduLogic/EduLogic.podspec
+  EduUI:
+    :path: Modules/EduUI/EduUI.podspec
+  NERecordPlay:
+    :path: Modules/NERecordPlay/NERecordPlay.podspec
+  NERecordPlayUI:
+    :path: Modules/NERecordPlayUI/NERecordPlayUI.podspec
+  NEWhiteBoard:
+    :path: Modules/NEWhiteBoard/NEWhiteBoard.podspec
+
+SPEC CHECKSUMS:
+  AFNetworking: 7864c38297c79aaca1500c33288e429c3451fdce
+  Alamofire: f3b09a368f1582ab751b3fff5460276e0d2cf5c9
+  EduLogic: cd2ec81c3cf7a074f5ded80f763a197a3c558004
+  EduUI: 6b16d7e429c09eb600f59bf99542e1be3b4f6158
+  MJRefresh: fdf5e979eb406a0341468932d1dfc8b7f9fce961
+  NEDyldYuv: 6b47adff16186768bf2f8b165697fdee8e94d7ac
+  NELivePlayer: d334038ae09338e8fae578d2d3d08749ecae5b62
+  NERecordPlay: 4083549fa4610742519240f004d7856ea5be1236
+  NERecordPlayUI: f1f951f373e5770f10c21483eadea35a19cca806
+  NERtcSDK: b98a8937959ef4781ec31e0dee44dc483965fc85
+  NEScreenShareBroadcaster: 6048110e58028d38c01b4fa70c478b530dbe1635
+  NEScreenShareHost: be9b9fe5d0d264111e0e44956ad7c90b451951c0
+  NEWhiteBoard: fd5013962c9c7c3e9ee4d690b4c9be27ecc58eec
+  NIMSDK_LITE: b7f32bacdb5d0fafa3f7927c75325e3c6f2ba288
+  SDWebImage: a7f831e1a65eb5e285e3fb046a23fcfbf08e696d
+  YXAlog_iOS: 3948d6f7c0173c9dc0117a9445fc9411f97b314e
+  YYModel: 2a7fdd96aaa4b86a824e26d0c517de8928c04b30
+
+PODFILE CHECKSUM: 9618f927885644f08c956112482b72ce3cd83856
+
+COCOAPODS: 1.11.3

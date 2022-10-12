@@ -10,9 +10,10 @@
 #import "NMCWebView.h"
 #import "NMCMessageHandlerDispatch.h"
 #import "NMCWebViewHeader.h"
+#import <Photos/Photos.h>
 
+NSString * const NMCWhiteboardURL = @"https://yiyong.netease.im/yiyong-static/statics/whiteboard-webview/webview.html";
 
-NSString * const NMCWhiteboardURL = @"https://yiyong-xedu-v2-static.netease.im/whiteboard-webview/g2/webview.html";
 // 白板私有化测试地址
 //NSString * const NMCWhiteboardURL = @"https://yunxinent-demo.netease.im/xedu/webview/g2/webview_vconsole.html";
 
@@ -117,7 +118,11 @@ NSString * const NMCWhiteboardURL = @"https://yiyong-xedu-v2-static.netease.im/w
 {
     [self performJSSelector:@"enableDraw" withObject:@"drawPlugin" parameter:@{@"param1":@(enable)}];
 }
-
+- (void)setAppConfigWithPresetId:(NSNumber *)presetId {
+    [self performJSSelector:@"setAppConfig" withObject:@"drawPlugin" parameter:@{
+        @"params": @[@{ @"presetId": presetId }]
+    }];
+}
 - (void)setWhiteboardColor:(NSString *)color
 {
     [self performJSSelector:@"setColor" withObject:@"drawPlugin" parameter:@{@"param1":color}];
@@ -259,7 +264,28 @@ NSString * const NMCWhiteboardURL = @"https://yiyong-xedu-v2-static.netease.im/w
 {
     NSString *requestString = navigationAction.request.URL.absoluteString;
     NSLog(@"[WK] decidePolicyForNavigationAction %@",requestString);
-    decisionHandler(WKNavigationActionPolicyAllow);
+    // 判断是否为IMG
+    if (navigationAction.navigationType == WKNavigationTypeLinkActivated &&
+       [requestString rangeOfString:@"data:image/png;base64,"].location != NSNotFound) {
+        NSString *dataString = [requestString stringByReplacingOccurrencesOfString:@"data:image/png;base64," withString:@""];
+        NSData *imageData = [[NSData alloc]initWithBase64EncodedString:dataString options:NSDataBase64DecodingIgnoreUnknownCharacters];
+        UIImage *image = [UIImage imageWithData:imageData];
+        //TODO:
+        //save image
+        [[PHPhotoLibrary sharedPhotoLibrary] performChanges:^{
+            [PHAssetChangeRequest creationRequestForAssetFromImage:image];
+        } completionHandler:^(BOOL success, NSError * _Nullable error) {
+            if (success) {
+                NSLog(@"保存成功");
+            } else {
+                NSLog(@"保存失败");
+            }
+        }];
+        
+        decisionHandler(WKNavigationActionPolicyCancel);
+    } else {
+        decisionHandler(WKNavigationActionPolicyAllow);
+    }
 }
 
 - (void)webView:(WKWebView *)webView didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential * _Nullable credential))completionHandler {
