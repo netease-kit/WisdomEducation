@@ -35,5 +35,6 @@ module.exports = {
     '@typescript-eslint/indent': 0,
     "indent": ["error", 2, { "SwitchCase": 1 }],
     // "semi": [2, "always"],
+    "react/no-unknown-property": ['error', { ignore: ['x-webkit-airplay', 'webkit-playsinline'] }]
   }
 };

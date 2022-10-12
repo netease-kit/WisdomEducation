@@ -44,7 +44,7 @@ export class WhiteBoardStore {
   }
 
   /**
-   * @description: 初始化登录白板
+   * @description: initialize a whiteboard instance
    * @param {WhiteBoardInitOptions} options
    * @return {*}
    */
@@ -54,31 +54,31 @@ export class WhiteBoardStore {
       await this.whiteboard.initWhiteboard(options)
       this.wbInstance = this.whiteboard.whiteboard;
     } catch (error) {
-      logger.error('白板初始化错误', error)
+      logger.error('An error occurred while initializing a whiteboard instance', error)
     }
   }
 
   /**
-   * @description: 加入白板
+   * @description:Join a whiteboard room
    * @param {WhiteJoinRoomOtions} options
    * @return {*}
    */
   @action
   public async joinRoom(options: WhiteJoinRoomOtions): Promise<void> {
     if (!this.wbInstance) {
-      logger.error('白板尚未初始化');
+      logger.error('The whiteboard instance is not initialized');
       return;
     }
     try {
       await this.whiteboard.joinRoom(options);
       this.drawPlugin = this.whiteboard.drawPlugin;
     } catch (error) {
-      logger.error('加入白板错误', error);
+      logger.error('An error occurred while joining the whiteboard room', error);
     }
   }
 
   /**
-   * @description: 设置白板操作权限
+   * @description: Set whiteboard permissions
    * @param {boolean} enbale
    * @param {WhiteBoardSetEnableOtions} options
    * @return {*}
@@ -86,46 +86,47 @@ export class WhiteBoardStore {
   @action
   public async setEnableDraw(enbale: boolean, options?: WhiteBoardSetEnableOtions): Promise<void> {
     if (!this.drawPlugin) {
-      logger.log('白板尚未登录');
+      logger.log('You have not logged on to the whiteboard');
       return;
     }
-    logger.log('设置白板-store', enbale);
+    logger.log('Set whiteboard-store', enbale);
     await this.whiteboard.setEnableDraw(enbale, options);
   }
 
   /**
-   * @description: 设置渲染dom
+   * @description: Set rendering DOM
    * @param {HTMLElement} dom
    * @return {*}
    */
   @action
   public async setContainer(dom: HTMLElement): Promise<void> {
     if (!this.drawPlugin) {
-      logger.log('白板尚未登录');
+      logger.log('You have not logged on to the whiteboard');
       return;
     }
     await this.whiteboard.setContainer(dom);
-    logger.log('设置白板Container');
+    logger.log('Set the whiteboard container');
   }
 
   /**
-   * @description: 设置工具栏dom
+   * @description: Set the toolbar DOM
    * @param {HTMLElement} dom
+   * @param {boolean} enableUploadMedia
    * @return {*}
    */
   @action
-  public async setToolCollection(dom?: HTMLElement): Promise<void> {
+  public async setToolCollection(dom?: HTMLElement, enableUploadMedia?: boolean): Promise<void> {
     if (!this.drawPlugin) {
-      logger.log('白板尚未登录');
+      logger.log('You have not logged on to the whiteboard');
       return;
     }
-    await this.whiteboard.setToolCollection(dom);
+    await this.whiteboard.setToolCollection(dom, enableUploadMedia);
     this.toolCollection = this.whiteboard.toolCollection;
-    logger.log('设置白板工具栏');
+    logger.log('Set the whiteboard toolbar');
   }
 
   /**
-   * @description: 获取白板流
+   * @description: Get a whiteboard stream
    * @param {*}
    * @return {*}
    */
@@ -136,7 +137,7 @@ export class WhiteBoardStore {
 
 
   /**
-   * @description: 更新白板流参数
+   * @description: Update parameters of whiteboard streams
    * @param {*}
    * @return {*}
    */
@@ -149,7 +150,7 @@ export class WhiteBoardStore {
   }
 
   /**
-   * @description: 白板销毁
+   * @description: Destroy a whiteboard instance
    * @param {*}
    * @return {*}
    */
@@ -161,6 +162,6 @@ export class WhiteBoardStore {
     this.drawPlugin = null;
     this.wbInstance = null;
     this.setWbSetFinish(false)
-    logger.log('白板销毁');
+    logger.log('The whiteboard is destroyed');
   }
 }

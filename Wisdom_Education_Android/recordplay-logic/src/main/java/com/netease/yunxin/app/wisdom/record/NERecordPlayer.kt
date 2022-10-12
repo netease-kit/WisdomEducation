@@ -137,7 +137,8 @@ class NERecordPlayer(var recordOptions: NERecordOptions) : NERecordUIListener, I
      * @return
      */
     fun getVideoList(): List<NERecordItem> {
-        return recordOptions.recordData.recordItemList.filter { it.type == NERecordItem.TYPE_VIDEO && !it.subStream }
+        return recordOptions.recordData.recordItemList.filter { (it.type == NERecordItem.TYPE_VIDEO || it.type == NERecordItem.TYPE_AUDIO)
+                && !it.subStream }
     }
 
     /**

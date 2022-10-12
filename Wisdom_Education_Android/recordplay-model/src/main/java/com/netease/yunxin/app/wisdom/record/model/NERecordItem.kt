@@ -29,6 +29,7 @@ data class NERecordItem(
     companion object {
         const val TYPE_WHITEBOARD = "gz"
         const val TYPE_VIDEO = "mp4"
+        const val TYPE_AUDIO = "aac"
     }
 
     fun isHost(): Boolean {

@@ -52,6 +52,7 @@ export interface UserComponentData {
   canScreenShare?: boolean;
   wbDrawEnable?: boolean;
   avHandsUp?: number | null;
+  isStudent?: boolean;
 }
 
 export enum NIMNotifyTypes {
@@ -72,7 +73,7 @@ export const Authorization = `Basic ${process.env.REACT_APP_SDK_AUTHORIZATION}`;
 
 export const isDev = process.env.REACT_APP_ENV === "development";
 export const isElectron = process.env.REACT_APP_PLATFORM === "electron";
-
+console.log("isElectron", isElectron)
 export enum PlatForms {
   mac = "darwin",
   linux = "linux",

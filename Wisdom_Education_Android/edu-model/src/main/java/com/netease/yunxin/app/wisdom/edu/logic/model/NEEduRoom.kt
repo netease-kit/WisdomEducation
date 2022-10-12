@@ -58,6 +58,10 @@ class NEEduRoom(
     fun pullRtsUrl(): String? {
         return live()["pullRtsUrl"]?.toString()
     }
+
+    fun pushUrl(): String? {
+        return live()["pushUrl"]?.toString()
+    }
 }
 
 class NEEduRoomStates(

@@ -25,17 +25,17 @@ export class RecordStore {
   @observable
   _store: IpStore = { videoTracks: [], wbTracks: [], events: [], record: [], screenTracks: [], sceneType: SceneTypes.ONE_TO_ONE };
   /**
-   * uid到name，video, event的查询方法
-   * 传递给Replay时，uname要拼接到video tracks，wb tracks中,
+   * Query method using uid, name，video, and event
+   * To pass in Replay, uname must be concatenated with video tracks and wb tracks.
    */
   @observable
   uidToMember: Map<string, any> = new Map();
 
-  // 转码是否生成
+  // Check if transcoding is completed
   @observable
   isValid = true;
 
-  // 回放进度条初始化的位置
+  // The initial position for playback progress
   @observable
   seekToTime = 0;
 
@@ -50,7 +50,7 @@ export class RecordStore {
   }
 
   /**
-   * @description: 初始化
+   * @description: Initialization
    * @param {string | number} roomUuid
    * @param {string | number} rtcCid
    * @return {*}
@@ -75,13 +75,13 @@ export class RecordStore {
       uiStore.setLoading(false)
 
     } catch (error) {
-      logger.error('初始化错误', error)
+      logger.error('An error occurred while initializing', error)
       uiStore.setLoading(false)
     }
   }
 
   /**
-  * @description: 将数据转换成组件需要的数据
+  * @description: Convert data to a format required by the component
   * @param {object} data
   * @return {*}
   */
@@ -138,7 +138,10 @@ export class RecordStore {
             end: record.startTime + (item.duration || 1) * 1000
           })
         } else {
-          const userLeaveEvent = rawEvents.find(ele => ele.roomUid == item.roomUid && ele.type == 2)
+          // fix: 学生上台后下台，再次上台，由于中间有remove事件，后续的流未正常播放
+          const tempEvents = rawEvents.concat([])
+          tempEvents.reverse()
+          const userLeaveEvent = tempEvents.find(ele => ele.roomUid == item.roomUid && ele.type == 2)
           videoTracks.push({
             id: item.roomUid, // ?
             userId: item.roomUid,
@@ -146,7 +149,7 @@ export class RecordStore {
             role: item.role || intl.get('未知身份'),
             url: item.url,
             type: 'video',
-            start: item.timestamp, // 学生视频开始时间以系统生成时间为准
+            start: item.timestamp, // Start time on student clients must be calibrated with the system time
             subStream: item.subStream,
             end: userLeaveEvent ? userLeaveEvent.timestamp : record.stopTime,
             // end: item.timestamp + (item.duration || 1) * 1000
@@ -168,11 +171,15 @@ export class RecordStore {
     }
 
     for (const event of rawEvents) {
-      events.push({
-        userId: event.roomUid,
-        action: this.checkEventType(event.type, sceneType),
-        timestamp: event.timestamp
-      })
+      // 只处理课堂开始到结束的事件
+      if (event.timestamp >= record.startTime && event.timestamp <= record.stopTime) {
+        events.push({
+          userId: event.roomUid,
+          action: this.checkEventType(event.type, sceneType),
+          type: event.type,
+          timestamp: event.timestamp
+        })
+      }
     }
     console.log('events', events);
 
@@ -182,6 +189,22 @@ export class RecordStore {
 
   }
 
+  /**
+   * 
+   * @param type 成员操作事件类型
+   * 1:成员进入房间
+   * 2:成员离开房间
+   * 3:成员打开音频
+   * 4:成员关闭音频
+   * 5:成员打开视频
+   * 6:成员关闭视频
+   * 7:成员打开辅流
+   * 8:成员关闭辅流
+   * 9:互动大班课学生上台
+   * 10:互动大班课学生下台
+   * @param sceneType 课程类型
+   * @returns 
+   */
   private checkEventType = (type: number, sceneType: SceneTypes) => {
     let result: "show" | "hide" | "showScreen" | "remove";
     switch (true) {
@@ -201,7 +224,8 @@ export class RecordStore {
         result = 'remove';
         break;
       default:
-        if (SceneTypes.BIG === sceneType && ![4, 6].includes(type)) {
+        // fix: 互动大班课停止共享type为8，应该解析为'hide'
+        if (SceneTypes.BIG === sceneType && ![4, 6, 8].includes(type)) {
           result = 'remove';
         } else {
           result = 'hide';

@@ -152,7 +152,7 @@ class MainFragment : Fragment(R.layout.main_fragment) {
             sceneType!!,
             roleType,
             if (isLiveClass) NEEduConfig(NEEduResource(chatroom = PreferenceUtil.enableChatRoom, live = true, rtc = false))
-            else NEEduConfig(NEEduResource(chatroom = PreferenceUtil.enableChatRoom))
+            else NEEduConfig(NEEduResource(chatroom = PreferenceUtil.enableChatRoom, live = PreferenceUtil.enableHostLive, rtc = true))
         )
         NEEduUiKit.init(uuid, token).observeOnce(viewLifecycleOwner, initObserver)
     }

@@ -106,7 +106,7 @@ const Footer: React.FC = observer(() => {
   useEffect(() => {
     return () => {
       classTimeStop();
-      // roomStore.setRoomState('课程未开始');
+      // roomStore.setRoomState('Class not started');
     }
   }, [])
 
@@ -134,7 +134,7 @@ const Footer: React.FC = observer(() => {
       const hour = Math.floor(seconds / 3600);
       const minute = Math.floor(seconds / 60) - hour * 60;
       const second = seconds - hour * 3600 - minute * 60;
-      // 不足1h时只展示分秒，否则展示时分秒 
+      // Display mm:ss if less than 1 hour. Otherwise, display HH:mm:ss.
       let time = hour > 0 ? `(${hour < 10 ? `0${hour}` : `${hour}`} : `: `(`; 
       time += `${minute < 10 ? `0${minute}` : `${minute}`} : ${second < 10 ? `0${second}` : second})`;
       roomStore.setPrevToNowTime(time);
@@ -158,12 +158,16 @@ const Footer: React.FC = observer(() => {
 
   const handleModalOk = async () => {
     const { roomUuid } = roomInfo;
+    const joinSettingInfo = JSON.parse(localStorage.getItem('room-setting') || '{}');
     if (isHost) {
       setModalVisible(false);
       switch (true) {
         case roomStep === StepTypes.init && !isEleClose:
           await roomStore.startClassRoom();
           setRoomStep(StepTypes.isStart)
+          if (joinSettingInfo.teaPlugFlow && Number(roomInfo.sceneType) !== RoomTypes.bigClasLive) {
+            roomStore.startPushStream()
+          }
           break;
         case roomStep === StepTypes.isStart || isEleClose:
           try {
@@ -206,7 +210,7 @@ const Footer: React.FC = observer(() => {
     //     roomStore.setPrevToNowTime(time);
     //   }, 1000);
     //   await roomStore.startClassRoom();
-    //   await roomStore.setRoomState('正在上课');
+    //   await roomStore.setRoomState('Streaming');
     // }
     // if (isEnd && isHost) {
     //   await roomStore.endClassRoom();
@@ -214,7 +218,7 @@ const Footer: React.FC = observer(() => {
     //   history.push('/endCourse');
     //   clearInterval(startInterval);
     //   roomStore.setPrevToNowTime('');
-    //   roomStore.setRoomState('课程结束');
+    //   roomStore.setRoomState('Class completed');
     // }
     // if (!isEnd && isHost) {
     //   clearInterval(startInterval);
@@ -244,7 +248,7 @@ const Footer: React.FC = observer(() => {
 
   console.log('roomStore.channelClosed', roomStore.channelClosed);
 
-  // RTC受到消息需要结束
+  // The chat room received messages and needs to be closed
   const channelClosed = async () => {
     await roomStore.leave();
     history.push('/');
@@ -268,15 +272,15 @@ const Footer: React.FC = observer(() => {
       <div className="roomBtns">
         {/* {isHost && <Button type="ghost" onClick={handleEndModal}>
           {
-            roomPause === PauseTypes.isPause? '继续上课' : '暂离课堂'
+            roomPause === PauseTypes.isPause? 'Resume streaming' : 'Temporarily off'
           }
         </Button>} */}
         {/* {
-          isHost && <Button type="ghost" onClick={handleEndModal}>离开课堂</Button>
+          isHost && <Button type="ghost" onClick={handleEndModal}>Leave Class</Button>
         } */}
-        {/* {(roomStore.finishBtnShow && !isHost) && <Button type="ghost" onClick={handleFinishModal}>下讲台</Button>} */}
+        {/* {(roomStore.finishBtnShow && !isHost) && <Button type="ghost" onClick={handleFinishModal}>Move to audience</Button>} */}
         {/* {
-          isHost && <Button type="ghost" onClick={handleLeaveModal}>离开课堂</Button>
+          isHost && <Button type="ghost" onClick={handleLeaveModal}>Leave Class</Button>
         } */}
         {
 

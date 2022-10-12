@@ -26,7 +26,7 @@ export class AppStore {
   constructor() {
     makeObservable(this);
     this.load();
-    // roomInfo改变会更新stroage
+    // if roomInfo changes, update storage
     autorun(() => {
       const data = toJS(this)
       GlobalStorage.save("room", {
@@ -48,7 +48,7 @@ export class AppStore {
   }
 
   /**
-   * @description: 每次加载会获取一遍roomInfo
+   * @description: Get the roomInfo after each loading
    * @param {*}
    * @return {*}
    */
@@ -60,7 +60,7 @@ export class AppStore {
   }
 
   /**
-   * @description: 重置roomInfo
+   * @description: reset roomInfo
    * @param {*}
    * @return {*}
    */
@@ -69,7 +69,7 @@ export class AppStore {
     this._roomInfo = {}
   }
   /**
-   * @description: 设置roomInfo
+   * @description: Set roomInfo
    * @param {*}
    * @return {*}
    */

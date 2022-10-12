@@ -222,7 +222,7 @@ const DeviceList: React.FC = observer(() => {
                       uiStore.showToast(`${intl.get("当前选择")} ${label}`);
                     })
                     .catch((e) => {
-                      logger.log("切换扬声器失败", e);
+                      logger.log("Failed to switch the speaker", e);
                     });
                 },
               },
@@ -251,7 +251,7 @@ const DeviceList: React.FC = observer(() => {
                       uiStore.showToast(`${intl.get("当前选择")} ${label}`);
                     })
                     .catch((e) => {
-                      logger.log("切换麦克风失败", e);
+                      logger.log("Failed to switch the microphone", e);
                     });
                 },
               },
@@ -278,7 +278,7 @@ const DeviceList: React.FC = observer(() => {
                       uiStore.showToast(`${intl.get("当前选择")} ${label}`);
                     })
                     .catch((e) => {
-                      logger.log("切换摄像头失败", e);
+                      logger.log("Failed to switch the camera", e);
                     });
                 },
               },
@@ -332,7 +332,7 @@ const DeviceList: React.FC = observer(() => {
           const speakerItem = speakers?.find((item) => item.deviceId === speakerIdSelect)
           const microItem = microphones?.find((item) => item.deviceId === microphoneSelect)
           const cameraItem = cameras?.find((item) => item.deviceId === cameraSelect)
-          // 需要异常提示的情况：插入设备或拔掉正在使用的设备（包括拔掉后可能发生自动切换的情况）
+          // Exception indication required: Plug or unplug a device in use. Auto switch may take place.
           if (
             (cameras.length > originCameras.length) || 
             (cameraSelect && !cameraItem) || 
@@ -346,7 +346,7 @@ const DeviceList: React.FC = observer(() => {
             (microLabel && microItem?.label !== microLabel)
           ) {
             message.push(intl.get("音频输入设备"));
-            // 麦克风移出default变更时，需要手动重连一下
+            // If the microphone is unplugged and default changes, select again
             if ((microLabel && microItem?.label !== microLabel)) {
               const tempMicro = speakerIdSelect || speakers[0]?.deviceId
               tempMicro && ( roomStore.selectAudio(tempMicro))
@@ -361,7 +361,7 @@ const DeviceList: React.FC = observer(() => {
           }
           if (message.length > 0) {
             uiStore.showToast(message.join("、") + intl.get("异常，请重新进行设备选择和检测！"));
-            logger.log("检测到有设备插拔：",message);
+            logger.log("Device plugging detected: ",message);
           }
           setListType(null);
           setOriginCameras(cameras);

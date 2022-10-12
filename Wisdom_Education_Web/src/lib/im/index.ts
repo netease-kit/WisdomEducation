@@ -8,7 +8,7 @@ import { EnhancedEventEmitter } from '../event';
 import logger from '../logger';
 import nim_server_conf from './nim_server_conf.json';
 const needPrivate = process.env.REACT_APP_SDK_IM_PRIVATE;
-needPrivate === "true" && logger.log("IM私有化配置", nim_server_conf);
+needPrivate === "true" && logger.log("IM on-premises deployment configuration", nim_server_conf);
 
 interface loginOptions {
   imAppkey: string;
@@ -27,7 +27,7 @@ export class NENim extends EnhancedEventEmitter {
   }
 
   /**
-   * @description: 抛出IM的实例化后的对象
+   * @description: return the instance of the object
    * @param {*}
    * @return {*}
    */
@@ -36,13 +36,13 @@ export class NENim extends EnhancedEventEmitter {
   }
 
   /**
-   * @description: 登录im并获取实例
+   * @description: Log on to IM and get the instance
    * @param {loginOptions} options
    * @return {*}
    */
   public async loginImServer(options: loginOptions): Promise<any> {
     return new Promise((resolve, reject) => {
-      // TODO 离开后销毁IM实例
+      // 
       if (this._nim) {
         resolve(null)
       }
@@ -52,7 +52,7 @@ export class NENim extends EnhancedEventEmitter {
         appKey: options.imAppkey,
         account: options.imAccid,
         token: options.imToken,
-        // 关闭IM中无用的信息同步
+        // Turn off data synchronization in IM
         syncRelations: false,
         syncFriends: false,
         syncFriendUsers: false,
@@ -60,23 +60,23 @@ export class NENim extends EnhancedEventEmitter {
         syncSuperTeams: false,
         syncRoamingMsgs: false,
         syncSuperTeamRoamingMsgs: false,
-        privateConf: needPrivate === "true" ? nim_server_conf : {}, // 私有化配置
+        privateConf: needPrivate === "true" ? nim_server_conf : {}, // On-premises deployment configuration
         ...options.NIMconf,
         onconnect: () => {
-          logger.debug('im连接认证成功...');
+          logger.debug('IM authentication success...');
           this.emit('im-connect')
         },
         onsyncdone: () => {
-          logger.debug('im登录成功...')
+          logger.debug('IM login success...')
           this.repeatTimes = 0;
           resolve(null)
         },
         ondisconnect: (error: any) => {
-          logger.error('IM断开连接：', error);
+          logger.error('IM disconnected: ', error);
           if (this.repeatTimes <= 5) {
             setTimeout(() => {
               this.repeatTimes += 1;
-              logger.error(`IM断开, 尝试重连第${this.repeatTimes}次`);
+              logger.error(`IM disconnected, retries: ${this.repeatTimes}`);
               this.connect();
             }, 5000);
           }
@@ -93,12 +93,12 @@ export class NENim extends EnhancedEventEmitter {
     })
   }
   /**
-   * @description: 消息通知
+   * @description: Notification message
    * @param {any} data
    * @return {*}
    */
   private onNotify(data: any): void{
-    logger.debug('IM-收到服务器通知')
+    logger.debug('IM-receive notifications from servers')
     if (data && data.body) {
       data.body = JSON.parse(data.body)
     }
@@ -106,7 +106,7 @@ export class NENim extends EnhancedEventEmitter {
   }
 
   /**
-   * @description: 透传请求
+   * @description: request sent in pass-through mode
    * @param {string} path
    * @param {any} body
    * @return {*}
@@ -131,7 +131,7 @@ export class NENim extends EnhancedEventEmitter {
   }
 
   /**
-   * @description: 登出IM
+   * @description: Log out IM
    * @param {*}
    * @return {*}
    */
@@ -143,7 +143,7 @@ export class NENim extends EnhancedEventEmitter {
   }
 
   /**
-   * @description: 登录
+   * @description: Log in
    * @param {*}
    * @return {*}
    */

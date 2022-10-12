@@ -8,22 +8,15 @@
 
 - 在云信控制台创建应用，并获取对应的AppKey。
 - AUTHORIZATION： 请联系[联系云信商务经理](https://yunxin.163.com/bizQQWPA.html)
-- 为此应用开通以下相关服务与抄送：
+- 为此应用开通以下相关服务：
   - 产品服务：音视频通话 2.0、IM 专业版、聊天室、信令、互动白板、云端录制、点播。
   - 产品功能：
-    - 音视频通话 2.0 的云端录制和抄送功能。
+    - 音视频通话 2.0 的云端录制功能。
     - 互动白板的文档转码和云端录制功能。
-  - 音视频通话 2.0 抄送，抄送类型如下：
-    - 1-房间启动
-    - 2-房间结束
-    - 3-房间录制文件下载信息抄送
-    - 4-用户进入房间
-    - 5-用户离开房间
-    - 8-房间时长抄送。
 
-> 开通相关产品与抄送，请联系[联系云信商务经理](https://yunxin.163.com/bizQQWPA.html)
+> 开通相关产品，请联系[联系云信商务经理](https://yunxin.163.com/bizQQWPA.html)
 >
-> 如果仅需要本地跑通示例项目，简单体验智慧云课堂，您可以使用[智慧云课堂体验账号](https://github.com/netease-kit/WisdomEducation/tree/main/Wisdom_Education_Docs/智慧云课堂体验账号.md)。体验账号已开通相关权限与抄送，课堂时长限制为 30 分钟。
+> 如果仅需要本地跑通示例项目，简单体验智慧云课堂，您可以使用[智慧云课堂体验账号](https://github.com/netease-kit/WisdomEducation/tree/main/Wisdom_Education_Docs/智慧云课堂体验账号.md)。体验账号已开通相关权限，课堂时长限制为 30 分钟。
 > 
 > 体验账号仅供开发者体验与测试，请勿在线上环境中使用。
 
@@ -34,6 +27,7 @@
 
 - 安全环境：https 环境或者本地连接 localhost/127.0.0.1 环境。
 - 浏览器：Chrome 74 及以上版本、Safari 12 及以上版本。
+- Node：推荐v14.16.0，建议使用nvm进行node版本管理。
 
 ## 示例项目结构
 
@@ -112,7 +106,7 @@
     ```
     cd Wisdom_Educaiton_Web
     npm install               // 安装依赖
-    npm run start:ele         // 开发环境
+    npm run start-ele         // 开发环境
     npm run start:ele-pro     // 线上环境
     ```
 4. 构建项目。

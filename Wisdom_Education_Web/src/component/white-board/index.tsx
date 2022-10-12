@@ -20,8 +20,9 @@ const WhiteBoard:React.FC = observer(() => {
     if (joinFinish && wbRef.current) {
       const { localUserInfo: { role }, roomInfo: { sceneType } } = roomStore;
       const enbaleDraw = role === RoleTypes.host || Number(sceneType) === RoomTypes.oneToOne;
+      const enableUploadMedia = Number(sceneType) !== RoomTypes.bigClasLive;
       whiteBoardStore.setContainer(wbRef.current);
-      whiteBoardStore.setToolCollection(wbRef.current)
+      whiteBoardStore.setToolCollection(wbRef.current, enableUploadMedia)
       roomStore.setLocalWbDrawEnable(enbaleDraw);
       whiteBoardStore.setEnableDraw(enbaleDraw);
       whiteBoardStore.setWbSetFinish(true);
@@ -39,7 +40,7 @@ const WhiteBoard:React.FC = observer(() => {
       //       })
       //       whiteBoardStore.setEnableDraw(enbaleDraw);
       //     }).catch((e) => {
-      //       logger.log('白板加入异常', e)
+      //       logger.log('An error occurred while joining the whiteboard', e)
       //     });
       //   } else {
       //     whiteBoardStore.joinRoom({
@@ -47,7 +48,7 @@ const WhiteBoard:React.FC = observer(() => {
       //     }).then(() => {
       //       whiteBoardStore.setEnableDraw(enbaleDraw);
       //     }).catch((e) => {
-      //       logger.log('白板加入异常', e)
+      //       logger.log('An error occurred while joining the whiteboard', e)
       //     });
       //   }
       // }
@@ -62,7 +63,7 @@ const WhiteBoard:React.FC = observer(() => {
   }, [whiteBoardStore])
 
   useEffect(() => {
-    logger.log('设置白板-index.tsx', localWbDrawEnable, whiteBoardStore.wbInstance);
+    logger.log('Set whiteboard-index.tsx', localWbDrawEnable, whiteBoardStore.wbInstance);
     if (whiteBoardStore.wbInstance) {
       whiteBoardStore.setEnableDraw(localWbDrawEnable);
     }

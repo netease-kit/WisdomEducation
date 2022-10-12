@@ -40,7 +40,7 @@ const DeviceCheck: React.FC<IProps> = ({
   cameraId,
   microphoneId,
   speakerId,
-  okText = '确定',
+  okText = 'OK',
   onOk,
   auidoUrl = 'https://app.yunxin.163.com/webdemo/audio/rain.mp3',
   onCameraChange,
@@ -117,12 +117,12 @@ const DeviceCheck: React.FC<IProps> = ({
             setOriginCameras(_cameras)
           } 
           if (!shallowEqual(_microphones, originMicrophones)) {
-            console.log("testMic停止")
+            console.log("testMic stops")
             testMic && handleMicTest()
             setOriginMicrophones(_microphones)
           } 
           if (!shallowEqual(_speakers, originSpeakers)) {
-            console.log("testSpeaker停止")
+            console.log("testSpeaker stops")
             testSpeaker && handleSpeakerTest()
             setOriginSpeakers(_speakers)
           }      
@@ -390,7 +390,7 @@ const DeviceCheck: React.FC<IProps> = ({
                 if (audioRef.current) {
                   audioRef.current.volume = volume / 100
                 }
-                console.log("设置扬声器输出音量",volume)
+                console.log("Set the ouput volume of the speaker",volume)
                 onAudioVolumeChange?.(volume)
               }}
               disabled={!speakerId || originSpeakers.length===0}
