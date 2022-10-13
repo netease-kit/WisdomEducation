@@ -263,6 +263,59 @@
 - Body: None
 #### Response:
 - Body: None
+### 房间录制记录查询
+
+#### Request:
+- Url: https://{Host}/apps/v2/room-media?roomArchiveId={roomArchiveId}
+- HttpMethod: GET
+- Auth: CHECKSUM
+- Url请求参数:
+
+| 参数名称           | 	是否必选| 	描述     |
+|----------------|----|---------|
+| roomArchiveId	 | 必选| 	房间唯一Id |
+#### Response:
+- Body:
+
+  | 参数名称 | 	类型|描述|
+  |----|-----------|----|
+  | fileInfos| List| 录制文件信息列表。|
+  | fileInfos.vid| String| 云端录制文件的标识。|
+  | fileInfos.objectName| String| 云端录制生成的文件名。|
+  | fileInfos.url| String| 云端录制文件的对应地址，获取此地址后可以通过播放器 SDK 播放。 |
+  | fileInfos.createTime|Long| 云端录制文件的生成时间。 |
+- Sample
+```json
+{
+  "code": 0,
+  "cost": "91ms",
+  "requestId": "9c04d29dd20c4b9ca4e79f9018c1de54",
+  "msg": "Success",
+  "data": {
+    "fileInfos": [
+      {
+        "vid": 4934894395,
+        "objectName": "19237-1345278913991800-1665455883302-0.mp4",
+        "url": "http://sample.domain/jdvodwzsxohf4/19237-1345278913991800-1665455883302-0.mp4",
+        "createTime": 1665455897302
+      },
+      {
+        "vid": 4934894396,
+        "objectName": "19237-1345278913991800-1665455883302-0-substream.mp4",
+        "url": "http://sample.domain/jdvodwzsxohf4/19237-1345278913991800-1665455883302-0-substream.mp4",
+        "createTime": 1665455897302
+      },
+      {
+        "vid": 4934892596,
+        "objectName": "0-1345273313871842-1665455897302-0-mix.mp4",
+        "url": "http://sample.domain/jdvodwzsxohf4/19237-1345278913991800-1665455883302-0-mix.mp4",
+        "createTime": 1665455897302
+      }
+    ]
+  },
+  "ts": 1665475539147
+}
+```
 
 ### 直播流名查询
 
