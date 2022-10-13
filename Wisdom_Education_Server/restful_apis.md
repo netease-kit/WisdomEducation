@@ -281,8 +281,8 @@
   |----|-----------|----|
   | fileInfos| List| 录制文件信息列表。|
   | fileInfos.vid| String| 云端录制文件的标识。|
-  | fileInfos.objectName| String| 云端录制生成的文件名。|
-  | fileInfos.url| String| 云端录制文件的对应地址，获取此地址后可以通过播放器 SDK 播放。 |
+  | fileInfos.objectName| String| <ul><li>云端录制生成的文件名。混合录制文件的objectName 带有"-mix"标记，不带则是单人录制文件。辅流录制文件带有"-substream"标记<br/><li>文件的类型，即文件扩展名包括：<ul><li>aac：实时音频录制文件。<li>mp4：实时视频录制文件。<li>flv：互动直播视频录制文件。<li>gz: 白板录制文件|
+  | fileInfos.url| String| 云端录制文件的对应地址，获取此地址后可以通过播放器 SDK 播放。 云端录制文件的对应地址，获取此地址后可以通过播放器 SDK 播放。   <note type="note">如果点播域名开启了 URL 鉴权，您需要手工拼接防盗链 URL ，即在原始地址的最后手工增加 wsSecret 和 wsTime 相关的值，否则用户会无法访问相应的资源。拼接防盗链 URL 的方法请参见<a href="https://doc.yunxin.163.com/jY3NDM4Nzc/docs/DM5MzI2OTI?platform=server#url-鉴权的功能原理" target="_blank">防盗链URL构成</a>。</note> |
   | fileInfos.createTime|Long| 云端录制文件的生成时间。 |
 - Sample
 ```json
