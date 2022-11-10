@@ -37,6 +37,8 @@ typedef enum : NSUInteger {
     WhiteboardItemNamePageBoardInfo,
     WhiteboardItemNamePreview,
     WhiteboardItemNameMore,
+    WhiteboardItemNameUpload,
+    WhiteboardItemNameLog,
 } WhiteboardItemName;
 
 extern const NSString * WhiteboardPositionTopRight;
@@ -51,6 +53,11 @@ extern const NSString * WhiteboardPositionTopLeft;
 //
 @property (nonatomic , assign, readonly) WhiteboardItemName  itemName;
 @property (nonatomic , copy) NSArray             <WhiteboardItem *> * subItems;
+
+@property(nonatomic, assign) BOOL supportPptToH5;
+@property(nonatomic, assign) BOOL supportDocToPic;
+@property(nonatomic, assign) BOOL supportUploadMedia;
+@property(nonatomic, assign) BOOL supportTransMedia;
 
 - (instancetype)initWithName:(WhiteboardItemName)name;
 
