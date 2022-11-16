@@ -8,7 +8,7 @@ import { Button, Tooltip, Modal, Checkbox, Tabs, Input, message } from 'antd';
 import VirtualList from 'rc-virtual-list'
 import './index.less';
 import logger from '@/lib/logger';
-import { HandsUpTypes, RoleTypes, RoomTypes, UserComponentData } from '@/config';
+import { HandsUpTypes, UserSeatOperation, RoleTypes, RoomTypes, UserComponentData, HostSeatOperation } from '@/config';
 import { useRoomStore, useUIStore } from '@/hooks/store';
 import { Message } from '../chatroom/chatroomHelper';
 import ChatRoom from '@/component/chatroom';
@@ -34,7 +34,7 @@ const MemberList = observer(() => {
 
   const roomStore = useRoomStore();
   const uiStore = useUIStore();
-  const { roomInfo, studentData, nim, localUserInfo, snapRoomInfo, bigLivememberFullList } = roomStore
+  const { roomInfo, studentData, nim, localUserInfo, snapRoomInfo, bigLivememberFullList, isBigLiveClass } = roomStore
   const userInfo = roomStore?.localData || {};
 
   const isBySelf = useCallback((userUuid) => userUuid === roomStore?.localData?.userUuid, [roomStore?.localData])
@@ -95,13 +95,25 @@ const MemberList = observer(() => {
         if (userInfo.hasScreen) {
           await roomStore.stopScreen();
         }
-        await roomStore.handsUpAction(userInfo?.userUuid, HandsUpTypes.init);
+        if (isBigLiveClass) {
+          roomStore.deleteMember(userInfo?.userUuid)
+        } else {
+          await roomStore.handsUpAction(userInfo?.userUuid, HandsUpTypes.init);
+        }
         break;
       case HandsUpTypes.studentHandsup:
-        await roomStore.handsUpAction(userInfo?.userUuid, HandsUpTypes.studentCancel);
+        if (isBigLiveClass) {
+          await roomStore.handsUpActionForSeat(userInfo?.userUuid, UserSeatOperation.studentCancel);
+        } else {
+          await roomStore.handsUpAction(userInfo?.userUuid, HandsUpTypes.studentCancel);
+        }
         break;
       default:
-        await roomStore.handsUpAction(userInfo?.userUuid, HandsUpTypes.studentHandsup);
+        if (isBigLiveClass) {
+          await roomStore.handsUpActionForSeat(userInfo?.userUuid, UserSeatOperation.studentHandsup);
+        } else {
+          await roomStore.handsUpAction(userInfo?.userUuid, HandsUpTypes.studentHandsup);
+        }
         break;
     }
     setHandsVisible(false);
@@ -124,23 +136,24 @@ const MemberList = observer(() => {
     }
   }
 
-  const handsUpAction = async (userUuid: string, value: HandsUpTypes) => {
+  const handsUpActionByTea = async (userUuid: string, value: HandsUpTypes) => {
     try {
-      const res = await roomStore.handsUpAction(userUuid, value)
-      console.log('res', res);
-      await uiStore.showToast(intl.get("操作成功"));
+      !isBigLiveClass && await roomStore.handsUpAction(userUuid, value)
       switch (value) {
         case HandsUpTypes.teacherAgree:
-          // await roomStore.changeMemberStreamProperties(userUuid, 1, 1, 1)
+          isBigLiveClass && await roomStore.handsUpActionForSeat(userUuid, HostSeatOperation.teacherAgree, true)
           break;
         case HandsUpTypes.teacherOff:
-          // await roomStore.changeMemberStreamProperties(userUuid, 0, 0, 0);
+          isBigLiveClass && await roomStore.handsUpActionForSeat(userUuid, HostSeatOperation.teacherOff, true)
           await roomStore.changeSubVideoStream(userUuid, 0);
           break;
+        case HandsUpTypes.teacherReject:
+          isBigLiveClass && await roomStore.handsUpActionForSeat(userUuid, HostSeatOperation.teacherReject, true)
+          break;
         default:
-          // await roomStore.changeMemberStreamProperties(userUuid, 0, 0, 0)
           break;
       }
+      await uiStore.showToast(intl.get("操作成功"));
     } catch (error) {
       console.error('error', error);
     }
@@ -197,7 +210,7 @@ const MemberList = observer(() => {
           <li><Button onClick={() => handleSetAllowScreen(item.userUuid, 1)} type="text">{intl.get('授予共享权限')}</Button></li>}
         {
           RoomTypes.bigClass === Number(roomStore?.roomInfo?.sceneType) && item.avHandsUp === HandsUpTypes.teacherAgree &&
-          <li><Button onClick={() => handsUpAction(item.userUuid, HandsUpTypes.teacherOff)} type="text">{intl.get('请他下台')}</Button></li>
+          <li><Button onClick={() => handsUpActionByTea(item.userUuid, HandsUpTypes.teacherOff)} type="text">{intl.get('请他下台')}</Button></li>
         }
       </ul>
     );
@@ -205,18 +218,19 @@ const MemberList = observer(() => {
 
   const handleChangeSearch = (e) => {
     setSearchValue(e.target.value)
+    handleSearchMember(e.target.value)
   }
 
   const handleSearchMember = useCallback(
-    () => {
+    (_value=searchValue) => {
       const arr = Number(localUserInfo?.sceneType) === RoomTypes.bigClasLive ? bigLivememberFullList : studentData;
-      if (!searchValue) {
+      if (!_value) {
         setAllMember(arr)
       } else {
-        const newArray = arr.filter((item) => item?.userName.includes(searchValue));
+        const newArray = arr.filter((item) => item?.userName.includes(_value));
         setAllMember(newArray)
       }
-      logger.log('Search info', searchValue, arr, Number(localUserInfo?.sceneType))
+      logger.log('Search info', _value, arr, Number(localUserInfo?.sceneType))
     },
     [searchValue, studentData, localUserInfo, bigLivememberFullList],
   )
@@ -422,7 +436,7 @@ const MemberList = observer(() => {
           <p className="gray">{intl.get('课堂成员')}</p>
         </div>
       </div>
-      {Number(roomInfo.sceneType) === RoomTypes.bigClass && (userInfo.role === RoleTypes.host || roomStore.classStep === 1) &&
+      {([RoomTypes.bigClass, RoomTypes.bigClasLive].includes(Number(roomInfo.sceneType))) && (userInfo.role === RoleTypes.host || roomStore.classStep === 1) &&
         <div className="list-wrapper">
           <div className="list-content">
             <Button
@@ -451,7 +465,7 @@ const MemberList = observer(() => {
         </div>
       </div>}
       <Modal
-        title={Number(roomInfo.sceneType) === RoomTypes.bigClass ? memberTabs() : `${intl.get("课堂成员")} (${studentData?.length || bigLivememberFullList?.length})`}
+        title={Number(roomInfo.sceneType) === RoomTypes.bigClass ? memberTabs() : `${intl.get("课堂成员")} (${Number(roomInfo.sceneType) === RoomTypes.bigClasLive ? bigLivememberFullList?.length : studentData?.length})`}
         wrapClassName="memberModal"
         visible={handleMemberVisible}
         onCancel={handleMemberCancel}
@@ -493,8 +507,8 @@ const MemberList = observer(() => {
               item?.avHandsUp === HandsUpTypes.studentHandsup && <li key={item.userUuid}>
                 <span>{item.userName}</span>
                 <div>
-                  <Button onClick={() => handsUpAction(item.userUuid, HandsUpTypes.teacherAgree)} >{intl.get('同意')}</Button>
-                  <Button onClick={() => handsUpAction(item.userUuid, HandsUpTypes.teacherReject)} >{intl.get('拒绝')}</Button>
+                  <Button onClick={() => handsUpActionByTea(item.userUuid, HandsUpTypes.teacherAgree)} >{intl.get('同意')}</Button>
+                  <Button onClick={() => handsUpActionByTea(item.userUuid, HandsUpTypes.teacherReject)} >{intl.get('拒绝')}</Button>
                 </div>
               </li>
             ))

@@ -208,13 +208,13 @@ export class RecordStore {
   private checkEventType = (type: number, sceneType: SceneTypes) => {
     let result: "show" | "hide" | "showScreen" | "remove";
     switch (true) {
-      case SceneTypes.BIG === sceneType && [3, 5, 9].includes(type):
+      case [SceneTypes.BIG, SceneTypes.BiGLIVE].includes(sceneType) && [3, 5, 9].includes(type):
         result = 'show';
         break;
-      case SceneTypes.BIG === sceneType && [1].includes(type):
+      case [SceneTypes.BIG, SceneTypes.BiGLIVE].includes(sceneType) && [1].includes(type):
         result = 'remove';
         break;
-      case SceneTypes.BIG !== sceneType && [1, 3, 5, 9].includes(type):
+      case ![SceneTypes.BIG, SceneTypes.BiGLIVE].includes(sceneType) && [1, 3, 5, 9].includes(type):
         result = 'show';
         break;
       case [7].includes(type):
@@ -225,7 +225,7 @@ export class RecordStore {
         break;
       default:
         // fix: 互动大班课停止共享type为8，应该解析为'hide'
-        if (SceneTypes.BIG === sceneType && ![4, 6, 8].includes(type)) {
+        if ([SceneTypes.BIG, SceneTypes.BiGLIVE].includes(sceneType) && ![4, 6, 8].includes(type)) {
           result = 'remove';
         } else {
           result = 'hide';

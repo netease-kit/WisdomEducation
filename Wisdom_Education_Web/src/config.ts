@@ -36,6 +36,23 @@ export enum HandsUpTypes {
   teacherOff = 5,
 }
 
+export enum UserSeatOperation {
+  studentHandsup = 1,
+  studentCancel = 2,
+  studentOff = 5
+}
+
+export enum HostSeatOperation {
+  teacherAgree = 1,
+  teacherReject = 4,
+  teacherOff = 5
+}
+
+export enum LiveClassMemberStatus {
+  InRTC = 1,
+  InCDN = 2
+}
+
 export interface UserComponentData {
   userName: string;
   userUuid: string;
@@ -67,13 +84,20 @@ export enum NIMNotifyTypes {
   StreamChange = 40,
   StreamRemove = 41,
   CustomMessage = 99,
+  HostAgreeSeatApply = 110, // 管理员同意上麦
+  HostRejectSeatApply = 113, // 管理员拒绝上麦
+  HostKickSeater = 114, // 管理员踢麦
+  MemberApplySeat = 115, // 观众申请上麦
+  MemberCancelApplySeat = 116, // 观众取消申请上麦
+  MemberLeaveSeat = 119, // 观众主动下麦
+  SeatStatesChange = 120, // 麦位状态变更
 }
 
 export const Authorization = `Basic ${process.env.REACT_APP_SDK_AUTHORIZATION}`;
 
 export const isDev = process.env.REACT_APP_ENV === "development";
 export const isElectron = process.env.REACT_APP_PLATFORM === "electron";
-console.log("isElectron", isElectron)
+
 export enum PlatForms {
   mac = "darwin",
   linux = "linux",

@@ -13,7 +13,7 @@ import React, {
 import "./index.less";
 import { observer } from "mobx-react";
 import { useRoomStore, useWhiteBoardStore, useUIStore } from "@/hooks/store";
-import { RoleTypes, RoomTypes, HandsUpTypes, isElectron } from "@/config";
+import { RoleTypes, RoomTypes, HandsUpTypes, isElectron, HostSeatOperation } from "@/config";
 import { Popover, Button, Modal } from "antd";
 import logger from "@/lib/logger";
 import { setInterval } from "timers";
@@ -52,7 +52,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = observer(
     applyWhiteBoardDraw = false,
     basicStream,
     audioStream,
-    isLocal = true,
+    isLocal = false,
     userName,
     role,
     rtcUid = "",
@@ -121,22 +121,28 @@ const VideoPlayer: React.FC<VideoPlayerProps> = observer(
       await uiStore.showToast(intl.get("操作成功"));
     };
 
-    const handleModalOk = async (userUuid: string, value: HandsUpTypes) => {
-      await roomStore.handsUpAction(userUuid, value);
-      switch (value) {
-        case HandsUpTypes.teacherAgree:
-          // await roomStore.changeMemberStreamProperties(userUuid, 1, 1, 1)
-          break;
-        case HandsUpTypes.teacherOff:
-          // await roomStore.changeMemberStreamProperties(userUuid, 0, 0, 0)
-          await roomStore.changeSubVideoStream(userUuid, 0);
-          break;
-        default:
-          // await roomStore.changeMemberStreamProperties(userUuid, 0, 0, 0)
-          break;
+    const handleModalOk = async (userUuid: string, value: HandsUpTypes) => { 
+      try {
+        switch (value) {
+          case HandsUpTypes.teacherAgree:
+            break;
+          case HandsUpTypes.teacherOff:
+            if (roomStore.isBigLiveClass) {
+              await roomStore.handsUpActionForSeat(userUuid, HostSeatOperation.teacherOff, true)
+            } else {
+              await roomStore.handsUpAction(userUuid, value);
+            }
+            await roomStore.changeSubVideoStream(userUuid, 0);
+            break;
+          default:
+            break;
+        }
+        await uiStore.showToast(intl.get("操作成功"));
+      } catch (error) {
+        console.error('error', error);
+      } finally {
+        setModalVisible(false);
       }
-      await uiStore.showToast(intl.get("操作成功"));
-      setModalVisible(false);
     };
 
     const handleModalCancel = () => {
@@ -188,7 +194,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = observer(
               </Button>
             </li>
           )}
-          {RoomTypes.bigClass === Number(roomStore?.roomInfo?.sceneType) &&
+          {[RoomTypes.bigClass, RoomTypes.bigClasLive].includes(Number(roomStore?.roomInfo?.sceneType)) &&
             avHandsUp === HandsUpTypes.teacherAgree && (
             <li>
               <Button
