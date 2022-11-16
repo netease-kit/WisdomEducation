@@ -33,7 +33,6 @@ static NSString *cellID = @"NEEduVideoCellID";
 @property (nonatomic, assign) BOOL whiteboardWritable;
 
 @property (nonatomic, strong) NEScreenShareHost *shareHost;
-
 @property (nonatomic, strong) UIView *shareScreenView;
 @property (nonatomic, strong) NEEduRoomViewMaskView *maskView;
 @property (nonatomic, strong) NEEduMembersVC *membersVC;

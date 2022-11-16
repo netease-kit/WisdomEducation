@@ -1,11 +1,6 @@
-//
-//  NEEduClassRoomVC.m
-//  EduUI
-//
-//  Created by Groot on 2021/5/19.
-//  Copyright © 2021 NetEase. All rights reserved.
-//  Use of this source code is governed by a MIT license that can be found in the LICENSE file
-//
+// Copyright (c) 2022 NetEase, Inc. All rights reserved.
+// Use of this source code is governed by a MIT license that can be
+// found in the LICENSE file.
 
 #import "NEEduClassRoomVC.h"
 #import "UIImage+NE.h"
@@ -34,8 +29,6 @@
 @property (nonatomic, strong) NSMutableArray<NEEduChatMessage *> *messages;
 @property (nonatomic, assign) BOOL netReachable;
 @property (nonatomic, strong) UILabel *shareScreenMask;
-
-
 @end
 
 static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
@@ -63,6 +56,8 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
     //请求
     __weak typeof(self)weakSelf = self;
     NCKLogInfo(@"ClassRoom viewDidLoad");
+    //让视频方向跟随APP方向
+    [[NERtcEngine sharedEngine]setVideoRotationMode:1];
     [[NEEduManager shared] joinRtcAndGetProfileCompletion:^(NSError * _Nonnull error, NEEduRoomProfile * _Nonnull profile) {
         if (error) {
             NCKLogInfo(@"profileError%@",error);
@@ -159,7 +154,7 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
                                                  compeltion:^(NSString * _Nonnull taskId, kNERtcLiveStreamError errorCode) {
         
         NSString *toast = !errorCode ? @"添加成功" : [NSString stringWithFormat:@"添加失败 errorcode = %d",errorCode];
-        NSLog(@"%@", toast);
+        NSLog(@"%@", toast);  
     }];
     
     if (ret != 0) {
@@ -398,7 +393,9 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
         return;
     }
     [self setupShareKit];
-    [self.shareHost launchBroadcaster];
+    if (@available(iOS 12.0, *)) {
+        [self.shareHost launchBroadcaster];
+    }
 }
 - (void)startScreenShare {
     // RTC开启共享辅流
@@ -902,17 +899,29 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
     message.content = imMessage.text;
     message.myself = NO;
     message.timestamp = [[NSDate date] timeIntervalSince1970];
-    if([imMessage messageType] == NIMMessageTypeImage) {
-        message.type = NEEduChatMessageTypeImage;
-        NIMImageObject *originMessageObject = [imMessage messageObject];
-        message.imageUrl = originMessageObject.url;
-        message.imageThumbUrl = originMessageObject.thumbUrl;
-        [[SDWebImageDownloader sharedDownloader] downloadImageWithURL:[NSURL URLWithString:originMessageObject.thumbUrl] completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, BOOL finished) {
-            if (error) {
-                return;
-            }
-            message.thumbImage = image;
-            message.contentSize = [image ne_showSizeWithMaxWidth:176 maxHeight:190];
+    switch (imMessage.messageType) {
+        case NIMMessageTypeImage: { // 图片
+            message.type = NEEduChatMessageTypeImage;
+            NIMImageObject *originMessageObject = [imMessage messageObject];
+            message.imageUrl = originMessageObject.url;
+            message.imageThumbUrl = originMessageObject.thumbUrl;
+            [[SDWebImageDownloader sharedDownloader] downloadImageWithURL:[NSURL URLWithString:originMessageObject.thumbUrl] completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, BOOL finished) {
+                if (error) return;
+                message.thumbImage = image;
+                message.contentSize = [image ne_showSizeWithMaxWidth:176 maxHeight:190];
+                [self addTimeMessage:message];
+                [self addMessage:message];
+                if (self.chatVC.presentingViewController) {
+                    [self.chatVC reloadTableViewToBottom:YES];
+                }else {
+                    self.chatItem.badgeLabel.hidden = NO;
+                }
+            }];
+        }
+            break;
+        case NIMMessageTypeText: { // 文本
+            message.type = NEEduChatMessageTypeText;
+            message.contentSize = [imMessage.text sizeWithWidth:(self.view.bounds.size.width - 112) font:[UIFont systemFontOfSize:14]];
             [self addTimeMessage:message];
             [self addMessage:message];
             if (self.chatVC.presentingViewController) {
@@ -920,24 +929,15 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
             }else {
                 self.chatItem.badgeLabel.hidden = NO;
             }
-        }];
-        
-    }else if ([imMessage messageType] == NIMMessageTypeText) {
-        message.type = NEEduChatMessageTypeText;
-        message.contentSize = [imMessage.text sizeWithWidth:(self.view.bounds.size.width - 112) font:[UIFont systemFontOfSize:14]];
-        [self addTimeMessage:message];
-        [self addMessage:message];
-        if (self.chatVC.presentingViewController) {
-            [self.chatVC reloadTableViewToBottom:YES];
-        }else {
-            self.chatItem.badgeLabel.hidden = NO;
         }
+            break;
+        default: break;
     }
 }
 
 - (void)willSendMessage:(NIMMessage *)message {
     //去重
-    NSLog(@"willSendMessage:%@ state:%d",message.messageId,message.deliveryState);
+    NSLog(@"willSendMessage:%@ state:%ld", message.messageId, message.deliveryState);
     for (NEEduChatMessage *eduMessage in self.messages) {
         if ([eduMessage.imMessage.messageId isEqualToString:message.messageId]) {
             eduMessage.sendState = NEEduChatMessageSendStateNone;
@@ -952,7 +952,7 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
     NSString *role = [[NEEduManager shared].localUser isTeacher] ? @"老师":@"学生";
     eduMessage.userName = [NSString stringWithFormat:@"%@(%@)",[NEEduManager shared].localUser.userName,role];
     eduMessage.content = message.text;
-    if([message messageType] == NIMMessageTypeImage) {
+    if ([message messageType] == NIMMessageTypeImage) {
         NIMImageObject *originMessageObject = [message messageObject];
         UIImage *thumbImage = [UIImage imageWithContentsOfFile:originMessageObject.thumbPath];
         eduMessage.contentSize = [thumbImage ne_showSizeWithMaxWidth:176 maxHeight:190];
@@ -960,7 +960,7 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
         eduMessage.imageUrl = originMessageObject.path;
         eduMessage.imageThumbUrl = originMessageObject.thumbPath;
         eduMessage.type = NEEduChatMessageTypeImage;
-    }else {
+    } else {
         eduMessage.type = NEEduChatMessageTypeText;
         eduMessage.contentSize = [message.text sizeWithWidth:(self.view.bounds.size.width - 112) font:[UIFont systemFontOfSize:14]];
     }
@@ -970,7 +970,7 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
     
     [self addTimeMessage:eduMessage];
     [self addMessage:eduMessage];
-    NSLog(@"sendMessage count:%d",self.messages.count);
+    NSLog(@"sendMessage count:%ld", self.messages.count);
     if (self.chatVC) {
         [self.chatVC reloadTableViewToBottom:YES];
     }

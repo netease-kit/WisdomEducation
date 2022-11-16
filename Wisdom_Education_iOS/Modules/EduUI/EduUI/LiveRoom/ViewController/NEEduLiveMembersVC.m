@@ -11,6 +11,7 @@
 #import <EduLogic/EduLogic.h>
 #import "NEEduMembersHeadView.h"
 #import <MJRefresh/MJRefresh.h>
+#import "NEEduMemberCell.h"
 
 static NSString *const cellID = @"NELiveMemberCellID";
 @interface NEEduLiveMembersVC ()<UITableViewDelegate,UITableViewDataSource,UITextFieldDelegate>
@@ -26,6 +27,9 @@ static NSString *const cellID = @"NELiveMemberCellID";
 @property (nonatomic, strong) NSArray<NIMChatroomMember *> *searchArray;
 @property (nonatomic, assign) bool isSearching;
 @property (nonatomic, assign) NSInteger number;
+@property (nonatomic, strong) NSArray<NEEduMember *> *onlineArray;
+@property (nonatomic, strong) NSArray *currentArray;
+@property (nonatomic, strong) UIButton *currentButton;
 
 @end
 
@@ -127,6 +131,7 @@ static NSString *const cellID = @"NELiveMemberCellID";
     }
     [self.view addConstraints:@[left,top]];
     [self.backButton addConstraints:@[width,height]];
+    
     [self.view addSubview:self.onlineButton];
     if (@available(iOS 11.0, *)) {
         [NSLayoutConstraint activateConstraints:@[

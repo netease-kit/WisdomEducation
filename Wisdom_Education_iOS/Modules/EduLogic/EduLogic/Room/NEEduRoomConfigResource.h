@@ -9,6 +9,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/// 房间能力配置
 @interface NEEduRoomConfigResource : NSObject
 @property (nonatomic, assign) BOOL rtc;
 @property (nonatomic, assign) BOOL whiteboard;

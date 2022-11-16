@@ -19,7 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @protocol NEEduIMChatDelegate <NSObject>
-
+@optional
 /// 将要发送消息回调
 /// @param message 消息
 - (void)willSendMessage:(NIMMessage *)message;
