@@ -7,7 +7,7 @@ package com.netease.yunxin.app.wisdom.edu.logic.net.service
 
 import com.google.gson.Gson
 import com.netease.nimlib.sdk.passthrough.model.PassthroughProxyData
-import com.netease.yunxin.app.wisdom.base.network.RetrofitManager
+import com.netease.yunxin.app.wisdom.base.network.NEEduRetrofitManager
 import okhttp3.internal.and
 import okio.Buffer
 import retrofit2.http.*
@@ -55,7 +55,7 @@ class PassthroughDataFactory {
     }
 
     private fun getHeader(): String {
-        return gson.toJson(RetrofitManager.instance().getHeader())
+        return gson.toJson(NEEduRetrofitManager.instance().getHeader())
     }
 
     private fun parseParameter() {

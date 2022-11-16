@@ -56,9 +56,9 @@ object WhiteboardManager : WhiteboardApi() {
 
     private lateinit var config: WhiteboardConfig
 
-    private lateinit var bgHandler: Handler
+    private var bgHandler: Handler? = null
 
-    private const val REQUEST_CODE_FILE_BROWSER = 1
+    private var bgHandlerThread: HandlerThread? = null
 
     private lateinit var choosePictureLaunch: ActivityResultLauncher<Uri>
 
@@ -68,15 +68,26 @@ object WhiteboardManager : WhiteboardApi() {
         jsBridge = JsBridge(this)
         jsBridge.setPresetId(PRESET_ID)
 
-        val thread = HandlerThread("bg")
-        thread.start()
-        bgHandler = Handler(thread.looper)
+        bgHandlerThread = HandlerThread("bg")
+        bgHandlerThread?.let {
+            it.start()
+            bgHandler = Handler(it.looper)
+        }
+
 
         choosePictureLaunch = (webView.context as ComponentActivity).registerForActivityResult(ChoosePicture()) {
             onGetChosenFile(it)
         }
 
         initWebView(webView)
+    }
+
+    fun reload(){
+        webView?.reload()
+    }
+
+    fun setConfig(whiteboardConfig: WhiteboardConfig){
+     config = whiteboardConfig
     }
 
     @SuppressLint("JavascriptInterface")
@@ -134,14 +145,14 @@ object WhiteboardManager : WhiteboardApi() {
             }
             val dataOriginBytes =
                 Base64.decode(dataBase64Str, Base64.DEFAULT)
-            bgHandler.post(Runnable {
+            bgHandler?.post {
                 ALog.i(
                     TAG,
                     "dataOriginBytes=" + if (dataOriginBytes == null) "null" else HexDump.toHex(
                         dataOriginBytes
                     )
                 )
-            })
+            }
             val imgName = StringBuilder()
             imgName.append(UUID.randomUUID().toString())
             if (!TextUtils.isEmpty(ext)) {
@@ -252,7 +263,8 @@ object WhiteboardManager : WhiteboardApi() {
      * Live with the host
      */
     override fun finish() {
-        bgHandler.looper.quit()
+        bgHandler?.removeCallbacksAndMessages(null)
+        bgHandlerThread?.quit()
         webView?.destroy()
         webView = null
     }

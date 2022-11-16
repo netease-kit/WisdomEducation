@@ -9,7 +9,7 @@ import com.netease.nimlib.sdk.StatusCode
 import com.netease.nimlib.sdk.chatroom.model.ChatRoomKickOutEvent
 
 /**
- * 
+ *
  */
 enum class IMErrorCode(val code: Int, val msg: String) {
 
@@ -25,6 +25,8 @@ enum class IMErrorCode(val code: Int, val msg: String) {
     // chat room error
     KICK_OUT_BY_CONFLICT_LOGIN(CHAT_ERROR_CODE_BASE.code + ChatRoomKickOutEvent.ChatRoomKickOutReason
         .KICK_OUT_BY_CONFLICT_LOGIN.value, ""),
+    CHAT_ROOM_INVALID(CHAT_ERROR_CODE_BASE.code + ChatRoomKickOutEvent.ChatRoomKickOutReason
+        .CHAT_ROOM_INVALID.value, ""),
     KICK_OUT_BY_MANAGER(CHAT_ERROR_CODE_BASE.code + ChatRoomKickOutEvent.ChatRoomKickOutReason
         .KICK_OUT_BY_MANAGER.value, "");
 

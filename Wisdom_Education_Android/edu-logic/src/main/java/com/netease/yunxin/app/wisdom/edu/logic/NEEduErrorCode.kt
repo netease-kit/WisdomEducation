@@ -61,6 +61,7 @@ class NEEduErrorCode {
                 NEEduRtcCode.ENGINE_ERROR_SERVER_KICKED.code -> getString(context, R.string.engine_error_server_kicked)
                 NEEduRtcCode.ENGINE_ERROR_ROOM_CLOSED.code -> getString(context, R.string.engine_error_room_closed)
                 NEEduIMCode.KICK_OUT_BY_CONFLICT_LOGIN.code -> getString(context, R.string.account_relogged_in_elsewhere)
+                NEEduIMCode.CHAT_ROOM_INVALID.code -> getString(context,R.string.engine_error_room_closed)
                 else -> ""
             }
         }

@@ -8,7 +8,7 @@ package com.netease.yunxin.app.wisdom.edu.logic
 import com.netease.yunxin.app.wisdom.im.IMErrorCode
 
 /**
- * 
+ *
  */
 enum class NEEduIMCode(val code: Int, val msg: String) {
     // IM error codes
@@ -41,6 +41,8 @@ enum class NEEduIMCode(val code: Int, val msg: String) {
      * Login is invalidated by simultaneous logins on other clients using the same credentials
      */
     KICK_OUT_BY_CONFLICT_LOGIN(IMErrorCode.KICK_OUT_BY_CONFLICT_LOGIN.code, ""),
+
+    CHAT_ROOM_INVALID(IMErrorCode.CHAT_ROOM_INVALID.code,""),
 
     /**
      * Login is banned by admins

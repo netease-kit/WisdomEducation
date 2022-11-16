@@ -17,7 +17,7 @@ import com.netease.yunxin.app.wisdom.record.whiteboard.view.NERecordWhiteboardVi
 
 
 object NERecordWhiteboardManager : NERecordWhiteboardApi() {
-    // 回放白板地址
+
     private const val DEFAULT_URL =
         "https://yiyong.netease.im/yiyong-static/statics/whiteboard-webview/webview.record.html"
 

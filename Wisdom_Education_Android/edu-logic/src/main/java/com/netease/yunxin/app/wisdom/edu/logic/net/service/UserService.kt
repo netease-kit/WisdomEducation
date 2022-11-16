@@ -10,10 +10,7 @@ import com.netease.yunxin.app.wisdom.base.network.NEResult
 import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduEntryRes
 import com.netease.yunxin.app.wisdom.edu.logic.net.service.request.JoinClassroomReq
 import com.netease.yunxin.app.wisdom.edu.logic.net.service.request.NEEduUpdateMemberPropertyReq
-import retrofit2.http.Body
-import retrofit2.http.POST
-import retrofit2.http.PUT
-import retrofit2.http.Path
+import retrofit2.http.*
 
 internal interface UserService {
 
@@ -37,6 +34,16 @@ internal interface UserService {
         @Path("userUuid") userUuid: String,
         @Path("key") key: String,
         @Body req: NEEduUpdateMemberPropertyReq,
+    ): LiveData<NEResult<Void>>
+
+    /**
+     * Member properties
+     */
+    @DELETE("scene/apps/{appKey}/v1/rooms/{roomId}/members/{userUuid}")
+    fun leaveClassroom(
+        @Path("appKey") appKey: String,
+        @Path("roomId") roomId: String,
+        @Path("userUuid") userUuid: String,
     ): LiveData<NEResult<Void>>
 
     /**

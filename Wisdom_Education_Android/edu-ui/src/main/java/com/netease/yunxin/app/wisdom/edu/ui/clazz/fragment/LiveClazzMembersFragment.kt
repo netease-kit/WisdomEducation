@@ -31,11 +31,11 @@ class LiveClazzMembersFragment : BaseFragment(R.layout.fragment_liveclazz_member
 
     override fun initData() {
         adapter = LiveMemberTitleListAdapter(requireContext(),
-            eduManager.getMemberService().getMemberList().filter { !it.isHost() } as MutableList<NEEduMember>,
+            distinctMemberList(eduManager.getMemberService().getMemberList()).filter { !it.isHost() } as MutableList<NEEduMember>,
             loadMoreListener = requestLoadMoreListener)
-        eduManager.getMemberService().onMemberJoin().observe(this, { t ->
-            val memberList = t.filter { !it.isHost() } as MutableList<NEEduMember>
-            if(memberList.size >= LoadMoreConstant.LOAD_MORE_PAGE && memberList.all { !it.isHolder() }) {
+        eduManager.getMemberService().onMemberJoin().observe(this) { t ->
+            val memberList = distinctMemberList(t).filter { !it.isHost() } as MutableList<NEEduMember>
+            if (memberList.size >= LoadMoreConstant.LOAD_MORE_PAGE && memberList.all { !it.isHolder() }) {
                 // add holder to support load more
                 memberList.add(NEEduMember.buildLoadMoreHoldMember(NEEduRoleType.BROADCASTER))
             }
@@ -43,18 +43,29 @@ class LiveClazzMembersFragment : BaseFragment(R.layout.fragment_liveclazz_member
             adapter.isSearch = false
             adapter.updateDataAndNotify(memberList.sortedByDescending { it.time })
             updateAllMembersText()
-        })
+        }
 
     }
 
     private fun updateAllMembersText() {
         chatViewModel.fetchRoomInfo {
             var userCount = it.onlineUserCount
-            if (eduManager.getMemberService().getMemberList().any { it1 -> it1.isHost() }) {
+            if (distinctMemberList(eduManager.getMemberService().getMemberList()).any { it1 -> it1.isHost() }) {
                 userCount -= 1
             }
             binding.titleMember.text = getString(R.string.all_room_members, userCount)
         }
+    }
+
+    private fun distinctMemberList(members:List<NEEduMember>):List<NEEduMember>{
+        val memberMap = mutableMapOf<String, NEEduMember>()
+        members.forEach {
+            memberMap[it.userUuid] = it
+        }
+        val memberList = memberMap.map {
+            it.value
+        }
+        return memberList
     }
 
     override fun initViews() {
@@ -67,7 +78,7 @@ class LiveClazzMembersFragment : BaseFragment(R.layout.fragment_liveclazz_member
             btMembersSearch.visibility = View.VISIBLE
             etMembersSearch.visibility = View.VISIBLE
             btMembersSearch.setOnClickListener {
-                val memberList = eduManager.getMemberService().getMemberList()
+                val memberList = distinctMemberList(eduManager.getMemberService().getMemberList())
                     .filter { !it.isHost() && it.userName.contains(patternStr) } as MutableList<NEEduMember>
                 adapter.isSearch = true
                 adapter.updateDataAndNotify(memberList)

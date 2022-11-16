@@ -13,7 +13,7 @@ import com.netease.nimlib.sdk.RequestCallbackWrapper
 import com.netease.nimlib.sdk.ResponseCode
 import com.netease.nimlib.sdk.passthrough.model.PassthroughProxyData
 import com.netease.yunxin.app.wisdom.base.network.NEResult
-import com.netease.yunxin.app.wisdom.base.network.RetrofitManager
+import com.netease.yunxin.app.wisdom.base.network.NEEduRetrofitManager
 import com.netease.yunxin.app.wisdom.edu.logic.impl.NEEduManagerImpl
 import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduHttpCode
 import com.netease.yunxin.kit.alog.ALog
@@ -72,7 +72,7 @@ internal interface BaseService {
         zClass.declaredMethods.forEach {
             methodMap[it.name] = it
         }
-        return RetrofitManager.instance().getService(baseUrl, zClass)
+        return NEEduRetrofitManager.instance().getService(baseUrl, zClass)
     }
 
     /**

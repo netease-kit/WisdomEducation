@@ -191,6 +191,10 @@ object RtcManager : NERtcCallbackEx, NERtcStatsObserver {
 
     fun leave() {
         engine.leaveChannel()
+        rtcSubVideoPendingMap.clear()
+        rtcAudioPendingList.clear()
+        rtcVideoPendingMap.clear()
+        userList.clear()
     }
 
     fun release() {

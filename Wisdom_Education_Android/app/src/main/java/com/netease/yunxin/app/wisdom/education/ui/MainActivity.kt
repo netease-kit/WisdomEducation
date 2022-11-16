@@ -25,10 +25,10 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.Theme_EduApp)
         super.onCreate(savedInstanceState)
-        if (!isTaskRoot) {
-            finish()
-            return
-        }
+//        if (!isTaskRoot) {
+//            finish()
+//            return
+//        }
         StatusBarUtil.hideStatusBar(window, true)
         requestPermissions()
         setContentView(R.layout.main_activity)
@@ -47,14 +47,14 @@ class MainActivity : AppCompatActivity() {
                 Manifest.permission.CAMERA,
                 Manifest.permission.RECORD_AUDIO
             )
-            .onExplainRequestReason { scope: ExplainScope, deniedList: List<String?>? ->
+            .onExplainRequestReason { scope: ExplainScope, deniedList: List<String> ->
                 scope.showRequestReasonDialog(
                     deniedList,
                     resources.getString(R.string.request_permission_reason),
                     resources.getString(R.string.i_have_understood)
                 )
             }
-            .onForwardToSettings { scope: ForwardScope, deniedList: List<String?>? ->
+            .onForwardToSettings { scope: ForwardScope, deniedList: List<String> ->
                 scope.showForwardToSettingsDialog(
                     deniedList,
                     resources.getString(R.string.settings_to_manually_enable_permissions),

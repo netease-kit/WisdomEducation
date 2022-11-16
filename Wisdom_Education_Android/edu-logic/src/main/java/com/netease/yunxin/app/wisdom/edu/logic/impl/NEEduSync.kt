@@ -16,8 +16,9 @@ import com.netease.yunxin.kit.alog.ALog
  */
 internal class NEEduSync(val neEduManager: NEEduManagerImpl) {
 
+    private val tag = "NEEduSync"
 
-    private var lastSequenceId: Long = -1 // The last sequence ID of the local cache
+    var lastSequenceId: Long = -1 // The last sequence ID of the local cache
 
     var syncing: Boolean = false
 
@@ -121,6 +122,8 @@ internal class NEEduSync(val neEduManager: NEEduManagerImpl) {
                     }
                 }
             }
+        } else if(cmdBody.type == NEEduNotifyType.RM.value){
+            return true
         }
 
         return false
@@ -142,6 +145,7 @@ internal class NEEduSync(val neEduManager: NEEduManagerImpl) {
     }
 
     fun snapshot(roomUuid: String) {
+        ALog.i(tag,"====================================snapshot==================================")
         if (syncing) {
             return
         }
@@ -171,13 +175,16 @@ internal class NEEduSync(val neEduManager: NEEduManagerImpl) {
 
     private fun dispatchSnapshotEvent(it: NEEduSnapshotRes) =
         if (it.sequence <= lastSequenceId) {
+            ALog.i(tag,"====================================snapshot===not  excute===============================")
             // Do nothing. In this case, the message is updated to the top. Wait for next sync
         } else {
             lastSequenceId = it.sequence
             if (it.snapshot.members.size > 0) {
-                if (neEduManager.isLiveClass()) {
+                if (neEduManager.isLiveClass() && !neEduManager.isInRtcRoom()) {
+                    ALog.i(tag,"====================================snapshot=== excute===isLiveClass====true========================")
                     neEduManager.getMemberService().updateMemberJoin(it.snapshot.members, true)
                 } else {
+                    ALog.i(tag,"====================================snapshot=== excute===isLiveClass==false==========================")
                     neEduManager.getRtcService().updateSnapshotMember(it.snapshot.members)
                     val lastJoinList: MutableList<NEEduMember> = mutableListOf()
                     lastJoinList.addAll(neEduManager.getMemberService().getMemberList())
