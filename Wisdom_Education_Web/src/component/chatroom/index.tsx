@@ -163,6 +163,8 @@ const Chatroom: React.FC<IProps> = ({
           }
         } else if (reason === 'managerKick') {
           msg = intl.get('被管理员踢出房间')
+        } else if (reason === 'chatroomClosed') {
+          msg = intl.get('该房间已关闭')
         }
 
         //Removed from the chat room and redirected to the home page

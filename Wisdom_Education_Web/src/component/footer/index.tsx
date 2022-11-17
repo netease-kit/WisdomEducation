@@ -6,7 +6,7 @@ import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { useHistory } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { useRoomStore } from '@/hooks/store';
-import { RoomTypes, StepTypes, PauseTypes, RoleTypes, HandsUpTypes, isElectron } from '@/config';
+import { RoomTypes, StepTypes, PauseTypes, RoleTypes, HandsUpTypes, isElectron, UserSeatOperation, LiveClassMemberStatus } from '@/config';
 import { Button, Modal } from 'antd';
 import DeviceList from '@/component/device-list';
 import MemberList from '@/component/member-list';
@@ -27,7 +27,7 @@ const Footer: React.FC = observer(() => {
   const startTime = useRef(0);
   const history = useHistory();
   const roomStore = useRoomStore();
-  const { snapRoomInfo: { states: { step, pause } = {}, rtcCid }, roomInfo, classDuration } = roomStore;
+  const { snapRoomInfo: { states: { step, pause } = {}, rtcCid }, roomInfo, classDuration, isBigLiveClass, localData } = roomStore;
   const userInfo = roomStore?.localUserInfo || {};
   const [isEleClose, setIsEleClose] = useState(false);
 
@@ -192,6 +192,10 @@ const Footer: React.FC = observer(() => {
           break;
       }
     } else {
+      if(isBigLiveClass && localData?.avHandsUp === HandsUpTypes.studentHandsup) {
+        // 直播大班课学生已举手的话需要先释放麦位
+        await roomStore.handsUpActionForSeat(localData.userUuid, UserSeatOperation.studentCancel)
+      }
       clearInterval(startInterval);
       setModalVisible(false);
       await roomStore.leave();
@@ -236,7 +240,11 @@ const Footer: React.FC = observer(() => {
   }
 
   const handleFinishModalOk = () => {
-    roomStore.handsUpAction(userInfo?.userUuid, HandsUpTypes.studentCancel);
+    if (isBigLiveClass) {
+      roomStore.deleteMember(userInfo?.userUuid)
+    } else {
+      roomStore.handsUpAction(userInfo?.userUuid, HandsUpTypes.studentCancel);
+    }
     setFinishVisible(false);
   }
 
@@ -250,10 +258,11 @@ const Footer: React.FC = observer(() => {
 
   // The chat room received messages and needs to be closed
   const channelClosed = async () => {
+    if (roomStore.isBigLiveClass && roomStore.localMemberSeatStatus === LiveClassMemberStatus.InCDN) return
     await roomStore.leave();
     history.push('/');
     setTimeout(() => {
-      location.reload();
+      !isElectron && location.reload();
     });
   }
 

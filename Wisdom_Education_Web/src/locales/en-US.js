@@ -167,5 +167,6 @@ export default {
   "取消举手": "Lower Hand",
   "是否确认取消举手？":"Are you sure you want to lower hand?",
   "申请上台与老师沟通，通过后你的视频画面将出现在屏幕上并能与老师语音": "Request to speak with teachers. If the request is accepted, your screen will appear on the canvas and you can communicate with teachers over voice",
-  "老师端推流": "Teacher Streaming"
+  "老师端推流": "Teacher Streaming",
+  "该房间已关闭": "The room is closed"
 }

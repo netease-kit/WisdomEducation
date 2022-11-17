@@ -156,7 +156,7 @@ class ChatroomHelper extends EventEmit {
           ondisconnect: (err) => {
             console.log('Chat room disconnected. Reason ', err)
             if (err && err.code === 'kicked') {
-              if (err.reason === 'samePlatformKick' || err.reason === 'managerKick') {
+              if (['samePlatformKick', 'managerKick', 'chatroomClosed'].includes(err.reason)) {
                 this.emit('chat-onkicked', err.reason)
               }
             } else {

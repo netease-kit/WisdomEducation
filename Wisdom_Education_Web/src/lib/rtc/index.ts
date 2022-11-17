@@ -77,8 +77,8 @@ export class NeWebrtc extends EnhancedEventEmitter {
     })
 
     this._client.on('client-banned', (_data: any) => {
-      logger.log(`${_data.uid} was removed from the room`)
-      if (_data.uid == this._localStream.streamID) {
+      logger.log(`${_data?.uid} was removed from the room`)
+      if (_data?.uid == this._localStream.streamID) {
         logger.log('You were removed')
         this._localStream = null
         this._mapRemoteStreams.clear()
@@ -196,8 +196,10 @@ export class NeWebrtc extends EnhancedEventEmitter {
         mediaType: _data.mediaType,
         stream,
       })
-      const audioEl = stream._play.audioDom
-      this._selectSpeakers(audioEl, this._pubConf.speakerId)
+      if (_data.stream.audio) {
+        const audioEl = stream._play.audioDom
+        this._selectSpeakers(audioEl, this._pubConf.speakerId)
+      }
       // if (videoStream) {
       // reporter.send({
       //   'action_name': 'member_video_state',
