@@ -91,7 +91,7 @@ internal class NEEduMemberServiceImpl : NEEduMemberService() {
 
     override fun updateStreamChange(member: NEEduMember, streams: NEEduStreams): NEEduMember? {
         for (element in joinList) {
-            if (element.userUuid == member.userUuid) {
+            if (element.userUuid == member.userUuid && element.rtcUid == member.rtcUid) {
                 element.streams = element.streams?.merge(streams) ?: streams
                 return element
             }
@@ -101,7 +101,7 @@ internal class NEEduMemberServiceImpl : NEEduMemberService() {
 
     override fun updateStreamRemove(member: NEEduMember, streamType: String): NEEduMember? {
         for (element in joinList) {
-            if (element.userUuid == member.userUuid) {
+            if (element.userUuid == member.userUuid && element.rtcUid == member.rtcUid) {
                 element.streams = element.streams?.delete(streamType) ?: null
                 return element
             }

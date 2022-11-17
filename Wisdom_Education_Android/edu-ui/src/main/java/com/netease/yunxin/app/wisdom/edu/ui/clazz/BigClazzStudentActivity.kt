@@ -17,7 +17,7 @@ import com.netease.yunxin.app.wisdom.edu.logic.model.NEEduRoleType
 import com.netease.yunxin.app.wisdom.edu.ui.R
 import com.netease.yunxin.app.wisdom.edu.ui.clazz.dialog.ConfirmDialog
 
-class BigClazzStudentActivity : BaseBigClassActivity() {
+open class BigClazzStudentActivity : BaseBigClassActivity() {
 
     companion object {
         fun start(context: Context) {
@@ -79,13 +79,16 @@ class BigClazzStudentActivity : BaseBigClassActivity() {
             var list = mutableListOf<NEEduMember>()
             eduManager.getMemberService().getMemberList().firstOrNull { it.isHost() }?.let { list.add(it) }
             list.addAll(t)
-            preprocessList(list).let {
-                if(!compareList(it, memberVideoAdapter.dataList)) memberVideoAdapter.setData(it)
+            preprocessList(list).let {list ->
+                if(!compareList(list, memberVideoAdapter.dataList)) {
+                    list.sortWith(compareBy({ !it.isHost() }, { eduManager.getEntryMember().userUuid != it.userUuid }))
+                    memberVideoAdapter.setData(list)
+                }
             }
         }
     }
 
-    private fun preprocessList(it: List<NEEduMember>): List<NEEduMember> {
+    private fun preprocessList(it: MutableList<NEEduMember>): MutableList<NEEduMember> {
         return if (it.none { it.role == NEEduRoleType.HOST.value }) {
             val toMutableList = it.toMutableList()
             toMutableList.add(0, NEEduMember.buildHoldTeacherMember())

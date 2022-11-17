@@ -74,7 +74,7 @@ data class NEEduPermissionStreams(
 )
 
 data class NEEduRoomPermissionStates(
-    val pause: NEEduPermissionRoleList,
+    val pause: NEEduPermissionRoleList?,
     val step: NEEduPermissionRoleList,
 )
 

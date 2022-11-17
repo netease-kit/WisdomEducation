@@ -12,6 +12,7 @@ import com.netease.yunxin.app.wisdom.edu.ui.R
 import com.netease.yunxin.app.wisdom.edu.ui.base.BaseFragment
 import com.netease.yunxin.app.wisdom.edu.ui.databinding.FragmentWhiteboardBinding
 import com.netease.yunxin.app.wisdom.viewbinding.viewBinding
+import com.netease.yunxin.app.wisdom.whiteboard.WhiteboardManager
 import com.netease.yunxin.app.wisdom.whiteboard.config.NEWbPrivateConf
 import com.netease.yunxin.app.wisdom.whiteboard.config.WhiteboardConfig
 import com.netease.yunxin.app.wisdom.whiteboard.model.NEWbAuth
@@ -50,6 +51,11 @@ class WhiteboardFragment : BaseFragment(R.layout.fragment_whiteboard) {
         return auth?.let {
             NEWbAuth(auth.checksum, auth.curTime, auth.nonce)
         }
+    }
+
+    fun setWhiteboardConfig(whiteboardConfig: WhiteboardConfig){
+        config = whiteboardConfig
+        WhiteboardManager.setConfig(whiteboardConfig)
     }
 
     override fun initViews() {

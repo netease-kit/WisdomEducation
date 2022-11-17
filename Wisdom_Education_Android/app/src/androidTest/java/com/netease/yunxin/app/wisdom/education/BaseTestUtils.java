@@ -341,7 +341,7 @@ public final class BaseTestUtils {
 
     /**
      * Waiting for the target control display
-     * 
+     *
      * @param parentId The ID of the parent control of the target control
      * @param text     The text of the target control
      * @param timeout  The timeout duration

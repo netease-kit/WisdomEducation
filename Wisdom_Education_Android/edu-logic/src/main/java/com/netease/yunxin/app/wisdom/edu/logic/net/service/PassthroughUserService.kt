@@ -42,6 +42,14 @@ object PassthroughUserService : UserService, BaseService {
         }
     }
 
+    override fun leaveClassroom(
+        appKey: String,
+        roomId: String,
+        userUuid: String
+    ): LiveData<NEResult<Void>> {
+        return userService.leaveClassroom(appKey,roomId,userUuid)
+    }
+
     override fun updateInfo(appKey: String, roomId: String, userUuid: String): LiveData<NEResult<String>> {
         val method: Method? = findMethod(BaseService.UPDATE_INFO)
         return if (overPassthrough() && method != null) {

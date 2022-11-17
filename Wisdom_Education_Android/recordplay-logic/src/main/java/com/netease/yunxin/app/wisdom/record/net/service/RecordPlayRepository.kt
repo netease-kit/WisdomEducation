@@ -7,7 +7,7 @@ package com.netease.yunxin.app.wisdom.record.net.service
 
 import androidx.lifecycle.LiveData
 import com.netease.yunxin.app.wisdom.base.network.NEResult
-import com.netease.yunxin.app.wisdom.base.network.RetrofitManager
+import com.netease.yunxin.app.wisdom.base.network.NEEduRetrofitManager
 import com.netease.yunxin.app.wisdom.record.model.NEEduRecordData
 
 /**
@@ -27,6 +27,6 @@ object RecordPlayRepository {
 
     private fun <T> getService(zClass: Class<T>): T {
         require(zClass.isInterface) { "API declarations must be interfaces." }
-        return RetrofitManager.instance().getService(baseUrl, zClass)
+        return NEEduRetrofitManager.instance().getService(baseUrl, zClass)
     }
 }

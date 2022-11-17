@@ -3,7 +3,7 @@
  *  Use of this source code is governed by a MIT license that can be found in the LICENSE file
  */
 
-package  com.netease.yunxin.app.wisdom.player.sdk;
+package com.netease.yunxin.app.wisdom.player.sdk;
 
 
 import com.netease.yunxin.app.wisdom.player.sdk.model.MediaInfo;

@@ -14,7 +14,7 @@ import com.netease.yunxin.app.wisdom.whiteboard.model.NEWbAuth
  */
 class WhiteboardConfig(
     val appKey: String,
-    val rtcUid: Long,
+    var rtcUid: Long,
     val wbAuth: NEWbAuth?,
     val imAccid: String,
     val imToken: String,
