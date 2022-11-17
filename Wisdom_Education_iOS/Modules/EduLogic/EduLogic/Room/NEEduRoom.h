@@ -13,10 +13,10 @@
 NS_ASSUME_NONNULL_BEGIN
 
 typedef NS_ENUM(NSInteger, NEEduSceneType) {
-    NEEduSceneType1V1 = 0,
-    NEEduSceneTypeSmall = 1,
-    NEEduSceneTypeBig = 2,
-    NEEduSceneTypeLive = 3,
+    NEEduSceneType1V1 = 0, // 一对一教学
+    NEEduSceneTypeSmall = 1, // 多人小班课
+    NEEduSceneTypeBig = 2, // 互动大班课
+    NEEduSceneTypeLive = 3, // 直播大班课
 };
 
 @interface NEEduRoom : NSObject

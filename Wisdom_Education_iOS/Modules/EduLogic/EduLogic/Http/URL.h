@@ -45,4 +45,13 @@
 //拉取回放地址 /scene/apps/{appKey}/v1/rooms/{roomUuid}/{rtcCid}/record/playback
 #define HTTP_RECORD_GET @"%@/scene/apps/%@/%@/rooms/%@/%@/record/playback"
 
+// 离开房间
+#define HTTP_LEAVE_ROOM @"%@/scene/apps/%@/v1/rooms/%@/members/%@"
 
+#pragma mark ------------------------ 麦位 ------------------------
+// 用户麦位操作
+#define HTTP_SEAT_USER_OPERATION @"%@/scene/apps/%@/%@/rooms/%@/seat/user/action"
+// 获取麦位信息
+#define HTTP_SEAT_INFO @"%@/scene/apps/%@/%@/rooms/%@/seat/seatList"
+// 麦位请求列表
+#define HTTP_SEAT_REQUEST_LIST @"%@/scene/apps/%@/v1/rooms/%@/seat/applyList"

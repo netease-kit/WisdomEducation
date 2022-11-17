@@ -28,5 +28,12 @@
     return YES;
 }
 
+- (void)applicationWillTerminate:(UIApplication *)application{
+    NSString *stopNotificationName =
+          @"com.netease.yunxin.kit.screenshare.notification.host_request_stop";
+      CFStringRef notificationName = (CFStringRef)CFBridgingRetain(stopNotificationName);
+      CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(),
+                                           notificationName, nil, nil, true);
+}
 
 @end

@@ -9,7 +9,7 @@
 
 #import "NEEduIMService.h"
 #import "NEEduIMCustomDecoder.h"
-@interface NEEduIMService ()<NIMPassThroughManagerDelegate,NIMChatroomManagerDelegate,NIMChatManagerDelegate,NIMLoginManager>
+@interface NEEduIMService ()<NIMPassThroughManagerDelegate, NIMChatroomManagerDelegate, NIMChatManagerDelegate, NIMLoginManager>
 @property (nonatomic, strong ,readwrite) NIMChatroom *chatRoom;
 @property (nonatomic, strong ,readwrite) NSMutableArray *chatMessages;
 @end

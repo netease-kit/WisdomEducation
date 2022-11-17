@@ -44,7 +44,8 @@ public class NEEduRecordPlayer: NEEduRecordPlayerProtocol {
     
     init(url: String)throws {
         self.url = url
-        player = try NELivePlayerController.init(contentURL: URL(string: url))
+//        player = try NELivePlayerController.init(contentURL: URL(string: url))
+        player = NELivePlayerController(contentURL: URL(string: url)!, error: nil)
         addNotification()
     }
     
@@ -101,7 +102,10 @@ public class NEEduRecordPlayer: NEEduRecordPlayerProtocol {
     
     public func updateUrl(url: String) {
         self.url = url
-        player.switchContentUrl(URL.init(string: url))
+//        player.switchContentUrl(URL.init(string: url))
+        if let aUrl = URL(string: url) {
+            player.switchContentUrl(aUrl)
+        }
     }
     
     @objc public func onPreparedToPlay(noti:Notification) {

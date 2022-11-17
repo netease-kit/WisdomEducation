@@ -24,6 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) BOOL autoSubscribeVideo;
 // default NO
 @property (nonatomic, assign) BOOL autoSubscribeAudio;
+@property (nonatomic, assign) BOOL isLiveClass;
 @end
 
 NS_ASSUME_NONNULL_END
