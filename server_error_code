@@ -1,0 +1,198 @@
+    SUCCESS(0, "Success", HttpStatus.SC_OK),
+    NOT_MODIFIED(304, "Not Modified", HttpStatus.SC_NOT_MODIFIED),
+
+    /**
+     * 参数非法
+     */
+    BAD_REQUEST(400, "Bad Request", HttpStatus.SC_BAD_REQUEST),
+    /**
+     * 鉴权失败
+     */
+    UNAUTHORIZED(401, "Unauthorized", HttpStatus.SC_UNAUTHORIZED),
+    /**
+     * 房间操作权限禁止
+     */
+    FORBIDDEN(403, "Forbidden", HttpStatus.SC_FORBIDDEN),
+    NOT_FOUND(404, "Not Found", HttpStatus.SC_NOT_FOUND),
+    /**
+     * method不支持
+     */
+    METHOD_NOT_ALLOWED(405, "Method Not Allowed", HttpStatus.SC_METHOD_NOT_ALLOWED),
+    /**
+     * 创建房间时，房间号已经存在
+     */
+    CONFLICT(409, "Target Already Exists", HttpStatus.SC_CONFLICT),
+    /**
+     * 不支持的MediaType，比如非Json的body
+     */
+    UNSUPPORTED_MEDIA_TYPE(415, "Unsupported Media Type", HttpStatus.SC_UNSUPPORTED_MEDIA_TYPE),
+    /**
+     * 内部异常，一般是内部服务出现问题
+     */
+    INTERNAL_SERVER_ERROR(500, "Internal Server Error", HttpStatus.SC_INTERNAL_SERVER_ERROR),
+    SERVICE_UNAVAILABLE(503, "Service Busy", HttpStatus.SC_SERVICE_UNAVAILABLE),
+
+    /**
+     * 房间内操作时，房间configId不存在，或者configId对应的config不存在，或有格式或内容有误；
+     * （未完待续）超大房间获取观察者入口时，rtc房间未创建（因为观察者入口并不会创建房间）
+     * （未完待续）超大房间获取观察者入口时，聊天室未创建，因为超大房间是需要聊天室辅助发送信令的
+     * （未完待续）超大房间设置临时座位时，房间座位配置没有正确设置
+     * 课堂开始 如step=1时，rtc房间未创建，因为此时录制没发开始
+     */
+    ROOM_NOT_PREPARED(1001, "Room Not Prepared", HttpStatus.SC_FORBIDDEN),
+    /**
+     * 加入房间时，角色数量超限
+     */
+    ROOM_ROLE_EXCEED(1002, "Room Role Exceed", HttpStatus.SC_FORBIDDEN),
+    /**
+     * 加入房间时，指定角色未定义
+     */
+    ROOM_ROLE_UNDEFINED(1003, "Room Role Undefined", HttpStatus.SC_FORBIDDEN),
+    /**
+     * 任何和房间强关联的操作，指定的roomUuid查不到对应的活的房间
+     */
+    ROOM_NOT_EXIST(1004, "Room Not Found", HttpStatus.SC_NOT_FOUND),
+    /**
+     * 创建房间时，config不存在或无法使用
+     */
+    ROOM_BAD_CONFIG(1005, "Bad Room Config", HttpStatus.SC_BAD_REQUEST),
+    /**
+     * 房间属性exclusive时put改属性，该属性已经存在
+     */
+    ROOM_PROPERTY_EXISTS(1006, "Room Property Exists", HttpStatus.SC_FORBIDDEN),
+    /**
+     * 成员属性exclusive时put改属性，该属性已经存在
+     */
+    ROOM_MEMBER_PROPERTY_EXISTS(1007, "Room Member Property Exists", HttpStatus.SC_FORBIDDEN),
+    /**
+     * （未完待续）超大房间设置的座位号已经存在
+     */
+    ROOM_SIT_CONFLICT(1008, "Room Sit Conflict", HttpStatus.SC_BAD_REQUEST),
+    /**
+     * （未完待续）超大房间设置座位时，座位已满
+     */
+    ROOM_SIT_FULL(1009, "Room Sits Full", HttpStatus.SC_BAD_REQUEST),
+    /**
+     * （未完待续）超大房间设置座位时，目标用户已经在座位上
+     */
+    ROOM_SIT_USER_CONFLICT(1010, "Room Sit User Conflict", HttpStatus.SC_BAD_REQUEST),
+    /**
+     * （未完待续）超大房间设置座位时，座位号不存在
+     */
+    ROOM_SIT_NOT_EXIST(1011, "Room Sit Not Exist", HttpStatus.SC_BAD_REQUEST),
+    /**
+     * put:member.stream|property时，该属性的并发超限，并发超限，如屏幕共享同时只能一人
+     */
+    ROOM_MEMBER_CONCURRENCY_OUT(1012, "Member Property or Stream Out of Currency Limit", HttpStatus.SC_FORBIDDEN),
+    /**
+     * （未完待续）坐席配置不正确
+     */
+    ROOM_SITS_BAD(1014, "Room Sits Bad", HttpStatus.SC_BAD_REQUEST),
+    /**
+     * 被操作的成员不存在
+     */
+    ROOM_DESTINATION_MEMBER_NOT_EXIST(1015, "Destination Member Server Error", HttpStatus.SC_FORBIDDEN),
+
+    /**
+     * 房间成员已存在
+     */
+    ROOM_MEMBER_EXIST(1016, "Member Exist", HttpStatus.SC_FORBIDDEN),
+    /**
+     * 创建房间时房间已经存在且config冲突
+     */
+    ROOM_CONFIG_CONFLICT(1017, "Bad Room Config: Conflict", HttpStatus.SC_BAD_REQUEST),
+    /**
+     * 房间成员不存在
+     */
+    ROOM_MEMBER_NOT_EXIST(1021, "Room Member Not Exist", HttpStatus.SC_FORBIDDEN),
+    /**
+     * 创建IM账户失败
+     */
+    NIM_USER_CREATE_ERROR(700, "Nim Create User Error", HttpStatus.SC_INTERNAL_SERVER_ERROR),
+    /**
+     * 指定IM账户不存在
+     */
+    NIM_USER_NOT_EXIST(701, "Nim User NOT exist", HttpStatus.SC_INTERNAL_SERVER_ERROR),
+    /**
+     * IM服务异常
+     */
+    NIM_SERVICE_ERROR(702, "Nim Bad Im Service", HttpStatus.SC_INTERNAL_SERVER_ERROR),
+    /**
+     * IM账户已存在
+     */
+    NIM_USER_EXIST(703, "Nim User exist", HttpStatus.SC_INTERNAL_SERVER_ERROR),
+    /**
+     * IM账户 Token错误
+     */
+    NIM_USER_BAD_TOKEN(704, "Nim User Bad Token", HttpStatus.SC_INTERNAL_SERVER_ERROR),
+    /**
+     * 麦位已经关闭
+     */
+    SEAT_HAS_CLOSED(1301, "The Seat Have Been Closed.", HttpStatus.SC_NOT_FOUND),
+
+    /**
+     * 麦位已经打开
+     */
+    SEAT_IS_OPENED(1302, "The Seat Is Opened.", HttpStatus.SC_NOT_FOUND),
+
+    /**
+     * 观众已经申请上麦
+     */
+    USER_HAS_BEEN_APPLIED(1303, "User Has Been Applied The Seat.", HttpStatus.SC_NOT_FOUND),
+
+    /**
+     * 观众没有申请上麦
+     */
+    USER_HAS_NOT_BEEN_APPLIED(1304, "User Has Not Been Applied The Seat.", HttpStatus.SC_NOT_FOUND),
+
+    /**
+     * 麦位已经被其他观众占位
+     */
+    SEAT_IS_OCCUPIED(1305, "Seat Is Occupied.", HttpStatus.SC_NOT_FOUND),
+
+    /**
+     * 观众在麦上
+     */
+    USER_IS_ON_SEAT(1306, "User Is On Seat.", HttpStatus.SC_NOT_FOUND),
+
+    /**
+     * 麦序未初始化
+     */
+    SEAT_NOT_INIT(1307, "Seat Not Init.", HttpStatus.SC_NOT_FOUND),
+
+    /**
+     * 麦序已经初始化
+     */
+    SEAT_ALREADY_INIT(1308, "Seat Already Init.", HttpStatus.SC_NOT_FOUND),
+
+    /**
+     * 主播未将观众抱上麦
+     */
+    HOST_NOT_PICKUP_USER(1309, "Host Not PickUp User To The Seat.", HttpStatus.SC_NOT_FOUND),
+
+    /**
+     * 麦位已经关闭
+     */
+    SEAT_IS_CLOSED(1310, "Seat Is Closed.", HttpStatus.SC_NOT_FOUND),
+    /**
+     * 麦位都被占了，没有可用的麦位了
+     */
+    NO_AVAILABLE_SEAT(1311, "No Available Seat.", HttpStatus.SC_NOT_FOUND),
+    /**
+     * 观众已经被抱麦，无法再次被抱麦
+     */
+    USER_HAS_BEEN_PICKUP(1312, "User Has Been PickUp The Seat.", HttpStatus.SC_NOT_FOUND),
+    /**
+     * 观众不在麦位上
+     */
+    USER_NOT_ON_SEAT(1313, "User Not On Seat.", HttpStatus.SC_NOT_FOUND),
+    /**
+     * 麦位数量不能超过20个
+     */
+    SEAT_COUNT_OVER_LIMIT(1314, "The Seat Count cannot exceed 20.", HttpStatus.SC_NOT_FOUND),
+    APPLY_COUNT_OVER_LIMIT(1315, "The Apply Count cannot exceed 30.", HttpStatus.SC_NOT_FOUND),
+
+    RECORD_NOT_EXIST(800,"record does not exist" , HttpStatus.SC_BAD_REQUEST),
+
+    LIVE_NOT_EXIST(801,"live does not exist",HttpStatus.SC_BAD_REQUEST),
+    STREAM_NAME_NOT_EXIST(802,"stream name does not exist",HttpStatus.SC_BAD_REQUEST);
