@@ -112,7 +112,7 @@
   "roomName": "9999",
   "configId": 5,
   "properties": {},
-  "config": {"resource": {"live": true}}
+  "config": {"resource": {"live": true,"rtc": true,"chatroom": true,"whiteboard": true,"seat": true}}
 }
 ```
 
