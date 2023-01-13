@@ -344,6 +344,7 @@ static NSString * kLastRtcCid = @"lastRtcCid";
     if (self.isSharing) {
         [self stopAllScreenShare];
     }
+    [self.player shutdown];
     [[NMCWhiteboardManager sharedManager] callWebLogoutIM];
     [[NMCWhiteboardManager sharedManager] clearWebViewCache];
     [[NEEduManager shared] destoryClassroom];

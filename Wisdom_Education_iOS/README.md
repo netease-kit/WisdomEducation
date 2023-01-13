@@ -61,7 +61,8 @@
    | authorization | 调用服务端接口时，请求头中的校验参数。     |
 
    **说明：**如果仅需要本地跑通示例项目，您可以使用[智慧云课堂体验账号](https://github.com/netease-kit/WisdomEducation/tree/main/Wisdom_Education_Docs)。体验账号的课堂时长限制为 30 分钟。
-
+   **确保您已经提前安装cocoapods-pod-sign插件
+     若未安装请打开终端，执行命令`sudo gem install cocoapods-pod-sign`
 ## 功能实现
 
 示例项目结构：
