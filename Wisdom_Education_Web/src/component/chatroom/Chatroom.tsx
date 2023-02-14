@@ -149,6 +149,7 @@ const Chatroom: React.FC<IProps> = ({
             setCurText(e.target.value);
           }}
           onPressEnter={pressEnterHandler}
+          maxLength={4096}
         />
       </div>
     </div>
