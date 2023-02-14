@@ -12,7 +12,8 @@ enum class NEEduSceneType(var value: String) {
     ONE_TO_ONE("EDU.1V1"),
     SMALL("EDU.SMALL"),
     BIG("EDU.BIG"),
-    LIVE_SIMPLE("EDU.LIVE_SIMPLE");
+    LIVE_SIMPLE("EDU.LIVE_SIMPLE"),
+    LIVE_TO_BIG("EDU.LIVE_TO_BIG");
 
     fun configId(): Int {
         return when (this) {
@@ -20,6 +21,7 @@ enum class NEEduSceneType(var value: String) {
             SMALL -> 6
             BIG -> 7
             LIVE_SIMPLE -> 20
+            LIVE_TO_BIG -> 20
         }
     }
 
@@ -32,6 +34,7 @@ enum class NEEduSceneType(var value: String) {
                 audio = NEEduStreamAudio(),
                 video = NEEduStreamVideo())
             BIG -> if (roleType == NEEduRoleType.AUDIENCE) null else NEEduStreams(audio = NEEduStreamAudio(), video = NEEduStreamVideo())
+            LIVE_TO_BIG -> NEEduStreams(audio = NEEduStreamAudio(), video = NEEduStreamVideo())
             else -> null
         }
     }

@@ -1,11 +1,6 @@
-//
-//  NEEduBigClassVC.m
-//  EduUI
-//
-//  Created by Groot on 2021/5/28.
-//  Copyright © 2021 NetEase. All rights reserved.
-//  Use of this source code is governed by a MIT license that can be found in the LICENSE file
-//
+// Copyright (c) 2022 NetEase, Inc. All rights reserved.
+// Use of this source code is governed by a MIT license that can be
+// found in the LICENSE file.
 
 #import "NEEduBigClassStudentVC.h"
 #import "UIView+Toast.h"

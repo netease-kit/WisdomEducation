@@ -33,6 +33,7 @@ object CMDActionFactory {
         map[CMDId.USER_LEAVE] = RoomMemberLeaveAction::class.java
         map[CMDId.STREAM_CHANGE] = StreamChangeAction::class.java
         map[CMDId.STREAM_REMOVE] = StreamRemoveAction::class.java
+        map[CMDId.SEAT_ITEM_CHANGE] = RoomSeatChangeAction::class.java
     }
 
     fun parse(text: String): NEEduCMDBody? {
@@ -63,7 +64,31 @@ object CMDActionFactory {
     }
 
     fun <T> getRealAction(cmdBody: NEEduCMDBody): T? {
-        val zClass: Class<*>? = map[cmdBody.cmd]
+        val cmd = cmdBody.cmd
+        var zClass: Class<*>? = map[cmdBody.cmd]
+        if ((cmd == CMDId.SEAT_APPROVE_REQUEST) || (cmd == CMDId.SEAT_SUBMIT_REQUEST)
+            || (cmd == CMDId.SEAT_CANCEL_REQUEST) || (cmd == CMDId.SEAT_LEAVE)
+            || (cmd == CMDId.SEAT_REJECT_REQUEST)  || (cmd == CMDId.SEAT_KICK)) {
+            zClass =  RoomSeatAction::class.java
+            return zClass?.let {
+                try {
+                    gson.fromJson(gson.toJson(cmdBody), zClass) as T
+                } catch (e: Throwable) {
+                    ALog.i(tag, "get real action fail ${cmdBody.data}, zClass=${zClass}")
+                    null
+                }
+            }
+        }
+        if(cmd == CMDId.SEAT_ITEM_CHANGE){
+            return zClass?.let {
+                try {
+                    gson.fromJson(gson.toJson(cmdBody), zClass) as T
+                } catch (e: Throwable) {
+                    ALog.i(tag, "get real action fail ${cmdBody.data}, zClass=${zClass}")
+                    null
+                }
+            }
+        }
         return zClass?.let {
             try {
                 gson.fromJson(gson.toJson(cmdBody.data), zClass) as T

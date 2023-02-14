@@ -49,7 +49,6 @@ dependencies {
     androidTestImplementation deps.ext_junit
     androidTestImplementation deps.espresso_core
 
-    api deps.yxbase
     api deps.basesdk
     api deps.chatroom
 }

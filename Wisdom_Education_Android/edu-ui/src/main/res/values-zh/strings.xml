@@ -153,4 +153,5 @@
     <string name="the_class_does_not_begin_please_wait_for_a_moment">课程还未开始，请耐心等待哦</string>
     <string name="agree">同意</string>
     <string name="decline">拒绝</string>
+    <string name="play_error">播放异常，退出重新进入课堂</string>
 </resources>

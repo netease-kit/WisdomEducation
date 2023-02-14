@@ -65,4 +65,36 @@ object CMDId {
      */
     const val STREAM_REMOVE = 41
 
+    /**
+     * approve seat request
+     */
+    const val SEAT_APPROVE_REQUEST = 110
+
+    /**
+     * apply seat
+     */
+    const val SEAT_SUBMIT_REQUEST = 115
+
+    /**
+     * cancel seat request
+     */
+    const val SEAT_CANCEL_REQUEST = 116
+
+    /**
+     * leave seat
+     */
+    const val SEAT_LEAVE = 119
+
+    /**
+     * reject seat
+     */
+    const val SEAT_REJECT_REQUEST = 113
+
+    /**
+     * kick seat
+     */
+    const val SEAT_KICK = 114
+
+    const val SEAT_ITEM_CHANGE = 120
+
 }

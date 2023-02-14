@@ -66,7 +66,7 @@ abstract class BaseNormalClassActivity(layoutId: Int = R.layout.activity_normal_
         private const val ACTION_OFFSTAGE = 4
     }
 
-    open val whiteboardFragment: WhiteboardFragment = WhiteboardFragment()
+    open var whiteboardFragment: WhiteboardFragment = WhiteboardFragment()
 
     lateinit var memberVideoAdapter: MemberVideoListAdapter
 
@@ -245,7 +245,7 @@ abstract class BaseNormalClassActivity(layoutId: Int = R.layout.activity_normal_
                     getChangeClazzStateView()?.visibility = View.VISIBLE
                 }
             }
-            pause.let {
+            pause?.let {
                 if (it.hasPermission(self.role)) {
                     getLeaveClazzView()?.visibility = View.GONE // TODO Leave class
                 }
@@ -308,41 +308,10 @@ abstract class BaseNormalClassActivity(layoutId: Int = R.layout.activity_normal_
             when (it) {
                 NEEduRoomStep.START.ordinal -> {
                     // Save playback request parameters
-                    PreferenceUtil.recordPlay =
-                        Pair(eduRoom.roomUuid, eduRoom.rtcCid)
-
-                    getClazzTitleView().startClazzState(getString(R.string.having_class_now), states.duration ?: 0)
-                    if (!clazzStart) {
-                        getChangeClazzStateView()?.apply {
-                            text = getString(R.string.end_class)
-                            isSelected = false
-                            setOnClickThrottleFirst {
-                                finishClazz()
-                            }
-                        }
-                        getClassInitLayout().visibility = View.GONE
-                        if (eduManager.roomConfig.isBig() && !entryMember.isHost()) {
-                            getAvHandsUpView().visibility = View.VISIBLE
-                        }
-                        clazzStart = true
-                    }
+                    classStart(states)
                 }
                 NEEduRoomStep.END.ordinal -> {
-                    hideFragmentWithChatRoom()
-                    hideFragmentWithMembers()
-                    eduManager.getRtcService().leave()
-                    eduManager.getBoardService().dispose()
-                    getClazzTitleView().apply { setFinishClazzState(getClazzDuration()) }
-                    getClassFinishReplay().setOnClickThrottleFirst {
-                        TODO("Not yet implemented")
-                    }
-                    getClassFinishBackView().setOnClickThrottleFirst {
-                        onBackClicked()
-                    }
-                    getClazzFinishLayout().visibility = View.VISIBLE
-                    getClassInitLayout().visibility = View.GONE
-                    clazzStart = true
-                    clazzEnd = true
+                    classEnd()
                 }
                 else -> {
                     getClazzTitleView().setClazzState(getString(R.string.class_did_not_start))
@@ -355,6 +324,48 @@ abstract class BaseNormalClassActivity(layoutId: Int = R.layout.activity_normal_
                     }
                 }
             }
+        }
+    }
+
+    open fun classEnd() {
+        hideFragmentWithChatRoom()
+        hideFragmentWithMembers()
+        eduManager.getRtcService().leave()
+        eduManager.getBoardService().dispose()
+        getClazzTitleView().apply { setFinishClazzState(getClazzDuration()) }
+        getClassFinishReplay().setOnClickThrottleFirst {
+            TODO("Not yet implemented")
+        }
+        getClassFinishBackView().setOnClickThrottleFirst {
+            onBackClicked()
+        }
+        getClazzFinishLayout().visibility = View.VISIBLE
+        getClassInitLayout().visibility = View.GONE
+        clazzStart = true
+        clazzEnd = true
+    }
+
+    open fun classStart(states: NEEduRoomStates) {
+        PreferenceUtil.recordPlay =
+            Pair(eduRoom.roomUuid, eduRoom.rtcCid)
+
+        getClazzTitleView().startClazzState(
+            getString(R.string.having_class_now),
+            states.duration ?: 0
+        )
+        if (!clazzStart) {
+            getChangeClazzStateView()?.apply {
+                text = getString(R.string.end_class)
+                isSelected = false
+                setOnClickThrottleFirst {
+                    finishClazz()
+                }
+            }
+            getClassInitLayout().visibility = View.GONE
+            if (eduManager.roomConfig.isBig() && !entryMember.isHost()) {
+                getAvHandsUpView().visibility = View.VISIBLE
+            }
+            clazzStart = true
         }
     }
 
@@ -464,6 +475,10 @@ abstract class BaseNormalClassActivity(layoutId: Int = R.layout.activity_normal_
     }
 
     private fun startLocalShareScreen() {
+        if(hasOtherScreen()){
+            ToastUtil.showShort(getString(R.string.someone_share))
+            return
+        }
         eduManager.getShareScreenService().shareScreen(eduRoom.roomUuid, entryMember.userUuid).observe(this,
             { t ->
                 if (t.success()) {
@@ -476,6 +491,13 @@ abstract class BaseNormalClassActivity(layoutId: Int = R.layout.activity_normal_
                     }
                 }
             })
+    }
+
+    private fun hasOtherScreen():Boolean{
+      val screenMember =   eduManager.getMemberService().getMemberList().find {
+            it.streams?.subVideo?.value ==1
+        }
+        return screenMember != null
     }
 
     open fun stopLocalShareScreen(callback: (() -> Unit)? = null) {
@@ -853,7 +875,7 @@ abstract class BaseNormalClassActivity(layoutId: Int = R.layout.activity_normal_
         eduManager.getShareScreenService().onPermissionGranted().removeObserver(shareScreenPermissionObserver)
     }
 
-    fun destroy() {
+   open fun destroy() {
         eduManager.getRtcService().leave()
         unRegisterObserver()
         eduManager.getMemberService().getLocalUser().let {

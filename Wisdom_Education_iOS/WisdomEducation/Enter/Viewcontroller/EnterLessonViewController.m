@@ -77,6 +77,7 @@ static NSString *kLastUserToken = @"lastUserToken";
     [self preSetting];
 }
 - (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
     [self.navigationController setNavigationBarHidden:YES];
     NSString *lastRoomUuid = [[NSUserDefaults standardUserDefaults] objectForKey:kLastRoomUuid];
     self.recordBtn.hidden = lastRoomUuid.length > 0 ? NO : YES;
@@ -195,8 +196,8 @@ static NSString *kLastUserToken = @"lastUserToken";
     [self.studentRoleButton addConstraints:@[studentWidth,studentHeight]];
 
     [self.view addSubview:self.joinLessonBtn];
-    NSLayoutConstraint *joinTop = [NSLayoutConstraint constraintWithItem:self.joinLessonBtn attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.teacherRoleButton attribute:NSLayoutAttributeBottom multiplier:1.0 constant:12];
-    NSLayoutConstraint *joinLeading = [NSLayoutConstraint constraintWithItem:self.joinLessonBtn attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:self.teacherRoleButton attribute:NSLayoutAttributeLeading multiplier:1.0 constant:0];
+    NSLayoutConstraint *joinTop = [NSLayoutConstraint constraintWithItem:self.joinLessonBtn attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.selectionView attribute:NSLayoutAttributeBottom multiplier:1.0 constant:52];
+    NSLayoutConstraint *joinLeading = [NSLayoutConstraint constraintWithItem:self.joinLessonBtn attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:self.selectionView attribute:NSLayoutAttributeLeading multiplier:1.0 constant:0];
     NSLayoutConstraint *joinTrailing = [NSLayoutConstraint constraintWithItem:self.joinLessonBtn attribute:NSLayoutAttributeTrailing relatedBy:NSLayoutRelationEqual toItem:self.lessonIdView attribute:NSLayoutAttributeTrailing multiplier:1.0 constant:0];
     NSLayoutConstraint *joinHeight = [NSLayoutConstraint constraintWithItem:self.joinLessonBtn attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:40];
     [self.view addConstraints:@[joinTop,joinLeading,joinTrailing,joinHeight]];
@@ -310,9 +311,8 @@ static NSString *kLastUserToken = @"lastUserToken";
                 if (!granted) {
                     [self.view makeToast:@"请在设置页面先开启视频权限"];
                     return;
-                }else {
-                    [self enterRoom];
                 }
+                [self enterRoom];
             }];
         }
     }];
@@ -566,8 +566,40 @@ static NSString *kLastUserToken = @"lastUserToken";
     self.lessonType = indexPath.row;
     self.selectionView.title = self.lessonTypes[indexPath.row];
     [tableView removeFromSuperview];
-    self.teacherRoleButton.hidden = [self.selectionView.title isEqualToString:@"直播大班课"];
+    [self.studentRoleButton removeFromSuperview];
+    [self.teacherRoleButton removeFromSuperview];
+//    self.teacherRoleButton.hidden = [self.selectionView.title isEqualToString:@"直播大班课"];
+    [self updateRoleButton];
     [self checkJoinButton];
+}
+- (void)updateRoleButton{
+    if([self.selectionView.title isEqualToString:@"直播大班课"]){
+        [self.view addSubview:self.studentRoleButton];
+        NSLayoutConstraint *studentTop = [NSLayoutConstraint constraintWithItem:self.studentRoleButton attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.selectionView attribute:NSLayoutAttributeBottom multiplier:1.0 constant:12];
+        NSLayoutConstraint *studentLeading = [NSLayoutConstraint constraintWithItem:self.studentRoleButton attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:self.selectionView attribute:NSLayoutAttributeLeading multiplier:1.0 constant:0];
+        NSLayoutConstraint *studentWidth = [NSLayoutConstraint constraintWithItem:self.studentRoleButton attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:64];
+        NSLayoutConstraint *studentHeight = [NSLayoutConstraint constraintWithItem:self.studentRoleButton attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:40];
+        [self.view addConstraints:@[studentLeading,studentTop]];
+        [self.studentRoleButton addConstraints:@[studentWidth,studentHeight]];
+    }else{
+        [self.view addSubview:self.teacherRoleButton];
+        NSLayoutConstraint *teacherTop = [NSLayoutConstraint constraintWithItem:self.teacherRoleButton attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.selectionView attribute:NSLayoutAttributeBottom multiplier:1.0 constant:12];
+        NSLayoutConstraint *teacherLeading = [NSLayoutConstraint constraintWithItem:self.teacherRoleButton attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:self.selectionView attribute:NSLayoutAttributeLeading multiplier:1.0 constant:0];
+        NSLayoutConstraint *teacherWidth = [NSLayoutConstraint constraintWithItem:self.teacherRoleButton attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:64];
+        NSLayoutConstraint *teacherHeight = [NSLayoutConstraint constraintWithItem:self.teacherRoleButton attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:40];
+        [self.view addConstraints:@[teacherTop,teacherLeading]];
+        [self.teacherRoleButton addConstraints:@[teacherWidth,teacherHeight]];
+        
+        [self.view addSubview:self.studentRoleButton];
+        NSLayoutConstraint *studentTop = [NSLayoutConstraint constraintWithItem:self.studentRoleButton attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.teacherRoleButton attribute:NSLayoutAttributeTop multiplier:1.0 constant:0];
+        NSLayoutConstraint *studentLeading = [NSLayoutConstraint constraintWithItem:self.studentRoleButton attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:self.teacherRoleButton attribute:NSLayoutAttributeTrailing multiplier:1.0 constant:10];
+        NSLayoutConstraint *studentWidth = [NSLayoutConstraint constraintWithItem:self.studentRoleButton attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:64];
+        NSLayoutConstraint *studentHeight = [NSLayoutConstraint constraintWithItem:self.studentRoleButton attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:40];
+        [self.view addConstraints:@[studentLeading,studentTop]];
+        [self.studentRoleButton addConstraints:@[studentWidth,studentHeight]];
+
+    }
+    
 }
 
 #pragma mark - EduSelectViewDelegate
@@ -589,7 +621,7 @@ static NSString *kLastUserToken = @"lastUserToken";
         self.tableview.hidden = YES;
     }
 }
-#pragma mark - 
+#pragma mark -
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
 {
     return YES;
@@ -686,6 +718,7 @@ static NSString *kLastUserToken = @"lastUserToken";
     if (!_lessonIdView) {
         _lessonIdView = [[EduInputView alloc] initWithPlaceholder:@"请输入课堂号"];
         _lessonIdView.delegate = self;
+        _lessonIdView.text = _lessonIdView.text;
     }
     return _lessonIdView;
 }
@@ -694,6 +727,7 @@ static NSString *kLastUserToken = @"lastUserToken";
         _nicknameView = [[EduInputView alloc] initWithPlaceholder:@"请输入昵称"];
         _nicknameView.delegate = self;
         _nicknameView.textField.keyboardType = UIKeyboardTypeDefault;
+        _nicknameView.text = _nicknameView.text;
     }
     return _nicknameView;
 }
@@ -701,6 +735,7 @@ static NSString *kLastUserToken = @"lastUserToken";
     if (!_selectionView) {
         _selectionView = [[EduSelectView alloc] initWithTitle:@"请选择课堂类型"];
         _selectionView.delegate = self;
+        _selectionView.title = @"直播大班课";
     }
     return _selectionView;
 }

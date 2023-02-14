@@ -47,6 +47,7 @@
     }];
 }
 - (void)getRoom:(NEEduRoom *)room completion:(void(^)(NEEduRoomConfigResponse *result,NSError *error))completion {
+    // 获取房间信息
     [HttpManager getRoom:room.roomUuid param:nil classType:[NEEduRoomConfigResponse class] success:^(id  _Nonnull objModel) {
         if (completion) {
             NEEduRoomConfigResponse *res = (NEEduRoomConfigResponse *)objModel;
@@ -59,7 +60,6 @@
                 [NEEduManager shared].localUser.userName = room.nickName;
                 completion(objModel,nil);
             }
-            
         }
     } failure:^(NSError * _Nullable error, NSInteger statusCode) {
         if (completion) {
@@ -87,11 +87,17 @@
         streams.subVideo = subVideo;
     }
     request.userName = room.userName;
-    request.role = NEEduRoleBroadcaster;
-    if (room.role == NEEduRoleTypeStudent) {
+    if(room.isLiveClass){
+        request.role = NEEduRoleAudience;
+    }
+    else{
         request.role = NEEduRoleBroadcaster;
-    }else {
-        request.role = NEEduRoleHost;
+        
+        if (room.role == NEEduRoleTypeStudent) {
+            request.role = NEEduRoleBroadcaster;
+        }else {
+            request.role = NEEduRoleHost;
+        }
     }
 //    streams.subVideo = subVideo;
     if (room.sceneType == NEEduSceneTypeBig && room.role == NEEduRoleTypeStudent) {

@@ -7,84 +7,51 @@ package com.netease.yunxin.app.wisdom.edu.ui.clazz
 
 import android.content.Context
 import android.content.Intent
-import android.os.Bundle
-import android.text.TextUtils
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import android.widget.FrameLayout
 import android.widget.LinearLayout
-import androidx.activity.viewModels
 import androidx.lifecycle.Observer
 import com.netease.neliveplayer.proxy.config.NEPlayerConfig
-import com.netease.nimlib.sdk.chatroom.model.ChatRoomMessage
 import com.netease.yunxin.app.wisdom.base.util.CommonUtil.setOnClickThrottleFirst
 import com.netease.yunxin.app.wisdom.base.util.PreferenceUtil
 import com.netease.yunxin.app.wisdom.base.util.ToastUtil
-import com.netease.yunxin.app.wisdom.edu.logic.NEEduErrorCode
+import com.netease.yunxin.app.wisdom.edu.logic.NEEduManager
 import com.netease.yunxin.app.wisdom.edu.logic.model.*
-import com.netease.yunxin.app.wisdom.edu.ui.NEEduUiKit
+import com.netease.yunxin.app.wisdom.edu.logic.service.NEEduSeatEventListener
 import com.netease.yunxin.app.wisdom.edu.ui.R
-import com.netease.yunxin.app.wisdom.edu.ui.base.BaseChatView
-import com.netease.yunxin.app.wisdom.edu.ui.base.BaseClassActivity
 import com.netease.yunxin.app.wisdom.edu.ui.base.BaseFragment
-import com.netease.yunxin.app.wisdom.edu.ui.base.BaseMemberView
-import com.netease.yunxin.app.wisdom.edu.ui.clazz.adapter.MemberVideoListAdapter
 import com.netease.yunxin.app.wisdom.edu.ui.clazz.dialog.ConfirmDialog
-import com.netease.yunxin.app.wisdom.edu.ui.clazz.fragment.ChatRoomFragment
 import com.netease.yunxin.app.wisdom.edu.ui.clazz.fragment.LiveClazzMembersFragment
-import com.netease.yunxin.app.wisdom.edu.ui.clazz.fragment.ZoomImageFragment
-import com.netease.yunxin.app.wisdom.edu.ui.clazz.viewmodel.ChatRoomViewModel
-import com.netease.yunxin.app.wisdom.edu.ui.clazz.widget.ClazzInfoView
-import com.netease.yunxin.app.wisdom.edu.ui.clazz.widget.ItemBottomView
-import com.netease.yunxin.app.wisdom.edu.ui.clazz.widget.TitleView
-import com.netease.yunxin.app.wisdom.edu.ui.databinding.ActivityLiveClazzBinding
 import com.netease.yunxin.app.wisdom.player.sdk.PlayerManager
 import com.netease.yunxin.app.wisdom.player.sdk.VodPlayer
 import com.netease.yunxin.app.wisdom.player.sdk.VodPlayerObserver
-import com.netease.yunxin.app.wisdom.player.sdk.constant.CauseCode
 import com.netease.yunxin.app.wisdom.player.sdk.model.*
 import com.netease.yunxin.app.wisdom.player.sdk.view.AdvanceTextureView
-import com.netease.yunxin.app.wisdom.viewbinding.viewBinding
+import com.netease.yunxin.app.wisdom.whiteboard.WhiteboardManager
+import com.netease.yunxin.app.wisdom.whiteboard.config.WhiteboardConfig
+import com.netease.yunxin.app.wisdom.whiteboard.model.NEWbAuth
 import com.netease.yunxin.kit.alog.ALog
 
-class LiveClassActivity(layoutId: Int = R.layout.activity_live_clazz) : BaseClassActivity(layoutId), BaseChatView, BaseMemberView {
+class LiveClassActivity : BigClazzStudentActivity(),
+    NEEduSeatEventListener {
+
     private val tag: String = "LiveClassActivity"
-    private val binding: ActivityLiveClazzBinding by viewBinding(R.id.one_container)
-
-    lateinit var memberVideoAdapter: MemberVideoListAdapter
-
-    private var clazzStart: Boolean = false
-
-    private var clazzEnd: Boolean = false
-
-    private val chatViewModel: ChatRoomViewModel by viewModels()
-
-    private val chatRoomFragment: ChatRoomFragment = ChatRoomFragment()
-
-    private val membersFragment: LiveClazzMembersFragment = LiveClazzMembersFragment()
-
     private var player: VodPlayer? = null
-
     private var textureView: AdvanceTextureView? = null
-
     private var isReleasePlayer: Boolean = false
+    private var isRtcMode = false
+    private val lastJoinList: MutableList<NEEduMember> = mutableListOf()
+    private val membersFragment: LiveClazzMembersFragment = LiveClazzMembersFragment()
+    private var retryPlayCount = 1
+    private val retryCount = 3
+
 
     companion object {
-
         val options by lazy {
             val options = VideoOptions()
             options.hardwareDecode = false
-            /**
-             * isPlayLongTimeBackground Specify whether to continue playback in the background or screen lock. Developers can modify based on requirements: For example:
-             * Software decoding is enabled:
-             * Set isPlayLongTimeBackground to false, streaming stops when the app is switched to the background and resumes to stream after switched back to the foreground.
-             * Set isPlayLongTimeBackground to true, the streaming continues after the app is switched to the background.
-             *
-             * Hardware is enabled:
-             * The live stream stops if the app is switched to the background and resume streaming after the app comes back to the foreground。
-             */
             options.isPlayLongTimeBackground = false
             options.bufferStrategy = VideoBufferStrategy.ANTI_JITTER
             options.isAutoStart = true
@@ -95,330 +62,6 @@ class LiveClassActivity(layoutId: Int = R.layout.activity_live_clazz) : BaseClas
             val intent = Intent(context, LiveClassActivity::class.java)
             context.startActivity(intent)
         }
-    }
-
-    override fun getMembersFragment(): BaseFragment {
-        return membersFragment
-    }
-
-    override fun getChatroomFragment(): BaseFragment {
-        return chatRoomFragment
-    }
-
-    private val roomStatesChangeObserver = Observer<NEEduRoomStates> { updateRoomStates(it) }
-    private val memberJoinObserver = Observer<List<NEEduMember>> {}
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)// keep screen on
-        initVideoPlayer()
-        initEduManager()
-        initViews()
-        registerObserver()
-    }
-
-    private fun initVideoPlayer() {
-        val config = SDKOptions()
-        config.privateConfig = NEPlayerConfig()
-        PlayerManager.init(this, config)
-        val sdkInfo: SDKInfo = PlayerManager.getSDKInfo(this)
-        ALog.i(tag, "NESDKInfo:version" + sdkInfo.version.toString() + ",deviceId:" + sdkInfo.deviceId)
-    }
-
-    private fun initEduManager() {
-        eduManager = NEEduUiKit.instance!!.neEduManager!!
-        eduRoom = eduManager.getRoom()
-        entryMember = eduManager.getEntryMember()
-        eduManager.errorLD.observe(this, { t ->
-            if (t != null && t != NEEduHttpCode.SUCCESS.code && !clazzEnd) {
-                val tip = NEEduErrorCode.tipsWithErrorCode(baseContext, t)
-                if (!TextUtils.isEmpty(tip)) {
-                    ToastUtil.showLong(tip)
-                } else {
-                    ToastUtil.showLong(getString(R.string.left_class_due_to_network_problems))
-                }
-                NEEduUiKit.destroy()
-                finish()
-            }
-
-        })
-    }
-
-
-    private fun registerObserver() {
-        eduManager.getRoomService().onRoomStatesChange().observeForever(roomStatesChangeObserver)
-        eduManager.getMemberService().onMemberJoin().observeForever(memberJoinObserver)
-    }
-
-
-    private fun initViews() {
-        replaceFragment(R.id.layout_members, getMembersFragment())
-
-        // The button at the bottom
-        binding.bottomView.apply {
-            getHandsUp().visibility = View.GONE
-            getHandsUpApply().visibility = View.GONE
-            getAudio().visibility = View.GONE
-            getVideo().visibility = View.GONE
-            getShareScreen().visibility = View.GONE
-            getBtnClazzCtrlLeft().visibility = View.GONE
-            getBtnClazzCtrlRight().visibility = View.GONE
-            getChatRoomView().visibility = View.VISIBLE
-        }
-
-        // Chat room
-        eduRoom.chatRoomId()?.let {
-            if (!eduManager.roomConfig.is1V1()) {
-                getChatroomFragment().let {
-                    replaceFragment(R.id.layout_chat_room, it)
-                }
-
-                getChatRoomView().setOnClickListener {
-                    showFragmentWithChatRoom()
-                }
-
-                chatViewModel.onUnreadChange().observe(this, {
-                    getChatRoomView().setSmallUnread(it)
-                })
-
-                getChatRoomView().visibility = View.VISIBLE
-            }
-            binding.ivChatHide.setOnClickListener { hideFragmentWithChatRoom() }
-
-            eduRoom.run {
-                if(PreferenceUtil.lowLatencyLive) {
-                    pullRtsUrl()
-                } else {
-                    pullRtmpUrl()
-                }
-            }?.apply {
-                initVideo(this)
-                renderVideo(binding.videoContainer)
-            }
-        }
-
-        getMembersView().setOnClickListener {
-            showFragmentWithMembers()
-        }
-
-        // The back button at the top
-        handleBackBtn(getBackView())
-
-        // Class state & paused & start/end class
-        initClazzViews(getClazzTitleView())
-        getClazzTitleView().setClazzState(getString(R.string.class_did_not_start))
-
-
-    }
-
-    private fun updateRoomStates(states: NEEduRoomStates) {
-        states.step?.value?.also {
-            when (it) {
-                NEEduRoomStep.START.ordinal -> {
-                    // Save playback request parameters
-                    PreferenceUtil.recordPlay =
-                        Pair(eduRoom.roomUuid, eduRoom.rtcCid)
-
-                    getClazzTitleView().startClazzState(getString(R.string.having_class_now), states.duration ?: 0)
-                    if (!clazzStart) {
-                        getClassInitLayout().visibility = View.GONE
-                        clazzStart = true
-                    }
-                    startPlayer()
-                }
-                NEEduRoomStep.END.ordinal -> {
-                    hideFragmentWithChatRoom()
-                    hideFragmentWithMembers()
-                    getClazzTitleView().apply { setFinishClazzState(getClazzDuration()) }
-                    getClassFinishReplay().setOnClickThrottleFirst {
-
-                    }
-                    getClassFinishBackView().setOnClickThrottleFirst {
-                        onBackClicked()
-                    }
-                    getClazzFinishLayout().visibility = View.VISIBLE
-                    getClassInitLayout().visibility = View.GONE
-                    clazzStart = true
-                    clazzEnd = true
-                    releasePlayer()
-                }
-                else -> {
-                    getClazzTitleView().setClazzState(getString(R.string.class_did_not_start))
-                }
-            }
-        }
-    }
-
-    fun isSelf(member: NEEduMember): Boolean {
-        return eduManager.isSelf(member.userUuid)
-    }
-
-    private fun replaceFragment(id: Int, baseFragment: BaseFragment) {
-        supportFragmentManager.beginTransaction().replace(id, baseFragment).commitNow()
-    }
-
-    private fun addFragment(id: Int, baseFragment: BaseFragment) {
-        supportFragmentManager.beginTransaction().add(id, baseFragment).commitNowAllowingStateLoss()
-    }
-
-    private fun removeFragment(baseFragment: BaseFragment) {
-        supportFragmentManager.beginTransaction().remove(baseFragment).commitAllowingStateLoss()
-    }
-
-    private fun handleBackBtn(view: View) {
-        view.setOnClickThrottleFirst {
-            // may be show quit dialog
-            onBackClicked()
-        }
-    }
-
-    override fun updateUnReadCount() {}
-
-
-    private fun initClazzViews(
-        title: TitleView
-    ) {
-        eduManager.getRoomService().onCurrentRoomInfo().observe(this@LiveClassActivity, { room ->
-            title.setClazzName(room.roomName)
-            title.setClazzInfoClickListener {
-                getClazzInfoLayout().let {
-                    it.setRoomName(room.roomName)
-                    eduManager.getMemberService().getMemberList().firstOrNull { it1 -> it1.isHost() }
-                        ?.let { it2 -> it.setTeacherName(it2.userName) }
-                    room.roomUuid.let { it3 ->
-                        it.setRoomId(it3)
-                        it.setOnCopyText(it3)
-                    }
-                    it.show()
-                }
-            }
-
-        })
-    }
-
-    override fun showFragmentWithChatRoom() {
-        getIMLayout().visibility = View.VISIBLE
-    }
-
-    override fun hideFragmentWithChatRoom() {
-        getIMLayout().visibility = View.GONE
-        chatViewModel.clearUnread()
-        getChatroomFragment().hideKeyBoard()
-    }
-
-    override fun showFragmentWithMembers() {
-        getMembersFragment().let {
-            getMembersLayout().visibility = View.VISIBLE
-        }
-    }
-
-    override fun hideFragmentWithMembers() {
-        getMembersFragment().let {
-            getMembersLayout().visibility = View.GONE
-        }
-        getMembersFragment().hideKeyBoard()
-    }
-
-    override fun onBackPressed() {
-        onBackClicked()
-    }
-
-    private fun onBackClicked() {
-        if (clazzEnd) {
-            destroy()
-        } else {
-            ConfirmDialog.show(this,
-                getString(R.string.sure_leave_class),
-                getString(R.string.leave_class_student_tips),
-                cancelable = true,
-                cancelOnTouchOutside = true,
-                callback = object : ConfirmDialog.Callback {
-                    override fun result(boolean: Boolean?) {
-                        if (boolean == true) {
-                            destroy()
-                        }
-                    }
-                })
-        }
-    }
-
-//    fun toastOperateSuccess() {
-//        ToastUtil.showShort(R.string.operation_successful)
-//    }
-
-    private fun unRegisterObserver() {
-        eduManager.getRoomService().onRoomStatesChange().removeObserver(roomStatesChangeObserver)
-    }
-
-    fun getClazzTitleView(): TitleView {
-        return binding.titleLayout
-    }
-
-    private fun getClazzInfoLayout(): ClazzInfoView {
-        return binding.clazzInfoView
-    }
-
-    override fun getChatRoomView(): ItemBottomView {
-        return binding.bottomView.getChatRoom()
-    }
-
-    override fun getMembersView(): View {
-        return binding.bottomView.getMembers()
-    }
-
-    override fun getIMLayout(): View {
-        return binding.layoutIm
-    }
-
-    override fun getMembersLayout(): View {
-        return binding.layoutMembers
-    }
-
-    private fun getClassInitLayout(): View {
-        return binding.rlClassInit
-    }
-
-    private fun getClassFinishReplay(): View {
-        return binding.btnClassFinishReplay
-    }
-
-    private fun getClassFinishBackView(): View {
-        return binding.btnClassFinishBack
-    }
-
-    fun getClazzFinishLayout(): View {
-        return binding.layoutClassFinish
-    }
-
-    private fun getBackView(): View {
-        return binding.titleLayout.getBackTv()
-    }
-
-    override fun getZoomImageLayout(): View {
-        return binding.layoutZoomImage
-    }
-
-    private var zoomImageFragment: BaseFragment? = null
-
-    override fun showZoomImageFragment(message: ChatRoomMessage) {
-        getZoomImageLayout().visibility = View.VISIBLE
-        zoomImageFragment = ZoomImageFragment().also {
-            it.arguments = Bundle().apply { putSerializable(ZoomImageFragment.INTENT_EXTRA_IMAGE, message) }
-            replaceFragment(R.id.layout_zoom_image, it)
-        }
-    }
-
-    override fun hideZoomImageFragment() {
-        getZoomImageLayout().visibility = View.GONE
-        zoomImageFragment?.let {
-            removeFragment(it)
-        }
-    }
-
-    private fun initVideo(url: String) {
-        player = PlayerManager.buildVodPlayer(this, url, options)
-        player?.registerPlayerObserver(playerObserver, true)
-
     }
 
     private val playerObserver: VodPlayerObserver = object : VodPlayerObserver {
@@ -449,15 +92,23 @@ class LiveClassActivity(layoutId: Int = R.layout.activity_live_clazz) : BaseClas
         }
 
         override fun onError(code: Int, extra: Int) {
-            if (code == CauseCode.CODE_VIDEO_PARSER_ERROR) {
-                ALog.i(tag, "Video parsing error")
-            } else {
-                ALog.i(tag, "Play error, error code:$code")
+            ALog.i(tag, "Video play error:$code")
+            if (retryPlayCount > retryCount) {
+                ToastUtil.showLong(getString(R.string.play_error))
+                return
             }
+            retryPlayCount++
+            binding.videoContainer.postDelayed({
+                releasePlayer()
+                initVideoPlayer()
+                startPlayer()
+            }, 1000)
+
         }
 
         override fun onFirstVideoRendered() {
             ALog.i(tag, "The first frame of video has been parsed")
+            retryPlayCount = 0
         }
 
         override fun onFirstAudioRendered() {
@@ -474,7 +125,10 @@ class LiveClassActivity(layoutId: Int = R.layout.activity_live_clazz) : BaseClas
         }
 
         override fun onVideoDecoderOpen(value: Int) {
-            ALog.i(tag, "Use the decoder type: ${if (value == 1) "Hardware decode" else "Soft decode"}")
+            ALog.i(
+                tag,
+                "Use the decoder type: ${if (value == 1) "Hardware decode" else "Soft decode"}"
+            )
         }
 
         override fun onStateChanged(stateInfo: StateInfo?) {
@@ -484,6 +138,60 @@ class LiveClassActivity(layoutId: Int = R.layout.activity_live_clazz) : BaseClas
         override fun onHttpResponseInfo(code: Int, header: String) {
             ALog.i(tag, "onHttpResponseInfo,code:$code header:$header")
         }
+    }
+
+    override fun initViews() {
+        initVideoPlayer()
+        super.initViews()
+        binding.layoutWhiteboard.visibility = View.GONE
+        binding.rcvMemberVideo.visibility = View.GONE
+        registerSeatListener()
+        initHandUpState()
+    }
+
+    override fun classStart(states: NEEduRoomStates) {
+        super.classStart(states)
+        getAvHandsUpView().visibility = View.VISIBLE
+        startPlayer()
+    }
+
+    private fun initVideoPlayer() {
+        isReleasePlayer = false
+        val config = SDKOptions()
+        config.privateConfig = NEPlayerConfig()
+        PlayerManager.init(this, config)
+        val sdkInfo: SDKInfo = PlayerManager.getSDKInfo(this)
+        ALog.i(
+            tag,
+            "NESDKInfo:version" + sdkInfo.version.toString() + ",deviceId:" + sdkInfo.deviceId
+        )
+        initVideo()
+    }
+
+    private fun initVideo(url: String) {
+        player = PlayerManager.buildVodPlayer(this, url, options)
+        player?.registerPlayerObserver(playerObserver, true)
+    }
+
+    private fun initVideo() {
+        eduRoom.run {
+            if (PreferenceUtil.lowLatencyLive) {
+                pullRtsUrl()
+            } else {
+                pullRtmpUrl()
+            }
+        }?.apply {
+            initVideo(this)
+            renderVideo(binding.videoContainer)
+        }
+    }
+
+    private fun renderVideo(viewGroup: ViewGroup) {
+        val videoView = pickVideoView()
+        viewGroup.removeAllViews()
+        viewGroup.addView(videoView)
+        textureView = videoView
+        player?.setupRenderView(textureView, VideoScaleMode.FIT)
     }
 
     private fun pickVideoView(): AdvanceTextureView {
@@ -500,20 +208,15 @@ class LiveClassActivity(layoutId: Int = R.layout.activity_live_clazz) : BaseClas
         return videoView1
     }
 
-    private fun renderVideo(viewGroup: ViewGroup) {
-        val videoView = pickVideoView()
-        viewGroup.removeAllViews()
-        viewGroup.addView(videoView)
-        textureView = videoView
-        player?.setupRenderView(textureView, VideoScaleMode.FIT)
-    }
-
     private fun startPlayer() {
-        player?.start()
+        if (!isRtcMode) {
+            binding.videoContainer.visibility = View.VISIBLE
+            player?.start()
+        }
     }
 
     private fun releasePlayer() {
-        if(isReleasePlayer) {
+        if (isReleasePlayer) {
             return
         }
         isReleasePlayer = true
@@ -526,10 +229,309 @@ class LiveClassActivity(layoutId: Int = R.layout.activity_live_clazz) : BaseClas
         textureView = null
     }
 
-    fun destroy() {
-        releasePlayer()
-        unRegisterObserver()
-        NEEduUiKit.destroy()
-        finish()
+    private fun initHandUpState() {
+        eduManager.getSeatService().getSeatRequestList(eduRoom.roomUuid)
+            .observe(this, Observer { result ->
+                if (result.success()) {
+                    result.data?.firstOrNull {
+                        it.userUuid == entryMember.userUuid
+                    }?.apply {
+                        eduManager.getSeatService().cancelSeatRequest(eduRoom.roomUuid,entryMember.userName)
+                            .observe(this@LiveClassActivity) {}
+                    }
+                }
+            })
+        eduManager.getSeatService().getSeatInfo(eduRoom.roomUuid).observe(this, Observer { result ->
+            if (result.success()) {
+                result.data?.seatIndexList?.firstOrNull {
+                    it.userUuid == entryMember.userUuid
+                }?.apply {
+                    userUuid?.apply {
+                        eduManager.getRoomService().leaveClassroom(this)
+                            .observe(this@LiveClassActivity) {}
+                    }
+                }
+            }
+        })
     }
+
+    private fun registerSeatListener() {
+        eduManager.getSeatService().addSeatListener(this)
+    }
+
+    private fun unregisterSeatListener() {
+        eduManager.getSeatService().removeSeatListener(this)
+    }
+
+    private fun resetHandsUpState() {
+        getAvHandsUpView().visibility = View.VISIBLE
+        getAvHandsUpView().isSelected = true
+        getLeaveClazzView()?.visibility = View.GONE
+        getAvHandsUpOffstageView().visibility = View.GONE
+        getScreenShareView().visibility = View.GONE
+        getScreenShareCoverView().visibility = View.GONE
+
+        // Reset the state: streaming/whiteboard/raise hand/whiteboard/screenshare
+        eduManager.getMemberService().getLocalUser()?.apply {
+            if (hasSubVideo()) {
+                stopLocalShareScreen()
+            }
+            eduManager.getRtcService().updateRtcAudio(this)
+            eduManager.getRtcService().enableLocalVideo(this)
+            eduManager.getBoardService().setEnableDraw(false)
+        }
+
+        getAudioView().visibility = View.GONE
+        getVideoView().visibility = View.GONE
+    }
+
+    override fun switchStuLocalHandsUp() {
+        eduManager.getMemberService().getLocalUser()?.apply {
+            if (!getAvHandsUpView().isSelected) {
+                ConfirmDialog.show(this@LiveClassActivity,
+                    getString(R.string.cancel_hands_up),
+                    getString(R.string.sure_to_cancel_your_hand),
+                    cancelable = true,
+                    cancelOnTouchOutside = true,
+                    callback = object : ConfirmDialog.Callback {
+                        override fun result(boolean: Boolean?) {
+                            if (boolean == true)
+                                cancelStudentHandsUp()
+                        }
+                    })
+
+            } else {
+                ConfirmDialog.show(this@LiveClassActivity,
+                    this@LiveClassActivity.getString(R.string.hands_up_apply),
+                    this@LiveClassActivity.getString(R.string.hands_up_apply_msg),
+                    cancelable = true,
+                    cancelOnTouchOutside = true,
+                    callback = object : ConfirmDialog.Callback {
+                        override fun result(boolean: Boolean?) {
+                            if (boolean == true)
+                                applyStudentHandsUp()
+                        }
+                    })
+            }
+        }
+    }
+
+
+    override fun applyStudentHandsUp() {
+        eduManager.getSeatService().submitSeatRequest(eduRoom.roomUuid,entryMember.userName).observe(this) { t ->
+            if (!t.success()) {
+                ToastUtil.showShort(getString(R.string.operate_fail))
+                ALog.w("fail to apply hands up ${t.code}")
+            }
+        }
+    }
+
+    override fun cancelStudentHandsUp() {
+        eduManager.getSeatService().cancelSeatRequest(eduRoom.roomUuid,entryMember.userName).observe(this) { t ->
+            if (!t.success()) {
+                ToastUtil.showShort(getString(R.string.operate_fail))
+                ALog.w("fail to cancel hands up ${t.code}")
+            }
+        }
+    }
+
+    override fun offStageStudentLocal() {
+        eduManager.getRoomService().leaveClassroom(eduManager.getEntryMember().userUuid)
+            .observe(this) { t ->
+                if (!t.success()) {
+                    ToastUtil.showShort(getString(R.string.operate_fail))
+                    ALog.w("fail to leaveClassroom ${t.code}")
+                } else {
+                    resetHandsUpState()
+                    NEEduManager.classOptions.roleType = NEEduRoleType.BROADCASTER
+                    NEEduManager.classOptions.sceneType = NEEduSceneType.LIVE_SIMPLE
+                    NEEduManager.classOptions.isRtcRoom = false
+                    eduManager.getRtcService().leave()
+                    cdnMode()
+                }
+            }
+    }
+
+    private fun showOffStageDialog() {
+        ConfirmDialog.show(this,
+            getString(R.string.off_stage),
+            getString(R.string.offstage_confirm_message),
+            cancelable = true,
+            cancelOnTouchOutside = true,
+            ok = getString(R.string.confirm),
+            callback = object : ConfirmDialog.Callback {
+                override fun result(boolean: Boolean?) {
+                    if (boolean == true)
+                        offStageStudentLocal()
+                }
+            })
+    }
+
+
+    override fun onSeatRequestSubmitted(user: String) {
+        if (!clazzStart) return
+        if (eduManager.isSelf(user)) {
+            getAvHandsUpView().visibility = View.VISIBLE
+            getAvHandsUpView().isSelected = false
+            getLeaveClazzView()?.visibility = View.GONE
+            getAvHandsUpOffstageView().visibility = View.GONE
+
+            getAudioView().visibility = View.GONE
+            getVideoView().visibility = View.GONE
+        }
+    }
+
+    override fun onSeatRequestCancelled(user: String) {
+        if (!clazzStart) return
+        if (eduManager.isSelf(user)) {
+            resetHandsUpState()
+        }
+    }
+
+    override fun onSeatRequestApproved(user: String, operateBy: String) {
+        if (!clazzStart) return
+        if (eduManager.isSelf(user)) {
+            switchRtcClass(user)
+        }
+    }
+
+    override fun onSeatRequestRejected(user: String, operateBy: String) {
+        if (!clazzStart) return
+        if (eduManager.isSelf(user)) {
+            ToastUtil.showLong(R.string.hands_up_has_been_rejected)
+            resetHandsUpState()
+        }
+    }
+
+    override fun onSeatLeave(user: String) {
+    }
+
+    override fun onSeatKicked(user: String, operateBy: String) {
+        if (!clazzStart) return
+        if (eduManager.isSelf(user)) {
+            ToastUtil.showLong(R.string.teacher_finished_your_stage_operation)
+            offStageStudentLocal()
+        }
+    }
+
+    override fun onSeatListChanged(seats: List<NESeatItem>) {
+        onStageListChange()
+    }
+
+    override fun getMembersFragment(): BaseFragment? {
+        return membersFragment
+    }
+
+    private fun switchRtcClass(user: String) {
+        lastJoinList.clear()
+        lastJoinList.addAll(eduManager.getMemberService().getMemberList())
+        NEEduManager.classOptions.roleType = NEEduRoleType.AUDIENCE
+        NEEduManager.classOptions.isRtcRoom = true
+        isRtcMode = true
+        eduManager.enterNormalClass(NEEduManager.classOptions).observe(this, Observer {
+            if (it.success()) {
+                ALog.i(tag, "join room success")
+                updateLocalUserVideoAudio(
+                    videoEnabled = true,
+                    audioEnabled = true
+                ).observe(this, {})
+                eduManager.getHandsUpService()
+                    .handsUpStateChange(NEEduHandsUpStateValue.TEACHER_ACCEPT, user)
+                    .observe(this,
+                        Observer {
+                            if (it.success()) {
+                                ALog.i(tag, "update handup properties success")
+                                rtcMode()
+                            } else {
+                                ALog.i(tag, "update handup properties success fail")
+                            }
+                        })
+            } else {
+                NEEduManager.classOptions.roleType = NEEduRoleType.BROADCASTER
+                NEEduManager.classOptions.isRtcRoom = false
+                isRtcMode = false
+                ALog.i(tag, "join room flail")
+            }
+        })
+    }
+
+    override fun onScreenShareChange(t: List<NEEduMember>) {
+        if(isRtcMode) {
+            super.onScreenShareChange(t)
+        }
+    }
+
+    private fun cdnMode() {
+        isRtcMode = false
+        binding.layoutWhiteboard.visibility = View.GONE
+        binding.videoContainer.visibility = View.VISIBLE
+        binding.rcvMemberVideo.visibility = View.GONE
+        binding.layoutShareVideo.visibility = View.GONE
+        binding.layoutShareVideo.removeAllViews()
+        initVideoPlayer()
+        startPlayer()
+    }
+
+    private fun rtcMode() {
+        isRtcMode = true
+        releasePlayer()
+        rtcModeUI()
+        reloadWhiteboard()
+        eduManager.getMemberService().updateMemberJoin(lastJoinList, true)
+    }
+
+    private fun rtcModeUI() {
+        binding.layoutWhiteboard.visibility = View.VISIBLE
+        binding.videoContainer.visibility = View.GONE
+        binding.rcvMemberVideo.visibility = View.VISIBLE
+        getAudioView().visibility = View.VISIBLE
+        getVideoView().visibility = View.VISIBLE
+        getAvHandsUpView().visibility = View.GONE
+        getAvHandsUpOffstageView().apply {
+            visibility = View.VISIBLE
+            setOnClickThrottleFirst {
+                showOffStageDialog()
+            }
+        }
+        getLeaveClazzView()?.text = getString(R.string.leave_class)
+    }
+
+    private fun reloadWhiteboard() {
+        eduManager.apply {
+            val config = WhiteboardConfig(
+                eduLoginRes.imKey,
+                getEntryMember().rtcUid,
+                buildWbAuth(getWbAuth()),
+                eduLoginRes.userUuid,
+                eduLoginRes.imToken,
+                getRoom().whiteBoardCName()!!,
+                "",
+                isHost(),
+                null
+            )
+            whiteboardFragment.setWhiteboardConfig(config)
+            WhiteboardManager.reload()
+        }
+    }
+
+    private fun buildWbAuth(auth: NEEduWbAuth?): NEWbAuth? {
+        return auth?.let {
+            NEWbAuth(auth.checksum, auth.curTime, auth.nonce)
+        }
+    }
+
+    override fun destroy() {
+        if (isRtcMode) {
+            eduManager.getRoomService().leaveClassroom(eduManager.getEntryMember().userUuid)
+                .observe(this) {}
+        }
+        releasePlayer()
+        super.destroy()
+    }
+
+    override fun onDestroy() {
+        unregisterSeatListener()
+        super.onDestroy()
+    }
+
 }

@@ -55,6 +55,7 @@ open class BaseRepository {
             RoomService::class.java -> PassthroughRoomService as T
             StreamService::class.java -> PassthroughStreamService as T
             UserService::class.java -> PassthroughUserService as T
+            SeatService::class.java -> PassthroughSeatService as T
             else -> null as T
         }
     }

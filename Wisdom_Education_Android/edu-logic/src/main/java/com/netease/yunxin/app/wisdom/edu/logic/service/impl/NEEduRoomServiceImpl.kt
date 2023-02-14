@@ -47,11 +47,13 @@ internal class NEEduRoomServiceImpl : NEEduRoomService() {
         return RoomServiceRepository.getConfig(roomUuid)
     }
 
-    override fun entryClass(options: NEEduClassOptions): LiveData<NEResult<NEEduEntryRes>> {
+    override fun entryClass(options: NEEduClassOptions,isHasStreams:Boolean): LiveData<NEResult<NEEduEntryRes>> {
         val joinClassroomReq = JoinClassroomReq(
             userName = options.nickName,
             role = options.roleType.value,
-            streams = options.sceneType.streams(options.roleType)
+            streams = if(isHasStreams) NEEduStreams(
+                audio = NEEduStreamAudio(),
+                video = NEEduStreamVideo()) else options.sceneType.streams(options.roleType)
         )
         return UserServiceRepository.joinClassroom(options.classId, joinClassroomReq).map {
             if (it.success()) {
@@ -69,8 +71,8 @@ internal class NEEduRoomServiceImpl : NEEduRoomService() {
         return roomLD
     }
 
-    override fun leaveClassroom() {
-        TODO("Not yet implemented")
+    override fun leaveClassroom(userUuid:String):LiveData<NEResult<Void>> {
+       return UserServiceRepository.leaveClassroom(eduRoom.roomUuid,userUuid)
     }
 
     override fun startClass(roomUuid: String): LiveData<NEResult<Void>> {

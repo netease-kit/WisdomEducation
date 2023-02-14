@@ -250,7 +250,7 @@
         [self.imService logout];
     }
 }
-
+  
 - (void)destoryClassroom {
     [self.rtcService destroy];
 }
@@ -313,5 +313,11 @@
         _localUser = [[NEEduHttpUser alloc] init];
     }
     return _localUser;
+}
+- (NEEduSeatService *)seatService {
+    if (!_seatService) {
+        _seatService = [NEEduSeatService new];
+    }
+    return _seatService;
 }
 @end

@@ -10,6 +10,7 @@
 #import <Foundation/Foundation.h>
 #import "NEEduUserProperty.h"
 #import "NEEduStreams.h"
+#import "NEEduSeatUserAction.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

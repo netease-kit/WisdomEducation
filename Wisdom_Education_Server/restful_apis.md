@@ -103,6 +103,7 @@
 | config.resource.rtc	|可选: 默认以模版中的设置为准 | 房间是否打开rtc房间| 
 | config.resource.chatroom| 可选: 默认以模版中的设置为准 | 房间是否打开聊天时| 
 | config.resource.whiteboard| 可选: 默认以模版中的设置为准 | 房间是否打开白板| 
+| config.resource.seat| 可选: 默认以模版中的设置为准 | 房间是否打开麦位| 
 | liveStreamName| 可选 | 只有在云信appKey开通了直播2.0时才有效，用于指定自定义流名，具体咨询商务经理| 
 
 - Sample
@@ -111,7 +112,7 @@
   "roomName": "9999",
   "configId": 5,
   "properties": {},
-  "config": {"resource": {"live": true}}
+  "config": {"resource": {"live": true,"rtc": true,"chatroom": true,"whiteboard": true,"seat": true}}
 }
 ```
 
@@ -347,6 +348,106 @@
     "streamName":"12345678_1232324345"
   },
   "ts": 1665475539147
+}
+```
+### 在线成员列表查询
+
+#### Request:
+- Url: https://{Host}/apps/v2/online-user-list?roomArchiveId={roomArchiveId}
+- HttpMethod: GET
+- Auth: CHECKSUM
+- Url请求参数:
+
+| 参数名称           | 类型      | 	是否必选 | 	描述             |
+|----------------|---------|-------|-----------------|
+| roomArchiveId	 | String  | 必选    | 	房间唯一Id         |
+| pageNumber	    | Integer | 可选    | 	页码，默认1         |
+| pageSize	      | Integer | 可选    | 	分页大小，默认10，最大50 |
+#### Response:
+- Body:
+
+## 返回参数
+| 参数名称                | 类型      | 示例                             | 描述                                                                        |
+|---------------------|---------|--------------------------------|---------------------------------------------------------------------------|
+| code                | int     | 0                              | 状态码，0表示成功                                                                 |
+| msg                 | String  | Success                        | 业务结果描述，Success 表示成功。                                                      |
+| ts                  | Long    | 1648021056815                  | 服务器处理该请求的完成时间。该时间为 Unix 时间戳，即从 1970 年 1 月 1 日 0 点 0 分 0 秒开始到现在的秒数。 |
+| requestId           | String  | 7c4b6d9c3e9d42*****cc6e3a4d995 | 请求的唯一标识。                                                                  |
+| cost                | String  | 48ms                           | 处理该请求所消耗的时间。                                                              |
+| data                | Object  | -                              | 在线成员列表。                                                                   |
+| data.totalCount     | Integer | 100                            | 房间人数总数。                                                                   |
+| data.pageTotal      | Long    | 10                             | 总页数 。                                                                     |
+| data.users          | List    | -                              | 用户列表。                                                                     |
+| data.users.userUuid | String  | user01                         | 用户 ID。                                                                    |
+| data.users.name     | String  | userName01                     | 用户名称。                                                                     |
+| data.users.role     | String  | host                           | 成员对应角色。                                                                   |
+| data.users.state    | Integer | 2                              | 成员状态，2表示在房间中                                                              |
+
+- Sample
+
+```json
+{
+  "code":0,
+  "msg":"Success",
+  "ts":1619068087795,
+  "requestId":"6e507107d1f4447ea731f651dc6d2432",
+  "cost":"66ms",
+  "data": {
+    "totalCount":1000,
+    "pageTotal":100,
+    "users":[
+      {
+        "userUuid":"user01",
+        "name":"Name***",
+        "role":"host",
+        "state":"2"
+      },
+      {
+        "userUuid":"user02",
+        "name":"Name***",
+        "role":"host",
+        "state":"2"
+      }
+    ]
+  }
+}
+```
+### 用户Id查询
+
+#### Request:
+- Url: https://{Host}/apps/v2/user-info?rtcUid={rtcUid}
+- HttpMethod: GET
+- Auth: CHECKSUM
+- Url请求参数:
+
+| 参数名称    | 类型   | 	是否必选 | 	描述     |
+|---------|------|-------|---------|
+| rtcUid	 | Long | 必选    | 	rtcUid |
+#### Response:
+- Body:
+
+## 返回参数
+| 参数名称          | 类型     | 示例                             | 描述                                                                        |
+|---------------|--------|--------------------------------|---------------------------------------------------------------------------|
+| code          | int    | 0                              | 状态码，0表示成功                                                                 |
+| msg           | String | Success                        | 业务结果描述，Success 表示成功。                                                      |
+| ts            | Long   | 1648021056815                  | 服务器处理该请求的完成时间。该时间为 Unix 时间戳，即从 1970 年 1 月 1 日 0 点 0 分 0 秒开始到现在的秒数。 |
+| requestId     | String | 7c4b6d9c3e9d42*****cc6e3a4d995 | 请求的唯一标识。                                                                  |
+| cost          | String | 48ms                           | 处理该请求所消耗的时间。                                                              |
+| data          | Object | -                              | 用户信息。         |
+| data.userUuid | String | ayreu3534                      | 用户Id。  |
+- Sample
+
+```json
+{
+  "code":0,
+  "msg":"Success",
+  "ts":1619068087795,
+  "requestId":"6e507107d1f4447ea731f651dc6d2432",
+  "cost":"66ms",
+  "data": {
+     "userUuid":"user01"
+  }
 }
 ```
 ## Error Code

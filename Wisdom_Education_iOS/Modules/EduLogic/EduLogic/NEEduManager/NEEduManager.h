@@ -18,15 +18,23 @@
 #import "NEEduRtcService.h"
 #import "NEEduUserService.h"
 #import "NEEduHttpUser.h"
+#import "NEEduSeatService.h"
 NS_ASSUME_NONNULL_BEGIN
 
 @interface NEEduManager : NSObject
+/// IM 服务
 @property (nonatomic, strong) NEEduIMService *imService;
+/// rtc 服务
 @property (nonatomic, strong) NEEduRtcService *rtcService;
-
+/// 房间服务
 @property (nonatomic, strong) NEEduRoomService *roomService;
+/// 消息服务
 @property (nonatomic, strong) NEEduMessageService *messageService;
+/// 用户服务
 @property (nonatomic, strong) NEEduUserService *userService;
+/// 麦位服务
+@property(nonatomic, strong) NEEduSeatService *seatService;
+
 
 @property (nonatomic, strong ,nonnull) NEEduRoomProfile *profile;
 @property (nonatomic, strong ,readonly) NEEduHttpUser *localUser;

@@ -12,7 +12,7 @@ import androidx.lifecycle.Observer
 import com.netease.lava.nertc.sdk.NERtcServerAddresses
 import com.netease.nimlib.sdk.auth.LoginInfo
 import com.netease.yunxin.app.wisdom.base.network.NEResult
-import com.netease.yunxin.app.wisdom.base.network.RetrofitManager
+import com.netease.yunxin.app.wisdom.base.network.NEEduRetrofitManager
 import com.netease.yunxin.app.wisdom.base.util.observeForeverOnce
 import com.netease.yunxin.app.wisdom.edu.logic.NEEduManager
 import com.netease.yunxin.app.wisdom.edu.logic.cmd.CMDDispatcher
@@ -86,6 +86,8 @@ internal object NEEduManagerImpl : NEEduManager {
 
     private lateinit var handsUpServiceImpl: NEEduHandsUpService
 
+    private lateinit var seatServiceImpl: NEEduSeatService
+
     private lateinit var imService: NEEduIMService
 
     private val observer: Observer<Boolean> = Observer<Boolean> {
@@ -123,7 +125,7 @@ internal object NEEduManagerImpl : NEEduManager {
     private fun afterLogin(t: NEResult<NEEduLoginRes>, initLD: MediatorLiveData<NEResult<Boolean>>) {
         eduLoginRes = t.data!!
         initRtcAndLoginIM(initLD)
-        RetrofitManager.instance().addHeader("user", eduLoginRes.userUuid).addHeader("token", eduLoginRes.userToken)
+        NEEduRetrofitManager.instance().addHeader("user", eduLoginRes.userUuid).addHeader("token", eduLoginRes.userToken)
     }
 
     private fun initRtcAndLoginIM(initLD: MediatorLiveData<NEResult<Boolean>>) {
@@ -185,12 +187,20 @@ internal object NEEduManagerImpl : NEEduManager {
         return enterLD
     }
 
-    private fun enterNormalClass(enterLD: MediatorLiveData<NEResult<NEEduEntryRes>>) {
+    override fun enterNormalClass(neEduClassOptions: NEEduClassOptions): LiveData<NEResult<NEEduEntryRes>> {
+        NEEduManager.classOptions = neEduClassOptions
+        val enterLD = MediatorLiveData<NEResult<NEEduEntryRes>>()
+        neEduSync?.lastSequenceId = -1
+        enterNormalClass(enterLD,true)
+        return enterLD
+    }
+
+    private fun enterNormalClass(enterLD: MediatorLiveData<NEResult<NEEduEntryRes>>,isHasStreams:Boolean = false) {
         getRoomService().config(NEEduManager.classOptions).also {
             it.observeForeverOnce { t ->
                 if (t.success() || t.success(NEEduHttpCode.CONFLICT.code)) {
                     t.data!!.apply { roomConfig = config }
-                    realEnterClass(enterLD)
+                    realEnterClass(enterLD,isHasStreams)
                 } else {
                     destroy()
                     enterLD.postValue(NEResult(t.code))
@@ -249,8 +259,8 @@ internal object NEEduManagerImpl : NEEduManager {
         neEduSync?.snapshot(NEEduManager.classOptions.classId)
     }
 
-    private fun realEnterClass(enterLiveData: MediatorLiveData<NEResult<NEEduEntryRes>>) {
-        getRoomService().entryClass(NEEduManager.classOptions).also {
+    private fun realEnterClass(enterLiveData: MediatorLiveData<NEResult<NEEduEntryRes>>,isHasStreams:Boolean = false) {
+        getRoomService().entryClass(NEEduManager.classOptions,isHasStreams).also {
             it.observeForeverOnce { t ->
                 if (t.success()) {
                     eduEntryRes = t.data!!
@@ -260,6 +270,7 @@ internal object NEEduManagerImpl : NEEduManager {
                             .foregroundServiceConfig ?: NEEduForegroundServiceConfig()
                     )
                     observerAuth()
+                    IMManager.authLD.postValue(true)
                     cmdDispatcher?.start()
                     enterLiveData.postValue(t)
                 } else {
@@ -304,6 +315,7 @@ internal object NEEduManagerImpl : NEEduManager {
         boardService = NEEduBoardServiceImpl()
         shareScreenService = NEEduShareScreenServiceImpl()
         handsUpServiceImpl = NEEduHandsUpServiceImpl()
+        seatServiceImpl = NEEduSeatServiceImpl()
     }
 
     private fun disposeService() {
@@ -336,6 +348,10 @@ internal object NEEduManagerImpl : NEEduManager {
 
     override fun getHandsUpService(): NEEduHandsUpService {
         return handsUpServiceImpl
+    }
+
+    override fun getSeatService(): NEEduSeatService {
+        return seatServiceImpl
     }
 
 }
