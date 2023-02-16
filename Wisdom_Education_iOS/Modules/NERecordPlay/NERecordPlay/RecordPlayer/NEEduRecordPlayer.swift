@@ -44,8 +44,9 @@ public class NEEduRecordPlayer: NEEduRecordPlayerProtocol {
     
     init(url: String)throws {
         self.url = url
-        player = try NELivePlayerController.init(contentURL: URL(string: url))
+        player = NELivePlayerController(contentURL: URL(string: url)!, error: nil)
         addNotification()
+        addProgressListen()
     }
     
     func addNotification() {
@@ -61,12 +62,12 @@ public class NEEduRecordPlayer: NEEduRecordPlayerProtocol {
         NotificationCenter.default.removeObserver(self)
     }
     
-//    func addProgressListen() {
-//        player.setPlaybackTimeListenerWithIntervalMS(1000) { [unowned self] interval in
-//            self.delegate?.onPlayTime(player: self, time: interval)
-//            print("11播放器:\(self.player) asTimeline:\(self.asTimeline) 播放时间：\(self.player.currentPlaybackTime())")
-//        }
-//    }
+    func addProgressListen() {
+        player.setPlaybackTimeListenerWithIntervalMS(1000) { [unowned self] interval in
+            self.delegate?.onPlayTime(player: self, time: interval)
+            print("11播放器:\(self.player) 播放时间：\(self.player.currentPlaybackTime())")
+        }
+    }
 //    func removeProgressListen() {
 //        player.setPlaybackTimeListenerWithIntervalMS(0, callback: nil)
 //    }
@@ -101,7 +102,9 @@ public class NEEduRecordPlayer: NEEduRecordPlayerProtocol {
     
     public func updateUrl(url: String) {
         self.url = url
-        player.switchContentUrl(URL.init(string: url))
+        if let aUrl = URL(string: url) {
+            player.switchContentUrl(aUrl)
+        }
     }
     
     @objc public func onPreparedToPlay(noti:Notification) {

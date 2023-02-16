@@ -13,7 +13,7 @@ Pod::Spec.new do |spec|
   spec.exclude_files = "NERecordPlay/Exclude"
   spec.public_header_files = "NERecordPlay/**/*.h"
 
-  spec.dependency "NELivePlayer/LivePlayer", "3.2.1"
+  spec.dependency "NELivePlayer/LivePlayer", "3.2.101"
   spec.dependency "Alamofire", "~> 5.4.3"
   spec.dependency "NEWhiteBoard", "~> 0.0.1"
   
