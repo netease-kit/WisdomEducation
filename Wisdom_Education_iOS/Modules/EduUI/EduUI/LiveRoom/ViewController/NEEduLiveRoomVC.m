@@ -30,6 +30,7 @@ static NSString * kLastRtcCid = @"lastRtcCid";
 //    self.netReachable = YES;
 //    [self.navigationController setNavigationBarHidden:NO];
     self.whiteboardWritable = NO;
+    self.userIsShareScreen = false;
     self.handsupState = NEEduHandsupStateIdle;
     [[UIApplication sharedApplication] setIdleTimerDisabled:YES];
     [NEEduManager shared].imService.chatDelegate = self;
