@@ -10,7 +10,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import com.netease.nimlib.sdk.util.NIMUtil
 import com.netease.yunxin.app.wisdom.base.network.NEResult
-import com.netease.yunxin.app.wisdom.base.network.RetrofitManager
+import com.netease.yunxin.app.wisdom.base.network.NEEduRetrofitManager
 import com.netease.yunxin.app.wisdom.base.util.CryptoUtil
 import com.netease.yunxin.app.wisdom.base.util.PreferenceUtil
 import com.netease.yunxin.app.wisdom.base.util.observeForeverOnce
@@ -39,12 +39,12 @@ interface NEEduManager {
 
         internal lateinit var instance: NEEduManager
 
-        internal lateinit var classOptions: NEEduClassOptions
+        lateinit var classOptions: NEEduClassOptions
 
         /**
          * SDK inner version code
          */
-        private const val VERSION_CODE = 71
+        private const val VERSION_CODE = 110
 
 
         /**
@@ -65,7 +65,7 @@ interface NEEduManager {
             if (NIMUtil.isMainProcess(context)) {
                 NEEduActivityManger.init(context)
                 PreferenceUtil.init(context)
-                RetrofitManager.instance()
+                NEEduRetrofitManager.instance()
                     .addHeader(NEEduExtras.AUTHORIZATION, CryptoUtil.getAuth(eduOptions.authorization))
                     .addHeader(NEEduExtras.DEVICE_ID, PreferenceUtil.deviceId)
                     .addHeader(NEEduExtras.CLIENT_TYPE, NEEduClientType.ANDROID.type)
@@ -151,11 +151,14 @@ interface NEEduManager {
     /**Raising hand*/
     fun getHandsUpService(): NEEduHandsUpService
 
+    fun getSeatService():NEEduSeatService
+
     /**
      * Join the class
      */
     fun enterClass(neEduClassOptions: NEEduClassOptions): LiveData<NEResult<NEEduEntryRes>>
 
+    fun enterNormalClass(neEduClassOptions: NEEduClassOptions): LiveData<NEResult<NEEduEntryRes>>
     /**
      * Sync snapshot
      */
@@ -189,6 +192,10 @@ interface NEEduManager {
      */
     fun isLiveClass(): Boolean {
         return classOptions.sceneType == NEEduSceneType.LIVE_SIMPLE
+    }
+
+    fun isInRtcRoom():Boolean{
+        return classOptions.isRtcRoom
     }
 
 }

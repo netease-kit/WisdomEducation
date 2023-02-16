@@ -8,6 +8,10 @@
 import Foundation
 import NELivePlayerFramework
 
+public enum NEEduRecordError: Error {
+    case invalidUrl
+}
+
 public class NEEduRecordPlayer: NEEduRecordPlayerProtocol {
     
 //    public var asTimeline = false
@@ -42,9 +46,10 @@ public class NEEduRecordPlayer: NEEduRecordPlayerProtocol {
     public var startOffSet: Double = 0.0
     public var seekToTime: Double = 0
     
-    init(url: String)throws {
+    init(url: String) throws {
+        guard let URL = URL(string: url) else { throw NEEduRecordError.invalidUrl }
         self.url = url
-        player = NELivePlayerController(contentURL: URL(string: url)!, error: nil)
+        player = NELivePlayerController(contentURL: URL, error: nil)
         addNotification()
         addProgressListen()
     }

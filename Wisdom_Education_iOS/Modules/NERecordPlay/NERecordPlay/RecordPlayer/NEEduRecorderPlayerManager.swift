@@ -445,11 +445,6 @@ public class NEEduRecorderPlayerManager: NSObject, NEEduRecordPlayerProtocol, NE
         guard let player = player as? NEEduRecordPlayer, teacherPlayer?.player.hash == player.player.hash, player.state == .finished else { return }
         resetPlayers(recordList: data.recordItemList,seekToZero: true)
         delegate?.onFinished(player: self)
-//        if let playerItem = player as? NEEduWBPlayer, playerItem.asTimeline {
-//            print("播放完成 白板播放器：\(playerItem.asTimeline)")
-//            resetPlayers(recordList: data.recordItemList,seekToZero: true)
-//            delegate?.onFinished(player: self)
-//        }
     }
     
     public func onError(player: Any, errorCode: Int) {

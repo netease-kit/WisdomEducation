@@ -14,10 +14,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 @protocol NEEduMessageServiceDelegate <NSObject>
-
 /// 用户进入房间
 - (void)onUserInWithUser:(NEEduHttpUser *)user members:(NSArray *)members;
-/// 用户推出房间
+/// 用户退出房间
 - (void)onUserOutWithUser:(NEEduHttpUser *)user members:(NSArray *)members;
 
 /// 用户token校验失败或token过期，请求中出现校验失败回调到这里

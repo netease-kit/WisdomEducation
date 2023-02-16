@@ -22,7 +22,4 @@ Pod::Spec.new do |spec|
   spec.dependency "NELivePlayer/LivePlayer", "3.2.101"
   spec.dependency 'MJRefresh', '~> 3.7.2'
   
-
-
-
 end

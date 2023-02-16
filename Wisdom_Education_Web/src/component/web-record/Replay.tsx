@@ -8,11 +8,8 @@ import './Replay.less'
 import VideoGroup from './VideoGroup'
 import VideoBox from './VideoBox'
 
-enum SceneTypes {
-    ONE_TO_ONE = "EDU.1V1",
-    SMALL = "EDU.SMALL",
-    BIG = "EDU.BIG",
-}
+import { SceneTypes } from '@/config'
+
 interface IProps {
     config: {
         videoWidth: number
@@ -190,13 +187,13 @@ export default class Replay extends React.Component<IProps, IState> {
       const visibleVIds = arr.filter(t => {
         const inRange = (time >= t.start) && (time <= t.end)
         if (!inRange) {
-          return SceneTypes.BIG === store.sceneType && t.role === 'host'
+          return [SceneTypes.BIG, SceneTypes.BiGLIVE].includes(store.sceneType) && t.role === 'host'
         } else {
           //看看是否因为进出事件，导致视频不应该播放
           const events = store.events.filter(ev => ev.userId == t.userId && ev.timestamp <= time)
-          if (SceneTypes.BIG === store.sceneType && t.role === 'host') {
+          if ([SceneTypes.BIG, SceneTypes.BiGLIVE].includes(store.sceneType) && t.role === 'host') {
             return true
-          } else if (SceneTypes.BIG !== store.sceneType) {
+          } else if (![SceneTypes.BIG, SceneTypes.BiGLIVE].includes(store.sceneType)) {
             return true;
           } else if (events.length > 0) {
             // 判断最近的操作是展示还是离开

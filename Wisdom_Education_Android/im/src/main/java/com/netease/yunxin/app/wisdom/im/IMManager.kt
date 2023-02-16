@@ -24,7 +24,7 @@ import com.netease.nimlib.sdk.util.NIMUtil
 import com.netease.yunxin.kit.alog.ALog
 
 /**
- * 
+ *
  */
 object IMManager {
 
@@ -83,7 +83,7 @@ object IMManager {
     { t ->
         ALog.i(TAG, "online status change $t")
         when (t.reason) {
-            ChatRoomKickOutEvent.ChatRoomKickOutReason.KICK_OUT_BY_CONFLICT_LOGIN, ChatRoomKickOutEvent.ChatRoomKickOutReason.KICK_OUT_BY_MANAGER -> {
+            ChatRoomKickOutEvent.ChatRoomKickOutReason.CHAT_ROOM_INVALID,ChatRoomKickOutEvent.ChatRoomKickOutReason.KICK_OUT_BY_CONFLICT_LOGIN, ChatRoomKickOutEvent.ChatRoomKickOutReason.KICK_OUT_BY_MANAGER -> {
                 errorLD.postValue(IMErrorCode.mapChatError(t.reason.value))
             }
         }

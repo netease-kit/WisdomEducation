@@ -39,7 +39,7 @@ abstract class NEEduRoomService : INEEduService() {
      *
      * @param options Parameters required to join a class
      */
-    internal abstract fun entryClass(options: NEEduClassOptions): LiveData<NEResult<NEEduEntryRes>>
+    internal abstract fun entryClass(options: NEEduClassOptions,isHasStreams:Boolean = false): LiveData<NEResult<NEEduEntryRes>>
 
     internal abstract fun updateCurrentRoomInfo(room: NEEduRoom)
 
@@ -52,7 +52,7 @@ abstract class NEEduRoomService : INEEduService() {
      * Students leave the class
      *
      */
-    abstract fun leaveClassroom()
+    abstract fun leaveClassroom(userUuid:String):LiveData<NEResult<Void>>
 
     /**
      * The teacher starts a class

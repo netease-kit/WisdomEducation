@@ -147,7 +147,7 @@ abstract class BaseBigClassActivity : BaseNormalClassActivity() {
      * Raise hand/lower hand
      *
      */
-    fun switchStuLocalHandsUp() {
+   open fun switchStuLocalHandsUp() {
         eduManager.getMemberService().getLocalUser()?.apply {
             if (isHandsUp()) {
                 ConfirmDialog.show(this@BaseBigClassActivity,
@@ -200,11 +200,11 @@ abstract class BaseBigClassActivity : BaseNormalClassActivity() {
         handsUpStateChange(NEEduHandsUpStateValue.TEACHER_OFF_STAGE, userUuid)
     }
 
-    private fun applyStudentHandsUp() {
+    open fun applyStudentHandsUp() {
         handsUpStateChange(NEEduHandsUpStateValue.APPLY, entryMember.userUuid)
     }
 
-    private fun cancelStudentHandsUp() {
+    open fun cancelStudentHandsUp() {
         handsUpStateChange(NEEduHandsUpStateValue.STUDENT_CANCEL, entryMember.userUuid)
     }
 
@@ -212,7 +212,7 @@ abstract class BaseBigClassActivity : BaseNormalClassActivity() {
      * Student leaves as speaker
      *
      */
-    fun offStageStudentLocal() {
+    open fun offStageStudentLocal() {
         handsUpStateChange(NEEduHandsUpStateValue.IDLE, entryMember.userUuid)
     }
 

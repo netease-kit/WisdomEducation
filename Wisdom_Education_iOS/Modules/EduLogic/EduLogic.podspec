@@ -138,5 +138,5 @@ Pod::Spec.new do |spec|
   spec.dependency "NERtcSDK", "4.4.7"
   spec.dependency "NIMSDK_LITE", '8.7.1'
   spec.dependency "YXAlog_iOS", '1.0.6'
-
+  
 end

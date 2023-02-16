@@ -5,7 +5,7 @@
 
 import { post, put, get, reqDelete } from './index';
 import { GlobalStorage, trimStr } from '@/utils';
-import { RoomTypes, RoleTypes, Authorization } from '@/config';
+import { RoomTypes, RoleTypes, Authorization, UserSeatOperation, HostSeatOperation } from '@/config';
 
 interface LoginResponse {
   imKey: string;
@@ -203,6 +203,11 @@ export interface Resources {
   whiteboard?: boolean;
 }
 
+export interface SeatIndexInfo {
+  roomUuid: string;
+  userUuid: string;
+  userName: string;
+}
 
 /**
  * @description: login request
@@ -229,7 +234,7 @@ export async function anonymousLogin(): Promise<LoginResponse>  {
  * @param {string} roomUuid
  * @return {*}
  */
-export async function createRoom(roomUuid: string|number, roomName: string, roomType: RoomTypes, resource: Resources): Promise<any> {
+export async function createRoom(roomUuid: string|number, roomName: string, roomType: RoomTypes, resource: Resources, properties: any): Promise<any> {
   const reqConfig = {
     roomName: roomName,
     configId: roomType,
@@ -239,7 +244,8 @@ export async function createRoom(roomUuid: string|number, roomName: string, room
         rtc: true,
         whiteboard: true,
       },
-    }
+    },
+    properties: properties
   };
   const res = await put(`/v1/rooms/${roomUuid}`, reqConfig,
     {
@@ -299,15 +305,13 @@ export async function entryRoom(options: EntryRoomOptions): Promise<EntryRoomRes
   return res;
 }
 
-export async function deleteMember(options) {
-  const res = await reqDelete(`/v1/rooms/${options.roomUuid}`, {
+export async function deleteMemberApi(options) {
+  const res = await reqDelete(`/v1/rooms/${options.roomUuid}/members/${options.userUuid}`, {
     headers: {
       user: GlobalStorage.read('user')?.userUuid,
       token: GlobalStorage.read('user')?.userToken
     },
-    params: {
-      // TODO
-    }
+    data: {}
   })
   return res;
 }
@@ -462,4 +466,37 @@ export async function getRecordInfo(roomUuid: string|number, rtcCid: string|numb
     }
   });
   return res;
+}
+
+export async function changeMemberSeat(options: {
+  roomUuid: string|number, 
+  toUserUuid: string, 
+  action: UserSeatOperation | HostSeatOperation,
+  operateByHost: boolean
+  userName?: string
+}): Promise<any> {
+  const {roomUuid, toUserUuid, action, operateByHost, userName} = options
+  const param = {
+    action,
+    toUserUuid,
+    userName
+  }
+  const res = await post(`/v1/rooms/${roomUuid}/seat/${operateByHost ? 'host' : 'user'}/action`, param, {
+    headers: {
+      user: GlobalStorage.read('user')?.userUuid,
+      token: GlobalStorage.read('user')?.userToken
+    }
+  });
+
+  return res;
+}
+
+export async function getSeatApplyList(roomUuid: number|string): Promise<SeatIndexInfo[]> {
+  const res = await get(`/v1/rooms/${roomUuid}/seat/applyList`, {
+    headers: {
+      user: GlobalStorage.read('user')?.userUuid,
+      token: GlobalStorage.read('user')?.userToken
+    }
+  })
+  return res
 }
