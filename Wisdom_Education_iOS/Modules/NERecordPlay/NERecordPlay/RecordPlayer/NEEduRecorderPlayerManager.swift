@@ -18,7 +18,8 @@ public class NEEduRecorderPlayerManager: NSObject, NEEduRecordPlayerProtocol, NE
 
     public var state: PlayState {
         get {
-            return firstPlayerItem?.state ?? .idle
+//            return firstPlayerItem?.state ?? .idle
+            return teacherPlayer?.state ?? .idle
         }
     }
     
@@ -27,7 +28,7 @@ public class NEEduRecorderPlayerManager: NSObject, NEEduRecordPlayerProtocol, NE
     var data: RecordData
     var wbContentView: UIView
     var firstPlayerItem: NEEduWBPlayer?
-    
+    var teacherPlayer: NEEduRecordPlayer?
     /// 用户视频数据视频数据列表，不包含辅流
     public var recordList: Array<RecordItem> = []
     
@@ -73,22 +74,26 @@ public class NEEduRecorderPlayerManager: NSObject, NEEduRecordPlayerProtocol, NE
         // 创建视频播放器列表
         self.playerList = createVideoPlayer(recordList: recordList)
         // 创建白板播放器
-        self.wbPlayer = createWBPlayer(wbUrlList: wbUrlList)
+        if wbUrlList.count > 0 {
+            self.wbPlayer = createWBPlayer(wbUrlList: wbUrlList)
+        }
     }
     /// 对元数据分类处理
     /// - Parameter data: 元数据
     func handleData(data:RecordData) {
         for item in data.recordItemList {
-            if item.type == .gz {
+            switch item.type {
+            case .gz:
                 wbUrlList.append(item.url)
-            }else {
-                if item.type == .mp4 || item.type == .aac{
-                    if item.subStream {
-                        subStreamList.append(item)
-                    }else {
-                        item.isTeacher() ? recordList.insert(item, at: 0) : recordList.append(item)
-                    }
+                break
+            case .mp4, .aac:
+                if item.subStream {
+                    subStreamList.append(item)
+                } else {
+                    item.isTeacher() ? recordList.insert(item, at: 0) : recordList.append(item)
                 }
+                break
+            default: break
             }
         }
         print("recordList:\(recordList)\n subStreamList:\(subStreamList)\n wbUrlList:\(wbUrlList)")
@@ -127,6 +132,7 @@ public class NEEduRecorderPlayerManager: NSObject, NEEduRecordPlayerProtocol, NE
                 if showVideoView(record: recordItem) {
 //                    player.autoPlay = self.autoPlay;
                     if recordItem.isTeacher() {
+                        teacherPlayer = player
                         playingPlayers.insert(player, at: 0)
                         playingRecordItems.insert(recordItem, at: 0)
                     }else {
@@ -136,6 +142,7 @@ public class NEEduRecorderPlayerManager: NSObject, NEEduRecordPlayerProtocol, NE
                 }else {
 //                    player.autoPlay = false;
                     preparePlayPlayers.append(player)
+                    teacherPlayer = preparePlayPlayers.first
                 }
             } catch  {
                 print("error: initPlayer:\(error)")
@@ -193,39 +200,6 @@ public class NEEduRecorderPlayerManager: NSObject, NEEduRecordPlayerProtocol, NE
         print("resetPlayers\(playingPlayers.count) playingRecordItems:\(playingRecordItems.count)")
         self.delegate?.onResetPlayer(player: self)
     }
-    
-    /*
-     func createVideoPlayer(recordList:[RecordItem]) -> [NEEduRecordPlayer] {
-         var itemList = [NEEduRecordPlayer]()
-         for recordItem in recordList {
-             do {
-                 let player = try NEEduRecordPlayer(url: recordItem.url)
-                 player.startOffSet = Double(recordItem.timestamp - data.record.startTime) / 1000
-                 player.delegate = self
-                 itemList.append(player)
-                 playerDic[recordItem.url] = player
-                 //统计刚进入回放就需要播放的播放器
- //                let offset = (recordItem.timestamp - data.record.startTime)/1000
-                 if showVideoView(record: recordItem) {
-                     player.autoPlay = self.autoPlay;
-                     if recordItem.isTeacher() {
-                         playingPlayers.insert(player, at: 0)
-                         playingRecordItems.insert(recordItem, at: 0)
-                     }else {
-                         playingPlayers.append(player)
-                         playingRecordItems.append(recordItem)
-                     }
-                 }else {
-                     player.autoPlay = false;
-                     preparePlayPlayers.append(player)
-                 }
-             } catch  {
-                 print("error: initPlayer:\(error)")
-             }
-         }
-         return itemList
-     }
-     */
   
     /// 创建白板播放器
     /// - Returns: 播放器
@@ -246,10 +220,7 @@ public class NEEduRecorderPlayerManager: NSObject, NEEduRecordPlayerProtocol, NE
                 break
             }
         }
-        guard let record = recordItem else {
-            return nil
-        }
-        return record
+        return recordItem
     }
     
     func createSubVideoPlayer(recordItem: RecordItem) -> NEEduRecordPlayer? {
@@ -471,11 +442,9 @@ public class NEEduRecorderPlayerManager: NSObject, NEEduRecordPlayerProtocol, NE
     
     public func onFinished(player: Any) {
         //所有播放器播放完成才更新
-        if let playerItem = player as? NEEduWBPlayer, playerItem.asTimeline {
-            print("播放完成 白板播放器：\(playerItem.asTimeline)")
-            resetPlayers(recordList: data.recordItemList,seekToZero: true)
-            delegate?.onFinished(player: self)
-        }
+        guard let player = player as? NEEduRecordPlayer, teacherPlayer?.player.hash == player.player.hash, player.state == .finished else { return }
+        resetPlayers(recordList: data.recordItemList,seekToZero: true)
+        delegate?.onFinished(player: self)
     }
     
     public func onError(player: Any, errorCode: Int) {
@@ -483,22 +452,23 @@ public class NEEduRecorderPlayerManager: NSObject, NEEduRecordPlayerProtocol, NE
     }
     
     public func onPlayTime(player: NEEduRecordPlayerProtocol, time: Double) {
-        if let player = player as? NEEduWBPlayer, player.asTimeline, player.state != .finished {
-            currentTime = time;
-            if(curTime == Int(time)) {
-                return
-            }
-            delegate?.onPlayTime(player: self, time: time)
-            // 查找是否有需要执行的事件
-            curTime = Int(time);
-//            print("播放时间：\(curTime) in timeEvent:\(timeEvent)");
-            guard let event = timeEvent[curTime] else {
-                return
-            }
-            print("播放器:event:\(event.type) curTime:\(curTime)")
-            let to  =  Double((event.timestamp - data.record.startTime) / 1000)
-            handleEvent(event: event, to: to)
+        guard let player = player as? NEEduRecordPlayer, teacherPlayer?.player == player.player, player.state != .finished else {
+            return
         }
+        currentTime = time;
+        if(curTime == Int(time)) {
+            return
+        }
+        delegate?.onPlayTime(player: self, time: time)
+        // 查找是否有需要执行的事件
+        curTime = Int(time);
+//            print("播放时间：\(curTime) in timeEvent:\(timeEvent)");
+        guard let event = timeEvent[curTime] else {
+            return
+        }
+        print("播放器:event:\(event.type) curTime:\(curTime)")
+        let to  =  Double((event.timestamp - data.record.startTime) / 1000)
+        handleEvent(event: event, to: to)
     }
     public func onSubStreamStart(player: NEEduRecordPlayerProtocol, videoView: UIView?) {
         

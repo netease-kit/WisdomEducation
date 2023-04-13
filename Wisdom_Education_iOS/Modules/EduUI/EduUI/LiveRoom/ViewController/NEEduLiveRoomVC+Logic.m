@@ -95,8 +95,20 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
         // update onlinemembers list
         weakSelf.totalMembers = [weakSelf showMembersWithJoinedMembers:profile.snapshot.members].mutableCopy;
         
+        for (NEEduHttpUser *user in profile.snapshot.members) {
+            if( user.streams.subVideo.value ){
+                weakSelf.userIsShareScreen = true;
+                weakSelf.shareScreenView.hidden = NO;
+                [self onSubVideoStreamEnable:true user:user];
+                break;
+            }
+        }
+        if(!weakSelf.userIsShareScreen) {
+            [weakSelf addWhiteboardView];
+        }
+
         [weakSelf.maskView.navView updateRoomState:weakSelf.room serverTime:profile.ts];
-        [weakSelf addWhiteboardView];
+//        [weakSelf addWhiteboardView];
         self.whiteboardWritable = NO;
         [[NMCWhiteboardManager sharedManager] callEnableDraw:self.whiteboardWritable];
         [[NMCWhiteboardManager sharedManager] hiddenTools:!self.whiteboardWritable];
@@ -121,6 +133,7 @@ static NSString *kAppGroup = @"group.com.netease.yunxin.app.wisdom.education";
         
         weakSelf.profile = profile;
         weakSelf.muteChat = profile.snapshot.room.states.muteChat.value;
+        weakSelf.userIsShareScreen = false;
         if (profile.snapshot.room.states.step.value == NEEduLessonStateClassIn) {
             weakSelf.lessonStateView.hidden = YES;
             NSString *urlString = self.useFastLive ? profile.snapshot.room.properties.live.pullRtsUrl : profile.snapshot.room.properties.live.pullRtmpUrl;
