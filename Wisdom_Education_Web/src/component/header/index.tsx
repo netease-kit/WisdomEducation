@@ -24,6 +24,7 @@ interface HeaderShowProps {
   hasBack?: boolean;
   backUrl?: string;
   backMsg?: string;
+  onBackClick?: ()=> void
 }
 
 const netInfoImgMap = {
@@ -98,7 +99,13 @@ const Header: React.FC<HeaderShowProps> = observer((props) => {
 
   return (
     <div className="head-component">
-      {props.hasBack && <div className="head-back" onClick={() => history.push(`${props.backUrl}`)}>
+      {props.hasBack && <div className="head-back" onClick={() => {
+        if (props.onBackClick) {
+          props.onBackClick()
+        } else {
+          history.push(`${props.backUrl}`)
+        }
+      }}>
         <LeftOutlined className="back-icon"/>
         {props?.backMsg}
       </div>}

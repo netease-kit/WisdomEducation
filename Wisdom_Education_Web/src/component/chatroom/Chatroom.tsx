@@ -79,6 +79,10 @@ const Chatroom: React.FC<IProps> = ({
   };
 
   const uploadImgHandler = (file: any): any => {
+    if(!canSendMsg) {
+      message.error(intl.get("聊天室已禁言"))
+      return null
+    }
     onSend(file, 'image');
   };
 
@@ -89,7 +93,7 @@ const Chatroom: React.FC<IProps> = ({
   return (
     <div className='chatroomWrapper chat-board'>
       {/* <div className='chatroomTitle'>Message</div> */}
-      <div ref={contentRef} className='chatroomContent'>
+      <div ref={contentRef} className='chatroomContent' id="chatroomContent">
         {messages.map((item, index, array) => (
           <React.Fragment  key={item.idClient}>
             {((index - 1 >= 0 && item.time - array[index - 1].time > 5 * 60 * 100) || index === 0) && <p className='chatroomCardTime'>{moment(item.time).format('yyyy-MM-DD HH:mm:ss')}</p>}

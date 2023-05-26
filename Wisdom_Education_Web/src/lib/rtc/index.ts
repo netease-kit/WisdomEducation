@@ -7,7 +7,7 @@ import * as WebRTC2 from './sdk/NIM_Web_NERTC_v4.5.500.js';
 
 import { EnhancedEventEmitter } from '../event';
 import logger from '../logger';
-import { ShareListItem } from '@/config';
+import { RoleTypes, ShareListItem } from '@/config';
 import rtc_server_conf from './rtc_server_conf.json';
 const needPrivate = process.env.REACT_APP_SDK_RTC_PRIVATE;
 needPrivate === "true" && logger.log("web-RTC on-premises deployment configuration", rtc_server_conf);
@@ -31,6 +31,7 @@ export class NeWebrtc extends EnhancedEventEmitter {
   constructor(appKey: string){
     super()
     this._appkey = appKey;
+    WebRTC2.Logger.enableLogUpload();
     this._client = WebRTC2.createClient({
       appkey: this._appkey,
       debug: true
@@ -745,6 +746,22 @@ export class NeWebrtc extends EnhancedEventEmitter {
       return data;
     } catch (e: any) {
       logger.log('setClientChannelProfile() fail:', e);
+      throw new Error(e);
+    }
+  }
+
+  /**
+   * Setting user roles
+   * @param type RoleTypes
+   */
+  async setClientRole(type=RoleTypes.host) {
+    logger.log('setClientRole ', type);
+    try {
+      const data = await this._client?.setClientRole(type);
+      logger.log('setClientRole success', data);
+      return data;
+    } catch (e: any) {
+      logger.log('setClientRole() fail:', e);
       throw new Error(e);
     }
   }

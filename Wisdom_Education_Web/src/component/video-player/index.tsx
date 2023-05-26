@@ -14,7 +14,7 @@ import "./index.less";
 import { observer } from "mobx-react";
 import { useRoomStore, useWhiteBoardStore, useUIStore } from "@/hooks/store";
 import { RoleTypes, RoomTypes, HandsUpTypes, isElectron, HostSeatOperation } from "@/config";
-import { Popover, Button, Modal } from "antd";
+import { Button, Modal, Dropdown, Menu } from "antd";
 import logger from "@/lib/logger";
 import { setInterval } from "timers";
 import intl from 'react-intl-universal';
@@ -67,7 +67,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = observer(
     const wbStore = useWhiteBoardStore();
     const uiStore = useUIStore();
     const [modalVisible, setModalVisible] = useState(false);
-    const [moreVisible, setMoreVisible] = useState(false);
     const [userStats, setUserStats] = useState<{
       CaptureResolutionWidth?: number;
       CaptureResolutionHeight?: number;
@@ -107,7 +106,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = observer(
         await uiStore.showToast(intl.get("请先开始上课"));
         return;
       }
-      roomStore.setWbEnableDraw(userUuid, value);
+      await roomStore.setWbEnableDraw(userUuid, value);
       await uiStore.showToast(intl.get("操作成功"));
     };
 
@@ -155,59 +154,34 @@ const VideoPlayer: React.FC<VideoPlayerProps> = observer(
 
     const MoreContent = useCallback(() => {
       return (
-        <ul onClick={() => setMoreVisible(false)}>
+        <Menu>
           {wbDrawEnable ? (
-            <li>
-              <Button
-                onClick={() => handleSetWbEnableDraw(userUuid, 0)}
-                type="text"
-              >
-                {intl.get('取消白板权限')}
-              </Button>
-            </li>
+            <Menu.Item onClick={() => handleSetWbEnableDraw(userUuid, 0)}>
+              {intl.get('取消白板权限')}
+            </Menu.Item>
           ) : (
-            <li>
-              <Button
-                onClick={() => handleSetWbEnableDraw(userUuid, 1)}
-                type="text"
-              >
-                {intl.get('授予白板权限')}
-              </Button>
-            </li>
+            <Menu.Item onClick={() => handleSetWbEnableDraw(userUuid, 1)}>
+              {intl.get('授予白板权限')}
+            </Menu.Item>
           )}
           {canScreenShare ? (
-            <li>
-              <Button
-                onClick={() => handleSetAllowScreen(userUuid, 0)}
-                type="text"
-              >
-                {intl.get('取消共享权限')}
-              </Button>
-            </li>
+            <Menu.Item onClick={() => handleSetAllowScreen(userUuid, 0)}>
+              {intl.get('取消共享权限')}
+            </Menu.Item>
           ) : (
-            <li>
-              <Button
-                onClick={() => handleSetAllowScreen(userUuid, 1)}
-                type="text"
-              >
-                {intl.get('授予共享权限')}
-              </Button>
-            </li>
+            <Menu.Item onClick={() => handleSetAllowScreen(userUuid, 1)}>
+              {intl.get('授予共享权限')}
+            </Menu.Item>
           )}
           {[RoomTypes.bigClass, RoomTypes.bigClasLive].includes(Number(roomStore?.roomInfo?.sceneType)) &&
             avHandsUp === HandsUpTypes.teacherAgree && (
-            <li>
-              <Button
-                onClick={() =>
-                  handsUpAction(userUuid, HandsUpTypes.teacherOff)
-                }
-                type="text"
-              >
-                {intl.get('请他下台')}
-              </Button>
-            </li>
+            <Menu.Item onClick={() =>
+              handsUpAction(userUuid, HandsUpTypes.teacherOff)
+            }>
+              {intl.get('请他下台')}
+            </Menu.Item>
           )}
-        </ul>
+        </Menu>
       );
     }, [
       userUuid,
@@ -437,19 +411,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = observer(
     //   }
     // }
 
-    const popoverListener = () => {
-      if (moreVisible) {
-        setMoreVisible(false);
-      }
-    };
-
-    useEffect(() => {
-      document.addEventListener("click", popoverListener);
-      return () => {
-        document.removeEventListener("click", popoverListener);
-      };
-    }, [moreVisible]);
-
     useEffect(() => {
       logger.log(
         "CaptureResolutionWidth",
@@ -498,10 +459,16 @@ const VideoPlayer: React.FC<VideoPlayerProps> = observer(
         let res;
         if (isLocal) {
           logger.log("ele-setupLocalVideoCanvas null");
-          res = roomStore.client.setupLocalVideoCanvas({
-            view: null,
-            mode: 0,
-          });
+          if(roomStore?.localData?.hasScreen) {
+            // Avoid sdk error reporting, repair after upgrading sdk
+            res = 0
+            logger.log("skipped Electron canvas clear when screening");
+          } else {
+            res = roomStore.client.setupLocalVideoCanvas({
+              view: null,
+              mode: 0,
+            });
+          }
         } else {
           if (rtcUid) {
             logger.log("ele-setupRemoteVideoCanvas null", rtcUid);
@@ -564,9 +531,9 @@ const VideoPlayer: React.FC<VideoPlayerProps> = observer(
                 {role !== RoleTypes.host && wbDrawEnable && (
                   <i className="media-wb-open" />
                 )}
-                {/* {
-                (role !== RoleTypes.host && canScreenShare) && <i className="media-screen-open" />
-              } */}
+                {role !== RoleTypes.host && canScreenShare && (
+                  <i className="media-screen-open" />
+                )}
                 {hasAudio ? (
                   <i className="media-audio-open" />
                 ) : (
@@ -615,24 +582,26 @@ const VideoPlayer: React.FC<VideoPlayerProps> = observer(
             </div>
             {showMoreBtn && (
               <div className="menu-item">
-                <Popover
+                <Dropdown
+                  arrow
+                  overlayClassName='video-more-outer'
                   placement="bottomRight"
-                  visible={moreVisible}
-                  overlayClassName="video-more-outer"
-                  content={<MoreContent />}
-                  trigger="click"
+                  getPopupContainer={(triggerNode) => {
+                    return (triggerNode.parentNode ||
+                      document.body) as HTMLElement
+                  }}
+                  overlay={<MoreContent />}
                 >
                   <Button
                     onClick={(e) => {
                       e.stopPropagation();
-                      setMoreVisible(true);
                     }}
                     className="control-button"
                     shape="circle"
                   >
                     <i className="control-more-btn">···</i>
                   </Button>
-                </Popover>
+                </Dropdown>
                 <p>{intl.get('更多')}</p>
               </div>
             )}

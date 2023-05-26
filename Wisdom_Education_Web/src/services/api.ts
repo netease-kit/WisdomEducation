@@ -19,6 +19,7 @@ export interface EntryRoomOptions {
   role: string;
   roomUuid: number|string;
   sceneType: number;
+  isMuteAudio?: boolean
 }
 
 export interface EntryRoomResponse {
@@ -284,7 +285,7 @@ export async function entryRoom(options: EntryRoomOptions): Promise<EntryRoomRes
     role: options.role,
     streams: RoomTypes.bigClass === options.sceneType && options.role !== RoleTypes.host? {} : {
       audio: {
-        value: 1
+        value: options?.isMuteAudio ? 0 : 1
       },
       video: {
         value: 1

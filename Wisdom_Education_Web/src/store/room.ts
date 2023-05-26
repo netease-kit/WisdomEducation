@@ -194,6 +194,7 @@ export class RoomStore extends EnhancedEventEmitter {
     states: {
       step: {},
       pause: {},
+      muteChat: {},
     },
     properties: {
       whiteboard: {
@@ -262,6 +263,11 @@ export class RoomStore extends EnhancedEventEmitter {
   }
 
   @computed
+  get isBigClass(): boolean {
+    return Number(this.roomInfo?.sceneType) ===  RoomTypes.bigClass
+  }
+
+  @computed
   get snapRoomInfo(): SnapRoomInfo {
     return this._snapRoomInfo;
   }
@@ -269,6 +275,11 @@ export class RoomStore extends EnhancedEventEmitter {
   @computed
   get classStep(): number | undefined {
     return this._snapRoomInfo.states?.step?.value;
+  }
+
+  @computed
+  get isClassMuteChat(): boolean {
+    return this._snapRoomInfo.states?.muteChat?.value === 1;
   }
 
   @computed
@@ -548,6 +559,8 @@ export class RoomStore extends EnhancedEventEmitter {
     this.isLiveTeaJoin = Number(sceneType) === RoomTypes.bigClasLive && role === RoleTypes.host
     const joinSettingInfo = JSON.parse(localStorage.getItem('room-setting') || '{}');
     const { chatroom, teaPlugFlow } = joinSettingInfo;
+    // Whether mute is required, the teacher does not need it, and the students are subject to the settings in the classroom
+    let isMuteAudio = false;
     try {
       const resource = { chatroom, live: Number(sceneType) === RoomTypes.bigClasLive || (teaPlugFlow && role === RoleTypes.host), seat: this.isLiveTeaJoin};
       if (!this.isLiveStuJoin) {
@@ -558,15 +571,18 @@ export class RoomStore extends EnhancedEventEmitter {
             applyMode: 1, // 申请模式：1为申请上麦需要老师同意
           }
         }
-        await createRoom(roomUuid, `${userName}${intl.get("的课堂")}`, Number(sceneType), resource, this.isLiveTeaJoin ? liveClassProperties : {}).catch(
-          (data) => {
-            if (data?.code !== 409) {
-              logger.error("An error occurred while creating a room", data);
-              if (data?.code === 1017) throw Error('1017')
-              else throw Error(data?.msg || intl.get("创建异常"));
+        await createRoom(roomUuid, `${userName}${intl.get("的课堂")}`, Number(sceneType), resource, this.isLiveTeaJoin ? liveClassProperties : {})
+          .catch(
+            (data) => {
+              if (data?.code !== 409) {
+                logger.error("An error occurred while creating a room", data);
+                if (data?.code === 1017) throw Error('1017')
+                else throw Error(data?.msg || intl.get("创建异常"));
+              }
+              isMuteAudio = !!data?.data?.states?.muteAudio?.value && role !== RoleTypes.host
+              logger.log('isMuteAudio  ',isMuteAudio)
             }
-          }
-        );
+          );
         this._updateLocalLiveStatus(LiveClassMemberStatus.InRTC)
       } else {
         this._updateLocalLiveStatus(LiveClassMemberStatus.InCDN)
@@ -584,6 +600,7 @@ export class RoomStore extends EnhancedEventEmitter {
           role,
           roomUuid,
           sceneType: Number(sceneType),
+          isMuteAudio
         });
       }
     } catch (error: any) {
@@ -608,7 +625,7 @@ export class RoomStore extends EnhancedEventEmitter {
     }
 
     if (!this.isLiveStuJoin) {
-      await this._initializeSDK()
+      await this._initializeSDK(isMuteAudio)
     }
     console.log("/snapshot join()")
     await this.getMemberList();
@@ -619,7 +636,7 @@ export class RoomStore extends EnhancedEventEmitter {
     window.addEventListener("offline", this.updateOnlineStatus.bind(this));
   }
 
-  private async _initializeSDK() {
+  private async _initializeSDK(isMuteAudio?:boolean) {
     const joinSettingInfo = JSON.parse(localStorage.getItem('room-setting') || '{}');
     const {  userName, role, imKey } = this.localUserInfo;
     const { member = {}, room = {} } = this._entryData;
@@ -634,6 +651,11 @@ export class RoomStore extends EnhancedEventEmitter {
     logger.log("RTC initialization", this._webRtcInstance, this.client);
     if (!!joinSettingInfo?.teaPlugFlow && role === RoleTypes.host) {
       this._webRtcInstance.setClientChannelProfile('live')
+    }
+    const isBigClassStu = this.isBigClass &&
+    RoleTypes.host !== this.localUserInfo.role
+    if (isBigClassStu) {
+      this._webRtcInstance.setClientRole(RoleTypes.audience)
     }
 
     this._nimInstance.on("controlNotify", (_data: any) => {
@@ -816,15 +838,14 @@ export class RoomStore extends EnhancedEventEmitter {
       this.appStore.uiStore.showToast(intl.get("视频输入设备异常，请重新进行设备选择和检测！"));
     })
 
-    const mediaStatus =
-    RoomTypes.bigClass !== Number(this.appStore.roomInfo.sceneType) ||
+    const mediaStatus = !this.isBigClass ||
     RoleTypes.host === this.localUserInfo.role;
     // RTC join a room
     await this._webRtcInstance.join({
       channelName: this.appStore.roomInfo?.roomUuid,
       uid: rtcUid,
       token: rtcToken,
-      audio: mediaStatus,
+      audio: isMuteAudio ? false : mediaStatus,
       video: mediaStatus,
       needPublish: mediaStatus,
     });
@@ -856,7 +877,7 @@ export class RoomStore extends EnhancedEventEmitter {
       userName,
       role,
       roomUuid,
-      sceneType: Number(sceneType),
+      sceneType: Number(sceneType)
     });
     await this._initializeSDK()
   }
@@ -1356,6 +1377,9 @@ export class RoomStore extends EnhancedEventEmitter {
               break;
             case "avHandsUp":
               if (item?.value === HandsUpTypes.teacherAgree) {
+                if (this.isBigClass) {
+                  this._webRtcInstance?.setClientRole(RoleTypes.host)
+                }
                 this.appStore.uiStore.showToast(intl.get("举手申请通过"));
                 // 直播大班课学生在加房时已经开启了音视频
                 if (!this.isBigLiveClass) {
@@ -1382,12 +1406,18 @@ export class RoomStore extends EnhancedEventEmitter {
               }
               if (item?.value === HandsUpTypes.teacherOff) {
                 this.appStore.uiStore.showToast(intl.get("老师结束了你的上台操作"));
+                if (this.isBigClass) {
+                  this._webRtcInstance?.setClientRole(RoleTypes.audience)
+                }
                 this._webRtcInstance?.unpublish();
                 if (this._localWbDrawEnable) {
                   this._localWbDrawEnable = false;
                 }
               }
               if (item?.value === HandsUpTypes.init) {
+                if (this.isBigClass) {
+                  this._webRtcInstance?.setClientRole(RoleTypes.audience)
+                }
                 this._webRtcInstance?.unpublish();
                 if (this._localWbDrawEnable) {
                   this._localWbDrawEnable = false;
@@ -1608,12 +1638,17 @@ export class RoomStore extends EnhancedEventEmitter {
         sendControl &&
           (await this.changeSubVideoStream(this.localUserInfo.userUuid, 1));
         setTimeout(async () => {
-          await this._webRtcInstance?.open("screen", displayId, id);
+          try {
+            await this._webRtcInstance?.open("screen", displayId, id);
+          } catch(error) {
+            logger.error("An error occurred while sharing screen", error);
+            await this.stopScreen(sendControl);
+            throw error;
+          }
         }, 0);
       } else {
         await this._webRtcInstance?.open("screen", displayId);
-        sendControl &&
-          (await this.changeSubVideoStream(this.localUserInfo.userUuid, 1));
+        sendControl && await this.changeSubVideoStream(this.localUserInfo.userUuid, 1)
       }
       logger.log("Screen sharing started");
     } catch (error) {
@@ -1768,16 +1803,19 @@ export class RoomStore extends EnhancedEventEmitter {
             video: 1,
           }));
       } else {
-        sendControl &&
-          (await changeMemberStream({
+        if (sendControl) {
+          await changeMemberStream({
             roomUuid: this.roomInfo.roomUuid,
             userUuid,
             streamType: "video",
             value: 1,
-          }));
-        setTimeout(async()=>{
-          await this._webRtcInstance?.open("video")
-        }, 0)
+          })
+        } else {
+          // Turn on the camera after receiving the notification callback
+          setTimeout(async()=>{
+            await this._webRtcInstance?.open("video")
+          }, 0)
+        }
       }
     }
   }
@@ -2148,11 +2186,12 @@ export class RoomStore extends EnhancedEventEmitter {
               } else {
                 fromNotify && this.appStore.uiStore.showToast(intl.get("聊天室已取消禁言"));
               }
-              if (!this._snapRoomInfo.states?.muteChat) {
-                this._snapRoomInfo.states.muteChat = this._snapRoomInfo.states.muteChat || {}
-              }
-              this._snapRoomInfo.states.muteChat.value = item.value;
             }
+            if (!this._snapRoomInfo.states?.muteChat) {
+              this._snapRoomInfo.states.muteChat = this._snapRoomInfo.states.muteChat || {}
+            }
+            this._snapRoomInfo.states.muteChat.value = item.value;
+            console.log('this._snapRoomInfo.states.muteChat.value 变化 ',this._snapRoomInfo.states.muteChat.value)
             break;
           default:
             break;

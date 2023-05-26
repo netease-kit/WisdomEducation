@@ -1,4 +1,4 @@
-import { PlatForms, ShareListItem } from "@/config";
+import { PlatForms, RoleTypes, ShareListItem } from "@/config";
 import { EnhancedEventEmitter } from "../event";
 import logger from "../logger";
 import rtc_server_conf from './rtc_server_conf.json';
@@ -295,7 +295,9 @@ export class NeElertc extends EnhancedEventEmitter {
             {
               prefer: 1,
               profile: 2,
-              dimensions: { ...rectRegion }
+              dimensions: { ...rectRegion },
+              window_focus: true,
+              capture_mouse_cursor: true
             }
           );
         }
@@ -663,6 +665,20 @@ export class NeElertc extends EnhancedEventEmitter {
       return
     }
     logger.error('setClientChannelProfile fail:', res);
+  }
+
+  /**
+   * Setting user roles
+   * @param type RoleTypes
+   */
+  async setClientRole(type=RoleTypes.host) {
+    logger.log('setClientRole ', type);
+    const res = await this._nertcEngine?.setClientRole(type===RoleTypes.host ? 0 : 1);
+    if(res === 0) {
+      logger.log('setClientRole success', res);
+      return;
+    }
+    logger.error('setClientRole fail:', res);
   }
 
   /**

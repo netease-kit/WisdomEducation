@@ -30,6 +30,7 @@ export default {
   "确认开始上课": "Confirm to start class",
   "确认离开": "Confirm to leave class",
   "离开教室后将暂停学习，需要等待您再次进入课堂后方可继续上课？": "If you leave a class, the class will be paused. The class will be resumed after you rejoin the class. Are you sure you want to leave the class?",
+  "离开教室后将暂停教学，学生需要等待您再次进入课堂后方可继续上课。": "Teaching will be suspended after leaving the classroom, and students need to wait for you to re-enter the classroom before continuing the lesson.",
   "开课后教学内容将同步至学生端，并正式开始课堂录制": "If the class starts, the class stream will be synced to student clients, and the class recording will start",
   "结束课堂后老师和学生均会跳转课堂结束画面，支持查看课程回放": "If a class ends, teachers and students will be directed to the class completion page. You can view the class recordings",
   "下讲台后，你的视频画面将不再显示在屏幕上，不能继续与老师语音交流。": "If you are moved to audience, your screen will not be displayed on the canvas and you cannot communicate with teachers over voice.",
@@ -89,6 +90,7 @@ export default {
   "首页": "Home",
   "拉流超时": "Pull stream timeout",
   "确定离开当前页面吗？": "Are you sure you want to leave the current page?",
+  "确认离开？系统可能不会保存您的更改。":"Confirm to leave? Your changes may not be saved.",
   "加入房间成功": "Joined the classroom",
   "老师数量超过限制": "The number of teachers exceeds the upper limit",
   "学生数量超过限制": "The number of students exceeds the upper limit",
@@ -168,5 +170,6 @@ export default {
   "是否确认取消举手？":"Are you sure you want to lower hand?",
   "申请上台与老师沟通，通过后你的视频画面将出现在屏幕上并能与老师语音": "Request to speak with teachers. If the request is accepted, your screen will appear on the canvas and you can communicate with teachers over voice",
   "老师端推流": "Teacher Streaming",
-  "该房间已关闭": "The room is closed"
+  "该房间已关闭": "The room is closed",
+  "上传超时，请重试": "Upload timed out, please try again"
 }
