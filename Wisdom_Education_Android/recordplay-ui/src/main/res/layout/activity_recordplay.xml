@@ -51,6 +51,7 @@
         android:id="@+id/layout_whiteboard"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:background="@color/white"
         android:layout_marginEnd="@dimen/common_dp_8"
         app:layout_constraintBottom_toTopOf="@id/bottom_view"
         app:layout_constraintEnd_toStartOf="@id/rcv_member_video"

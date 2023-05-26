@@ -105,6 +105,7 @@
 | config.resource.whiteboard| 可选: 默认以模版中的设置为准 | 房间是否打开白板| 
 | config.resource.seat| 可选: 默认以模版中的设置为准 | 房间是否打开麦位| 
 | liveStreamName| 可选 | 只有在云信appKey开通了直播2.0时才有效，用于指定自定义流名，具体咨询商务经理| 
+| livePushOff| 可选 | true/false，默认false。表示是否关闭直播大班课中的托管推流。用于客户自定义推流。具体使用方式请联系云信技术支持。| 
 
 - Sample
 ```json

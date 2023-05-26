@@ -105,7 +105,7 @@ class NERecordHandsUpHandler(
      *
      */
     private fun filterOnStageEvent(event: NERecordEvent): Boolean {
-        return recordData.isBig() && (onStage(event) || offStage(event))
+        return (recordData.isBig() || recordData.isLiveSimple()) && (onStage(event) || offStage(event))
     }
 
 }

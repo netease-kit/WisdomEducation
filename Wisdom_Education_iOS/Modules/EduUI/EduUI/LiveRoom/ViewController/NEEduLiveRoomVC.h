@@ -64,6 +64,7 @@ UIViewController<NEEduMessageServiceDelegate,UICollectionViewDelegate,UICollecti
 @property (nonatomic, strong) WKWebView *boardView;
 ///是否屏幕共享
 @property (nonatomic, assign) BOOL isSharing;
+@property (nonatomic, assign) BOOL userIsShareScreen;
 ///屏幕共享遮罩
 @property (nonatomic, strong) UILabel *shareScreenMask;
 /// 屏幕共享视图
