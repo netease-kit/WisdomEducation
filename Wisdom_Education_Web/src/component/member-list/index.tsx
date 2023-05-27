@@ -13,6 +13,7 @@ import { useRoomStore, useUIStore } from '@/hooks/store';
 import { Message } from '../chatroom/chatroomHelper';
 import ChatRoom from '@/component/chatroom';
 import intl from 'react-intl-universal';
+import { debounce } from '@/utils';
 
 const MemberList = observer(() => {
   const [handSpeakVisible, setHandSpeakVisible] = useState(false);
@@ -34,7 +35,7 @@ const MemberList = observer(() => {
 
   const roomStore = useRoomStore();
   const uiStore = useUIStore();
-  const { roomInfo, studentData, nim, localUserInfo, snapRoomInfo, bigLivememberFullList, isBigLiveClass } = roomStore
+  const { roomInfo, studentData, nim, localUserInfo, snapRoomInfo, bigLivememberFullList, isBigLiveClass, isClassMuteChat } = roomStore
   const userInfo = roomStore?.localData || {};
 
   const isBySelf = useCallback((userUuid) => userUuid === roomStore?.localData?.userUuid, [roomStore?.localData])
@@ -89,7 +90,22 @@ const MemberList = observer(() => {
     setMessageCount(0)
   }
 
+  // Every time the chat window is opened, the message is positioned to the end
+  useEffect(()=>{
+    if(chatVisible) {
+      const contentDom = document.getElementById('chatroomContent')
+      if(!contentDom) return
+      setTimeout(()=>{
+        contentDom.scrollTo({
+          top: contentDom?.scrollHeight,
+          behavior: 'smooth'
+        })
+      }, 0)
+    }
+  }, [chatVisible])
+
   const handleHandsModalOk = async () => {
+    setHandsVisible(false);
     switch (userInfo?.avHandsUp) {
       case HandsUpTypes.teacherAgree:
         if (userInfo.hasScreen) {
@@ -116,7 +132,6 @@ const MemberList = observer(() => {
         }
         break;
     }
-    setHandsVisible(false);
   }
 
   const handleHandsModalCancel = () => {
@@ -185,7 +200,7 @@ const MemberList = observer(() => {
       await uiStore.showToast(intl.get("请先开始上课"));
       return;
     }
-    roomStore.setWbEnableDraw(userUuid, value);
+    await roomStore.setWbEnableDraw(userUuid, value);
     await uiStore.showToast(intl.get("操作成功"));
   }
 
@@ -289,7 +304,7 @@ const MemberList = observer(() => {
         {inputVisible ?
           <div className="search">
             <Input placeholder={intl.get('请输入关键词搜索')} onChange={handleChangeSearch} allowClear />
-            <Button onClick={handleSearchMember} >{intl.get('搜索')}</Button>
+            <Button onClick={()=>{handleSearchMember()}} >{intl.get('搜索')}</Button>
           </div> : null
         }
         <ul>
@@ -417,12 +432,17 @@ const MemberList = observer(() => {
   }, [moreVisible])
 
   useEffect( () => {
-    if (userInfo.role === RoleTypes.host && memberAllLength > 0 && memberAllLength > lastMemNum) {
-      message.info(intl.get('有新的举手申请'))
+    if (userInfo.role === RoleTypes.host) {
+      if (memberAllLength > 0 && memberAllLength > lastMemNum) {
+        message.info(intl.get('有新的举手申请'))
+      }
       setLastMemNum(memberAllLength)
     }
   }, [memberAllLength, userInfo.role])
 
+  const muteChatContent = useMemo(()=>{
+    return <Checkbox onChange={onBanChange} checked={isClassMuteChat}>{intl.get('聊天室全体禁言')}</Checkbox>
+  }, [isClassMuteChat])
 
   return (
     <div className="member-list">
@@ -469,6 +489,7 @@ const MemberList = observer(() => {
         wrapClassName="memberModal"
         visible={handleMemberVisible}
         onCancel={handleMemberCancel}
+        keyboard={false}
         centered
         footer={
           userInfo.role === RoleTypes.host && <div className="footers">
@@ -487,7 +508,7 @@ const MemberList = observer(() => {
             <Tooltip title={content} overlayClassName="mute-tooltip" placement="topLeft">
               <img src={require('@/assets/imgs/info5.png').default} alt="info" className="infoImg" />
             </Tooltip></>}
-            <Checkbox onChange={onBanChange}>{intl.get('聊天室全体禁言')}</Checkbox>
+            {muteChatContent}
           </div>
         }
       >
@@ -507,8 +528,16 @@ const MemberList = observer(() => {
               item?.avHandsUp === HandsUpTypes.studentHandsup && <li key={item.userUuid}>
                 <span>{item.userName}</span>
                 <div>
-                  <Button onClick={() => handsUpActionByTea(item.userUuid, HandsUpTypes.teacherAgree)} >{intl.get('同意')}</Button>
-                  <Button onClick={() => handsUpActionByTea(item.userUuid, HandsUpTypes.teacherReject)} >{intl.get('拒绝')}</Button>
+                  <Button onClick={() => {
+                    debounce(()=>{
+                      handsUpActionByTea(item.userUuid, HandsUpTypes.teacherAgree)
+                    }, 1000)
+                  }} >{intl.get('同意')}</Button>
+                  <Button onClick={() => {
+                    debounce(()=>{
+                      handsUpActionByTea(item.userUuid, HandsUpTypes.teacherReject)
+                    }, 1000)
+                  }} >{intl.get('拒绝')}</Button>
                 </div>
               </li>
             ))

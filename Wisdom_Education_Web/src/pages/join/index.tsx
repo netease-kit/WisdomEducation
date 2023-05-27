@@ -64,9 +64,15 @@ const Join: FC = observer(() => {
 
   const handleFormChange = (changedValues, allValues) => {
     const formValue = Object.keys(allValues).some(
-      (item) =>
-        !["uuid", "token"].includes(item) &&
-        (allValues[item] === undefined || allValues[item] === "")
+      (item) => {
+        const _value = allValues[item]
+        if(item === "userName") {
+          return _value === undefined || _value?.trim() === ""
+        } else {
+          return !["uuid", "token"].includes(item) &&
+         (_value === undefined || _value === "")
+        }
+      }
     );
     const verifyNum =
       !roomUuidReg.test(allValues["roomUuid"]) &&
@@ -84,17 +90,12 @@ const Join: FC = observer(() => {
   };
 
   const onFinish = (values) => {
-    logger.log("values", values);
-
-    /**
-     * http://jira.netease.com/browse/YYTX-3445
-     * roomUuid must be digits only
-     */
     const roomUuid = (values.roomUuid || '').match(/\d+/g).join('')
     if (roomUuid.length === 0) {
       return
     }
 
+    values.userName = values?.userName?.trim('')
     const param = {
       ...values,
       roomUuid,

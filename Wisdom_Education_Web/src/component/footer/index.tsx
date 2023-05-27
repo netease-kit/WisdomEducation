@@ -110,18 +110,18 @@ const Footer: React.FC = observer(() => {
     }
   }, [])
 
-  useEffect(() => {
-    if (eleIpcIns) {
-      eleIpcIns.on('main-close-before', () => {
-        logger.debug('main-close-before');
-        setIsEleClose(true);
-        handleStartModal();
-      });
-    }
-    return () => {
-      eleIpcIns?.removeAllListeners();
-    }
-  }, [eleIpcIns])
+  // useEffect(() => {
+  // if (eleIpcIns) {
+  //   eleIpcIns.on('main-close-before', () => {
+  //     logger.debug('main-close-before');
+  //     setIsEleClose(true);
+  //     handleStartModal();
+  //   });
+  // }
+  // return () => {
+  //   eleIpcIns?.removeAllListeners();
+  // }
+  // }, [eleIpcIns])
 
 
 
