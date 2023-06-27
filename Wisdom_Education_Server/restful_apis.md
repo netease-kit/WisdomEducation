@@ -12,6 +12,7 @@
 [联系云信商务经理](https://yunxin.163.com/bizQQWPA.html) 开通功能
 ## Host：yiyong-xedu-v2.netease.im
 ## Headers
+### AppKey：应用唯一标识符
 ### CurTime：当前时间，毫秒时间戳
 ### Nonce：随机串，长度不超过64
 ### CheckSum：hex.lowercase(sha1(utf8.decode(AppSecret+Nonce+CurTime)))
