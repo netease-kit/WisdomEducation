@@ -459,7 +459,23 @@
   }
 }
 ```
+### 房间生成: cmdId=50:
 
+```json
+{
+  "sequence": 50,
+  "appKey":"5955807f4cf8tyeryr73464576yerty",
+  "roomId":1614298,
+  "roomUuid":"724262",
+  "type":"R",
+  "cmd":50,
+  "version":1,
+  "data":{
+    "appKey":"5955807f4cf8tyeryr73464576yerty",
+    "roomUuid":"724262"
+  }
+}
+```
 ### 消息: cmdId=99:
 
 ```json
