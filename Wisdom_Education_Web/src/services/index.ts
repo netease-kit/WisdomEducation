@@ -25,7 +25,7 @@ sessionStorage.setItem("edu-deviceId", deviceId);
 const defaultHeaders = {
   "Content-Type": "application/json",
   Authorization: Authorization,
-  versionCode: 112,
+  versionCode: 1121,
   clientType: isElectron ? "electron" : "web",
   deviceId,
 };

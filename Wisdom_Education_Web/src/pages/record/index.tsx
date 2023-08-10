@@ -18,10 +18,11 @@ import intl from 'react-intl-universal';
 
 export interface IEvent {
   userId: string
-  action: 'show' | 'hide' | 'showScreen' | 'remove',
+  action: 'show' | 'hide' | 'showScreen' | 'remove' | 'hideScreen',
   timestamp: number,
   type?: number,
   payload?: any
+  fromClassBeginInterval?: string // 距离上课开始的时间间隔hh::mm::ss
 }
 
 export interface ITrack {

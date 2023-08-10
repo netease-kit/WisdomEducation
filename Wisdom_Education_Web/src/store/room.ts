@@ -1191,9 +1191,9 @@ export class RoomStore extends EnhancedEventEmitter {
       case NIMNotifyTypes.StreamRemove: {
         const { streamType, member } = data;
         // 其他人停止屏幕共享时本端需要暂停播放
-        // if (streamType === 'subVideo' && member.userUuid !== this.localData?.userUuid) {
-        //   await this.screenData[0]?.basicStream?.stop()
-        // }
+        if (streamType === 'subVideo' && member.userUuid !== this.localData?.userUuid) {
+          await this.screenData[0]?.basicStream?.stop("screen")
+        }
         setTimeout(()=>{
           this.deleteMemberStream(member.userUuid, streamType);
         }, 100)
@@ -1556,17 +1556,21 @@ export class RoomStore extends EnhancedEventEmitter {
       this.channelClosed = false;
       this._joinFinish = false;
     });
-    this._webRtcInstance?.leave();
-    this._webRtcInstance?.destroy();
-    this._webRtcInstance = null;
-    this.appStore?.whiteBoardStore?.destroy();
-    // this.classDuration = 0;
-    this.setFinishBtnShow(false);
-    this.appStore.resetRoomInfo();
-    this.setRoomState("");
-    GlobalStorage.clear();
-    await this.reset();
-    await this._nimInstance.logoutImServer();
+    try {
+      await this._webRtcInstance?.leave();
+      await this._webRtcInstance?.destroy();
+      this._webRtcInstance = null;
+      this.appStore?.whiteBoardStore?.destroy();
+      // this.classDuration = 0;
+      this.setFinishBtnShow(false);
+      this.appStore.resetRoomInfo();
+      this.setRoomState("");
+      GlobalStorage.clear();
+      await this.reset();
+      await this._nimInstance.logoutImServer();
+    } catch (e) {
+      logger.error("room.ts leave error", e);
+    }
   }
 
   @action
@@ -1792,32 +1796,34 @@ export class RoomStore extends EnhancedEventEmitter {
     logger.log("Camera-open", userUuid, sendControl, isBySelf);
     // TODO
     const operatedUser = this.findMember(userUuid);
-    if (operatedUser) {
-      if (!isBySelf) {
-        sendControl &&
-          (await changeMemberProperties({
-            roomUuid: this.roomInfo.roomUuid,
-            userUuid,
-            propertyType: "streamAV",
-            value: 1,
-            video: 1,
-          }));
+    if (!operatedUser) return;
+    if (!isBySelf) {
+      sendControl &&
+        (await changeMemberProperties({
+          roomUuid: this.roomInfo.roomUuid,
+          userUuid,
+          propertyType: "streamAV",
+          value: 1,
+          video: 1,
+        }));
+    } else {
+      if (sendControl) {
+        await changeMemberStream({
+          roomUuid: this.roomInfo.roomUuid,
+          userUuid,
+          streamType: "video",
+          value: 1,
+        })
       } else {
-        if (sendControl) {
-          await changeMemberStream({
-            roomUuid: this.roomInfo.roomUuid,
-            userUuid,
-            streamType: "video",
-            value: 1,
+        // Turn on the camera after receiving the notification callback
+        setTimeout(async()=>{
+          await this._webRtcInstance?.open("video").catch((e)=>{
+            this.closeCamera(userUuid, sendControl, isBySelf)
           })
-        } else {
-          // Turn on the camera after receiving the notification callback
-          setTimeout(async()=>{
-            await this._webRtcInstance?.open("video")
-          }, 0)
-        }
+        }, 0)
       }
     }
+  
   }
 
   /**
@@ -1834,31 +1840,28 @@ export class RoomStore extends EnhancedEventEmitter {
     logger.log("Camera-close", userUuid, sendControl, isBySelf);
     // TODO
     const operatedUser = this.findMember(userUuid);
-    if (operatedUser) {
-      if (!isBySelf) {
-        sendControl &&
-          (await changeMemberProperties({
-            roomUuid: this.roomInfo.roomUuid,
-            userUuid,
-            propertyType: "streamAV",
-            value: 1,
-            video: 0,
-          }));
-      } else {
-        sendControl &&
-          (await deleteMemberStream({
-            roomUuid: this.roomInfo.roomUuid,
-            userUuid,
-            streamType: "video",
-          }));
-      }
-
-      // await this.tempStreams[operatedUser?.rtcUid]?.videoStream?.muteVideo().catch(() => {
-      isBySelf &&
-        (await this._webRtcInstance?.close("video").catch(() => {
-          // this.openCamera(userUuid, sendControl, isBySelf);
+    if (!operatedUser) return;
+    if (!isBySelf) {
+      sendControl &&
+        (await changeMemberProperties({
+          roomUuid: this.roomInfo.roomUuid,
+          userUuid,
+          propertyType: "streamAV",
+          value: 1,
+          video: 0,
         }));
-      // await this.resetAudio();
+    } else {
+      if (sendControl) {
+        await deleteMemberStream({
+          roomUuid: this.roomInfo.roomUuid,
+          userUuid,
+          streamType: "video",
+        })
+      } else {
+        await this._webRtcInstance?.close("video").catch((e)=>{
+          this.openCamera(userUuid, sendControl, isBySelf)
+        })
+      }
     }
   }
 
@@ -1875,30 +1878,29 @@ export class RoomStore extends EnhancedEventEmitter {
   ): Promise<void> {
     // TODO
     const operatedUser = this.findMember(userUuid);
-    if (operatedUser) {
-      if (!isBySelf) {
-        sendControl &&
-          (await changeMemberProperties({
-            roomUuid: this.roomInfo.roomUuid,
-            userUuid,
-            propertyType: "streamAV",
-            value: 1,
-            audio: 1,
-          }));
-      } else {
-        sendControl &&
-          (await changeMemberStream({
-            roomUuid: this.roomInfo.roomUuid,
-            userUuid,
-            streamType: "audio",
-            value: 1,
-          }));
-      }
-      // await this.tempStreams[operatedUser?.rtcUid]?.videoStream?.unmuteAudio().catch(() => {
-      isBySelf &&
-        (await this._webRtcInstance?.open("audio").catch(() => {
-          this.closeAudio(userUuid, sendControl, isBySelf);
+    if (!operatedUser) return;
+    if (!isBySelf) {
+      sendControl &&
+        (await changeMemberProperties({
+          roomUuid: this.roomInfo.roomUuid,
+          userUuid,
+          propertyType: "streamAV",
+          value: 1,
+          audio: 1,
         }));
+    } else {
+      if(sendControl) {
+        await changeMemberStream({
+          roomUuid: this.roomInfo.roomUuid,
+          userUuid,
+          streamType: "audio",
+          value: 1,
+        })
+      } else {
+        await this._webRtcInstance?.open("audio").catch(() => {
+          this.closeAudio(userUuid, sendControl, isBySelf);
+        });
+      }
     }
   }
 
@@ -1915,28 +1917,28 @@ export class RoomStore extends EnhancedEventEmitter {
   ): Promise<void> {
     // TODO
     const operatedUser = this.findMember(userUuid);
-    if (operatedUser) {
-      if (!isBySelf) {
-        sendControl &&
-          (await changeMemberProperties({
-            roomUuid: this.roomInfo.roomUuid,
-            userUuid,
-            propertyType: "streamAV",
-            value: 1,
-            audio: 0,
-          }));
-      } else {
-        sendControl &&
-          (await deleteMemberStream({
-            roomUuid: this.roomInfo.roomUuid,
-            userUuid,
-            streamType: "audio",
-          }));
-      }
-      isBySelf &&
-        (await this._webRtcInstance?.close("audio").catch(() => {
-          this.openAudio(userUuid, sendControl, isBySelf);
+    if (!operatedUser) return;
+    if (!isBySelf) {
+      sendControl &&
+        (await changeMemberProperties({
+          roomUuid: this.roomInfo.roomUuid,
+          userUuid,
+          propertyType: "streamAV",
+          value: 1,
+          audio: 0,
         }));
+    } else {
+      if (sendControl) {
+        await deleteMemberStream({
+          roomUuid: this.roomInfo.roomUuid,
+          userUuid,
+          streamType: "audio",
+        })
+      } else {
+        await this._webRtcInstance?.close("audio").catch(() => {
+          this.openAudio(userUuid, sendControl, isBySelf);
+        });
+      }
     }
   }
 

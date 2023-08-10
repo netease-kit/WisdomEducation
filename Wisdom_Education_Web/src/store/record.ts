@@ -9,6 +9,7 @@ import { IEvent, ITrack } from '@/pages/record/index';
 import { getRecordInfo } from '@/services/api';
 import { SceneTypes, RoleTypes } from '@/config';
 import intl from 'react-intl-universal';
+import { getTime } from '@/utils';
 
 interface IpStore {
   videoTracks: Array<ITrack>
@@ -138,10 +139,21 @@ export class RecordStore {
             end: record.startTime + (item.duration || 1) * 1000
           })
         } else {
-          // fix: 学生上台后下台，再次上台，由于中间有remove事件，后续的流未正常播放
-          const tempEvents = rawEvents.concat([])
+          const tempEvents = rawEvents.concat([])?.filter((ele: any) => ele.roomUid == item.roomUid)
           tempEvents.reverse()
-          const userLeaveEvent = tempEvents.find(ele => ele.roomUid == item.roomUid && ele.type == 2)
+          // 从后往前遍历当前用户的事件，视频时间为第一次进入课堂到最后一次离开课堂的时间（可中间离开多次） 
+          let timestamp = record.stopTime
+          for (const ele of tempEvents) {
+            if (ele.type === 2) {
+              // 先遇到ele.type=2，则为离开后再未进入课堂
+              timestamp = ele.timestamp
+              break
+            } else if (ele.type === 1) {
+              // 先遇到ele.type=1，则为进入课堂后再未离开
+              timestamp = record.stopTime
+              break
+            }
+          }
           videoTracks.push({
             id: item.roomUid, // ?
             userId: item.roomUid,
@@ -151,8 +163,7 @@ export class RecordStore {
             type: 'video',
             start: item.timestamp, // Start time on student clients must be calibrated with the system time
             subStream: item.subStream,
-            end: userLeaveEvent ? userLeaveEvent.timestamp : record.stopTime,
-            // end: item.timestamp + (item.duration || 1) * 1000
+            end: timestamp,
           })
         }
       } else {
@@ -177,7 +188,8 @@ export class RecordStore {
           userId: event.roomUid,
           action: this.checkEventType(event.type, sceneType),
           type: event.type,
-          timestamp: event.timestamp
+          timestamp: event.timestamp,
+          fromClassBeginInterval: getTime(event.timestamp - record.classBeginTimestamp)[0],
         })
       }
     }
@@ -206,30 +218,25 @@ export class RecordStore {
    * @returns 
    */
   private checkEventType = (type: number, sceneType: SceneTypes) => {
-    let result: "show" | "hide" | "showScreen" | "remove";
+    let result: "show" | "hide" | "showScreen" | "remove" | "hideScreen";
     switch (true) {
-      case [SceneTypes.BIG, SceneTypes.BiGLIVE].includes(sceneType) && [3, 5, 9].includes(type):
+      case [1, 3, 5, 9].includes(type):
         result = 'show';
         break;
-      case [SceneTypes.BIG, SceneTypes.BiGLIVE].includes(sceneType) && [1].includes(type):
-        result = 'remove';
-        break;
-      case ![SceneTypes.BIG, SceneTypes.BiGLIVE].includes(sceneType) && [1, 3, 5, 9].includes(type):
-        result = 'show';
+      case [4, 6].includes(type):
+        result = 'hide';
         break;
       case [7].includes(type):
         result = 'showScreen';
+        break;
+      case [8].includes(type):
+        result = 'hideScreen';
         break;
       case [2, 10].includes(type):
         result = 'remove';
         break;
       default:
-        // fix: 互动大班课停止共享type为8，应该解析为'hide'
-        if ([SceneTypes.BIG, SceneTypes.BiGLIVE].includes(sceneType) && ![4, 6, 8].includes(type)) {
-          result = 'remove';
-        } else {
-          result = 'hide';
-        }
+        result = 'show';
         break;
     }
     return result;

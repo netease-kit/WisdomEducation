@@ -291,16 +291,17 @@ export class NeWebrtc extends EnhancedEventEmitter {
 
   async leave(): Promise<void> {
     logger.log('leave()', this._client)
-    this._localStream && this._localStream.destroy();
-    this._localStream = null;
-    this._mapRemoteStreams.clear();
-    try{
+    try {
       await this._client?.leave()
       this._client = null;
       WebRTC2.destroy(); 
-    }catch(e: any){
+    } catch(e: any){
       logger.log('leave failed:', e)
       throw new Error(e);
+    } finally {
+      this._localStream?.destroy();
+      this._localStream = null;
+      this._mapRemoteStreams.clear();
     }
   }
 
@@ -783,16 +784,15 @@ export class NeWebrtc extends EnhancedEventEmitter {
 
   async destroy(): Promise<void> {
     logger.log('destroy()');
-    // this._localStream.destroy();
     try {
-      this._localStream = null
-      this._client?.destroy();
+      await this._client?.destroy();
       this._client = null;
       WebRTC2.destroy();
-      this._mapRemoteStreams.clear()
-      window.navigator.mediaDevices.ondevicechange = null;
     } catch (error) {
       logger.log('destroy() error', error);
+    } finally {
+      this._mapRemoteStreams.clear()
+      window.navigator.mediaDevices.ondevicechange = null;
     }
   }
 
