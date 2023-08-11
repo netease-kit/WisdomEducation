@@ -66,7 +66,7 @@ export interface ITrack {
 
 export interface IEvent {
     userId: string
-    action: 'show' | 'hide' | 'showScreen' | 'remove',
+    action: 'show' | 'hide' | 'showScreen' | 'remove' | 'hideScreen',
     timestamp: number,
     payload?: any
 }
@@ -167,8 +167,26 @@ export default class Replay extends React.Component<IProps, IState> {
         } else {
           //看看是否因为进出事件，导致视频不应该播放
           const events = store.events.filter(ev => ev.userId == t.userId && ev.timestamp <= time && (isScreen ? t.subStream : !t.subStream))
-          if (events.length > 0 && isScreen) {
-            return events[events.length - 1].action === (isScreen ? 'showScreen' :'show')
+          if (events.length > 0) {
+            // 1. events从后往前查找，根据最后的状态来判断是否播放
+            for (let i = events.length - 1; i >= 0; i--) {
+              const event = events[i];
+              // 2. isScreen为true时先遇到hideScreen或者remove就返回false，先遇到showScreen则返回true
+              if (isScreen) {
+                if (event.action === "hideScreen" || event.action === "remove") {
+                  return false;
+                } else if (event.action === "showScreen") {
+                  return true;
+                }
+              } else {
+                // 3. isScreen为false时先遇到hide或者remove就返回false，先遇到show则返回true
+                if (event.action === "hide" || event.action === "remove") {
+                  return false;
+                } else if (event.action === "show") {
+                  return true;
+                }
+              }
+            }
           } else {
             return isScreen ? false : true;
           }

@@ -1,6 +1,6 @@
 {
-  "name": "app-wisdon-education-web",
-  "version": "1.12.0",
+  "name": "app-wisdom-education-web",
+  "version": "1.12.1",
   "homepage": "./",
   "private": true,
   "workspaces": {

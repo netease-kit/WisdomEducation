@@ -52,7 +52,7 @@ const Join: FC = observer(() => {
       value: RoleTypes.broadcaster,
     },
   ];
-  
+
   const [disabled, setDisabled] = useState(true);
   const [form] = Form.useForm();
   const roomStore = useRoomStore();
@@ -66,11 +66,11 @@ const Join: FC = observer(() => {
     const formValue = Object.keys(allValues).some(
       (item) => {
         const _value = allValues[item]
-        if(item === "userName") {
+        if (item === "userName") {
           return _value === undefined || _value?.trim() === ""
         } else {
           return !["uuid", "token"].includes(item) &&
-         (_value === undefined || _value === "")
+            (_value === undefined || _value === "")
         }
       }
     );
@@ -103,7 +103,7 @@ const Join: FC = observer(() => {
       roomName: `${values.userName}${intl.get("的课堂")}`,
       role:
         values.sceneType === RoomTypes.bigClass &&
-        values.role === RoleTypes.broadcaster
+          values.role === RoleTypes.broadcaster
           ? RoleTypes.audience
           : values.role,
     };
@@ -188,7 +188,7 @@ const Join: FC = observer(() => {
                 <>
                   <Form.Item
                     name="uuid"
-                    // rules={[{ required: true, message: 'Invalid class ID format', pattern: roomUuidReg }]}
+                  // rules={[{ required: true, message: 'Invalid class ID format', pattern: roomUuidReg }]}
                   >
                     <div>
                       <Input
