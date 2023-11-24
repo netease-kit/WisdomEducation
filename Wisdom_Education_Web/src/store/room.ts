@@ -667,7 +667,6 @@ export class RoomStore extends EnhancedEventEmitter {
     });
     this._nimInstance.on("im-connect", () => {
       if (this.joined) {
-        console.log("/snapshot im-connect")
         this.getMemberList().then(() => {
           const result: any = this.memberList.filter(
             (item) => item.userUuid === this.localData?.userUuid
@@ -693,7 +692,7 @@ export class RoomStore extends EnhancedEventEmitter {
     // logger.log('Speaking', _data);
     });
     this._webRtcInstance.on("stream-removed", (_data: any) => {
-      this.updateStream(_data.uid, _data.mediaType, _data.stream);
+      // this.updateStream(_data.uid, _data.mediaType, _data.stream);
     });
     this._webRtcInstance.on("network-quality", (_data: NetStatusItem[]) => {
     // logger.log('Network status', _data);
@@ -781,10 +780,6 @@ export class RoomStore extends EnhancedEventEmitter {
         const item = this.memberFullList.find(item=>item.rtcUid === _data.uid)
         item?.userUuid && this._updateStudentData(item.userUuid, "update", item)
       });
-    });
-    this._webRtcInstance.on("stream-removed", (_data: any) => {
-      logger.log("Received the stream that was unpublished from the peer", _data);
-    // this.updateStream(_data.uid, _data.mediaType, null);
     });
     this._webRtcInstance.on("channelClosed", (_data: any) => {
       logger.log("The RTC room is closed", _data);
@@ -1191,7 +1186,7 @@ export class RoomStore extends EnhancedEventEmitter {
       case NIMNotifyTypes.StreamRemove: {
         const { streamType, member } = data;
         // 其他人停止屏幕共享时本端需要暂停播放
-        if (streamType === 'subVideo' && member.userUuid !== this.localData?.userUuid) {
+        if (streamType === 'subVideo') {
           await this.screenData[0]?.basicStream?.stop("screen")
         }
         setTimeout(()=>{
@@ -1386,16 +1381,17 @@ export class RoomStore extends EnhancedEventEmitter {
                   await changeMemberStream({
                     roomUuid: this.roomInfo.roomUuid,
                     userUuid: userUuid,
-                    streamType: "audio",
+                    streamType: "video",
                     value: 1,
                   });
                   await changeMemberStream({
                     roomUuid: this.roomInfo.roomUuid,
                     userUuid: userUuid,
-                    streamType: "video",
+                    streamType: "audio",
                     value: 1,
                   });
-                  this._webRtcInstance?.publish();
+                  // 修改成功open时sdk会自动pub
+                  // this._webRtcInstance?.publish();
                 }
               }
               if (item?.value === HandsUpTypes.teacherReject) {
@@ -1407,9 +1403,11 @@ export class RoomStore extends EnhancedEventEmitter {
               if (item?.value === HandsUpTypes.teacherOff) {
                 this.appStore.uiStore.showToast(intl.get("老师结束了你的上台操作"));
                 if (this.isBigClass) {
+                  // 设置为观众后，sdk会自动unpublish
                   this._webRtcInstance?.setClientRole(RoleTypes.audience)
+                } else {
+                  this._webRtcInstance?.unpublish()
                 }
-                this._webRtcInstance?.unpublish();
                 if (this._localWbDrawEnable) {
                   this._localWbDrawEnable = false;
                 }
@@ -1443,47 +1441,52 @@ export class RoomStore extends EnhancedEventEmitter {
     userUuid: string,
     streams: Streams
   ): Promise<void> {
-    const isBySelf = userUuid === this.localData?.userUuid;
-    this.memberFullList.some((item) => {
-      if (item.userUuid === userUuid) {
-        item.streams = Object.assign({}, item.streams, streams);
-        this._updateStudentData(userUuid, "update", item)
-        for (const key in streams) {
-          if (Object.prototype.hasOwnProperty.call(streams, key)) {
-            const item = streams[key];
-            switch (key) {
-              case "audio":
-                if (item.value === 1) {
-                  this.openAudio(userUuid, false, isBySelf);
-                } else if (item.value === 0) {
-                  this.closeAudio(userUuid, false, isBySelf);
-                }
-                break;
-              case "video":
-                if (item.value === 1) {
-                  this.openCamera(userUuid, false, isBySelf);
-                } else if (item.value === 0) {
-                  this.closeCamera(userUuid, false, isBySelf);
-                }
-                break;
-              case "subVideo":
-                if (this.localData?.userUuid === item.userUuid) {
-                  logger.log("subvideo triggered", item.value);
+    try {
+      const isBySelf = userUuid === this.localData?.userUuid;
+      this.memberFullList.some((item) => {
+        if (item.userUuid === userUuid) {
+          item.streams = Object.assign({}, item.streams, streams);
+          this._updateStudentData(userUuid, "update", item)
+          for (const key in streams) {
+            if (Object.prototype.hasOwnProperty.call(streams, key)) {
+              const item = streams[key];
+              switch (key) {
+                case "audio":
                   if (item.value === 1) {
-                    this.startScreen(false);
-                  } else {
-                    this.stopScreen(false);
+                    this.openAudio(userUuid, false, isBySelf);
+                  } else if (item.value === 0) {
+                    this.closeAudio(userUuid, false, isBySelf);
                   }
-                }
-                break;
-              default:
-                break;
+                  break;
+                case "video":
+                  if (item.value === 1) {
+                    this.openCamera(userUuid, false, isBySelf);
+                  } else if (item.value === 0) {
+                    this.closeCamera(userUuid, false, isBySelf);
+                  }
+                  break;
+                case "subVideo":
+                  if (this.localData?.userUuid === item.userUuid) {
+                    logger.log("subvideo triggered", item.value);
+                    if (item.value === 1) {
+                      this.startScreen(false);
+                    } else {
+                      this.stopScreen(false);
+                    }
+                  }
+                  break;
+                default:
+                  break;
+              }
             }
           }
+          return true;
         }
-        return true;
-      }
-    });
+      });
+
+    } catch (e) {
+      console.log('updateMemberStream error', e)
+    }
     logger.log("Stream change complete", this.memberFullList);
   }
 
@@ -1816,11 +1819,9 @@ export class RoomStore extends EnhancedEventEmitter {
         })
       } else {
         // Turn on the camera after receiving the notification callback
-        setTimeout(async()=>{
-          await this._webRtcInstance?.open("video").catch((e)=>{
-            this.closeCamera(userUuid, sendControl, isBySelf)
-          })
-        }, 0)
+        await this._webRtcInstance?.open("video").catch((e)=>{
+          this.closeCamera(userUuid, sendControl, isBySelf)
+        })
       }
     }
   

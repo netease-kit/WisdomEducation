@@ -69,8 +69,8 @@ const devServerConfig = () => config => {
   return {
     ...config,
     https: true,
-    key: fs.readFileSync('./cert/key.pem'),
-    cert: fs.readFileSync('./cert/cert.pem'),
+    key: fs.readFileSync('请替换为您申请的https证书路径'),
+    cert: fs.readFileSync('请替换为您申请的https证书路径'),
     port: 3001
   }
 }

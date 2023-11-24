@@ -31,6 +31,9 @@ const MemberList = observer(() => {
   const [messageCount, setMessageCount] = useState<number>(0);
   const [muteAllBtnHover, setMuteAllBtnHover] = useState(false);
   const [lastMemNum, setLastMemNum] = useState(0)
+  const [teaOffModalVisible, setTeaOffModalVisible] = useState<boolean>(false);
+  const [selectedUserUuid, setSelectedUserUuid] = useState<string>('');
+  const teaOffModalRef = useRef<HTMLDivElement|null>(null);
   // const count = useRef(0);
 
   const roomStore = useRoomStore();
@@ -171,6 +174,8 @@ const MemberList = observer(() => {
       await uiStore.showToast(intl.get("操作成功"));
     } catch (error) {
       console.error('error', error);
+    } finally {
+      setTeaOffModalVisible(false)
     }
   }
 
@@ -225,7 +230,17 @@ const MemberList = observer(() => {
           <li><Button onClick={() => handleSetAllowScreen(item.userUuid, 1)} type="text">{intl.get('授予共享权限')}</Button></li>}
         {
           RoomTypes.bigClass === Number(roomStore?.roomInfo?.sceneType) && item.avHandsUp === HandsUpTypes.teacherAgree &&
-          <li><Button onClick={() => handsUpActionByTea(item.userUuid, HandsUpTypes.teacherOff)} type="text">{intl.get('请他下台')}</Button></li>
+          <li>
+            <Button
+              onClick={() => {
+                setMoreVisible(false)
+                setTeaOffModalVisible(true)
+              }}
+              type="text"
+            >
+              {intl.get('请他下台')}
+            </Button>
+          </li>
         }
       </ul>
     );
@@ -367,8 +382,13 @@ const MemberList = observer(() => {
                       icon={item.hasVideo ? <img src={require('@/assets/imgs/videoOpen.png').default} alt="videoOpen" /> : <img src={require('@/assets/imgs/videoClose.png').default} alt="videoClose" />}
                     />
                     {userInfo.role === RoleTypes.host &&
-                      <Tooltip placement="bottomRight" title={MoreContent(item)} overlayClassName="tooltip" trigger="click">
+                      <Tooltip placement="bottomRight" title={MoreContent(item)} overlayClassName="tooltip" visible={moreVisible && selectedUserUuid === item.userUuid}>
                         <Button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setMoreVisible(true);
+                            setSelectedUserUuid(item.userUuid);
+                          }}
                           type="text"
                           icon={<div className="more">···</div>}
                         />
@@ -598,6 +618,22 @@ const MemberList = observer(() => {
       >
         <p className="title">{intl.get('举手申请被拒绝')}</p>
         <p className="desc">{intl.get('您的举手申请被拒绝，请稍后再尝试。')}</p>
+      </Modal>
+      <Modal
+        visible={teaOffModalVisible}
+        centered
+        onOk={() => handsUpActionByTea(selectedUserUuid, HandsUpTypes.teacherOff)}
+        onCancel={()=>setTeaOffModalVisible(false)}
+        okText={intl.get('确认')}
+        cancelText={intl.get('取消')}
+        wrapClassName="modal"
+      >
+        <div ref={teaOffModalRef}>
+          <p className="title">{intl.get('请他下台')}</p>
+          <p className="desc">
+            {intl.get('结束该学生的上台动作，同时收回他的屏幕共享、白板权限')}
+          </p>
+        </div>
       </Modal>
     </div>
   )

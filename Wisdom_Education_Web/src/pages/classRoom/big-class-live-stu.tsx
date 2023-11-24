@@ -111,7 +111,15 @@ const BigClassLiveStu: React.FC = observer(() => {
       myPlay && myPlay.release();
       myPlay = null;
     } else {
-      initNEPlayer()
+      const joinSettingInfo = JSON.parse(localStorage.getItem('room-setting') || '{}');
+      if (joinSettingInfo.nertsLive) {
+        // 低延时延迟1s去拉流，以防sdk服务端还没推到低延时服务器导致的拉流失败
+        setTimeout(()=>{
+          initNEPlayer()
+        }, 1000)
+      } else {
+        initNEPlayer()
+      }
     }
     return () => {
       myPlay && myPlay.release();

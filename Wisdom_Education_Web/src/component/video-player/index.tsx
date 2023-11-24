@@ -16,7 +16,6 @@ import { useRoomStore, useWhiteBoardStore, useUIStore } from "@/hooks/store";
 import { RoleTypes, RoomTypes, HandsUpTypes, isElectron, HostSeatOperation } from "@/config";
 import { Button, Modal, Dropdown, Menu } from "antd";
 import logger from "@/lib/logger";
-import { setInterval } from "timers";
 import intl from 'react-intl-universal';
 
 interface VideoPlayerProps {
@@ -67,12 +66,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = observer(
     const wbStore = useWhiteBoardStore();
     const uiStore = useUIStore();
     const [modalVisible, setModalVisible] = useState(false);
-    const [userStats, setUserStats] = useState<{
-      CaptureResolutionWidth?: number;
-      CaptureResolutionHeight?: number;
-      RecvResolutionWidth?: number;
-      RecvResolutionHeight?: number;
-    }>({});
     const [reloadTime, setReloadTime] = useState(0);
 
     const isBySelf = useMemo(
@@ -211,65 +204,28 @@ const VideoPlayer: React.FC<VideoPlayerProps> = observer(
       return param;
     }, [hasScreen, isLocal]);
 
-    const getUserStats = async () => {
-      let stats;
-      if (isLocal) {
-        const result =
-          (await roomStore.client?.getLocalVideoStats("screen")) || [];
-        stats = result[0];
-      } else {
-        const result =
-          (await roomStore.client?.getRemoteVideoStats("screen")) || {};
-        stats = result[rtcUid];
-      }
-      // logger.log('video-screen', stats)
-      if ((stats?.CaptureResolutionWidth || stats?.RecvResolutionWidth) > 0) {
-        setUserStats(stats);
-      }
-    };
-
-    const playVideo = async (
-      CaptureResolutionWidth = 0,
-      CaptureResolutionHeight = 0,
-      RecvResolutionWidth = 0,
-      RecvResolutionHeight = 0
-    ) => {
+    const playVideo = async () => {
       if (
         playDOM?.current?.clientWidth &&
-        (((CaptureResolutionWidth || RecvResolutionWidth) > 0 && hasScreen) ||
-          hasVideo)
+        ( hasScreen || hasVideo )
       ) {
-        logger.log("playback success", userName, playDOM, playDOM.current);
+        logger.log("playback success", userName, playDOM?.current);
         setReloadTime(0);
         clearTimeout(timer);
-        const scale = hasScreen
-          ? CaptureResolutionWidth
-            ? CaptureResolutionWidth / CaptureResolutionHeight
-            : RecvResolutionWidth / RecvResolutionHeight
-          : 1;
-        let width, height;
-        if (scale >= 1) {
-          width = playDOM.current.clientWidth;
-          height = playDOM.current.clientHeight;
-        } else {
-          width = playDOM.current.clientWidth * scale;
-          height = playDOM.current.clientHeight;
-        }
         const modeOptions = {
           options: {
-            width: hasScreen ? width : playDOM.current.clientWidth,
-            height: hasScreen ? height : playDOM.current.clientHeight,
+            width: playDOM.current.clientWidth,
+            height: playDOM.current.clientHeight,
             cut: false,
           },
           mediaType: hasScreen ? "screen" : "video",
         };
         logger.debug('Screen sharing', hasScreen);
         logger.debug('Configure', modeOptions);
-        logger.debug('Pass the aspect ratio', CaptureResolutionWidth, CaptureResolutionHeight, RecvResolutionWidth, RecvResolutionHeight)
         try {
           if (isLocal) {
             logger.log(
-              "Set the remote view",
+              "Set the local view",
               playDOM.current,
               modeOptions,
               basicStream
@@ -318,17 +274,10 @@ const VideoPlayer: React.FC<VideoPlayerProps> = observer(
         logger.error(
           "play failure-rerendering",
           `${reloadTime}`,
-          playDOM?.current?.clientWidth,
-          CaptureResolutionWidth,
-          RecvResolutionWidth
+          playDOM?.current?.clientWidth
         );
         timer = setTimeout(() => {
-          playVideo(
-            CaptureResolutionWidth,
-            CaptureResolutionHeight,
-            RecvResolutionWidth,
-            RecvResolutionHeight
-          );
+          playVideo();
         }, 2000);
       }
     };
@@ -401,7 +350,11 @@ const VideoPlayer: React.FC<VideoPlayerProps> = observer(
 
     const playAudio = () => {
       if (playDOM?.current?.clientWidth) {
-        audioStream.play(playDOM?.current);
+        audioStream.play(playDOM?.current, {
+          audio: true,
+          video: false,
+          screen: false
+        });
       }
     };
 
@@ -412,27 +365,33 @@ const VideoPlayer: React.FC<VideoPlayerProps> = observer(
     // }
 
     useEffect(() => {
-      logger.log(
-        "CaptureResolutionWidth",
-        userStats?.CaptureResolutionWidth,
-        userStats?.CaptureResolutionHeight,
-        userStats?.RecvResolutionWidth,
-        userStats?.RecvResolutionHeight
-      );
+      logger.log("basicStream||hasVideo||hasScreen changed --> playVideo");
       if (!isElectron) {
         if (
-          (basicStream && hasVideo) ||
-          (basicStream &&
-            hasScreen &&
-            (userStats?.CaptureResolutionWidth ||
-              userStats?.RecvResolutionWidth))
+          (basicStream && hasVideo && basicStream.hasVideo) ||
+          (basicStream && hasScreen)
         ) {
-          playVideo(
-            userStats?.CaptureResolutionWidth,
-            userStats?.CaptureResolutionHeight,
-            userStats?.RecvResolutionWidth,
-            userStats?.RecvResolutionHeight
-          );
+          playVideo();
+          // 大班课学生上台有视频时，需要多次尝试播放，否则会出现黑屏
+          if (
+            [RoomTypes.bigClass].includes(
+              Number(roomStore?.roomInfo?.sceneType)
+            ) &&
+            isLocal
+          ) {
+            let count = 0
+            const timer = setInterval(() => {
+              count++
+              if (count < 3) {
+                if ((hasVideo && !basicStream?.isPlaying('video')) || (hasScreen && !basicStream?.isPlaying('screen'))) {
+                  console.log('再次尝试播放次数 ', count, {hasVideo, hasScreen})
+                  playVideo()
+                }
+              } else {
+                clearInterval(timer)
+              }
+            }, 1000)
+          }
         }
       } else {
         playVideoInEle();
@@ -444,12 +403,9 @@ const VideoPlayer: React.FC<VideoPlayerProps> = observer(
       };
     }, [
       basicStream,
+      basicStream?.hasVideo,
       hasVideo,
-      hasScreen,
-      userStats?.CaptureResolutionWidth,
-      userStats?.CaptureResolutionHeight,
-      userStats?.RecvResolutionWidth,
-      userStats?.RecvResolutionHeight,
+      hasScreen
     ]);
 
     /* electron-sdk clear the canvas before turning off the camera */
@@ -489,21 +445,10 @@ const VideoPlayer: React.FC<VideoPlayerProps> = observer(
     }, [hasVideo])
 
     useEffect(() => {
-      if (audioStream) {
+      if (audioStream && !isLocal) {
         playAudio();
       }
     }, [audioStream]);
-
-    useEffect(() => {
-      if (!isElectron) {
-        timer = setInterval(() => {
-          getUserStats();
-        }, 2000);
-      }
-      return () => {
-        clearInterval(timer);
-      };
-    }, []);
 
     return (
       <div className="video-player-component">
