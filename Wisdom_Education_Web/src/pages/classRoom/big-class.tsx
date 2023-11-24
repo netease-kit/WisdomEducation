@@ -9,7 +9,6 @@ import { useRoomStore } from '@/hooks/store';
 import { observer } from 'mobx-react';
 import BeforeOrInClass, { classStatus } from '@/component/beforeorin-class';
 import WhiteBoard from '@/component/white-board';
-import VidepPlayer from '@/component/video-player';
 import StudentList from '@/component/student-list';
 import ScreenSharing from '@/component/screen-sharing';
 import './big-class.less';
@@ -35,14 +34,14 @@ const BigClass: React.FC = observer(() => {
       <Sider width={230} className="layout-sider">
         <StudentList>
           {!teacherData ? (
-            <VidepPlayer />) : (
-            <VidepPlayer
+            <VideoPlayer />) : (
+            <VideoPlayer
               {...teacherData}
               showMoreBtn={false}
             />
           )}
           {studentData.map((item) => (
-            item.avHandsUp === HandsUpTypes.teacherAgree && <VidepPlayer key={item.rtcUid} {...item} />
+            item.avHandsUp === HandsUpTypes.teacherAgree && <VideoPlayer key={item.rtcUid} {...item} />
           ))}
         </StudentList>
       </Sider>
