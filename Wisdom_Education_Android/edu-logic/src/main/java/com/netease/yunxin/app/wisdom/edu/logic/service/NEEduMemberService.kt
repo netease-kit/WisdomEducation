@@ -20,6 +20,8 @@ abstract class NEEduMemberService : INEEduService() {
      */
     abstract fun getMemberList(): MutableList<NEEduMember>
 
+    abstract fun mergeMemberList(list: List<NEEduMember>)
+
     /**
      * Update the member list if new members join the class
      * @param increment true indicates increment load and false indicates full load.

@@ -477,7 +477,7 @@ class LiveClassActivity : BigClazzStudentActivity(),
         releasePlayer()
         rtcModeUI()
         reloadWhiteboard()
-        eduManager.getMemberService().updateMemberJoin(lastJoinList, true)
+        eduManager.getMemberService().mergeMemberList(lastJoinList)
     }
 
     private fun rtcModeUI() {
