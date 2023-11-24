@@ -41,6 +41,22 @@ internal class NEEduMemberServiceImpl : NEEduMemberService() {
         propertiesChangeLD.postValue(Pair(member, properties))
     }
 
+    override fun mergeMemberList(list: List<NEEduMember>) {
+        synchronized(joinList) {
+            for (element in list) {
+                if (joinList.indexOf(element) == -1) {
+                    joinList.add(element)
+                }
+            }
+            joinList.sortWith(
+                compareBy(
+                    { !it.isHost() },
+                    { NEEduManagerImpl.getEntryMember().userUuid != it.userUuid })
+            )
+        }
+        joinLD.postValue(joinList)
+    }
+
     /**
      * Update the member list
      *
