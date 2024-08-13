@@ -27,7 +27,7 @@
 # 基本概念
 | 名称| 	类型| 	描述|
 |----|----|----|
-| userUuid	| String	| 用户唯一ID，即用户账号，加入房间时的用户身份, 若涉及字母, 传参时请一律转成小写处理|
+| userUuid	| String	| 用户唯一ID，即用户账号，加入房间时的用户身份，若涉及字母，传参时请一律转成小写处理|
 | userToken	| String	| 用户令牌，账号对应的密码，加入房间等需要USER_TOKEN鉴权的接口使用|
 | imKey	| String	| IM 应用标识符: 一般等同于AppKey，此应用绑定的im app key，一般情况下开发者无需关心此参数|
 | imToken	| String	| IM 应用中用户token。此应用绑定的im token，一般情况下开发者无需关心此参数|
