@@ -13,10 +13,9 @@ import React, {
 import "./index.less";
 import { observer } from "mobx-react";
 import { useRoomStore, useWhiteBoardStore, useUIStore } from "@/hooks/store";
-import { RoleTypes, RoomTypes, HandsUpTypes, isElectron } from "@/config";
-import { Popover, Button, Modal } from "antd";
+import { RoleTypes, RoomTypes, HandsUpTypes, isElectron, HostSeatOperation } from "@/config";
+import { Button, Modal, Dropdown, Menu } from "antd";
 import logger from "@/lib/logger";
-import { setInterval } from "timers";
 import intl from 'react-intl-universal';
 
 interface VideoPlayerProps {
@@ -52,7 +51,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = observer(
     applyWhiteBoardDraw = false,
     basicStream,
     audioStream,
-    isLocal = true,
+    isLocal = false,
     userName,
     role,
     rtcUid = "",
@@ -67,13 +66,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = observer(
     const wbStore = useWhiteBoardStore();
     const uiStore = useUIStore();
     const [modalVisible, setModalVisible] = useState(false);
-    const [moreVisible, setMoreVisible] = useState(false);
-    const [userStats, setUserStats] = useState<{
-      CaptureResolutionWidth?: number;
-      CaptureResolutionHeight?: number;
-      RecvResolutionWidth?: number;
-      RecvResolutionHeight?: number;
-    }>({});
     const [reloadTime, setReloadTime] = useState(0);
 
     const isBySelf = useMemo(
@@ -107,7 +99,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = observer(
         await uiStore.showToast(intl.get("请先开始上课"));
         return;
       }
-      roomStore.setWbEnableDraw(userUuid, value);
+      await roomStore.setWbEnableDraw(userUuid, value);
       await uiStore.showToast(intl.get("操作成功"));
     };
 
@@ -121,22 +113,28 @@ const VideoPlayer: React.FC<VideoPlayerProps> = observer(
       await uiStore.showToast(intl.get("操作成功"));
     };
 
-    const handleModalOk = async (userUuid: string, value: HandsUpTypes) => {
-      await roomStore.handsUpAction(userUuid, value);
-      switch (value) {
-        case HandsUpTypes.teacherAgree:
-          // await roomStore.changeMemberStreamProperties(userUuid, 1, 1, 1)
-          break;
-        case HandsUpTypes.teacherOff:
-          // await roomStore.changeMemberStreamProperties(userUuid, 0, 0, 0)
-          await roomStore.changeSubVideoStream(userUuid, 0);
-          break;
-        default:
-          // await roomStore.changeMemberStreamProperties(userUuid, 0, 0, 0)
-          break;
+    const handleModalOk = async (userUuid: string, value: HandsUpTypes) => { 
+      try {
+        switch (value) {
+          case HandsUpTypes.teacherAgree:
+            break;
+          case HandsUpTypes.teacherOff:
+            if (roomStore.isBigLiveClass) {
+              await roomStore.handsUpActionForSeat(userUuid, HostSeatOperation.teacherOff, true)
+            } else {
+              await roomStore.handsUpAction(userUuid, value);
+            }
+            await roomStore.changeSubVideoStream(userUuid, 0);
+            break;
+          default:
+            break;
+        }
+        await uiStore.showToast(intl.get("操作成功"));
+      } catch (error) {
+        console.error('error', error);
+      } finally {
+        setModalVisible(false);
       }
-      await uiStore.showToast(intl.get("操作成功"));
-      setModalVisible(false);
     };
 
     const handleModalCancel = () => {
@@ -149,59 +147,34 @@ const VideoPlayer: React.FC<VideoPlayerProps> = observer(
 
     const MoreContent = useCallback(() => {
       return (
-        <ul onClick={() => setMoreVisible(false)}>
+        <Menu>
           {wbDrawEnable ? (
-            <li>
-              <Button
-                onClick={() => handleSetWbEnableDraw(userUuid, 0)}
-                type="text"
-              >
-                {intl.get('取消白板权限')}
-              </Button>
-            </li>
+            <Menu.Item onClick={() => handleSetWbEnableDraw(userUuid, 0)}>
+              {intl.get('取消白板权限')}
+            </Menu.Item>
           ) : (
-            <li>
-              <Button
-                onClick={() => handleSetWbEnableDraw(userUuid, 1)}
-                type="text"
-              >
-                {intl.get('授予白板权限')}
-              </Button>
-            </li>
+            <Menu.Item onClick={() => handleSetWbEnableDraw(userUuid, 1)}>
+              {intl.get('授予白板权限')}
+            </Menu.Item>
           )}
           {canScreenShare ? (
-            <li>
-              <Button
-                onClick={() => handleSetAllowScreen(userUuid, 0)}
-                type="text"
-              >
-                {intl.get('取消共享权限')}
-              </Button>
-            </li>
+            <Menu.Item onClick={() => handleSetAllowScreen(userUuid, 0)}>
+              {intl.get('取消共享权限')}
+            </Menu.Item>
           ) : (
-            <li>
-              <Button
-                onClick={() => handleSetAllowScreen(userUuid, 1)}
-                type="text"
-              >
-                {intl.get('授予共享权限')}
-              </Button>
-            </li>
+            <Menu.Item onClick={() => handleSetAllowScreen(userUuid, 1)}>
+              {intl.get('授予共享权限')}
+            </Menu.Item>
           )}
-          {RoomTypes.bigClass === Number(roomStore?.roomInfo?.sceneType) &&
+          {[RoomTypes.bigClass, RoomTypes.bigClasLive].includes(Number(roomStore?.roomInfo?.sceneType)) &&
             avHandsUp === HandsUpTypes.teacherAgree && (
-            <li>
-              <Button
-                onClick={() =>
-                  handsUpAction(userUuid, HandsUpTypes.teacherOff)
-                }
-                type="text"
-              >
-                {intl.get('请他下台')}
-              </Button>
-            </li>
+            <Menu.Item onClick={() =>
+              handsUpAction(userUuid, HandsUpTypes.teacherOff)
+            }>
+              {intl.get('请他下台')}
+            </Menu.Item>
           )}
-        </ul>
+        </Menu>
       );
     }, [
       userUuid,
@@ -231,65 +204,28 @@ const VideoPlayer: React.FC<VideoPlayerProps> = observer(
       return param;
     }, [hasScreen, isLocal]);
 
-    const getUserStats = async () => {
-      let stats;
-      if (isLocal) {
-        const result =
-          (await roomStore.client?.getLocalVideoStats("screen")) || [];
-        stats = result[0];
-      } else {
-        const result =
-          (await roomStore.client?.getRemoteVideoStats("screen")) || {};
-        stats = result[rtcUid];
-      }
-      // logger.log('video-screen', stats)
-      if ((stats?.CaptureResolutionWidth || stats?.RecvResolutionWidth) > 0) {
-        setUserStats(stats);
-      }
-    };
-
-    const playVideo = async (
-      CaptureResolutionWidth = 0,
-      CaptureResolutionHeight = 0,
-      RecvResolutionWidth = 0,
-      RecvResolutionHeight = 0
-    ) => {
+    const playVideo = async () => {
       if (
         playDOM?.current?.clientWidth &&
-        (((CaptureResolutionWidth || RecvResolutionWidth) > 0 && hasScreen) ||
-          hasVideo)
+        ( hasScreen || hasVideo )
       ) {
-        logger.log("playback success", userName, playDOM, playDOM.current);
+        logger.log("playback success", userName, playDOM?.current);
         setReloadTime(0);
         clearTimeout(timer);
-        const scale = hasScreen
-          ? CaptureResolutionWidth
-            ? CaptureResolutionWidth / CaptureResolutionHeight
-            : RecvResolutionWidth / RecvResolutionHeight
-          : 1;
-        let width, height;
-        if (scale >= 1) {
-          width = playDOM.current.clientWidth;
-          height = playDOM.current.clientHeight;
-        } else {
-          width = playDOM.current.clientWidth * scale;
-          height = playDOM.current.clientHeight;
-        }
         const modeOptions = {
           options: {
-            width: hasScreen ? width : playDOM.current.clientWidth,
-            height: hasScreen ? height : playDOM.current.clientHeight,
+            width: playDOM.current.clientWidth,
+            height: playDOM.current.clientHeight,
             cut: false,
           },
           mediaType: hasScreen ? "screen" : "video",
         };
         logger.debug('Screen sharing', hasScreen);
         logger.debug('Configure', modeOptions);
-        logger.debug('Pass the aspect ratio', CaptureResolutionWidth, CaptureResolutionHeight, RecvResolutionWidth, RecvResolutionHeight)
         try {
           if (isLocal) {
             logger.log(
-              "Set the remote view",
+              "Set the local view",
               playDOM.current,
               modeOptions,
               basicStream
@@ -338,17 +274,10 @@ const VideoPlayer: React.FC<VideoPlayerProps> = observer(
         logger.error(
           "play failure-rerendering",
           `${reloadTime}`,
-          playDOM?.current?.clientWidth,
-          CaptureResolutionWidth,
-          RecvResolutionWidth
+          playDOM?.current?.clientWidth
         );
         timer = setTimeout(() => {
-          playVideo(
-            CaptureResolutionWidth,
-            CaptureResolutionHeight,
-            RecvResolutionWidth,
-            RecvResolutionHeight
-          );
+          playVideo();
         }, 2000);
       }
     };
@@ -421,7 +350,11 @@ const VideoPlayer: React.FC<VideoPlayerProps> = observer(
 
     const playAudio = () => {
       if (playDOM?.current?.clientWidth) {
-        audioStream.play(playDOM?.current);
+        audioStream.play(playDOM?.current, {
+          audio: true,
+          video: false,
+          screen: false
+        });
       }
     };
 
@@ -431,41 +364,34 @@ const VideoPlayer: React.FC<VideoPlayerProps> = observer(
     //   }
     // }
 
-    const popoverListener = () => {
-      if (moreVisible) {
-        setMoreVisible(false);
-      }
-    };
-
     useEffect(() => {
-      document.addEventListener("click", popoverListener);
-      return () => {
-        document.removeEventListener("click", popoverListener);
-      };
-    }, [moreVisible]);
-
-    useEffect(() => {
-      logger.log(
-        "CaptureResolutionWidth",
-        userStats?.CaptureResolutionWidth,
-        userStats?.CaptureResolutionHeight,
-        userStats?.RecvResolutionWidth,
-        userStats?.RecvResolutionHeight
-      );
+      logger.log("basicStream||hasVideo||hasScreen changed --> playVideo");
       if (!isElectron) {
         if (
-          (basicStream && hasVideo) ||
-          (basicStream &&
-            hasScreen &&
-            (userStats?.CaptureResolutionWidth ||
-              userStats?.RecvResolutionWidth))
+          (basicStream && hasVideo && basicStream.hasVideo) ||
+          (basicStream && hasScreen)
         ) {
-          playVideo(
-            userStats?.CaptureResolutionWidth,
-            userStats?.CaptureResolutionHeight,
-            userStats?.RecvResolutionWidth,
-            userStats?.RecvResolutionHeight
-          );
+          playVideo();
+          // 大班课学生上台有视频时，需要多次尝试播放，否则会出现黑屏
+          if (
+            [RoomTypes.bigClass].includes(
+              Number(roomStore?.roomInfo?.sceneType)
+            ) &&
+            isLocal
+          ) {
+            let count = 0
+            const timer = setInterval(() => {
+              count++
+              if (count < 3) {
+                if ((hasVideo && !basicStream?.isPlaying('video')) || (hasScreen && !basicStream?.isPlaying('screen'))) {
+                  console.log('再次尝试播放次数 ', count, {hasVideo, hasScreen})
+                  playVideo()
+                }
+              } else {
+                clearInterval(timer)
+              }
+            }, 1000)
+          }
         }
       } else {
         playVideoInEle();
@@ -477,12 +403,9 @@ const VideoPlayer: React.FC<VideoPlayerProps> = observer(
       };
     }, [
       basicStream,
+      basicStream?.hasVideo,
       hasVideo,
-      hasScreen,
-      userStats?.CaptureResolutionWidth,
-      userStats?.CaptureResolutionHeight,
-      userStats?.RecvResolutionWidth,
-      userStats?.RecvResolutionHeight,
+      hasScreen
     ]);
 
     /* electron-sdk clear the canvas before turning off the camera */
@@ -492,10 +415,16 @@ const VideoPlayer: React.FC<VideoPlayerProps> = observer(
         let res;
         if (isLocal) {
           logger.log("ele-setupLocalVideoCanvas null");
-          res = roomStore.client.setupLocalVideoCanvas({
-            view: null,
-            mode: 0,
-          });
+          if(roomStore?.localData?.hasScreen) {
+            // Avoid sdk error reporting, repair after upgrading sdk
+            res = 0
+            logger.log("skipped Electron canvas clear when screening");
+          } else {
+            res = roomStore.client.setupLocalVideoCanvas({
+              view: null,
+              mode: 0,
+            });
+          }
         } else {
           if (rtcUid) {
             logger.log("ele-setupRemoteVideoCanvas null", rtcUid);
@@ -516,21 +445,10 @@ const VideoPlayer: React.FC<VideoPlayerProps> = observer(
     }, [hasVideo])
 
     useEffect(() => {
-      if (audioStream) {
+      if (audioStream && !isLocal) {
         playAudio();
       }
     }, [audioStream]);
-
-    useEffect(() => {
-      if (!isElectron) {
-        timer = setInterval(() => {
-          getUserStats();
-        }, 2000);
-      }
-      return () => {
-        clearInterval(timer);
-      };
-    }, []);
 
     return (
       <div className="video-player-component">
@@ -558,9 +476,9 @@ const VideoPlayer: React.FC<VideoPlayerProps> = observer(
                 {role !== RoleTypes.host && wbDrawEnable && (
                   <i className="media-wb-open" />
                 )}
-                {/* {
-                (role !== RoleTypes.host && canScreenShare) && <i className="media-screen-open" />
-              } */}
+                {role !== RoleTypes.host && canScreenShare && (
+                  <i className="media-screen-open" />
+                )}
                 {hasAudio ? (
                   <i className="media-audio-open" />
                 ) : (
@@ -609,24 +527,26 @@ const VideoPlayer: React.FC<VideoPlayerProps> = observer(
             </div>
             {showMoreBtn && (
               <div className="menu-item">
-                <Popover
+                <Dropdown
+                  arrow
+                  overlayClassName='video-more-outer'
                   placement="bottomRight"
-                  visible={moreVisible}
-                  overlayClassName="video-more-outer"
-                  content={<MoreContent />}
-                  trigger="click"
+                  getPopupContainer={(triggerNode) => {
+                    return (triggerNode.parentNode ||
+                      document.body) as HTMLElement
+                  }}
+                  overlay={<MoreContent />}
                 >
                   <Button
                     onClick={(e) => {
                       e.stopPropagation();
-                      setMoreVisible(true);
                     }}
                     className="control-button"
                     shape="circle"
                   >
                     <i className="control-more-btn">···</i>
                   </Button>
-                </Popover>
+                </Dropdown>
                 <p>{intl.get('更多')}</p>
               </div>
             )}

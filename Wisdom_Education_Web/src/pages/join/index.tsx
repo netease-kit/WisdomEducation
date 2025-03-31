@@ -64,9 +64,15 @@ const Join: FC = observer(() => {
 
   const handleFormChange = (changedValues, allValues) => {
     const formValue = Object.keys(allValues).some(
-      (item) =>
-        !["uuid", "token"].includes(item) &&
-        (allValues[item] === undefined || allValues[item] === "")
+      (item) => {
+        const _value = allValues[item]
+        if(item === "userName") {
+          return _value === undefined || _value?.trim() === ""
+        } else {
+          return !["uuid", "token"].includes(item) &&
+         (_value === undefined || _value === "")
+        }
+      }
     );
     const verifyNum =
       !roomUuidReg.test(allValues["roomUuid"]) &&
@@ -84,17 +90,13 @@ const Join: FC = observer(() => {
   };
 
   const onFinish = (values) => {
-    logger.log("values", values);
-
-    /**
-     * http://jira.netease.com/browse/YYTX-3445
-     * roomUuid must be digits only
-     */
     const roomUuid = (values.roomUuid || '').match(/\d+/g).join('')
     if (roomUuid.length === 0) {
       return
     }
 
+    values.userName = values?.userName?.trim('')
+    logger.log("values", values);
     const param = {
       ...values,
       roomUuid,
@@ -132,6 +134,22 @@ const Join: FC = observer(() => {
     setRoomNum(e.target.value || "");
   };
 
+  const checkBrowser = () => {
+    const isChrome =
+        /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
+    const isEdge = /Edge|Edg/.test(navigator.userAgent);
+    if (!isChrome || isEdge) {
+      Modal.warning({
+        title: intl.get('暂不支持当前浏览器'),
+        content: intl.get('请使用Google Chrome浏览器打开'),
+        okText: intl.get('下载Chrome'),
+        onOk: () => {
+          window.open('https://www.google.cn/intl/zh-CN/chrome/')
+        }
+      })
+    }
+  }
+
   useEffect(() => {
     /**
      * After you land the join page, clear the state of the previous room
@@ -140,6 +158,7 @@ const Join: FC = observer(() => {
     roomStore.leave()
     GlobalStorage.clear();
     roomStore.setClassDuration(0);
+    checkBrowser();
   }, []);
 
   return (

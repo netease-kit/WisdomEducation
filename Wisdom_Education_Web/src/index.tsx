@@ -2,9 +2,10 @@
  * @Copyright (c) 2021 NetEase, Inc.  All rights reserved.
  * Use of this source code is governed by a MIT license that can be found in the LICENSE file
  */
-import React from 'react';
+import React, { useMemo, useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import './index.less';
+import { Modal } from 'antd';
 import 'antd/dist/antd.less';
 // import App from '@/pages/App';
 import RoomPage from '@/pages/classRoom';
@@ -21,65 +22,99 @@ import { Provider } from 'mobx-react';
 import { AppStore } from '@/store';
 import { history } from '@/utils';
 import { initLocales } from '@/utils/universal';
+import eleIpc from '@/lib/ele-ipc';
+import { isElectron } from '@/config';
+import intl from 'react-intl-universal';
 
 import {
   HashRouter as Router,
   Switch,
   Route,
 } from "react-router-dom";
+import logger from './lib/logger';
 
 export const defaultStore = new AppStore()
 initLocales()
+const { confirm } = Modal
+
+const ReactApp = () => {
+  const eleIpcIns = useMemo(() => (isElectron ? eleIpc.getInstance() : null), []);
+  const [modalVisible, setModalVisible] = useState<boolean>(false)
+
+  useEffect(() => {
+    if (eleIpcIns) {
+      eleIpcIns.on('main-close-before', () => {
+        logger.debug('main-close-before')
+        if (location.hash.includes('/classroom')) {
+          setModalVisible(true)
+        } else {
+          eleIpcIns?.sendMessage('allow-to-close')
+        }
+      });
+    }
+    return () => {
+      eleIpcIns?.removeAllListeners();
+    }
+  }, [eleIpcIns])
+
+  return (
+    <Provider store={defaultStore}>
+      <Router>
+        <Switch>
+          <Route exact path="/" component={Join} />
+          <Route exact path="/classroom/one-to-one" component={()=>(
+            <RoomPage>
+              <OneToOne />
+            </RoomPage>
+          )} />
+          <Route exact path="/classroom/small-class" component={()=>(
+            <RoomPage>
+              <SmallClass />
+            </RoomPage>)} />
+          <Route exact path="/classroom/big-class" component={()=>(
+            <RoomPage>
+              <BigClass />
+            </RoomPage>)}/>
+          <Route exact path="/classroom/big-class-live-tea" component={()=>(
+            <RoomPage>
+              <BigClassLiveTea />
+            </RoomPage>
+          )}/>
+          <Route exact path="/classroom/big-class-live-stu" component={()=>(
+            <RoomPage>
+              <BigClassLiveStu />
+            </RoomPage>
+          )}/>
+          <Route exact path="/record" component={Record} />
+          <Route exact path="/endCourse" component={EndCourse} />
+        </Switch>
+        <Modal 
+          visible={modalVisible} centered
+          onOk={()=>{
+            logger.debug('点击了确认 回到首页')
+            history.push('/')
+            setTimeout(()=>{
+              eleIpcIns?.sendMessage('allow-to-close')
+            }, 100)
+          }}
+          onCancel={()=>{
+            setModalVisible(false)
+          }}
+          okText={intl.get('确认')}
+          cancelText={intl.get('取消')}
+          wrapClassName="modal"
+        >
+          <p>
+            {intl.get('确认离开？系统可能不会保存您的更改。')}
+          </p>
+        </Modal>
+      </Router>
+    </Provider>
+  )
+}
 
 ReactDOM.render(
-  // <React.StrictMode>
-  <Provider store={defaultStore}>
-    <Router>
-      <Switch>
-        <Route exact path="/" >
-          <Join />
-        </Route>
-        {/* <Route exact path="/">
-          <App />
-        </Route> */}
-        <Route exact path="/classroom/one-to-one">
-          <RoomPage>
-            <OneToOne />
-          </RoomPage>
-        </Route>
-        <Route exact path="/classroom/small-class">
-          <RoomPage>
-            <SmallClass />
-          </RoomPage>
-        </Route>
-        <Route exact path="/classroom/big-class">
-          <RoomPage>
-            <BigClass />
-          </RoomPage>
-        </Route>
-        <Route exact path="/classroom/big-class-live-tea">
-          <RoomPage>
-            <BigClassLiveTea />
-          </RoomPage>
-        </Route>
-        <Route exact path="/classroom/big-class-live-stu">
-          <RoomPage>
-            <BigClassLiveStu />
-          </RoomPage>
-        </Route>
-        <Route exact path="/record">
-          <Record />
-        </Route>
-        <Route exact path="/endCourse">
-          <EndCourse />
-        </Route>
-        {/* <Route exact path="/deviceCheck">
-          <DeviceCheck />
-        </Route> */}
-      </Switch>
-    </Router>
-  </Provider>
-  // </React.StrictMode>,
+  <ReactApp/>
   ,document.getElementById('root')
 );
 

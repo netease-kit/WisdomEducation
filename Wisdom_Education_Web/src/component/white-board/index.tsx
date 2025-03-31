@@ -18,42 +18,22 @@ const WhiteBoard:React.FC = observer(() => {
 
   useEffect(() => {
     if (joinFinish && wbRef.current) {
-      const { localUserInfo: { role }, roomInfo: { sceneType } } = roomStore;
-      const enbaleDraw = role === RoleTypes.host || Number(sceneType) === RoomTypes.oneToOne;
-      whiteBoardStore.setContainer(wbRef.current);
-      whiteBoardStore.setToolCollection(wbRef.current)
-      roomStore.setLocalWbDrawEnable(enbaleDraw);
-      whiteBoardStore.setEnableDraw(enbaleDraw);
-      whiteBoardStore.setWbSetFinish(true);
-      // if (snapRoomInfo?.properties?.whiteboard?.channelName) {
-      //   if (!whiteBoardStore.wbInstance) {
-      //     whiteBoardStore.initWhiteBoard({
-      //       appKey: imKey,
-      //       account: userUuid,
-      //       token: imToken,
-      //       container: wbRef.current,
-      //       nickname: userName,
-      //     }).then(async () => {
-      //       await whiteBoardStore.joinRoom({
-      //         channel: (snapRoomInfo?.properties?.whiteboard?.channelName as number),
-      //       })
-      //       whiteBoardStore.setEnableDraw(enbaleDraw);
-      //     }).catch((e) => {
-      //       logger.log('An error occurred while joining the whiteboard', e)
-      //     });
-      //   } else {
-      //     whiteBoardStore.joinRoom({
-      //       channel: chatRoomId,
-      //     }).then(() => {
-      //       whiteBoardStore.setEnableDraw(enbaleDraw);
-      //     }).catch((e) => {
-      //       logger.log('An error occurred while joining the whiteboard', e)
-      //     });
-      //   }
-      // }
+      dealWhiteBoard()
     }
   }, [roomStore, joinFinish, whiteBoardStore, wbRef, snapRoomInfo?.properties?.whiteboard?.channelName]);
 
+  const dealWhiteBoard = async() => {
+    if (wbRef.current) {
+      const { localUserInfo: { role }, roomInfo: { sceneType } } = roomStore;
+      const enbaleDraw = role === RoleTypes.host || Number(sceneType) === RoomTypes.oneToOne;
+      const enableUploadMedia = Number(sceneType) !== RoomTypes.bigClasLive;
+      await whiteBoardStore.setContainer(wbRef.current);
+      await whiteBoardStore.setToolCollection(wbRef.current, enableUploadMedia)
+      roomStore.setLocalWbDrawEnable(enbaleDraw);
+      whiteBoardStore.setEnableDraw(enbaleDraw);
+      whiteBoardStore.setWbSetFinish(true);
+    }
+  }
 
   useEffect(() => {
     return () => {

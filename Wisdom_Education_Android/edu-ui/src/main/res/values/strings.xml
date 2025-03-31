@@ -159,4 +159,6 @@
     <string name="the_class_does_not_begin_please_wait_for_a_moment">The class does not begin. Please wait for a moment!</string>
     <string name="agree">Agree</string>
     <string name="decline">Decline</string>
+    <string name="play_error">An error occurred. Quit and join the class again</string>
+
 </resources>

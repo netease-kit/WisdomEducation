@@ -52,9 +52,9 @@ const BigClassLiveTea: React.FC = observer(() => {
               showMoreBtn={false}
             />
           )}
-          {/* {studentData.map((item) => (
+          {studentData.map((item) => (
             item.avHandsUp === HandsUpTypes.teacherAgree && <VidepPlayer key={item.rtcUid} {...item} />
-          ))} */}
+          ))}
         </StudentList>
       </Sider>
     </div>

@@ -11,6 +11,17 @@
     android:layout_height="match_parent"
     android:background="@color/color_030404">
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rcv_member_video"
+        android:layout_width="@dimen/common_dp_120"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/common_dp_49"
+        android:layout_marginEnd="@dimen/common_dp_46"
+        android:layout_marginBottom="@dimen/common_dp_60"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <com.netease.yunxin.app.wisdom.edu.ui.clazz.widget.TitleView
         android:id="@+id/title_layout"
         android:layout_width="match_parent"
@@ -34,6 +45,49 @@
         app:layout_constraintBottom_toTopOf="@id/bottom_view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title_layout" />
+
+    <FrameLayout
+        android:id="@+id/layout_whiteboard"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="@dimen/common_dp_8"
+        app:layout_constraintBottom_toTopOf="@id/bottom_view"
+        app:layout_constraintEnd_toStartOf="@id/rcv_member_video"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title_layout"
+        app:layout_goneMarginEnd="@dimen/common_dp_174" />
+
+    <RelativeLayout
+        android:id="@+id/layout_share_video"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="@dimen/common_dp_8"
+        android:background="@color/color_030404"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/bottom_view"
+        app:layout_constraintEnd_toStartOf="@id/rcv_member_video"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title_layout"
+        app:layout_goneMarginEnd="@dimen/common_dp_174" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_share_video"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/common_dp_0"
+        android:background="@color/color_030404"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center"
+        android:text="@string/you_are_sharing_the_screen"
+        android:textColor="@color/white"
+        android:textSize="@dimen/common_dp_17"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/bottom_view"
+        app:layout_constraintHeight_default="spread"
         app:layout_constraintTop_toBottomOf="@id/title_layout" />
 
     <RelativeLayout
@@ -68,7 +122,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="@dimen/common_dp_13"
             android:gravity="center"
-            android:text="The class does not begin. Please wait for a moment!"
+            android:text="@string/the_class_does_not_begin_please_wait_for_a_moment"
             android:textColor="@color/color_8d94a0" />
     </RelativeLayout>
 

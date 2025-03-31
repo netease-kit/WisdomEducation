@@ -10,7 +10,7 @@ package com.netease.yunxin.app.wisdom.edu.logic.extras
  */
 enum class NEEduClientType(val type: String) {
     WEB("web"),
-    ANDROID("android"),
+    ANDROID("aos"),
     IOS("ios"),
     PC("pc"),
 }

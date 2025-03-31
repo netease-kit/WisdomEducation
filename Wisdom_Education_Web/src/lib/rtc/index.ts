@@ -3,18 +3,18 @@
 * Use of this source code is governed by a MIT license that can be found in the LICENSE file
 */
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-import * as WebRTC2 from './sdk/NIM_Web_NERTC_v4.5.500.js';
+import * as WebRTC2 from './sdk/NIM_Web_NERTC_v5.5.2.js';
 
 import { EnhancedEventEmitter } from '../event';
 import logger from '../logger';
-import { ShareListItem } from '@/config';
+import { RoleTypes, ShareListItem } from '@/config';
 import rtc_server_conf from './rtc_server_conf.json';
 const needPrivate = process.env.REACT_APP_SDK_RTC_PRIVATE;
 needPrivate === "true" && logger.log("web-RTC on-premises deployment configuration", rtc_server_conf);
 
 
 // Version information required for testing
-logger.log('Current G2 version: 4.5.500');
+logger.log('Current G2 version: 5.5.2');
 export class NeWebrtc extends EnhancedEventEmitter {
   private readonly _appkey: string|undefined;
   private _client: any;
@@ -31,6 +31,9 @@ export class NeWebrtc extends EnhancedEventEmitter {
   constructor(appKey: string){
     super()
     this._appkey = appKey;
+    WebRTC2.Logger.enableLogUpload();
+    WebRTC2.getParameters().leaveOnUnload = false; // 刷新不离开sdk
+    WebRTC2.getParameters().allowEmptyMedia = true;
     this._client = WebRTC2.createClient({
       appkey: this._appkey,
       debug: true
@@ -77,8 +80,8 @@ export class NeWebrtc extends EnhancedEventEmitter {
     })
 
     this._client.on('client-banned', (_data: any) => {
-      logger.log(`${_data.uid} was removed from the room`)
-      if (_data.uid == this._localStream.streamID) {
+      logger.log(`${_data?.uid} was removed from the room`)
+      if (_data?.uid == this._localStream.streamID) {
         logger.log('You were removed')
         this._localStream = null
         this._mapRemoteStreams.clear()
@@ -107,14 +110,6 @@ export class NeWebrtc extends EnhancedEventEmitter {
       this.emit('network-quality', _data);
     });
 
-    this._client.on('deviceAdd', (_data: any) => {
-      this.emit('deviceAdd', _data)
-    })
-
-    this._client.on('deviceRemove', (_data: any) => {
-      this.emit('deviceRemove', _data)
-    })
-
     /*this._client.on('network-quality', (_data: any) => {
       logger.log('Network status of all members in the room:', _data)
     })*/
@@ -125,6 +120,21 @@ export class NeWebrtc extends EnhancedEventEmitter {
 
     window.navigator.mediaDevices.ondevicechange = (() => {
       logger.log('Device changes monitored')
+      this.emit('device-change')
+    })
+
+    this._client.on('camera-changed', (_data: any) => {
+      logger.log('camera-changed', _data)
+      this.emit('device-change')
+    })
+
+    this._client.on('playout-device-changed', (_data: any) => {
+      logger.log('playout-device-changed', _data)
+      this.emit('device-change')
+    })
+
+    this._client.on('recording-device-changed', (_data: any) => {
+      logger.log('recording-device-changed', _data)
       this.emit('device-change')
     })
 
@@ -139,7 +149,7 @@ export class NeWebrtc extends EnhancedEventEmitter {
     })
 
     this._client.on('stream-added', (_data: any) => {
-      logger.log('receive messages:', _data)
+      logger.log('receive stream-added messages:', _data)
       const uid = _data.stream.streamID
       this._mapRemoteStreams.set(uid, _data.stream)
       this.subscribe(_data.stream)
@@ -196,8 +206,10 @@ export class NeWebrtc extends EnhancedEventEmitter {
         mediaType: _data.mediaType,
         stream,
       })
-      const audioEl = stream._play.audioDom
-      this._selectSpeakers(audioEl, this._pubConf.speakerId)
+      if (_data.stream.audio) {
+        const audioEl = stream._play.audioDom
+        this._selectSpeakers(audioEl, this._pubConf.speakerId)
+      }
       // if (videoStream) {
       // reporter.send({
       //   'action_name': 'member_video_state',
@@ -277,6 +289,10 @@ export class NeWebrtc extends EnhancedEventEmitter {
     }
     const speakers: any = await this.getSpeakers()
     this._pubConf.speakerId = speakers[0] && speakers[0].deviceId
+    const microphones: any = await this.getMicrophones()
+    this._pubConf.microphoneId = microphones[0] && microphones[0].deviceId
+    const cameras: any = await this.getCameras()
+    this._pubConf.cameraId = cameras[0] && cameras[0].deviceId
     // if (this._pubConf.audio || this._pubConf.video) {
     logger.log('join() initLocalStream')
     await this.initLocalStream(options.uid, options.audio, options.video, options.needPublish).catch(() => logger.log('initLocalStream error'))
@@ -288,16 +304,17 @@ export class NeWebrtc extends EnhancedEventEmitter {
 
   async leave(): Promise<void> {
     logger.log('leave()', this._client)
-    this._localStream && this._localStream.destroy();
-    this._localStream = null;
-    this._mapRemoteStreams.clear();
-    try{
+    try {
       await this._client?.leave()
       this._client = null;
       WebRTC2.destroy(); 
-    }catch(e: any){
+    } catch(e: any){
       logger.log('leave failed:', e)
       throw new Error(e);
+    } finally {
+      this._localStream?.destroy();
+      this._localStream = null;
+      this._mapRemoteStreams.clear();
     }
   }
 
@@ -462,7 +479,7 @@ export class NeWebrtc extends EnhancedEventEmitter {
       await this._localStream.init()
       logger.log('initLocalStream() successed')
       if (this._localStream.audio) {
-        logger.log('initLocalStream() play local audio stream')
+        // logger.log('initLocalStream() play local audio stream')
         //this._localStream.play()
         //this._localStream.setLocalRenderMode()
       }
@@ -748,6 +765,22 @@ export class NeWebrtc extends EnhancedEventEmitter {
   }
 
   /**
+   * Setting user roles
+   * @param type RoleTypes
+   */
+  async setClientRole(type=RoleTypes.host) {
+    logger.log('setClientRole ', type);
+    try {
+      const data = await this._client?.setClientRole(type);
+      logger.log('setClientRole success', data);
+      return data;
+    } catch (e: any) {
+      logger.log('setClientRole() fail:', e);
+      throw new Error(e);
+    }
+  }
+
+  /**
    * Add streaming task
    * @param tasks task
    */
@@ -764,16 +797,15 @@ export class NeWebrtc extends EnhancedEventEmitter {
 
   async destroy(): Promise<void> {
     logger.log('destroy()');
-    // this._localStream.destroy();
     try {
-      this._localStream = null
-      this._client?.destroy();
+      await this._client?.destroy();
       this._client = null;
       WebRTC2.destroy();
-      this._mapRemoteStreams.clear()
-      window.navigator.mediaDevices.ondevicechange = null;
     } catch (error) {
       logger.log('destroy() error', error);
+    } finally {
+      this._mapRemoteStreams.clear()
+      window.navigator.mediaDevices.ondevicechange = null;
     }
   }
 

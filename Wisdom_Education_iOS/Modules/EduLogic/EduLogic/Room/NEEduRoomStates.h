@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface NEEduRoomStates : NSObject
 @property (nonatomic , strong) NEEduPropertyItem              * muteChat;
-@property (nonatomic , strong) NEEduLessonStep              * step;
+@property (nonatomic , strong) NEEduLessonStep                * step;
 @property (nonatomic , strong) NEEduPropertyItem              * muteAll;
 
 @property (nonatomic , strong) NEEduPropertyItem              * pause;

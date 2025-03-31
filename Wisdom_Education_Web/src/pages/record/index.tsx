@@ -9,7 +9,7 @@ import Header from '@/component/header';
 import { useRecordStore, useUIStore, useRoomStore } from '@/hooks/store';
 import { useLocation } from "react-router-dom";
 import { observer } from 'mobx-react';
-import Replay from '@/component/web-record';
+import Replay from '@/component/web-record/Replay';
 import { getQueryString } from '@/utils/index';
 import Empty from './empty';
 import './index.less';
@@ -18,9 +18,11 @@ import intl from 'react-intl-universal';
 
 export interface IEvent {
   userId: string
-  action: 'show' | 'hide' | 'showScreen' | 'remove',
+  action: 'show' | 'hide' | 'showScreen' | 'remove' | 'hideScreen',
   timestamp: number,
+  type?: number,
   payload?: any
+  fromClassBeginInterval?: string // 距离上课开始的时间间隔hh::mm::ss
 }
 
 export interface ITrack {

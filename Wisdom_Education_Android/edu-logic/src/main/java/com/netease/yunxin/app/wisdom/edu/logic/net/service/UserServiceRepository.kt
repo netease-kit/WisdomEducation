@@ -39,4 +39,10 @@ object UserServiceRepository : BaseRepository() {
         return interceptor(userService.updateInfo(appKey, roomId, userUuid))
     }
 
+    fun leaveClassroom(
+        roomId: String,
+        userUuid: String):LiveData<NEResult<Void>>{
+        return interceptor(userService.leaveClassroom(appKey,roomId,userUuid))
+    }
+
 }

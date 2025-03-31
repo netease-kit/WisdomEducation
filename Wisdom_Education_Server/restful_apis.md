@@ -12,6 +12,7 @@
 [联系云信商务经理](https://yunxin.163.com/bizQQWPA.html) 开通功能
 ## Host：yiyong-xedu-v2.netease.im
 ## Headers
+### AppKey：应用唯一标识符
 ### CurTime：当前时间，毫秒时间戳
 ### Nonce：随机串，长度不超过64
 ### CheckSum：hex.lowercase(sha1(utf8.decode(AppSecret+Nonce+CurTime)))
@@ -26,7 +27,7 @@
 # 基本概念
 | 名称| 	类型| 	描述|
 |----|----|----|
-| userUuid	| String	| 用户唯一ID，即用户账号，加入房间时的用户身份, 若涉及字母, 传参时请一律转成小写处理.|
+| userUuid	| String	| 用户唯一ID，即用户账号，加入房间时的用户身份，若涉及字母，传参时请一律转成小写处理|
 | userToken	| String	| 用户令牌，账号对应的密码，加入房间等需要USER_TOKEN鉴权的接口使用|
 | imKey	| String	| IM 应用标识符: 一般等同于AppKey，此应用绑定的im app key，一般情况下开发者无需关心此参数|
 | imToken	| String	| IM 应用中用户token。此应用绑定的im token，一般情况下开发者无需关心此参数|
@@ -47,12 +48,13 @@
 - Auth: CHECKSUM
 - Body:
 
-| 参数名称| 	是否必选 | 	描述                          |
-|----|-------|------------------------------|
-| userToken	| 否	    | 用户令牌                         |
-| imToken	| 否	    | imToken，复用Im账号时使用            |
-| assertNotExist	| 否	   | 是否断言该账号不存在，若true时并且账号已经存在则报错 |
-| updateOnConflict	| 否	   | 当账号存在时是否更新                   |
+| 参数名称| 	是否必选| 	描述|
+|----|----|----|
+| userToken	| 否	| 用户令牌  |
+| imToken	| 否	| imToken，复用Im账号时使用 |
+| assertNotExist	| 否	| 是否断言该账号不存在，若true时并且账号已经存在则报错 |
+| updateOnConflict	| 否	| 当账号存在时是否更新 |
+
 
 - Sample
 ```json
@@ -102,6 +104,9 @@
 | config.resource.rtc	|可选: 默认以模版中的设置为准 | 房间是否打开rtc房间| 
 | config.resource.chatroom| 可选: 默认以模版中的设置为准 | 房间是否打开聊天时| 
 | config.resource.whiteboard| 可选: 默认以模版中的设置为准 | 房间是否打开白板| 
+| config.resource.seat| 可选: 默认以模版中的设置为准 | 房间是否打开麦位| 
+| liveStreamName| 可选 | 只有在云信appKey开通了直播2.0时才有效，用于指定自定义流名，具体咨询商务经理| 
+| livePushOff| 可选 | true/false，默认false。表示是否关闭直播大班课中的托管推流。用于客户自定义推流。具体使用方式请联系云信技术支持。| 
 
 - Sample
 ```json
@@ -109,7 +114,7 @@
   "roomName": "9999",
   "configId": 5,
   "properties": {},
-  "config": {"resource": {"live": true}}
+  "config": {"resource": {"live": true,"rtc": true,"chatroom": true,"whiteboard": true,"seat": true}}
 }
 ```
 
@@ -120,6 +125,7 @@
 |----|----|----|
 |roomName|必选|房间名称|
 |roomUuid|必选|房间唯一标识符|
+|roomArchiveId|必选|房间唯一id|
 |config|必选|房间配置, 参见房间配置说明|
 |properties|必选|房间属性集, 参见房间属性集说明|
 |states|必选|房间状态集, 参见房间状态集说明|
@@ -261,7 +267,267 @@
 - Body: None
 #### Response:
 - Body: None
+### 房间录制记录查询
 
+#### Request:
+- Url: https://{Host}/apps/v2/room-media?roomArchiveId={roomArchiveId}
+- HttpMethod: GET
+- Auth: CHECKSUM
+- Url请求参数:
+
+| 参数名称           | 	是否必选| 	描述     |
+|----------------|----|---------|
+| roomArchiveId	 | 必选| 	房间唯一Id |
+#### Response:
+- Body:
+
+  | 参数名称 | 	类型|描述|
+  |----|-----------|----|
+  | fileInfos| List| 录制文件信息列表。|
+  | fileInfos.vid| String| 云端录制文件的标识。|
+  | fileInfos.objectName| String| <ul><li>云端录制生成的文件名。混合录制文件的objectName 带有"-mix"标记，不带则是单人录制文件。辅流录制文件带有"-substream"标记<br/><li>文件的类型，即文件扩展名包括：<ul><li>aac：实时音频录制文件。<li>mp4：实时视频录制文件。<li>flv：互动直播视频录制文件。<li>gz: 白板录制文件|
+  | fileInfos.url| String| 云端录制文件的对应地址，获取此地址后可以通过播放器 SDK 播放。 云端录制文件的对应地址，获取此地址后可以通过播放器 SDK 播放。   <note type="note">如果点播域名开启了 URL 鉴权，您需要手工拼接防盗链 URL ，即在原始地址的最后手工增加 wsSecret 和 wsTime 相关的值，否则用户会无法访问相应的资源。拼接防盗链 URL 的方法请参见<a href="https://doc.yunxin.163.com/jY3NDM4Nzc/docs/DM5MzI2OTI?platform=server#url-鉴权的功能原理" target="_blank">防盗链URL构成</a>。</note> |
+  | fileInfos.createTime|Long| 云端录制文件的生成时间。 |
+- Sample
+```json
+{
+  "code": 0,
+  "cost": "91ms",
+  "requestId": "9c04d29dd20c4b9ca4e79f9018c1de54",
+  "msg": "Success",
+  "data": {
+    "fileInfos": [
+      {
+        "vid": 4934894395,
+        "objectName": "19237-1345278913991800-1665455883302-0.mp4",
+        "url": "http://sample.domain/jdvodwzsxohf4/19237-1345278913991800-1665455883302-0.mp4",
+        "createTime": 1665455897302
+      },
+      {
+        "vid": 4934894396,
+        "objectName": "19237-1345278913991800-1665455883302-0-substream.mp4",
+        "url": "http://sample.domain/jdvodwzsxohf4/19237-1345278913991800-1665455883302-0-substream.mp4",
+        "createTime": 1665455897302
+      },
+      {
+        "vid": 4934892596,
+        "objectName": "0-1345273313871842-1665455897302-0-mix.mp4",
+        "url": "http://sample.domain/jdvodwzsxohf4/19237-1345278913991800-1665455883302-0-mix.mp4",
+        "createTime": 1665455897302
+      }
+    ]
+  },
+  "ts": 1665475539147
+}
+```
+
+### 直播流名查询
+
+#### Request:
+- Url: https://{Host}/apps/v2/live-stream-name?roomArchiveId={roomArchiveId}
+- HttpMethod: GET
+- Auth: CHECKSUM
+- Url请求参数:
+
+| 参数名称           | 类型     | 	是否必选| 	描述     |
+|----------------|--------|----|---------|
+| roomArchiveId	 | String | 必选   | 	房间唯一Id |
+#### Response:
+- Body:
+
+  | 参数名称 | 	类型     | 	描述   |
+  |---------|-------|----|
+  | streamName	   | String  | 	直播流名 |
+- Sample
+
+```json
+{
+  "code": 0,
+  "cost": "91ms",
+  "requestId": "80903990363247d8af4d2152f0c45cc2",
+  "msg": "Success",
+  "data": {
+    "streamName":"12345678_1232324345"
+  },
+  "ts": 1665475539147
+}
+```
+### 在线成员列表查询
+
+#### Request:
+- Url: https://{Host}/apps/v2/online-user-list?roomArchiveId={roomArchiveId}
+- HttpMethod: GET
+- Auth: CHECKSUM
+- Url请求参数:
+
+| 参数名称           | 类型      | 	是否必选 | 	描述             |
+|----------------|---------|-------|-----------------|
+| roomArchiveId	 | String  | 必选    | 	房间唯一Id         |
+| pageNumber	    | Integer | 可选    | 	页码，默认1         |
+| pageSize	      | Integer | 可选    | 	分页大小，默认10，最大50 |
+#### Response:
+- Body:
+
+## 返回参数
+| 参数名称                | 类型      | 示例                             | 描述                                                                        |
+|---------------------|---------|--------------------------------|---------------------------------------------------------------------------|
+| code                | int     | 0                              | 状态码，0表示成功                                                                 |
+| msg                 | String  | Success                        | 业务结果描述，Success 表示成功。                                                      |
+| ts                  | Long    | 1648021056815                  | 服务器处理该请求的完成时间。该时间为 Unix 时间戳，即从 1970 年 1 月 1 日 0 点 0 分 0 秒开始到现在的秒数。 |
+| requestId           | String  | 7c4b6d9c3e9d42*****cc6e3a4d995 | 请求的唯一标识。                                                                  |
+| cost                | String  | 48ms                           | 处理该请求所消耗的时间。                                                              |
+| data                | Object  | -                              | 在线成员列表。                                                                   |
+| data.totalCount     | Integer | 100                            | 房间人数总数。                                                                   |
+| data.pageTotal      | Long    | 10                             | 总页数 。                                                                     |
+| data.users          | List    | -                              | 用户列表。                                                                     |
+| data.users.userUuid | String  | user01                         | 用户 ID。                                                                    |
+| data.users.name     | String  | userName01                     | 用户名称。                                                                     |
+| data.users.role     | String  | host                           | 成员对应角色。                                                                   |
+| data.users.state    | Integer | 2                              | 成员状态，2表示在房间中                                                              |
+
+- Sample
+
+```json
+{
+  "code":0,
+  "msg":"Success",
+  "ts":1619068087795,
+  "requestId":"6e507107d1f4447ea731f651dc6d2432",
+  "cost":"66ms",
+  "data": {
+    "totalCount":1000,
+    "pageTotal":100,
+    "users":[
+      {
+        "userUuid":"user01",
+        "name":"Name***",
+        "role":"host",
+        "state":"2"
+      },
+      {
+        "userUuid":"user02",
+        "name":"Name***",
+        "role":"host",
+        "state":"2"
+      }
+    ]
+  }
+}
+```
+### 用户Id查询
+
+#### Request:
+- Url: https://{Host}/apps/v2/user-info?rtcUid={rtcUid}
+- HttpMethod: GET
+- Auth: CHECKSUM
+- Url请求参数:
+
+| 参数名称    | 类型   | 	是否必选 | 	描述     |
+|---------|------|-------|---------|
+| rtcUid	 | Long | 必选    | 	rtcUid |
+#### Response:
+- Body:
+
+## 返回参数
+| 参数名称          | 类型     | 示例                             | 描述                                                                        |
+|---------------|--------|--------------------------------|---------------------------------------------------------------------------|
+| code          | int    | 0                              | 状态码，0表示成功                                                                 |
+| msg           | String | Success                        | 业务结果描述，Success 表示成功。                                                      |
+| ts            | Long   | 1648021056815                  | 服务器处理该请求的完成时间。该时间为 Unix 时间戳，即从 1970 年 1 月 1 日 0 点 0 分 0 秒开始到现在的秒数。 |
+| requestId     | String | 7c4b6d9c3e9d42*****cc6e3a4d995 | 请求的唯一标识。                                                                  |
+| cost          | String | 48ms                           | 处理该请求所消耗的时间。                                                              |
+| data          | Object | -                              | 用户信息。         |
+| data.userUuid | String | ayreu3534                      | 用户Id。  |
+- Sample
+
+```json
+{
+  "code":0,
+  "msg":"Success",
+  "ts":1619068087795,
+  "requestId":"6e507107d1f4447ea731f651dc6d2432",
+  "cost":"66ms",
+  "data": {
+     "userUuid":"user01"
+  }
+}
+```
+### 自定义直播推流布局
+
+#### Request:
+- Url: https://{Host}/apps/v2/live-layout
+- HttpMethod: PUT
+- Auth: CHECKSUM
+- requestBody请求参数:
+
+| 参数名称           | 类型     | 	是否必选 | 	描述                                                                                    |
+|----------------|--------|-------|----------------------------------------------------------------------------------------|
+| roomArchiveId	 | String | 必选    | 	房间唯一Id                                                                                |
+| canvas	        | Object | 可选    | 	画板，不传使用默认配置，width: 1868L, height: 792L, color: 0L, 整体画布的宽、高取值范围为 0~1920，若设置为奇数值，会自动向下 |
+| streamList	    | List   | 可选    | 	主流布局，不传使用默认主流配置， 最多6路主流                                                               |
+| subStream	     | Object | 可选    | 	辅流布局，不传使用默认配置，支持一路辅流                                                                  |
+```
+支持在直播未开始和进行中设置直播布局
+```
+- Sample
+```json
+{
+  "roomArchiveId": 36152,
+  "canvas": {
+    "height": 1786,
+    "color": 0,
+    "width": 999
+  },
+  "streamList": [
+    {
+      "x": 1300,
+      "y": 2,
+      "width": 300,
+      "height": 200
+    },
+    {
+      "x": 1300,
+      "y": 266,
+      "width": 300,
+      "height": 200
+    },
+    {
+      "x": 1300,
+      "y": 398,
+      "width": 300,
+      "height": 130
+    }
+  ],
+  "subStream": {
+    "x": 0,
+    "y": 0,
+    "width": 888,
+    "height": 465
+  }
+}
+```
+#### Response:
+- Body:
+
+## 返回参数
+| 参数名称          | 类型     | 示例                             | 描述                                                                        |
+|---------------|--------|--------------------------------|---------------------------------------------------------------------------|
+| code          | int    | 0                              | 状态码，0表示成功                                                                 |
+| msg           | String | Success                        | 业务结果描述，Success 表示成功。                                                      |
+| ts            | Long   | 1648021056815                  | 服务器处理该请求的完成时间。该时间为 Unix 时间戳，即从 1970 年 1 月 1 日 0 点 0 分 0 秒开始到现在的秒数。 |
+| requestId     | String | 7c4b6d9c3e9d42*****cc6e3a4d995 | 请求的唯一标识。                                                                  |
+| cost          | String | 48ms                           | 处理该请求所消耗的时间。                                                              |
+- Sample
+
+```json
+{
+  "code": 0,
+  "cost": "227ms",
+  "requestId": "test_c5c9464cabaa4084bcfbc7387437072a",
+  "msg": "Success",
+  "ts": 1706685366201
+}
+```
 ## Error Code
 |错误码|错误消息|描述｜
 |----|----|----|
@@ -296,3 +562,6 @@
 |702|Nim Bad Im Service|IM服务异常|
 |703|Nim User exist|IM账户已存在|
 |704|Nim User Bad Token|IM账户 Token错误|
+|800|Record does not exist| 录制记录不存在|
+|801|Live does not exist| 直播不存在| 
+|802|Stream name does not exist| 直播流名不存在|

@@ -4,6 +4,12 @@ const path = require("path")
 const isLocal = process.env.MODE === 'local';
 let [hasbind, mainWindow] = [false];
 
+function handleWindowClose() {
+  app.isClosedByCode = true;
+  mainWindow.close()
+  mainWindow.destroy()
+}
+
 function createWindow() {
   // Create the browser window.
   const { width, height } = screen.getPrimaryDisplay().workAreaSize;
@@ -21,6 +27,9 @@ function createWindow() {
     backgroundColor: '#EEF1FB'
   });
 
+  app.isClosedByCode = false
+  app.isQuiting = false
+
   // and load the index.html of the app.
   if (isLocal) {
     mainWindow.loadURL("https://localhost:3001/");
@@ -30,18 +39,19 @@ function createWindow() {
     mainWindow.loadFile(path.join(__dirname, "../index.html"));
   }
 
-  mainWindow.webContents.on('did-finish-load', () => {
-    if (hasbind) {
-      return;
-    }
-    mainWindow.on('close', () => {
-      mainWindow.webContents.send('main-close-before')
+  if (mainWindow.listenerCount('close') === 0) {
+    console.log('\n添加close监听')
+    mainWindow.on('close', (event) => {
+      if(app.isClosedByCode) {
+        console.log('\nclose-直接关闭')
+        mainWindow.removeListener('close', handleWindowClose);
+      } else {
+        console.log('\nclose-触发二次确认')
+        event.preventDefault()
+        mainWindow.webContents.send('main-close-before')
+      }
     });
-    hasbind = true;
-    // mainWindow.on('closed', () => {
-    //   mainWindow.webContents.send('main-closed')
-    // })
-  });
+  }
 }
 
 if (isLocal) {
@@ -57,6 +67,11 @@ app.whenReady().then(() => {
     // dock icon is clicked and there are no other windows open.
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
   });
+
+  app.on("before-quit", (event) =>{
+    console.log('\n监听到quit')
+    app.isQuiting = true
+  })
 
   ipcMain.on('hasJoinClass', (event, arg) => {
     try {
@@ -77,10 +92,15 @@ app.whenReady().then(() => {
       console.error('Exception thrown', error);
     }
   })
+  ipcMain.on('allow-to-close', (event, arg)=>{
+    console.log('\n监听到allow-to-close')
+    handleWindowClose()
+  })
 });
 
 app.on('window-all-closed', function () {
-  if (process.platform !== 'darwin') app.quit()
+  console.log('\n监听到window-all-closed ',app.isQuiting)
+  if (process.platform !== 'darwin' || app.isQuiting) app.quit()
 });
 
 

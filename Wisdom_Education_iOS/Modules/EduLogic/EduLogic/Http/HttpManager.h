@@ -9,9 +9,8 @@
 #import <Foundation/Foundation.h>
 #import "BaseModel.h"
 #import "NEAppInfo.h"
+#import "NEEduSeatUserAction.h"
 
-#define APIVersion1 @"v1"
-#define APIVersion2 @"v2"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -27,11 +26,17 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+/// 成功回调
+typedef void(^NEEduSuccessBlock)(id _Nullable objModel);
+/// 失败回调
+typedef void(^NEEduFailureBlock)(NSError * _Nullable error, NSInteger statusCode);
+
 @interface HttpManager : NSObject
 
 + (HttpManagerConfig *)getHttpManagerConfig;
 + (void)setupHttpManagerConfig:(HttpManagerConfig *)httpConfig;
 + (void)setErrorBlock:(void(^)(NSInteger))errorBlock;
++ (NSMutableDictionary *)httpHeader;
 /// 添加请求头内容
 /// @param dictionary 添加内容
 + (void)addHeaderFromDictionary:(NSDictionary *)dictionary;
@@ -40,7 +45,9 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param classType 返回参数类型
 /// @param successBlock 成功回调
 /// @param failureBlock 失败回调
-+ (void)loginWithAnalysisClass:(Class)classType success:(void (^ _Nullable) (id objModel))successBlock failure:(void (^ _Nullable) (NSError * _Nullable error, NSInteger statusCode))failureBlock;
++ (void)loginWithAnalysisClass:(Class)classType
+                       success:(_Nullable NEEduSuccessBlock)successBlock
+                       failure:(_Nullable NEEduFailureBlock)failureBlock;
 
 /// 用户登录，已用户ID作为唯一表示
 /// @param userId    用户ID
@@ -48,9 +55,17 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param classType 返回参数类型
 /// @param successBlock 成功回调
 /// @param failureBlock 失败回调
-+ (void)loginWithUserId:(NSString *)userId token:(NSString *)token analysisClass:(Class)classType success:(void (^ _Nullable) (id objModel))successBlock failure:(void (^ _Nullable) (NSError * _Nullable error, NSInteger statusCode))failureBlock;
++ (void)loginWithUserId:(NSString *)userId
+                  token:(NSString *)token
+          analysisClass:(Class)classType
+                success:(_Nullable NEEduSuccessBlock)successBlock
+                failure:(_Nullable NEEduFailureBlock)failureBlock;
 
-+ (void)createRoom:(NSString *)roomUuid param:(NSDictionary *)param classType:(Class)classType success:(void (^ _Nullable) (id objModel))successBlock failure:(void (^ _Nullable) (NSError * _Nullable error, NSInteger statusCode))failureBlock;
++ (void)createRoom:(NSString *)roomUuid
+             param:(NSDictionary *)param
+         classType:(Class)classType
+           success:(_Nullable NEEduSuccessBlock)successBlock
+           failure:(_Nullable NEEduFailureBlock)failureBlock;
 
 /// 获取房间信息
 /// @param roomUuid 房间ID
@@ -58,23 +73,71 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param classType 返回数据类型
 /// @param successBlock 成功回调
 /// @param failureBlock 失败回调
-+ (void)getRoom:(NSString *)roomUuid param:(NSDictionary *)param classType:(Class)classType success:(void (^ _Nullable) (id objModel))successBlock failure:(void (^ _Nullable) (NSError * _Nullable error, NSInteger statusCode))failureBlock;
++ (void)getRoom:(NSString *)roomUuid
+          param:(NSDictionary * _Nullable)param
+      classType:(Class)classType
+        success:(_Nullable NEEduSuccessBlock)successBlock
+        failure:(_Nullable NEEduFailureBlock)failureBlock;
 
-+ (void)enterRoom:(NSString *)roomUuid param:(NSDictionary *)param classType:(Class)classType success:(void (^ _Nullable) (id objModel))successBlock failure:(void (^ _Nullable) (NSError * _Nullable error, NSInteger statusCode))failureBlock;
++ (void)enterRoom:(NSString *)roomUuid
+            param:(NSDictionary *)param
+        classType:(Class)classType
+          success:(_Nullable NEEduSuccessBlock)successBlock
+          failure:(_Nullable NEEduFailureBlock)failureBlock;
 
-+ (void)getRoomProfile:(NSString *)roomUuid classType:(Class)classType success:(void (^ _Nullable) (id objModel ,NSInteger ts))successBlock failure:(void (^ _Nullable) (NSError * _Nullable error, NSInteger statusCode))failureBlock;
-+ (void)updateStreamStateWithRoomUuid:(NSString *)roomUuid userUuid:(NSString *)userUuid param:(NSDictionary *)param classType:(Class)classType streamType:(NSString *)streamType success:(void (^ _Nullable) (id objModel))successBlock failure:(void (^ _Nullable) (NSError * _Nullable error, NSInteger statusCode))failureBlock;
++ (void)getRoomProfile:(NSString *)roomUuid
+             classType:(Class)classType
+               success:(void (^ _Nullable) (id objModel ,NSInteger ts))successBlock
+               failure:(_Nullable NEEduFailureBlock)failureBlock;
+
++ (void)updateStreamStateWithRoomUuid:(NSString *)roomUuid
+                             userUuid:(NSString *)userUuid
+                                param:(NSDictionary *)param
+                            classType:(Class)classType
+                           streamType:(NSString *)streamType
+                              success:(_Nullable NEEduSuccessBlock)successBlock
+                              failure:(_Nullable NEEduFailureBlock)failureBlock;
 //修改用户属性，教师通知学生打开音视频
-+ (void)updateMemberPropertyWithRoomUuid:(NSString *)roomUuid userUuid:(NSString *)userUuid param:(NSDictionary *)param classType:(Class)classType property:(NSString *)property success:(void (^ _Nullable) (id objModel))successBlock failure:(void (^ _Nullable) (NSError * _Nullable error, NSInteger statusCode))failureBlock;
++ (void)updateMemberPropertyWithRoomUuid:(NSString *)roomUuid
+                                userUuid:(NSString *)userUuid
+                                   param:(NSDictionary *)param
+                               classType:(Class)classType
+                                property:(NSString *)property
+                                 success:(_Nullable NEEduSuccessBlock)successBlock
+                                 failure:(_Nullable NEEduFailureBlock)failureBlock;
 
-+ (void)deleteMemberPropertyWithRoomUuid:(NSString *)roomUuid userUuid:(NSString *)userUuid param:(NSDictionary *)param classType:(Class)classType property:(NSString *)property success:(void (^ _Nullable) (id objModel))successBlock failure:(void (^ _Nullable) (NSError * _Nullable error, NSInteger statusCode))failureBlock;
++ (void)deleteMemberPropertyWithRoomUuid:(NSString *)roomUuid
+                                userUuid:(NSString *)userUuid
+                                   param:(NSDictionary *)param
+                               classType:(Class)classType
+                                property:(NSString *)property
+                                 success:(_Nullable NEEduSuccessBlock)successBlock
+                                 failure:(_Nullable NEEduFailureBlock)failureBlock;
 
 
-+ (void)startLessonWithRoomUuid:(NSString *)roomUuid param:(NSDictionary *)param classType:(Class)classType success:(void (^ _Nullable) (id objModel))successBlock failure:(void (^ _Nullable) (NSError * _Nullable error, NSInteger statusCode))failureBlock;
++ (void)startLessonWithRoomUuid:(NSString *)roomUuid
+                          param:(NSDictionary *)param
+                      classType:(Class)classType
+                        success:(_Nullable NEEduSuccessBlock)successBlock
+                        failure:(_Nullable NEEduFailureBlock)failureBlock;
 
-+ (void)muteAllWithRoomUuid:(NSString *)roomUuid param:(NSDictionary *)param classType:(Class)classType success:(void (^ _Nullable) (id objModel))successBlock failure:(void (^ _Nullable) (NSError * _Nullable error, NSInteger statusCode))failureBlock;
++ (void)muteAllWithRoomUuid:(NSString *)roomUuid
+                      param:(NSDictionary *)param
+                  classType:(Class)classType
+                    success:(_Nullable NEEduSuccessBlock)successBlock
+                    failure:(_Nullable NEEduFailureBlock)failureBlock;
 
-+ (void)muteAllTextWithRoomUuid:(NSString *)roomUuid param:(NSDictionary *)param classType:(Class)classType success:(void (^ _Nullable) (id objModel))successBlock failure:(void (^ _Nullable) (NSError * _Nullable error, NSInteger statusCode))failureBlock;
++ (void)muteAllTextWithRoomUuid:(NSString *)roomUuid
+                          param:(NSDictionary *)param
+                      classType:(Class)classType
+                        success:(_Nullable NEEduSuccessBlock)successBlock
+                        failure:(_Nullable NEEduFailureBlock)failureBlock;
+
+/// 离开房间
++ (void)leaveRoomWithRoomUuid:(NSString *)roomUuid
+                    userUuid:(NSString *)userUuid
+            success:(void (^ _Nullable)(void))successBlock
+            failure:(_Nullable NEEduFailureBlock)failureBlock;
 
 /// 获取丢失的长链接消息
 /// @param roomUuid 房间ID
@@ -82,7 +145,11 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param classType 返回数据类型
 /// @param successBlock 成功回调
 /// @param failureBlock 失败回调
-+ (void)getMessageWithRoomUuid:(NSString *)roomUuid nextId:(NSInteger)nextId classType:(Class)classType success:(void (^ _Nullable) (id objModel))successBlock failure:(void (^ _Nullable) (NSError * _Nullable error, NSInteger statusCode))failureBlock;
++ (void)getMessageWithRoomUuid:(NSString *)roomUuid
+                        nextId:(NSInteger)nextId
+                     classType:(Class)classType
+                       success:(_Nullable NEEduSuccessBlock)successBlock
+                       failure:(_Nullable NEEduFailureBlock)failureBlock;
 
 /// 获取回放地址
 /// @param roomUuid 房间ID
@@ -90,7 +157,29 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param classType 返回数据类型
 /// @param successBlock 成功回调
 /// @param failureBlock 失败回调
-+ (void)getRecords:(NSString *)roomUuid rtcCid:(NSInteger)rtcCid classType:(Class)classType success:(void (^ _Nullable) (id objModel))successBlock failure:(void (^ _Nullable) (NSError * _Nullable error, NSInteger statusCode))failureBlock;
++ (void)getRecords:(NSString *)roomUuid
+            rtcCid:(NSInteger)rtcCid
+         classType:(Class)classType
+           success:(_Nullable NEEduSuccessBlock)successBlock
+           failure:(_Nullable NEEduFailureBlock)failureBlock;
+
+/// 用户麦位操作
++ (void)userSeatOperation:(NSString *)roomUuid
+                 userName:(NSString *)userName
+               action:(NEEduSeatUserAction *)action
+                  success:(void (^ _Nullable)(void))success
+                  failure:(_Nullable NEEduFailureBlock)failure;
+
+/// 获取麦位信息
++ (void)getSeatInfo:(NSString *)roomUuid
+          classType:(Class)classType
+            success:(_Nonnull NEEduSuccessBlock)success
+            failure:(_Nullable NEEduFailureBlock)failure;
+/// 获取麦位请求列表
++ (void)getSeatRequestList:(NSString *)roomUuid
+            classType:(Class)classType
+            success:(_Nullable NEEduSuccessBlock)success
+            failure:(_Nullable NEEduFailureBlock)failure;
 @end
 
 NS_ASSUME_NONNULL_END

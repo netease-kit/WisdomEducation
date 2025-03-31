@@ -56,6 +56,7 @@
     NSString *toast = self.muteChat ? @"已全体禁言" : @"请输入";
     NSAttributedString *string = [[NSAttributedString alloc] initWithString:toast attributes:@{NSForegroundColorAttributeName:[UIColor colorWithRed:74/255.0 green:86/255.0 blue:101/255.0 alpha:1.0]}];
     self.textField.attributedPlaceholder = string;
+    self.sendButton.enabled = !self.muteChat;
 }
 #pragma mark -
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {

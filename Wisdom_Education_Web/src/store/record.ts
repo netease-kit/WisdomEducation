@@ -9,6 +9,7 @@ import { IEvent, ITrack } from '@/pages/record/index';
 import { getRecordInfo } from '@/services/api';
 import { SceneTypes, RoleTypes } from '@/config';
 import intl from 'react-intl-universal';
+import { getTime } from '@/utils';
 
 interface IpStore {
   videoTracks: Array<ITrack>
@@ -138,7 +139,21 @@ export class RecordStore {
             end: record.startTime + (item.duration || 1) * 1000
           })
         } else {
-          const userLeaveEvent = rawEvents.find(ele => ele.roomUid == item.roomUid && ele.type == 2)
+          const tempEvents = rawEvents.concat([])?.filter((ele: any) => ele.roomUid == item.roomUid)
+          tempEvents.reverse()
+          // 从后往前遍历当前用户的事件，视频时间为第一次进入课堂到最后一次离开课堂的时间（可中间离开多次） 
+          let timestamp = record.stopTime
+          for (const ele of tempEvents) {
+            if (ele.type === 2) {
+              // 先遇到ele.type=2，则为离开后再未进入课堂
+              timestamp = ele.timestamp
+              break
+            } else if (ele.type === 1) {
+              // 先遇到ele.type=1，则为进入课堂后再未离开
+              timestamp = record.stopTime
+              break
+            }
+          }
           videoTracks.push({
             id: item.roomUid, // ?
             userId: item.roomUid,
@@ -148,8 +163,7 @@ export class RecordStore {
             type: 'video',
             start: item.timestamp, // Start time on student clients must be calibrated with the system time
             subStream: item.subStream,
-            end: userLeaveEvent ? userLeaveEvent.timestamp : record.stopTime,
-            // end: item.timestamp + (item.duration || 1) * 1000
+            end: timestamp,
           })
         }
       } else {
@@ -168,11 +182,16 @@ export class RecordStore {
     }
 
     for (const event of rawEvents) {
-      events.push({
-        userId: event.roomUid,
-        action: this.checkEventType(event.type, sceneType),
-        timestamp: event.timestamp
-      })
+      // 只处理课堂开始到结束的事件
+      if (event.timestamp >= record.startTime && event.timestamp <= record.stopTime) {
+        events.push({
+          userId: event.roomUid,
+          action: this.checkEventType(event.type, sceneType),
+          type: event.type,
+          timestamp: event.timestamp,
+          fromClassBeginInterval: getTime(event.timestamp - record.classBeginTimestamp)[0],
+        })
+      }
     }
     console.log('events', events);
 
@@ -182,30 +201,42 @@ export class RecordStore {
 
   }
 
+  /**
+   * 
+   * @param type 成员操作事件类型
+   * 1:成员进入房间
+   * 2:成员离开房间
+   * 3:成员打开音频
+   * 4:成员关闭音频
+   * 5:成员打开视频
+   * 6:成员关闭视频
+   * 7:成员打开辅流
+   * 8:成员关闭辅流
+   * 9:互动大班课学生上台
+   * 10:互动大班课学生下台
+   * @param sceneType 课程类型
+   * @returns 
+   */
   private checkEventType = (type: number, sceneType: SceneTypes) => {
-    let result: "show" | "hide" | "showScreen" | "remove";
+    let result: "show" | "hide" | "showScreen" | "remove" | "hideScreen";
     switch (true) {
-      case SceneTypes.BIG === sceneType && [3, 5, 9].includes(type):
+      case [1, 3, 5, 9].includes(type):
         result = 'show';
         break;
-      case SceneTypes.BIG === sceneType && [1].includes(type):
-        result = 'remove';
-        break;
-      case SceneTypes.BIG !== sceneType && [1, 3, 5, 9].includes(type):
-        result = 'show';
+      case [4, 6].includes(type):
+        result = 'hide';
         break;
       case [7].includes(type):
         result = 'showScreen';
+        break;
+      case [8].includes(type):
+        result = 'hideScreen';
         break;
       case [2, 10].includes(type):
         result = 'remove';
         break;
       default:
-        if (SceneTypes.BIG === sceneType && ![4, 6].includes(type)) {
-          result = 'remove';
-        } else {
-          result = 'hide';
-        }
+        result = 'show';
         break;
     }
     return result;

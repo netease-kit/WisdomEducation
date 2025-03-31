@@ -47,7 +47,12 @@ extern NSString *const NMCWhiteboardURL;
  @param enable 是否可用
  */
 - (void)callEnableDraw:(BOOL)enable;
-
+/**
+ 设置 视频上传配置
+ 
+ @param presetId 转码模板id
+ */
+- (void)setAppConfigWithPresetId:(NSNumber *)presetId;
 /**
  设置白板颜色
 

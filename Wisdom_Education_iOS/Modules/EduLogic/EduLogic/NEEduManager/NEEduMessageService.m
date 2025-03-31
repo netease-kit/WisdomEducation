@@ -46,6 +46,11 @@
         NEEduSignalMessage *messageModel = [NEEduSignalMessage yy_modelWithJSON:message];
         [self dispatchMessage:messageModel];
         return;
+    } else if ([messageModel.type isEqualToString:@"R"]) {
+        //消息分发
+        NEEduSignalMessage *messageModel = [NEEduSignalMessage yy_modelWithJSON:message];
+        [self dispatchMessage:messageModel];
+        return;
     }
     /**
      1.根据sequence是否连续，判断消息是否丢失

@@ -18,7 +18,7 @@ data class NERecordItem(
     val roomCid: String,
     val roomUid: Long,
     val roomUuid: String,
-    val size: Int,
+    val size: Long,
     val timestamp: Long,
     val type: String,
     val url: String,

@@ -96,7 +96,7 @@ const Chatroom: React.FC<IProps> = ({
                       logger.error('Failed to get members in the chat room', error);
                       return;
                     }
-                    const members = obj.members.map((item) => {
+                    let members = obj.members.map((item) => {
                       if (!item.nick.includes(intl.get('老师'))) {
                         if (localUserInfo.userUuid === item.account) {
                           return {
@@ -127,6 +127,7 @@ const Chatroom: React.FC<IProps> = ({
                     //     }
                     //   }
                     // })
+                    members = members?.filter((item)=>!!item?.userUuid)
                     roomStore.setBigLiveMemberFullList(members);
                     logger.debug('Members', obj.members, members)
                   }
@@ -163,6 +164,8 @@ const Chatroom: React.FC<IProps> = ({
           }
         } else if (reason === 'managerKick') {
           msg = intl.get('被管理员踢出房间')
+        } else if (reason === 'chatroomClosed') {
+          msg = intl.get('该房间已关闭')
         }
 
         //Removed from the chat room and redirected to the home page
@@ -238,7 +241,7 @@ const Chatroom: React.FC<IProps> = ({
       const timeout = setTimeout(() => {
         message.error(intl.get('上传超时，请重试'));
         setProgress(type);
-      }, 30000);
+      }, 70000);
       chatroomHelper.sendFile({
         type,
         blob: data,
