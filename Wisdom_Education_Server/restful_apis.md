@@ -10,7 +10,7 @@
 # 接口调用概述
 ## AppKey/AppSecret：
 [联系云信商务经理](https://yunxin.163.com/bizQQWPA.html) 开通功能
-## Host：yiyong-xedu-v2.netease.im
+## Host：yiyong-xedu-v2.yunxinapi.com
 ## Headers
 ### AppKey：应用唯一标识符
 ### CurTime：当前时间，毫秒时间戳
